@@ -36,11 +36,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #undef WIN32_LEAN_AND_MEAN
 
 
+#include "Math/Vector4.h"
+
 // Entry point for editor
 int WinMain(HINSTANCE, HINSTANCE, char *, int){
 #if defined(DEBUG) | defined(_DEBUG)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
+
+	Math::Vec4 a{ 1, 2, 3, };
+
+	a.xzwy = a.yyzz;
 
 	//if (AllocConsole())
 	//{

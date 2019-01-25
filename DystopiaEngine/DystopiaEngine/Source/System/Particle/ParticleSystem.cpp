@@ -18,4 +18,8 @@ Dystopia::ParticleSystem::ParticleSystem(void) noexcept
 {
 }
 
+Dystopia::ParticleSystem::~ParticleSystem(void) noexcept
+{
+}
+
 

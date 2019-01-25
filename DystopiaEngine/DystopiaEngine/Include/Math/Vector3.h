@@ -70,7 +70,6 @@ namespace Math
 
 		// ======================================== OPERATORS ======================================= // 
 
-		// Potentially Slow?, please try to avoid!
 		inline float& _CALL operator[](const unsigned _nIndex);
 		inline const float _CALL operator[](const unsigned _nIndex) const;
 
@@ -112,9 +111,7 @@ namespace Math
 			inline _CALL operator float(void) const;
 
 		private:
-			__m128 mData;
-
-			static constexpr unsigned shuffleMask = _MM_SHUFFLE(N == 3 ? 0 : 3, N == 2 ? 0 : 2, N == 1 ? 0 : 1, N);
+			float mData[3];
 		};
 		template <unsigned X, unsigned Y>
 		struct _DLL_EXPORT SwizzleMask<X, Y>
@@ -123,9 +120,7 @@ namespace Math
 			inline _CALL operator Math::Vector2 (void) const;
 
 		private:
-			__m128 mData;
-
-			static constexpr unsigned shuffleMask = _MM_SHUFFLE(N == 3 ? 0 : 3, N == 2 ? 0 : 2, N == 1 ? 0 : 1, N);
+			float mData[3];
 		};
 
 		template <unsigned X, unsigned Y, unsigned Z>
@@ -153,128 +148,132 @@ namespace Math
 			template<unsigned Q, unsigned R, unsigned S, typename ret_t = Ut::EnableIf_t<IsLvalueSwizzle<X, Y, Z>::value, SwizzleMask>>
 			inline ret_t& _CALL operator = (SwizzleMask<Q, R, S> _rhs);
 
-			inline _CALL operator Math::Vector3(void) const;
+			inline _CALL operator Math::Vector3 (void) const;
 
 		private:
-			__m128 mData;
+			float mData[3];
+		};
+		template <unsigned X, unsigned Y, unsigned Z, unsigned W>
+		struct _DLL_EXPORT SwizzleMask<X, Y, Z, W>
+		{
+			inline SwizzleMask<Y>& _CALL operator= (Vector4 _rhs);
+			inline _CALL operator Math::Vector4 (void) const;
 
-			static constexpr unsigned shuffleRead = _MM_SHUFFLE(W, Z, Y, X);
-			static constexpr unsigned shuffleWrite = (3 << (2 * W)) | (2 << (2 * Z)) | (1 << (2 * Y)) | (0 << (2 * X));
+		private:
+			float mData[3];
 		};
 
-		static inline __m128 _CALL InvSqrt(__m128);
-		static inline __m128 _CALL Dot(__m128, __m128);
-
-		// Matrix needs the __m128 member
-		friend struct Math::Matrix4;
-
 	public:
+		float mData[3];
+
 		SwizzleMask<0> x;
 		SwizzleMask<1> y;
 		SwizzleMask<2> z;
-		SwizzleMask<3> w;
 
-		SwizzleMask<0, 0, 0, 0> xxxx;
-		SwizzleMask<0, 0, 1, 1> xxyy;
-		SwizzleMask<0, 0, 1, 2> xxyz;
-		SwizzleMask<0, 0, 2, 2> xxzz;
-		SwizzleMask<0, 1, 0, 1> xyxy;
-		SwizzleMask<0, 1, 1, 1> xyyy;
-		SwizzleMask<0, 1, 2, 3> xyzw;
-		SwizzleMask<0, 1, 3, 2> xywz;
-		SwizzleMask<0, 2, 1, 1> xzyy;
-		SwizzleMask<0, 2, 1, 3> xzyw;
-		SwizzleMask<0, 3, 0, 3> xwxw;
-		SwizzleMask<0, 3, 1, 2> xwyz;
-		SwizzleMask<0, 3, 2, 3> xwzw;
-		SwizzleMask<1, 0, 1, 0> yxyx;
-		SwizzleMask<1, 0, 2, 3> yxzw;
-		SwizzleMask<1, 0, 3, 2> yxwz;
-		SwizzleMask<1, 1, 1, 1> yyyy;
-		SwizzleMask<1, 3, 0, 2> ywxz;
-		SwizzleMask<1, 3, 1, 3> ywyw;
-		SwizzleMask<1, 3, 2, 0> ywzx;
-		SwizzleMask<2, 0, 1, 3> zxyw;
-		SwizzleMask<2, 0, 3, 1> zxwy;
-		SwizzleMask<2, 1, 2, 1> zyzy;
-		SwizzleMask<2, 2, 2, 3> zzzw;
-		SwizzleMask<2, 2, 2, 2> zzzz;
-		SwizzleMask<2, 3, 0, 0> zwxx;
-		SwizzleMask<2, 3, 0, 1> zwxy;
-		SwizzleMask<2, 3, 1, 0> zwyx;
-		SwizzleMask<2, 3, 2, 3> zwzw;
-		SwizzleMask<2, 3, 3, 2> zwwz;
-		SwizzleMask<3, 1, 2, 0> wyzx;
-		SwizzleMask<3, 2, 0, 1> wzxy;
-		SwizzleMask<3, 2, 1, 0> wzyx;
-		SwizzleMask<3, 2, 2, 3> wzzw;
-		SwizzleMask<3, 2, 3, 2> wzwz;
-		SwizzleMask<3, 3, 3, 3> wwww;
+		SwizzleMask<0, 0, 0> xxx; SwizzleMask<1, 0, 0> yxx; SwizzleMask<2, 0, 0> zxx;
+		SwizzleMask<0, 0, 1> xxy; SwizzleMask<1, 0, 1> yxy; SwizzleMask<2, 0, 1> zxy;
+		SwizzleMask<0, 0, 2> xxz; SwizzleMask<1, 0, 2> yxz; SwizzleMask<2, 0, 2> zxz;
+		SwizzleMask<0, 1, 0> xyx; SwizzleMask<1, 1, 0> yyx; SwizzleMask<2, 1, 0> zyx;
+		SwizzleMask<0, 1, 1> xyy; SwizzleMask<1, 1, 1> yyy; SwizzleMask<2, 1, 1> zyy;
+		SwizzleMask<0, 1, 2> xyz; SwizzleMask<1, 1, 2> yyz; SwizzleMask<2, 1, 2> zyz;
+		SwizzleMask<0, 2, 0> xzx; SwizzleMask<1, 2, 0> yzx; SwizzleMask<2, 2, 0> zzx;
+		SwizzleMask<0, 2, 1> xzy; SwizzleMask<1, 2, 1> yzy; SwizzleMask<2, 2, 1> zzy;
+		SwizzleMask<0, 2, 2> xzz; SwizzleMask<1, 2, 2> yzz; SwizzleMask<2, 2, 2> zzz;
 
-		inline __m128 _CALL GetRaw(void) const noexcept;
+		SwizzleMask<0, 0, 0, 0> xxxx; SwizzleMask<1, 0, 0, 0> yxxx; SwizzleMask<2, 0, 0, 0> zxxx;
+		SwizzleMask<0, 0, 0, 1> xxxy; SwizzleMask<1, 0, 0, 1> yxxy; SwizzleMask<2, 0, 0, 1> zxxy;
+		SwizzleMask<0, 0, 0, 2> xxxz; SwizzleMask<1, 0, 0, 2> yxxz; SwizzleMask<2, 0, 0, 2> zxxz;
+		SwizzleMask<0, 0, 0, 3> xxx0; SwizzleMask<1, 0, 0, 3> yxx0; SwizzleMask<2, 0, 0, 3> zxx0;
+		SwizzleMask<0, 0, 0, 4> xxx1; SwizzleMask<1, 0, 0, 4> yxx1; SwizzleMask<2, 0, 0, 4> zxx1;
+		SwizzleMask<0, 0, 1, 0> xxyx; SwizzleMask<1, 0, 1, 0> yxyx; SwizzleMask<2, 0, 1, 0> zxyx;
+		SwizzleMask<0, 0, 1, 1> xxyy; SwizzleMask<1, 0, 1, 1> yxyy; SwizzleMask<2, 0, 1, 1> zxyy;
+		SwizzleMask<0, 0, 1, 2> xxyz; SwizzleMask<1, 0, 1, 2> yxyz; SwizzleMask<2, 0, 1, 2> zxyz;
+		SwizzleMask<0, 0, 0, 3> xxy0; SwizzleMask<1, 0, 0, 3> yxy0; SwizzleMask<2, 0, 0, 3> zxy0;
+		SwizzleMask<0, 0, 0, 4> xxy1; SwizzleMask<1, 0, 0, 4> yxy1; SwizzleMask<2, 0, 0, 4> zxy1;
+		SwizzleMask<0, 0, 2, 0> xxzx; SwizzleMask<1, 0, 2, 0> yxzx; SwizzleMask<2, 0, 2, 0> zxzx;
+		SwizzleMask<0, 0, 2, 1> xxzy; SwizzleMask<1, 0, 2, 1> yxzy; SwizzleMask<2, 0, 2, 1> zxzy;
+		SwizzleMask<0, 0, 2, 2> xxzz; SwizzleMask<1, 0, 2, 2> yxzz; SwizzleMask<2, 0, 2, 2> zxzz;
+		SwizzleMask<0, 0, 0, 3> xxz0; SwizzleMask<1, 0, 0, 3> yxz0; SwizzleMask<2, 0, 0, 3> zxz0;
+		SwizzleMask<0, 0, 0, 4> xxz1; SwizzleMask<1, 0, 0, 4> yxz1; SwizzleMask<2, 0, 0, 4> zxz1;
+		SwizzleMask<0, 1, 0, 0> xyxx; SwizzleMask<1, 1, 0, 0> yyxx; SwizzleMask<2, 1, 0, 0> zyxx;
+		SwizzleMask<0, 1, 0, 1> xyxy; SwizzleMask<1, 1, 0, 1> yyxy; SwizzleMask<2, 1, 0, 1> zyxy;
+		SwizzleMask<0, 1, 0, 2> xyxz; SwizzleMask<1, 1, 0, 2> yyxz; SwizzleMask<2, 1, 0, 2> zyxz;
+		SwizzleMask<0, 1, 0, 3> xyx0; SwizzleMask<1, 1, 0, 3> yyx0; SwizzleMask<2, 1, 0, 3> zyx0;
+		SwizzleMask<0, 1, 0, 4> xyx1; SwizzleMask<1, 1, 0, 4> yyx1; SwizzleMask<2, 1, 0, 4> zyx1;
+		SwizzleMask<0, 1, 1, 0> xyyx; SwizzleMask<1, 1, 1, 0> yyyx; SwizzleMask<2, 1, 1, 0> zyyx;
+		SwizzleMask<0, 1, 1, 1> xyyy; SwizzleMask<1, 1, 1, 1> yyyy; SwizzleMask<2, 1, 1, 1> zyyy;
+		SwizzleMask<0, 1, 1, 2> xyyz; SwizzleMask<1, 1, 1, 2> yyyz; SwizzleMask<2, 1, 1, 2> zyyz;
+		SwizzleMask<0, 1, 0, 3> xyy0; SwizzleMask<1, 1, 0, 3> yyy0; SwizzleMask<2, 1, 0, 3> zyy0;
+		SwizzleMask<0, 1, 0, 4> xyy1; SwizzleMask<1, 1, 0, 4> yyy1; SwizzleMask<2, 1, 0, 4> zyy1;
+		SwizzleMask<0, 1, 2, 0> xyzx; SwizzleMask<1, 1, 2, 0> yyzx; SwizzleMask<2, 1, 2, 0> zyzx;
+		SwizzleMask<0, 1, 2, 1> xyzy; SwizzleMask<1, 1, 2, 1> yyzy; SwizzleMask<2, 1, 2, 1> zyzy;
+		SwizzleMask<0, 1, 2, 2> xyzz; SwizzleMask<1, 1, 2, 2> yyzz; SwizzleMask<2, 1, 2, 2> zyzz;
+		SwizzleMask<0, 1, 0, 3> xyz0; SwizzleMask<1, 1, 0, 3> yyz0; SwizzleMask<2, 1, 0, 3> zyz0;
+		SwizzleMask<0, 1, 0, 4> xyz1; SwizzleMask<1, 1, 0, 4> yyz1; SwizzleMask<2, 1, 0, 4> zyz1;
+		SwizzleMask<0, 2, 0, 0> xzxx; SwizzleMask<1, 2, 0, 0> yzxx; SwizzleMask<2, 2, 0, 0> zzxx;
+		SwizzleMask<0, 2, 0, 1> xzxy; SwizzleMask<1, 2, 0, 1> yzxy; SwizzleMask<2, 2, 0, 1> zzxy;
+		SwizzleMask<0, 2, 0, 2> xzxz; SwizzleMask<1, 2, 0, 2> yzxz; SwizzleMask<2, 2, 0, 2> zzxz;
+		SwizzleMask<0, 2, 0, 3> xzx0; SwizzleMask<1, 2, 0, 3> yzx0; SwizzleMask<2, 2, 0, 3> zzx0;
+		SwizzleMask<0, 2, 0, 4> xzx1; SwizzleMask<1, 2, 0, 4> yzx1; SwizzleMask<2, 2, 0, 4> zzx1;
+		SwizzleMask<0, 2, 1, 0> xzyx; SwizzleMask<1, 2, 1, 0> yzyx; SwizzleMask<2, 2, 1, 0> zzyx;
+		SwizzleMask<0, 2, 1, 1> xzyy; SwizzleMask<1, 2, 1, 1> yzyy; SwizzleMask<2, 2, 1, 1> zzyy;
+		SwizzleMask<0, 2, 1, 2> xzyz; SwizzleMask<1, 2, 1, 2> yzyz; SwizzleMask<2, 2, 1, 2> zzyz;
+		SwizzleMask<0, 2, 0, 3> xzy0; SwizzleMask<1, 2, 0, 3> yzy0; SwizzleMask<2, 2, 0, 3> zzy0;
+		SwizzleMask<0, 2, 0, 4> xzy1; SwizzleMask<1, 2, 0, 4> yzy1; SwizzleMask<2, 2, 0, 4> zzy1;
+		SwizzleMask<0, 2, 2, 0> xzzx; SwizzleMask<1, 2, 2, 0> yzzx; SwizzleMask<2, 2, 2, 0> zzzx;
+		SwizzleMask<0, 2, 2, 1> xzzy; SwizzleMask<1, 2, 2, 1> yzzy; SwizzleMask<2, 2, 2, 1> zzzy;
+		SwizzleMask<0, 2, 2, 2> xzzz; SwizzleMask<1, 2, 2, 2> yzzz; SwizzleMask<2, 2, 2, 2> zzzz;
+		SwizzleMask<0, 2, 0, 3> xzz0; SwizzleMask<1, 2, 0, 3> yzz0; SwizzleMask<2, 2, 0, 3> zzz0;
+		SwizzleMask<0, 2, 0, 4> xzz1; SwizzleMask<1, 2, 0, 4> yzz1; SwizzleMask<2, 2, 0, 4> zzz1;
 	};
 
 	// Converts a vector into unit length
-	inline Vector4 _CALL Normalise(const Vector4);
+	inline Vector3 _CALL Normalise(const Vector3);
 
 	// Computes the dot product of two vectors
-	inline float _CALL Dot(const Vector4, const Vector4);
-
-	// Computes the outer product of two vectors
-	Matrix4 _CALL Outer(const Vector4, const Vector4);
+	inline float _CALL Dot(const Vector3, const Vector3);
 
 	// Computes the cross product of two vectors
-	inline Vector4 _CALL Cross(const Vector4, const Vector4);
+	inline float _CALL Cross(const Vector3, const Vector3);
 
 	// Projects lhs onto rhs
-	inline Vector4 _CALL Project(const Vector4, const Vector4);
+	inline Vector3 _CALL Project(const Vector3, const Vector3);
 
-	inline Vector4 _CALL Reciprocal(const Vector4);
+	inline Vector3 _CALL Reciprocal(const Vector3);
 
 	template <unsigned FLAGS>
-	inline Vector4 _CALL Negate(const Vector4) noexcept;
+	inline Vector3 _CALL Negate(const Vector3) noexcept;
 
 
 	// ====================================== MATH UTILITY ======================================= // 
 	// Manually overload the math utility functions which cannot be called for type Vector4
 
-	inline Vector4 _CALL Abs(const Vector4);
+	inline Vector3 _CALL Abs(const Vector3);
 
-	inline Vector4 _CALL Min(const Vector4, const Vector4);
-	inline Vector4 _CALL Max(const Vector4, const Vector4);
+	inline Vector3 _CALL Min(const Vector3, const Vector3);
+	inline Vector3 _CALL Max(const Vector3, const Vector3);
 
 
 	// ==================================== VECTOR GENERATORS ==================================== // 
 
-	inline Vector4 _CALL MakePoint3D(float _x, float _y, float _z);
-	inline Vector4 _CALL MakeVector3D(float _x, float _y, float _z);
+	inline Vector3 _CALL MakePoint2D (float _x, float _y);
+	inline Vector3 _CALL MakeVector2D(float _x, float _y);
 
 
 	// ======================================== OPERATORS ======================================== // 
 
-	inline Vector4 _CALL operator-(const Vector4, const Vector4);
-	inline Vector4 _CALL operator+(const Vector4, const Vector4);
-	inline Vector4 _CALL operator*(const Vector4, const Vector4);
-	inline Vector4 _CALL operator*(const float, const Vector4);
-	inline Vector4 _CALL operator*(const Vector4, const float);
-	inline Vector4 _CALL operator/(const Vector4, const float);
-
-	// Alternate + and -
-	// x1 + x2 , y1 - y2 , z1 + z2 , w1 - w2
-	inline Vector4 _CALL AddSub(const Vector4, const Vector4);
-
-	// x1 + y1 , z1 + w1 , x2 + y2 , z2 + w2
-	inline Vector4 _CALL HorizontalAdd(const Vector4, const Vector4);
-	// x1 - y1 , z1 - w1 , x2 - y2 , z2 - w2
-	inline Vector4 _CALL HorizontalSub(const Vector4, const Vector4);
+	inline Vector3 _CALL operator - (const Vector3, const Vector3);
+	inline Vector3 _CALL operator + (const Vector3, const Vector3);
+	inline Vector3 _CALL operator * (const Vector3, const Vector3);
+	inline Vector3 _CALL operator * (const float, const Vector3);
+	inline Vector3 _CALL operator * (const Vector3, const float);
+	inline Vector3 _CALL operator / (const Vector3, const float);
 
 
-	using Vec4 = Vector4;
-	using Vector3D = Vector4;
-	using Vec3D = Vector4;
-	using Point3D = Vector4;
-	using Pt3D = Vector4;
-	using Color = Vector4;
+	using Vec3    = Vector3;
+	using Pt2D    = Vector3;
+	using Vec2D   = Vector3;
+	using Point2D = Vector3;
 }
 
 

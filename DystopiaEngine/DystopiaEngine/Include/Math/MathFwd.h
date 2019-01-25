@@ -28,6 +28,7 @@ namespace Math
 	class Degrees;
 
 	using Vec2 = Vector2;
+	using Vec3 = Vector3;
 	using Vec4 = Vector4;
 	using Pt3D = Vector4;
 	using Mat2 = Matrix2;

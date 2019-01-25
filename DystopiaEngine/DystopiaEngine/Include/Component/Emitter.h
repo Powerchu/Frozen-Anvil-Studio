@@ -19,7 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "DataStructure/AutoArray.h"
 
-#include "Math/Vector4.h"
+#include "Math/MathFwd.h"
 
 
 namespace Dystopia
@@ -48,7 +48,7 @@ namespace Dystopia
 
 	private:
 
-		AutoArray<
+		AutoArray<Math::Vec3> mPositions;
 	};
 }
 

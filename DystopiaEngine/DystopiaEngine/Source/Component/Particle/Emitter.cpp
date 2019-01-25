@@ -13,4 +13,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "Component/Emitter.h"
 
+Dystopia::Emitter::Emitter(void) noexcept
+{
+}
+
+Dystopia::Emitter::~Emitter(void) noexcept
+{
+}
 
