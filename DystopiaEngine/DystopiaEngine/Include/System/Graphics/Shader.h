@@ -35,7 +35,7 @@ namespace Dystopia
 	{
 	public:
 
-		Shader(OString const& = "") noexcept;
+		Shader(OString const& = "", bool = true) noexcept;
 		~Shader(void);
 
 		//void CreateShader(char const* _strVert, char const* _strFrag);
@@ -66,6 +66,7 @@ namespace Dystopia
 		void UploadUniformi(char const*, int, int, int, int) const noexcept;
 
 		OString const& GetName(void) const noexcept;
+		bool IsCustomShader(void) const noexcept;
 
 		void Unserialize(TextSerialiser&);
 
@@ -82,7 +83,7 @@ namespace Dystopia
 		::Gfx::ShaderStage mStages;
 		AutoArray<ShaderProgram*> mPrograms;
 
-		bool mbUpdate;
+		bool mbUpdate, mbIsCustom;
 		AutoArray<std::pair<OString, ::Gfx::eUniform_t>> mVars;
 	};
 }

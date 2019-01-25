@@ -40,7 +40,7 @@ namespace Dystopia
 		void EditorUpdate(void);
 		void Shutdown(void) noexcept;
 
-		Shader* CreateShader(char const* _strName) noexcept;
+		Shader* CreateShader(char const* _strName, bool _bCustom) noexcept;
 		ShaderProgram* CreateShaderProgram(::Gfx::ShaderStage, char const* _strName, bool _bTrack = true) noexcept;
 
 		Shader* GetShader(char const* _strName) const noexcept;

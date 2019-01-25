@@ -56,9 +56,9 @@ namespace Dystopia
 		Ty* LoadTexture(HashString const&);
 
 		template <typename Ty>
-		Ty* LoadRaw(Image const*);
+		Ty* LoadRaw(Image*);
 		template <typename Ty>
-		Ty* LoadRaw(Image const*, HashString const&);
+		Ty* LoadRaw(Image*, HashString const&);
 
 		void SaveAtlases(void);
 		void SaveTexture(Texture const*);
@@ -122,21 +122,17 @@ template <>
 Dystopia::Texture* Dystopia::TextureSystem::LoadTexture(HashString const&);
 
 template<typename Ty>
-Ty* Dystopia::TextureSystem::LoadRaw(Image const *_ptr)
+Ty* Dystopia::TextureSystem::LoadRaw(Image*_ptr)
 {
-	auto ret = mTextures.EmplaceAs<Ty>(std::to_string(reinterpret_cast<uintptr_t>(_ptr)).c_str());
-
-	ret->LoadTexture(_ptr);
+	auto ret = mTextures.EmplaceAs<Ty>(std::to_string(reinterpret_cast<uintptr_t>(_ptr)).c_str(), *_ptr);
 
 	return ret;
 }
 
 template<typename Ty>
-Ty* Dystopia::TextureSystem::LoadRaw(Image const *_ptr, HashString const& _strName)
+Ty* Dystopia::TextureSystem::LoadRaw(Image*_ptr, HashString const& _strName)
 {
-	auto ret = mTextures.EmplaceAs<Ty>(_strName);
-
-	ret->LoadTexture(_ptr);
+	auto ret = mTextures.EmplaceAs<Ty>(_strName, *_ptr);
 
 	return ret;
 }
