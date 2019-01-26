@@ -23,7 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/HashString.h"
 #include "Utility/MetaAlgorithms.h"	   // MetaFind
 
-#include "Math/Vector2.h"
+#include "Math/Vectors.h"
 #include <string>
 
 

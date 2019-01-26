@@ -13,7 +13,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _SPRITE_PREVEIWER_H_
 #define _SPRITE_PREVEIWER_H_
-#include "Math/Vector2.h"
+#include "Math/Vectors.h"
 #include "DataStructure/HashString.h"
 //#include "Editor/EditorTab.h"
 #include "Editor/EditorPanel.h"

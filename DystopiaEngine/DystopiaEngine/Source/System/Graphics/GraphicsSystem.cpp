@@ -61,8 +61,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Globals.h"
 #include "Utility/DebugAssert.h"			// DEBUG_ASSERT
-#include "Math/Vector4.h"
-#include "Math/Vector2.h"
+#include "Math/Vectors.h"
 
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely used stuff from Windows headers
 #define NOMINMAX				// Disable Window header min & max macros

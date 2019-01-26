@@ -30,6 +30,10 @@ namespace Dystopia
 		ParticleSystem(void) noexcept;
 		~ParticleSystem(void) noexcept;
 
+		bool Init(void) override;
+		void Update(float) override;
+		void FixedUpdate(float) override;
+		void Shutdown(void) override;
 
 
 	private:

@@ -28,7 +28,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Globals.h"
 #include "IO/TextSerialiser.h"
 
-#include "Math/Vector2.h"
+#include "Math/Vectors.h"
 
 #include <GL\glew.h>
 

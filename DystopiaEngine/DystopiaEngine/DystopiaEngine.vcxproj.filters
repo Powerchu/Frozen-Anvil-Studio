@@ -181,9 +181,6 @@
     <ClCompile Include="Source\Component\CollisionEvent.cpp">
       <Filter>Game Engine\Systems\Collision</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Math\Vector4.cpp">
-      <Filter>Math\Vector</Filter>
-    </ClCompile>
     <ClCompile Include="Source\System\Profiler\Profiler.cpp">
       <Filter>Game Engine\Systems\Profiler\ProfilerSystem</Filter>
     </ClCompile>
@@ -397,10 +394,13 @@
     <ClCompile Include="Source\System\Particle\ParticleSystem.cpp">
       <Filter>Game Engine\Systems\Particle\ParticleSystem</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Math\Vector3.cpp">
+    <ClCompile Include="Source\Math\Vector\Vector4.cpp">
       <Filter>Math\Vector</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Math\Vector2.cpp">
+    <ClCompile Include="Source\Math\Vector\Vector3.cpp">
+      <Filter>Math\Vector</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Math\Vector\Vector2.cpp">
       <Filter>Math\Vector</Filter>
     </ClCompile>
   </ItemGroup>
@@ -458,9 +458,6 @@
     </ClInclude>
     <ClInclude Include="Include\Component\Transform.h">
       <Filter>Game Engine\Components\Transform</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Math\Vector4.h">
-      <Filter>Math\Vector</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Window\Window.h">
       <Filter>Game Engine\Systems\Window\Window</Filter>
@@ -521,9 +518,6 @@
     </ClInclude>
     <ClInclude Include="Include\System\Graphics\Mesh.h">
       <Filter>Game Engine\SubSystems\Mesh\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Math\Vector2.h">
-      <Filter>Math\Vector</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Driver\Driver.h">
       <Filter>Game Engine\Systems\Driver</Filter>
@@ -1098,16 +1092,31 @@
     <ClInclude Include="Include\Utility\MetaLogic.h">
       <Filter>Utility\Meta\Logic</Filter>
     </ClInclude>
-    <ClInclude Include="MetaBind.h">
-      <Filter>Utility\Meta\Functions</Filter>
-    </ClInclude>
     <ClInclude Include="Include\System\Particle\ParticleSystem.h">
       <Filter>Game Engine\Systems\Particle\ParticleSystem</Filter>
     </ClInclude>
     <ClInclude Include="Include\Component\Emitter.h">
       <Filter>Game Engine\Components\Emitter</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Math\Vector3.h">
+    <ClInclude Include="Include\Utility\MetaBind.h">
+      <Filter>Utility\Meta\Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\MathConstants.h">
+      <Filter>Math\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\Vector\Vector2.h">
+      <Filter>Math\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\Vector\Vector3.h">
+      <Filter>Math\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\Vector\Vector4.h">
+      <Filter>Math\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\Vector\SwizzleOps.h">
+      <Filter>Math\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\Vectors.h">
       <Filter>Math\Vector</Filter>
     </ClInclude>
   </ItemGroup>

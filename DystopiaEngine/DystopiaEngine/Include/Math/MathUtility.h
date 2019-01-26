@@ -16,7 +16,10 @@
 #define _MATH_UTILS_H_
 
 #include "Utility/Meta.h"		// EnableIf, IsNumeric
+
+#include "Math/MathFwd.h"
 #include "Math/MathInternal.h"
+#include "Math/MathConstants.h"
 
 #include <cstdint>
 
@@ -34,39 +37,6 @@ namespace Math
 	{
 		return Internal::PowerCalc<T, (exponent < 0), Abs(exponent)>::Power(_x);
 	}
-
-	namespace C
-	{
-		template <typename Ty>
-		constexpr Ty euler = Ty(2.7182818284590452353602874713526L);
-
-		template <typename Ty>
-		constexpr Ty pi    = Ty(3.1415926535897932384626433832795L);
-															
-		template <typename Ty>								
-		constexpr Ty phi   = Ty(1.6180339887498948482045868343656L);
-
-		template <typename Ty>
-		constexpr Ty sqrt2 = Ty(1.4142135623730950488016887242096L);
-
-		template <typename Ty>
-		constexpr Ty epsilon = Power<1 - sizeof(Ty) * 2, Ty>(10);
-	}
-
-	// Exponential Constant
-	constexpr float euler = C::euler<float>;
-	// Mathematical PI
-	constexpr float pi    = C::pi<float>;
-	// 2 * PI
-	constexpr float pi2   = 2.f * C::pi<float>;
-	// Golden ratio
-	constexpr float phi   = C::phi<float>;
-	// Sqrt of 2
-	constexpr float sqrt2 = C::sqrt2<float>;
-	// Floating point error tolerance
-	constexpr float epsilon = C::epsilon<float>;
-
-
 
 	inline constexpr bool IsZero(float _fScalar)
 	{

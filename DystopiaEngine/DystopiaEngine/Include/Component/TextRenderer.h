@@ -23,7 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/MetaAlgorithms.h"		// MetaFind
 #include "System/Graphics/Font.h"
 
-#include "Math/Vector4.h"
+#include "Math/Vectors.h"
 
 #include <string>
 

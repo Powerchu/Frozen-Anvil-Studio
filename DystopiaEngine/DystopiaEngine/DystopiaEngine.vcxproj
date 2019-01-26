@@ -30,8 +30,8 @@
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
     <ClCompile Include="Include\IO\XMLParser.cpp" />
     <ClCompile Include="Include\System\Database\DataSheet.cpp" />
-    <ClCompile Include="Source\Math\Vector2.cpp" />
-    <ClCompile Include="Source\Math\Vector3.cpp" />
+    <ClCompile Include="Source\Math\Vector\Vector2.cpp" />
+    <ClCompile Include="Source\Math\Vector\Vector3.cpp" />
     <ClCompile Include="Source\System\Particle\ParticleSystem.cpp" />
     <ClCompile Include="Source\Component\Colliders\PointCollider.cpp" />
     <ClCompile Include="Source\Component\Colliders\RayCollider.cpp" />
@@ -81,7 +81,7 @@
     <ClCompile Include="Source\Editor\StyleScheme.cpp" />
     <ClCompile Include="Source\IO\DDSParser.cpp" />
     <ClCompile Include="Source\IO\PNGParser.cpp" />
-    <ClCompile Include="Source\Math\Vector4.cpp" />
+    <ClCompile Include="Source\Math\Vector\Vector4.cpp" />
     <ClCompile Include="Source\System\Database\DatabaseSystem.cpp" />
     <ClCompile Include="Source\System\Editor\EditorIntermediary.cpp" />
     <ClCompile Include="Source\System\Events\Events.cpp" />
@@ -192,7 +192,10 @@
     <ClInclude Include="Include\Lib\Gfx\GfxOptions.h" />
     <ClInclude Include="Include\Lib\Gfx\OpenGLAPI.h" />
     <ClInclude Include="Include\Lib\Gfx\Shaders.h" />
-    <ClInclude Include="Include\Math\Vector3.h" />
+    <ClInclude Include="Include\Math\MathConstants.h" />
+    <ClInclude Include="Include\Math\Vectors.h" />
+    <ClInclude Include="Include\Math\Vector\Vector3.h" />
+    <ClInclude Include="Include\Math\Vector\SwizzleOps.h" />
     <ClInclude Include="Include\PP\PPConcat.h" />
     <ClInclude Include="Include\PP\PPExtract.h" />
     <ClInclude Include="Include\PP\PPForEach.h" />
@@ -334,7 +337,7 @@
     <ClInclude Include="Include\Math\Matrix2.h" />
     <ClInclude Include="Include\Math\Matrix4.h" />
     <ClInclude Include="Include\Math\Quaternion.h" />
-    <ClInclude Include="Include\Math\Vector4.h" />
+    <ClInclude Include="Include\Math\Vector\Vector4.h" />
     <ClInclude Include="Include\Object\GameObject.h" />
     <ClInclude Include="Include\Object\ObjectFlags.h" />
     <ClInclude Include="Include\System\Base\Systems.h" />
@@ -372,13 +375,13 @@
     <ClInclude Include="Include\Utility\MetaLogic.h" />
     <ClInclude Include="Include\Utility\MetaSet.h" />
     <ClInclude Include="Include\Utility\Utility.h" />
-    <ClInclude Include="Include\Math\Vector2.h" />
+    <ClInclude Include="Include\Math\Vector\Vector2.h" />
     <ClInclude Include="Include\Utility\UtilityInternals.h" />
     <ClInclude Include="Include\DataStructure\UniquePtr.h" />
     <ClInclude Include="Include\Math\MathFwd.h" />
     <ClInclude Include="Include\DataStructure\Map.h" />
     <ClInclude Include="Include\DataStructure\OString.h" />
-    <ClInclude Include="MetaBind.h" />
+    <ClInclude Include="Include\Utility\MetaBind.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Include\System\Scene\SceneSysMetaHelper.h" />
     <ClInclude Include="Include\System\Input\XGamePad.h" />

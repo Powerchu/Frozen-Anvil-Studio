@@ -15,7 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _INPUT_MANAGER_H_
 
 #include "System/Base/Systems.h"    // Base Class
-#include "Math/Vector2.h"           // Vector2
+#include "Math/Vectors.h"           // Vector2
 //#include "Math\Vector4.h"		    // Vector4
 #include "System/Input/InputMap.h"
 #include "System/Input/MouseData.h"

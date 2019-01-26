@@ -5,7 +5,7 @@
 #include "ComponentList.h"
 
 #include "Math/Quaternion.h"
-#include "Math/Vector2.h"
+#include "Math/Vectors.h"
 
 
 namespace Dystopia

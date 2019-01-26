@@ -36,7 +36,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #undef WIN32_LEAN_AND_MEAN
 
 
-#include "Math/Vector4.h"
+#include "Math/Vectors.h"
 
 // Entry point for editor
 int WinMain(HINSTANCE, HINSTANCE, char *, int){

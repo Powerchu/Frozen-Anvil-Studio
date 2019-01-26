@@ -13,7 +13,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _STYLE_SCHEME_H_
 #define _STYLE_SCHEME_H_
-#include "Math/Vector2.h"
+#include "Math/Vectors.h"
 //#include "Editor/EditorTab.h"
 #include "Editor/EditorPanel.h"
 
