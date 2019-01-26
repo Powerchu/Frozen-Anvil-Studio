@@ -172,18 +172,18 @@ namespace Math
 		//
 		//	static constexpr unsigned shuffleMask = _MM_SHUFFLE(N == 3 ? 0 : 3, N == 2 ? 0 : 2, N == 1 ? 0 : 1, N);
 		//};
-		//
-		//template <unsigned X, unsigned Y, unsigned Z>
-		//struct _DLL_EXPORT SwizzleMask<X, Y, Z>
-		//{
-		//	inline SwizzleMask<X, Y>& _CALL operator= (float _rhs);
-		//	inline _CALL operator Math::Vector3(void) const;
-		//
-		//private:
-		//	__m128 mData;
-		//
-		//	static constexpr unsigned shuffleMask = _MM_SHUFFLE(N == 3 ? 0 : 3, N == 2 ? 0 : 2, N == 1 ? 0 : 1, N);
-		//};
+		
+		template <unsigned X, unsigned Y, unsigned Z>
+		struct _DLL_EXPORT SwizzleMask<X, Y, Z>
+		{
+			inline SwizzleMask<X, Y, Z>& _CALL operator= (Math::Vector3 _rhs);
+			inline _CALL operator Math::Vector3 (void) const noexcept;
+		
+		private:
+			__m128 mData;
+		
+			static constexpr unsigned shuffleMask = _MM_SHUFFLE(N == 3 ? 0 : 3, N == 2 ? 0 : 2, N == 1 ? 0 : 1, N);
+		};
 
 		template <unsigned X, unsigned Y, unsigned Z, unsigned W>
 		struct IsLvalueSwizzle
@@ -213,7 +213,7 @@ namespace Math
 			inline __m128 _CALL GetRaw(void) const noexcept;
 			inline __m128 _CALL _GetRawUnshuf(void) const noexcept;
 
-			inline _CALL operator Math::Vector4 (void) const;
+			inline _CALL operator Math::Vector4 (void) const noexcept;
 
 		private:
 			__m128 mData;
@@ -731,7 +731,7 @@ inline ret_t& _CALL Math::Vector4::SwizzleMask<X, Y, Z, W>::operator = (SwizzleM
 }
 
 template<unsigned X, unsigned Y, unsigned Z, unsigned W>
-inline _CALL Math::Vector4::SwizzleMask<X, Y, Z, W>::operator Math::Vector4(void) const
+inline _CALL Math::Vector4::SwizzleMask<X, Y, Z, W>::operator Math::Vector4 (void) const noexcept
 {
 	return Vector4{ GetRaw() };
 }

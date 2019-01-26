@@ -30,6 +30,8 @@
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
     <ClCompile Include="Include\IO\XMLParser.cpp" />
     <ClCompile Include="Include\System\Database\DataSheet.cpp" />
+    <ClCompile Include="Source\Math\Vector2.cpp" />
+    <ClCompile Include="Source\Math\Vector3.cpp" />
     <ClCompile Include="Source\System\Particle\ParticleSystem.cpp" />
     <ClCompile Include="Source\Component\Colliders\PointCollider.cpp" />
     <ClCompile Include="Source\Component\Colliders\RayCollider.cpp" />
@@ -367,6 +369,7 @@
     <ClInclude Include="Include\Utility\MetaAlgorithms.h" />
     <ClInclude Include="Include\Utility\MetaDataStructures.h" />
     <ClInclude Include="Include\Utility\MetaHelper.h" />
+    <ClInclude Include="Include\Utility\MetaLogic.h" />
     <ClInclude Include="Include\Utility\MetaSet.h" />
     <ClInclude Include="Include\Utility\Utility.h" />
     <ClInclude Include="Include\Math\Vector2.h" />
@@ -375,6 +378,7 @@
     <ClInclude Include="Include\Math\MathFwd.h" />
     <ClInclude Include="Include\DataStructure\Map.h" />
     <ClInclude Include="Include\DataStructure\OString.h" />
+    <ClInclude Include="MetaBind.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Include\System\Scene\SceneSysMetaHelper.h" />
     <ClInclude Include="Include\System\Input\XGamePad.h" />
