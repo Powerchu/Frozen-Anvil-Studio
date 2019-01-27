@@ -288,17 +288,44 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 
 namespace
 {
+	struct ShaderUploadVisitor
+	{
+		Dystopia::Shader*& s;
+		OString& strName;
+
+		template <typename T>
+		void operator()(T&& value)
+		{
+			s->UploadUniform(strName.c_str(), Ut::Fwd<T>(value));
+		}
+
+		template <>
+		void operator() < int > (int&& value)
+		{
+			s->UploadUniformi(strName.c_str(), value);
+		}
+		template <>
+		void operator() <int&> (int& value)
+		{
+			s->UploadUniformi(strName.c_str(), value);
+		}
+	};
+
 	template <typename T>
 	inline void DrawRenderer(T& _renderer, Dystopia::Shader* s, float _fGamma)
 	{
 		auto t = _renderer->GetTexture();
-
 		auto m = _renderer->GetOwner()->GetComponent<Dystopia::Transform>()->GetTransformMatrix();
 
 		if (t) t->Bind();
 
 		s->UploadUniform("ModelMat", m);
 		s->UploadUniform("Gamma", _fGamma);
+
+		for (auto&e : _renderer->GetOverrides())
+		{
+			e.Get<2>().Visit(ShaderUploadVisitor{ s, e.Get<0>() });
+		}
 
 		_renderer->Draw();
 
@@ -340,13 +367,13 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 	}
 
 	std::sort(set1.begin(), set1.end(), [](const auto& _rhs, const auto& _lhs) {
-		return _rhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z > _lhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
+		return _rhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z < _lhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
 	});
 	std::sort(set2.begin(), set2.end(), [](const auto& _rhs, const auto& _lhs) {
-		return _rhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z > _lhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
+		return _rhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z < _lhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
 	});
 	std::sort(set3.begin(), set3.end(), [](const auto& _rhs, const auto& _lhs) {
-		return _rhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z > _lhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
+		return _rhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z < _lhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
 	});
 
 	// Draw the game objects to screen based on the camera

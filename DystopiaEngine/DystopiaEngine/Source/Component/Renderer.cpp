@@ -155,6 +155,11 @@ void Dystopia::Renderer::ResetOverride(void)
 }
 
 
+AutoArray<Tuple<OString, ::Gfx::eUniform_t, Dystopia::Renderer::ShaderVariant_t>>& Dystopia::Renderer::GetOverrides(void)
+{
+	return mOverride;
+}
+
 Dystopia::Renderer* Dystopia::Renderer::Duplicate(void) const
 {
 	return static_cast<ComponentDonor<Renderer>*>(

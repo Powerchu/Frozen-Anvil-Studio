@@ -125,6 +125,7 @@ namespace Dystopia
 			/*Get the list of file changes in the directory*/
 			unsigned num  = 0;
 			unsigned prev = 0;
+
 			while (num = GetChangesInfo(*TrackJob, ListOfFileNames, 20))
 			{
 				prev = num;
