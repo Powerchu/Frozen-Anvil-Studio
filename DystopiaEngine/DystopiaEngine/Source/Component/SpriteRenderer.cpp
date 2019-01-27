@@ -44,7 +44,7 @@ Dystopia::SpriteRenderer::SpriteRenderer(Dystopia::SpriteRenderer&& _rhs) noexce
 	mnID{ Ut::Move(_rhs.mnID) }, mnCol{ Ut::Move(_rhs.mnCol) }, mnRow{ Ut::Move(_rhs.mnRow) },
 	mfFrameTime{ Ut::Move(_rhs.mfFrameTime) }, mfAccTime{ Ut::Move(_rhs.mfAccTime) }, mpAtlas{ Ut::Move(_rhs.mpAtlas) }, 
 	mNextSectionPos{ Ut::Move(_rhs.mNextSectionPos) }, mbPlayOnStart{ Ut::Move(_rhs.mbPlayOnStart) }, mbPlay{ Ut::Move(_rhs.mbPlay) }, 
-mbSimulate{ Ut::Move(_rhs.mbSimulate) }, mvTintCol{Ut::Move(_rhs.mvTintCol)}, mfTintPerc{Ut::Move(_rhs.mfTintPerc)}
+mbSimulate{ Ut::Move(_rhs.mbSimulate) }, mvTintCol{Ut::Move(_rhs.mvTintCol)}
 {
 	_rhs.mAnimations.clear();
 	_rhs.mpAtlas = nullptr;
@@ -55,7 +55,7 @@ Dystopia::SpriteRenderer::SpriteRenderer(const SpriteRenderer& _rhs) noexcept
 	mAnimations{ _rhs.mAnimations }, mnID{ _rhs.mnID }, mnCol{ _rhs.mnCol },
 	mnRow{_rhs.mnRow }, mfFrameTime{ _rhs.mfFrameTime }, mfAccTime{ _rhs.mfAccTime }, 
 	mNextSectionPos{ _rhs.mNextSectionPos }, mbPlayOnStart{ _rhs.mbPlayOnStart }, 
-	mbSimulate{ _rhs.mbSimulate }, mbPlay{ _rhs.mbPlay }, mvTintCol{ _rhs.mvTintCol }, mfTintPerc(_rhs.mfTintPerc)
+	mbSimulate{ _rhs.mbSimulate }, mbPlay{ _rhs.mbPlay }, mvTintCol{ _rhs.mvTintCol }
 {
 }
 
@@ -221,7 +221,6 @@ void Dystopia::SpriteRenderer::Serialise(TextSerialiser& _out) const
 	_out << mnID;
 	_out << mbPlayOnStart;
 	_out << mvTintCol;
-	_out << mfTintPerc;
 	_out.InsertEndBlock("Sprite Renderer");
 }
 
@@ -247,7 +246,6 @@ void Dystopia::SpriteRenderer::Unserialise(TextSerialiser& _in)
 	_in >> mnID;
 	_in >> mbPlayOnStart;
 	_in >> mvTintCol;
-	_in >> mfTintPerc;
 
 	_in.ConsumeEndBlock();
 }
@@ -282,6 +280,9 @@ void Dystopia::SpriteRenderer::EditorUI(void) noexcept
 	}
 	EGUI::PopLeftAlign();
 
+	EGUI::Display::HorizontalSeparator();
+	Renderer::ShaderField();
+
 #endif
 }
 
@@ -309,21 +310,20 @@ void Dystopia::SpriteRenderer::SetColorA(const Math::Vec4& _col)
 
 void Dystopia::SpriteRenderer::SetColor(const Math::Vec3D& _col)
 {
-	const auto tempW = mvTintCol.w;
+	float const tempW = mvTintCol.w;
 	mvTintCol = _col;
 	mvTintCol.w = tempW;
 }
 
 void Dystopia::SpriteRenderer::SetAlpha(float _a)
 {
+	mvTintCol.w = Ut::Clamp(_a, 0, 1);
 	mvTintCol.w = _a;
 }
 
 void Dystopia::SpriteRenderer::SetAlphaPerc(float _perc)
 {
-	if (_perc <= 0.f) _perc = 0.f;
-	else if (_perc >= 1.f) _perc = 1.0f;
-	mfTintPerc = _perc;
+	SetAlpha(_perc);
 }
 
 HashString Dystopia::SpriteRenderer::GetCurrentAnimation(void) const
@@ -349,7 +349,7 @@ Math::Vec4 Dystopia::SpriteRenderer::GetTint() const
 
 float Dystopia::SpriteRenderer::GetTintPerc() const
 {
-	return mfTintPerc;
+	return mvTintCol.w;
 }
 
 bool Dystopia::SpriteRenderer::IsPlaying(void) const
@@ -462,20 +462,20 @@ void Dystopia::SpriteRenderer::TextureFields(void)
 		}
 	}
 
-	if (EGUI::Display::EmptyBox("Mesh", 150, (mpMesh) ? mpMesh->GetName().c_str() : "-no mesh-", true))
-	{
-	}
-	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::FILE))
-	{
-		EGUI::Display::EndPayloadReceiver();
-	}
-	if (EGUI::Display::EmptyBox("Shader", 150, "shader has no name or id", true))
-	{
-	}
-	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::FILE))
-	{
-		EGUI::Display::EndPayloadReceiver();
-	}
+	//if (EGUI::Display::EmptyBox("Mesh", 150, (mpMesh) ? mpMesh->GetName().c_str() : "-no mesh-", true))
+	//{
+	//}
+	//if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::FILE))
+	//{
+	//	EGUI::Display::EndPayloadReceiver();
+	//}
+	//if (EGUI::Display::EmptyBox("Shader", 150, "shader has no name or id", true))
+	//{
+	//}
+	//if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::FILE))
+	//{
+	//	EGUI::Display::EndPayloadReceiver();
+	//}
 
 #endif
 }

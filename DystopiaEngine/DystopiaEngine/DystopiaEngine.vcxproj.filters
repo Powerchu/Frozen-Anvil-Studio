@@ -358,6 +358,15 @@
     <ClCompile Include="Source\System\AI\Blackboard.cpp">
       <Filter>Game Engine\Systems\AI\Tree</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Graphics\ShaderProgram.cpp">
+      <Filter>Game Engine\SubSystems\Shader\ShaderProgram</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Allocator\StackAlloc.cpp">
+      <Filter>Allocator\StackAllocator</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Lib\OpenGLAPI.cpp">
+      <Filter>Lib\GraphicsLib\OpenGL</Filter>
+    </ClCompile>
     <ClCompile Include="Source\System\Editor\EditorIntermediary.cpp">
       <Filter>Game Engine\Systems\Editor</Filter>
     </ClCompile>
@@ -376,7 +385,9 @@
     <ClCompile Include="Source\Component\Colliders\PointCollider.cpp">
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Component\Colliders\RayCollider.cpp" />
+    <ClCompile Include="Source\Component\Colliders\RayCollider.cpp">
+      <Filter>Game Engine\Components\Colliders</Filter>
+    </ClCompile>
     <ClCompile Include="Include\System\Database\DataSheet.cpp">
       <Filter>Game Engine\Systems\Database</Filter>
     </ClCompile>
@@ -799,9 +810,6 @@
     <ClInclude Include="Include\Reflection\ReadWriteObject.h">
       <Filter>Reflection\TypeErasure</Filter>
     </ClInclude>
-    <ClInclude Include="Include\DataStructure\Function.h">
-      <Filter>DataStructures</Filter>
-    </ClInclude>
     <ClInclude Include="Include\DataStructure\Map.h">
       <Filter>DataStructures</Filter>
     </ClInclude>
@@ -828,9 +836,6 @@
     </ClInclude>
     <ClInclude Include="Include\DataStructure\UniquePtr.h">
       <Filter>DataStructures\Pointers</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Lib\GraphicsLib.h">
-      <Filter>Lib\GraphicsLib</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\AI\AISystem.h">
       <Filter>Game Engine\Systems\AI</Filter>
@@ -1015,6 +1020,42 @@
     <ClInclude Include="Include\PP\PPVaToSeq.h">
       <Filter>Preprocessor</Filter>
     </ClInclude>
+    <ClInclude Include="Include\DataStructure\Function.h">
+      <Filter>DataStructures\Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DataStructure\Delegate.h">
+      <Filter>DataStructures\Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\PP\PPIsExpandable.h">
+      <Filter>Preprocessor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\ShaderProgram.h">
+      <Filter>Game Engine\SubSystems\Shader\ShaderProgram</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Lib\GraphicsLib.h">
+      <Filter>Lib\GraphicsLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Lib\Gfx\Shaders.h">
+      <Filter>Lib\GraphicsLib\Shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Lib\Gfx\OpenGLAPI.h">
+      <Filter>Lib\GraphicsLib\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Allocator\StackAlloc.h">
+      <Filter>Allocator\StackAllocator</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Allocator\StackAllocImpl.h">
+      <Filter>Allocator\StackAllocator</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Lib\Gfx\GfxOptions.h">
+      <Filter>Lib\GraphicsLib</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Utility\EnumOps.h">
+      <Filter>Utility\EnumOps</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Utility\MetaSet.h">
+      <Filter>Utility\Meta\Sets</Filter>
+    </ClInclude>
     <ClInclude Include="Include\System\Editor\EditorIntermediary.h">
       <Filter>Game Engine\Systems\Editor</Filter>
     </ClInclude>
@@ -1039,7 +1080,9 @@
     <ClInclude Include="Include\Component\PointCollider.h">
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Component\RayCollider.h" />
+    <ClInclude Include="Include\Component\RayCollider.h">
+      <Filter>Game Engine\Components\Colliders</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1474,6 +1517,27 @@
     <Filter Include="Preprocessor">
       <UniqueIdentifier>{af73041d-894d-4be1-9ac1-a597e6a69bf5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="DataStructures\Functions">
+      <UniqueIdentifier>{c1022da9-8d12-4aa9-973f-a4fcb8191288}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\SubSystems\Shader\ShaderProgram">
+      <UniqueIdentifier>{7e660d8c-36f5-42d3-9c56-9f39a55b02f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\GraphicsLib\Shaders">
+      <UniqueIdentifier>{d0491e43-a194-41ea-b0bd-9ec0ef9e45a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lib\GraphicsLib\OpenGL">
+      <UniqueIdentifier>{fb267853-1163-4cf3-90f4-bfa36fd0703e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Allocator\StackAllocator">
+      <UniqueIdentifier>{273b1a29-b088-48a8-b305-4faa3d8656b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\EnumOps">
+      <UniqueIdentifier>{f7a8de23-cec3-49c2-8894-8d65ca9a6691}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\Meta\Sets">
+      <UniqueIdentifier>{fef2c618-0eca-496f-9443-d642f1cb61af}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Game Engine\Systems\Editor">
       <UniqueIdentifier>{3eec429a-e71a-4642-8c21-307a1bf738d1}</UniqueIdentifier>
     </Filter>
@@ -1490,9 +1554,6 @@
   <ItemGroup>
     <Filter Include="Game Engine\SubSystems\Shader\Shader">
       <UniqueIdentifier>{2dfd4976-5994-4e0c-998d-d87b3f25cb6c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Game Engine\SubSystems\Shader\Shader\Programs">
-      <UniqueIdentifier>{25efe6f2-2810-44e2-bb62-561d5426d05d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game Engine\SubSystems\Texture\Texture">
       <UniqueIdentifier>{3bc26b14-c587-4f68-bc2e-389cf63bf598}</UniqueIdentifier>

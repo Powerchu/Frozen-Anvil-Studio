@@ -45,7 +45,6 @@ namespace Ut
 
 
 	// =========================================== COMPILE TIME FIND =========================================== // 
-	// Make result be false instead of compile error?
 
 		template <typename Ty, typename ... Arr>
 		struct MetaFinder

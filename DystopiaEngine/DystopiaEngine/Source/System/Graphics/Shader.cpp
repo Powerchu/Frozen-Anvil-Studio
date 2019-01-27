@@ -12,15 +12,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System/Graphics/Shader.h"		// File Header
+#include "Lib/GraphicsLib.h"
+#include "System/Graphics/ShaderSystem.h"
+
+#include "System/Driver/Driver.h"
 
 #include "Math/MathLib.h"
 #include "Utility/DebugAssert.h"
+#include "DataStructure/AutoArray.h"
 
 #include <GL/glew.h>
 #include <GL/GL.h>
-#include <fstream>		// ifstream
-#include <sstream>		// stringstream
-#include <cstdio>		// printf
 
 #if defined(EDITOR)
 #define PRINT_ERRORS EDITOR
@@ -28,180 +30,264 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define PRINT_ERRORS 0
 #endif
 
+namespace
+{
+	static auto const& pGfxAPI = ::Gfx::GetInstance();
+}
 
-Dystopia::Shader::Shader(void) noexcept :
-	mnShaderID{ glCreateProgram() }
+
+Dystopia::Shader::Shader(OString const& _strName) noexcept :
+	mID{ pGfxAPI->CreateShaderPipeline() }, mStages{ ::Gfx::ShaderStage::NONE }, mstrName{ _strName }, mbUpdate{ true }
 {
 
 }
 
 Dystopia::Shader::~Shader(void)
 {
-	glDeleteProgram(mnShaderID);
+	pGfxAPI->Free(mID);
 }
 
-void Dystopia::Shader::CreateShader(const std::string& _strVert, const std::string& _strFrag)
+//void Dystopia::Shader::CreateShader(char const* _strVert, char const* _strFrag)
+//{
+//	auto pShaderSys = CORE::Get<ShaderSystem>();
+//	
+//	if (auto prog = pShaderSys->CreateShaderProgram(::Gfx::ShaderStage::VERTEX, _strVert))
+//		AttachProgram(prog);
+//
+//	if (auto prog = pShaderSys->CreateShaderProgram(::Gfx::ShaderStage::FRAGMENT, _strFrag))
+//		AttachProgram(prog);
+//}
+//
+//void Dystopia::Shader::CreateShader(char const* _strVert, char const* _strFrag, char const* _strGeo)
+//{
+//	if (auto prog = CORE::Get<ShaderSystem>()->CreateShaderProgram(::Gfx::ShaderStage::GEOMETRY, _strGeo))
+//		AttachProgram(prog);
+//
+//	CreateShader(_strVert, _strFrag);
+//}
+
+void Dystopia::Shader::AttachProgram(ShaderProgram* _prog)
 {
-	unsigned vert = glCreateShader(GL_VERTEX_SHADER),
-			 frag = glCreateShader(GL_FRAGMENT_SHADER);
+	if (!_prog) return;
 
-	// Give OpenGL the shader data to compile
-	LoadShader(vert, _strVert);
-	LoadShader(frag, _strFrag);
-
-	// Attach compiled shader to program
-	glAttachShader(mnShaderID, vert);
-	glAttachShader(mnShaderID, frag);
-	glLinkProgram(mnShaderID);
-
-	// Free the vertex and fragment shaders
-	glDetachShader(mnShaderID, vert);
-	glDetachShader(mnShaderID, frag);
-	glDeleteShader(vert);
-	glDeleteShader(frag);
-
-
-#if PRINT_ERRORS
-
-	int nStatus = 0;
-	glGetProgramiv(mnShaderID, GL_LINK_STATUS, &nStatus);
-
-	if (GL_FALSE == nStatus)
+	if (static_cast<unsigned>(mStages & _prog->GetStage()))
 	{
-		glGetProgramiv(mnShaderID, GL_INFO_LOG_LENGTH, &nStatus);
-
-		std::string log;
-		log.reserve(nStatus);
-
-		glGetProgramInfoLog(mnShaderID, nStatus, nullptr, &log[0]);
-
-		std::printf("Shader Link Error : %s", log.c_str());
+		for (auto& e : mPrograms)
+			if (e->GetStage() == _prog->GetStage())
+			{
+				e = _prog;
+				break;
+			}
+	}
+	else
+	{
+		mStages |= _prog->GetStage();
+		mPrograms.EmplaceBack(_prog);
 	}
 
-#endif		// PRINT_ERRORS
+	pGfxAPI->AttachShaderProgram(mID, _prog->GetID(), _prog->GetStage());
+	mbUpdate = true;
 }
 
-void Dystopia::Shader::CreateShader(const std::string& _strVert, const std::string& _strFrag, const std::string& _strGeo)
+void Dystopia::Shader::ReattachProgram(ShaderProgram* _prog)
 {
-	// Create and attach the geometry shader
-	unsigned geo = glCreateShader(GL_GEOMETRY_SHADER);
-	LoadShader(geo, _strGeo);
-	glAttachShader(mnShaderID, geo);
+	for (auto& e : mPrograms)
+		if (e == _prog)
+		{
+			pGfxAPI->AttachShaderProgram(mID, _prog->GetID(), _prog->GetStage());
+			break;
+		}
 
-	// Create the rest of the Shader Program
-	CreateShader(_strVert, _strFrag);
-
-	// Free geometry shader
-	glDetachShader(mnShaderID, geo);
-	glDeleteShader(geo);
+	mbUpdate = true;
 }
+
+void Dystopia::Shader::DetachProgram(ShaderProgram* _prog)
+{
+	if (static_cast<unsigned>(mStages & _prog->GetStage()))
+	{
+		for (auto& e : Ut::Range(mPrograms).Reverse())
+			if (e->GetStage() == _prog->GetStage())
+			{
+				mPrograms.FastRemove(&e);
+				break;
+			}
+
+		pGfxAPI->AttachShaderProgram(mID, 0, _prog->GetStage());
+		mStages &= ~_prog->GetStage();
+	}
+
+	mbUpdate = true;
+}
+
+void Dystopia::Shader::DetachProgram(Gfx::ShaderStage _stage)
+{
+	if (static_cast<unsigned>(mStages & _stage))
+	{
+		for (auto& e : Ut::Range(mPrograms).Reverse())
+		{
+			if (static_cast<unsigned>(e->GetStage() & _stage))
+			{
+				pGfxAPI->AttachShaderProgram(mID, 0, e->GetStage());
+				mPrograms.FastRemove(&e);
+			}
+		}
+
+		mStages &= ~_stage;
+	}
+
+	mbUpdate = true;
+}
+
 
 void Dystopia::Shader::Bind(void) const
 {
-	glUseProgram(mnShaderID);
+	pGfxAPI->UseShaderPipeline(mID);
 }
 
 void Dystopia::Shader::Unbind(void) const
 {
-	glUseProgram(0);
+	//pGfxAPI->UseShaderPipeline(0);
 }
 
-unsigned Dystopia::Shader::GetID(void) const
+
+OString const& Dystopia::Shader::GetName(void) const noexcept
 {
-	return mnShaderID;
+	return mstrName;
 }
 
-void Dystopia::Shader::LoadShader(unsigned _nProg, const std::string& _path)
+void Dystopia::Shader::Unserialize(TextSerialiser& _file)
 {
-	std::ifstream file;
-	std::stringstream buffer;
-	const char* str;
-
-	file.open(_path);
-	buffer << file.rdbuf();
-	std::string proxy = buffer.str();
-	file.close();
-
-	str = proxy.c_str();
-	glShaderSource(_nProg, 1, &str, nullptr);
-	glCompileShader(_nProg);
+	for (auto& e : mPrograms)
+		_file << e->GetName();
+}
 
 
-#if PRINT_ERRORS
+void Dystopia::Shader::OnEditorUI(void) const
+{
+}
 
-	int nStatus = 0;
-	glGetShaderiv(_nProg, GL_COMPILE_STATUS, &nStatus);
+AutoArray<std::pair<OString, Gfx::eUniform_t>> const& Dystopia::Shader::GetVariables(void) noexcept
+{
+	if (mbUpdate)
+		ImportVariables();
 
-	if (GL_FALSE == nStatus)
+	return mVars;
+}
+
+void Dystopia::Shader::ImportVariables(void) noexcept
+{
+	mVars.clear();
+
+	for (auto& p : mPrograms)
 	{
-		glGetShaderiv(_nProg, GL_INFO_LOG_LENGTH, &nStatus);
+		for (auto& e : p->GetVariables())
+		{
+			bool bNew = true;
+			for (auto& var : mVars)
+			{
+				if (var.first == e.first)
+				{
+					bNew = false;
+					break;
+				}
+			}
 
-		std::string log;
-		log.reserve(nStatus);
-
-		glGetShaderInfoLog(_nProg, nStatus, &nStatus, &log[0]);
-
-		DEBUG_PRINT(eLog::ERROR, "Shader Compile Error : %s", log.c_str());
-
-#   if defined(_DEBUG) | defined(DEBUG)
-		__debugbreak();
-#   endif 
+			if (bNew) mVars.EmplaceBack(e);
+		}
 	}
 
-#endif		//  PRINT_ERRORS
-}
-
-int Dystopia::Shader::GetUniformLocation(char const* _strName) const
-{
-	return glGetUniformLocation(mnShaderID, _strName);
+	mbUpdate = false;
 }
 
 
-void Dystopia::Shader::UploadUniform(char const* _strName, float _f) const
+namespace
 {
-	glUniform1f(GetUniformLocation(_strName), _f);
+	template <typename T, typename C, typename ... U>
+	inline void UploadUniformAux(C const& _target, T _func, char const* _strName, U const& ... _args) noexcept
+	{
+		for (auto& e : _target)
+		{
+			auto loc = pGfxAPI->GetUniformLocation(e->GetID(), _strName);
+			(pGfxAPI->*_func)(e->GetID(), loc, _args ...);
+		}
+	}
 }
 
-void Dystopia::Shader::UploadUniform(char const* _strName, float _f1, float _f2) const
+void Dystopia::Shader::UploadUniform(char const* _strName, float _f) const noexcept
 {
-	glUniform2f(GetUniformLocation(_strName), _f1, _f2);
+	UploadUniformAux(mPrograms, &::Gfx::GraphicsAPI::UploadUniform1f, _strName, 1u, &_f);
 }
 
-void Dystopia::Shader::UploadUniform(char const* _strName, float _f1, float _f2, float _f3) const
+void Dystopia::Shader::UploadUniform(char const* _strName, float _f1, float _f2) const noexcept
 {
-	glUniform3f(GetUniformLocation(_strName), _f1, _f2, _f3);
+	float tempArr[]{ _f1, _f2 };
+
+	UploadUniformAux(mPrograms, &::Gfx::GraphicsAPI::UploadUniform2f, _strName, 1u, tempArr);
 }
 
-void Dystopia::Shader::UploadUniform(char const* _strName, float _f1, float _f2, float _f3, float _f4) const
+void Dystopia::Shader::UploadUniform(char const* _strName, float _f1, float _f2, float _f3) const noexcept
 {
-	glUniform4f(GetUniformLocation(_strName), _f1, _f2, _f3, _f4);
+	float tempArr[]{ _f1, _f2, _f3 };
+
+	UploadUniformAux(mPrograms, &::Gfx::GraphicsAPI::UploadUniform3f, _strName, 1u, tempArr);
 }
 
-void Dystopia::Shader::UploadUniform(char const * _strName, const Math::Vector2& _v) const
+void Dystopia::Shader::UploadUniform(char const* _strName, float _f1, float _f2, float _f3, float _f4) const noexcept
 {
-	glUniform2fv(GetUniformLocation(_strName), 1, reinterpret_cast<float const*>(&_v));
+	float tempArr[]{ _f1, _f2, _f3, _f4 };
+
+	UploadUniformAux(mPrograms, &::Gfx::GraphicsAPI::UploadUniform4f, _strName, 1u, tempArr);
 }
 
-void Dystopia::Shader::UploadUniform(char const* _strName, const Math::Vector4& _v) const
+void Dystopia::Shader::UploadUniformi(char const* _strName, int _n) const noexcept
 {
-	glUniform4fv(GetUniformLocation(_strName), 1, reinterpret_cast<float const*>(&_v));
+	UploadUniformAux(mPrograms, &::Gfx::GraphicsAPI::UploadUniform1i, _strName, 1u, &_n);
 }
 
-void Dystopia::Shader::UploadUniform3(char const* _strName, const Math::Vector4& _v) const
+void Dystopia::Shader::UploadUniformi(char const* _strName, int _n1, int _n2) const noexcept
 {
-	glUniform3fv(GetUniformLocation(_strName), 1, reinterpret_cast<float const*>(&_v));
+	int tempArr[]{ _n1, _n2 };
+
+	UploadUniformAux(mPrograms, &::Gfx::GraphicsAPI::UploadUniform2i, _strName, 1u, tempArr);
 }
 
-void Dystopia::Shader::UploadUniform(char const* _strName, const Math::Matrix2& _m) const
+void Dystopia::Shader::UploadUniformi(char const* _strName, int _n1, int _n2, int _n3) const noexcept
 {
-	glUniform4fv(GetUniformLocation(_strName), 1, reinterpret_cast<float const*>(&_m));
+	int tempArr[]{ _n1, _n2, _n3 };
+
+	UploadUniformAux(mPrograms, &::Gfx::GraphicsAPI::UploadUniform3i, _strName, 1u, tempArr);
 }
 
-void Dystopia::Shader::UploadUniform(char const* _strName, const Math::Matrix4& _m) const
+void Dystopia::Shader::UploadUniformi(char const* _strName, int _n1, int _n2, int _n3, int _n4) const noexcept
 {
-	glUniformMatrix4fv(
-		GetUniformLocation(_strName), 1, GL_TRUE, reinterpret_cast<float const*>(&_m)
-	);
+	int tempArr[]{ _n1, _n2, _n3, _n4 };
+
+	UploadUniformAux(mPrograms, &::Gfx::GraphicsAPI::UploadUniform4i, _strName, 1u, tempArr);
+}
+
+void Dystopia::Shader::UploadUniform(char const * _strName, const Math::Vector2& _v) const noexcept
+{
+	UploadUniformAux(mPrograms, &::Gfx::GraphicsAPI::UploadUniform2f, _strName, 1u, reinterpret_cast<float const*>(&_v));
+}
+
+void Dystopia::Shader::UploadUniform3(char const* _strName, const Math::Vector4& _v) const noexcept
+{
+	UploadUniformAux(mPrograms, &::Gfx::GraphicsAPI::UploadUniform3f, _strName, 1u, reinterpret_cast<float const*>(&_v));
+}
+
+void Dystopia::Shader::UploadUniform(char const* _strName, const Math::Vector4& _v) const noexcept
+{
+	UploadUniformAux(mPrograms, &::Gfx::GraphicsAPI::UploadUniform4f, _strName, 1u, reinterpret_cast<float const*>(&_v));
+}
+
+void Dystopia::Shader::UploadUniform(char const* _strName, const Math::Matrix2& _m) const noexcept
+{
+	UploadUniformAux(mPrograms, &::Gfx::GraphicsAPI::UploadMatrix2, _strName, 1u, reinterpret_cast<float const*>(&_m), true);
+}
+
+void Dystopia::Shader::UploadUniform(char const* _strName, const Math::Matrix4& _m) const noexcept
+{
+	UploadUniformAux(mPrograms, &::Gfx::GraphicsAPI::UploadMatrix4, _strName, 1u, reinterpret_cast<float const*>(&_m), true);
 }
 
 

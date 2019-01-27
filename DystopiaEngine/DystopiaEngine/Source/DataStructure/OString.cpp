@@ -156,14 +156,15 @@ char OString::front(void) const
 
 const char* OString::cbegin(void) const
 {
-	if (!mnCurSize)
-		return nullptr;
-	if (mpLiteral)
-		return mpLiteral;
-	return mpCharBuffer;
+	//if (!mnCurSize)
+	//	return nullptr;
+	//if (mpLiteral)
+	//	return mpLiteral;
+	//return mpCharBuffer;
+	return begin();
 }
 
-const char*	OString::begin(void)
+const char* OString::begin(void) const
 {
 	if (!mnCurSize)
 		return nullptr;
@@ -174,14 +175,15 @@ const char*	OString::begin(void)
 
 const char* OString::cend(void) const
 {
-	if (!mnCurSize)
-		return nullptr;
-	if (mpLiteral)
-		return mpLiteral + mnCurSize;
-	return mpCharBuffer + mnCurSize;
+	//if (!mnCurSize)
+	//	return nullptr;
+	//if (mpLiteral)
+	//	return mpLiteral + mnCurSize;
+	//return mpCharBuffer + mnCurSize;
+	return end();
 }
 
-const char*	OString::end(void)
+const char*	OString::end(void) const
 {
 	if (!mnCurSize)
 		return nullptr;
@@ -363,6 +365,10 @@ size_t OString::find_first_of(const char* _s, size_t _pos) const
 {
 	DEBUG_ASSERT(_pos >= mnCurSize, "Index out of range");
 	const char* it1 = cbegin() + _pos;
+
+	if (!it1)
+		return OString::nPos; // cbegin nullptr, no size determined
+
 	const char* it2 = _s;
 	while (it1 < cend())
 	{
@@ -389,6 +395,10 @@ size_t OString::find_last_of(const OString& _rhs, size_t _pos) const
 size_t OString::find_last_of(const char* _s, size_t _pos) const
 {
 	const char *it1 = (cbegin() + _pos < cend() && _pos != OString::nPos) ? cbegin() + _pos : cend();
+
+	if (!it1)
+		return OString::nPos; // cend nullptr, no size determined
+
 	const char* it2 = _s;
 	while (it1 >= cbegin())
 	{

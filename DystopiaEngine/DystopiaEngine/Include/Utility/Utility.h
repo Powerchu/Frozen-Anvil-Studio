@@ -40,6 +40,49 @@ namespace Ut
 		return static_cast<T&&>(_obj);
 	}
 
+	template <typename T>
+	constexpr T&&(*Fwd)(RemoveRef_t<T>&) = &Forward<T>;
+
+	template <typename T>
+	auto AsConstRef(T&& _obj)
+	{
+		return static_cast<typename AddLowConst<T&>::type>(_obj);
+	}
+
+	template <typename To, typename Fr>
+	inline To pun_cast(const Fr& _obj)
+	{
+		union temp
+		{
+			To result;
+			Fr input;
+		};
+
+		temp t;
+		t.input = Ut::Move(_obj);
+		return t.result;
+	}
+
+	template <typename Ty>
+	inline auto Begin(Ty&& _obj) -> decltype(declval<Ty>().begin())
+	{
+		return _obj.begin();
+	}
+	template <typename Ty>
+	inline auto End(Ty&& _obj) -> decltype(declval<Ty>().end())
+	{
+		return _obj.end();
+	}
+	template <typename Ty, auto N>
+	inline Ty* Begin(Ty(&_obj)[N]) noexcept
+	{
+		return _obj;
+	}
+	template <typename Ty, auto N>
+	inline Ty* End(Ty(&_obj)[N]) noexcept
+	{
+		return _obj + N;
+	}
 
 	// Increments the value by 1 and
 	// wraps the value back to 0 when it reaches Limit
@@ -87,10 +130,10 @@ namespace Ut
 		return _begin;
 	}
 
-	template <typename Container_t, typename Cond_t>
-	inline auto Find(Container_t const& _arr, Cond_t&& _cond)
+	template <typename Con_t, typename Cond_t>
+	inline auto Find(Con_t&& _arr, Cond_t&& _cond)
 	{
-		return Find(_arr.begin(), _arr.end(), Ut::Forward<Cond_t>(_cond));
+		return Find(Begin(Fwd<Con_t>(_arr)), End(Fwd<Con_t>(_arr)), Ut::Forward<Cond_t>(_cond));
 	}
 
 
@@ -158,9 +201,9 @@ namespace Ut
 	}
 
 	template <class Container, class It>
-	RemoveRef_t<It> Copy(Container&& _container, It&& _dest)
+	RemoveRef_t<It> Copy(Container&& _c, It&& _dest)
 	{
-		return Copy(_container.begin(), _container.end(), Forward<It>(_dest));
+		return Copy(Begin(Fwd<Container>(_c)), End(Fwd<Container>(_c)), Forward<It>(_dest));
 	}
 
 
@@ -179,6 +222,12 @@ namespace Ut
 	Interns::RangeMaker<T> Range(T&& _begin, T&& _end)
 	{
 		return Interns::RangeMaker<T>{ Forward<T>(_begin), Forward<T>(_end) };
+	}
+	template <typename T>
+	auto Range(T&& _container)
+	{
+		using It_t = decltype(_container.begin());
+		return Interns::RangeMaker<It_t>{ _container.begin(), _container.end() };
 	}
 
 

@@ -358,18 +358,18 @@ void Dystopia::Camera::EditorMasterCameraCheckbox()
 
 void Dystopia::Camera::EditorDebugCheckbox()
 {
-	bool tempBool = mbDebugDraw;
-	if (EGUI::Display::CheckBox("Debug Draw", &tempBool))
-	{
-		SetDebugDraw(tempBool);
-	}
+	//bool tempBool = mbDebugDraw;
+	//if (EGUI::Display::CheckBox("Debug Draw", &tempBool))
+	//{
+	//	SetDebugDraw(tempBool);
+	//}
 }
 
 void Dystopia::Camera::EditorProjectionDropdown(void)
 {
 	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
 	
-	std::string arr[2]{ " Orthographic"," Perspective"};
+	static std::string arr[2]{ " Orthographic"," Perspective"};
 
 	if (EGUI::Display::DropDownSelection("Projection", mnProjectionIndex, arr, 160.f))
 	{

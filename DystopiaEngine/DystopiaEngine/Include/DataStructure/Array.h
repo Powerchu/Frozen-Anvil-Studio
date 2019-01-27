@@ -73,8 +73,10 @@ public:
 
 	inline Itor_t      end(void) noexcept;
 	inline ConstItor_t end(void) const noexcept;
+	inline ConstItor_t cend(void) const noexcept;
 	inline Itor_t      begin(void) noexcept;
 	inline ConstItor_t begin(void) const noexcept;
+	inline ConstItor_t cbegin(void) const noexcept;
 
 	constexpr inline Sz_t size(void) const noexcept;
 
@@ -132,6 +134,12 @@ inline typename Array<T, Sz>::ConstItor_t Array<T, Sz>::begin(void) const noexce
 }
 
 template <typename T, size_t Sz>
+inline typename Array<T, Sz>::ConstItor_t Array<T, Sz>::cbegin(void) const noexcept
+{
+	return mArray;
+}
+
+template <typename T, size_t Sz>
 inline typename Array<T, Sz>::Itor_t Array<T, Sz>::end(void) noexcept
 {
 	return mArray + Sz;
@@ -139,6 +147,12 @@ inline typename Array<T, Sz>::Itor_t Array<T, Sz>::end(void) noexcept
 
 template <typename T, size_t Sz>
 inline typename Array<T, Sz>::ConstItor_t Array<T, Sz>::end(void) const noexcept
+{
+	return mArray + Sz;
+}
+
+template <typename T, size_t Sz>
+inline typename Array<T, Sz>::ConstItor_t Array<T, Sz>::cend(void) const noexcept
 {
 	return mArray + Sz;
 }

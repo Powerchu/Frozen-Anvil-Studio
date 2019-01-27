@@ -18,8 +18,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #pragma warning(disable : 4251)
 #include "Component/Component.h"		// Base Class
 #include "Component/ComponentList.h"
+#include "DataStructure/Tuple.h"
+#include "DataStructure/Variant.h"
 #include "DataStructure/AutoArray.h"
+#include "DataStructure/HashString.h"
 #include "Utility/MetaAlgorithms.h"
+#include "Math/MathFwd.h"
+
+#include "Lib/Gfx/Shaders.h"
 
 #include <string>
 
@@ -74,6 +80,9 @@ namespace Dystopia
 
 		bool HasTransparency(void) const noexcept;
 
+		template <typename T>
+		void SetManualShaderOverride(char const*, T&&);
+
 		Renderer* Duplicate(void) const;
 
 		void Serialise(TextSerialiser&) const;
@@ -83,20 +92,85 @@ namespace Dystopia
 
 	protected:
 
+		std::pair<OString, ::Gfx::eUniform_t> const* FindUniformInShader(const char*);
+
+		using ShaderVariant_t = Variant<int, bool, float, Math::Vec2, Math::Vec4>;
+		using ShaderTypeList = Ut::Collection<
+			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::INT  ), int>,
+			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::BOOL ), bool>,
+			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::FLOAT), float>,
+			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::VEC2 ), Math::Vec2>,
+			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::VEC4 ), Math::Vec4>>;
+
+		struct UIVisitor
+		{
+			OString& strName;
+
+			template<typename T>
+			void operator()(T&);
+
+			template<> void operator()(int&);
+			template<> void operator()(float&);
+			template<> void operator()(bool&);
+			template<> void operator()(Math::Vec2&);
+			template<> void operator()(Math::Vec4&);
+		};
+
 		unsigned mnUnique;
 
 		Mesh* mpMesh;
 		Shader* mpShader;
 		Texture* mpTexture;
-		std::string mTexturePath;
+		HashString mTexturePath;
+		AutoArray<Tuple<OString, ::Gfx::eUniform_t, ShaderVariant_t>> mOverride;
+
+		void ResetOverride(void);
 
 #   if EDITOR
+		AutoArray<char const*> mOverrideNames;
+
 		void TextureField();
 		void MeshField();
 		void ShaderField();
 #   endif
 	};
 }
+
+
+
+
+
+
+// ============================================ FUNCTION DEFINITIONS ============================================ // 
+
+
+template <typename T>
+void Dystopia::Renderer::SetManualShaderOverride(char const* _strName, T&& _obj)
+{
+	for (auto& e : mOverride)
+		if (e.Get<0>() == _strName)
+		{
+			e.Get<2>().KeepType() = Ut::Fwd<T>(_obj);
+			return;
+		}
+
+	if (auto f = FindUniformInShader(_strName))
+	{
+		using Result = typename Ut::MetaFind<Ut::Decay_t<T>, ShaderTypeList>;
+		static_assert(Result::value, "Not a valid uniform type!");
+		
+		if (static_cast<::Gfx::eUniform_t>(Result::result::value) == f->second)
+			mOverride.EmplaceBack(f->first, f->second, ShaderVariant_t{ Ut::Fwd<T>(_obj) });
+	}
+}
+
+
+template<typename T>
+inline void Dystopia::Renderer::UIVisitor::operator()(T&)
+{
+	static_assert(false, "ERROR in DataSheetEditor::UIVisitor");
+}
+
 
 
 #pragma warning(pop)

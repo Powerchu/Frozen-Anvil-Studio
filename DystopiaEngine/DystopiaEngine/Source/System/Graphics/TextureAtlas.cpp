@@ -20,6 +20,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Math/Vector2.h"
 #include "IO/TextSerialiser.h"
+#include "DataStructure/HashString.h"
+
+#define MAX_ROW_COL 100
 
 
 Dystopia::TextureAtlas::TextureAtlas(Texture* _ptr) noexcept
@@ -27,7 +30,7 @@ Dystopia::TextureAtlas::TextureAtlas(Texture* _ptr) noexcept
 {
 }
 
-Dystopia::TextureAtlas::TextureAtlas(const std::string& _strName)
+Dystopia::TextureAtlas::TextureAtlas(HashString const& _strName)
 	: mpTexture{ EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->GetTexture(_strName) }
 {
 }
@@ -78,8 +81,8 @@ void Dystopia::TextureAtlas::UpdateSection(unsigned _nIndex, const Math::Vec2 & 
 	e.vEnd = static_cast<float>(e.vStart + _nHeight * h);
 	const float uStride = (e.uEnd - e.uStart);
 	const float vStride = (e.vEnd - e.vStart);
-	e.mCol = float(uStride / _nCols);
-	e.mRow = float(vStride / _nRows);
+	e.mCol = Math::Clamp(float(uStride / _nCols), 0, MAX_ROW_COL);
+	e.mRow = Math::Clamp(float(vStride / _nRows), 0, MAX_ROW_COL);
 }
 
 void Dystopia::TextureAtlas::SetSection(unsigned _nID, unsigned _nCol, unsigned _nRow, Shader const& _Active)
@@ -104,12 +107,12 @@ AutoArray<Dystopia::TextureAtlas::SubTexture>& Dystopia::TextureAtlas::GetAllSec
 	return mSections;
 }
 
-std::string Dystopia::TextureAtlas::GetName(void) const
+HashString Dystopia::TextureAtlas::GetName(void) const
 {
 	return mpTexture->GetName();
 }
 
-const std::string& Dystopia::TextureAtlas::GetPath(void) const noexcept
+const HashString& Dystopia::TextureAtlas::GetPath(void) const noexcept
 {
 	return mpTexture->GetPath();
 }

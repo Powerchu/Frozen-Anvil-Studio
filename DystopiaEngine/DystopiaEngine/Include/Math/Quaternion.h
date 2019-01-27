@@ -32,7 +32,7 @@ namespace Math
 	\brief
 		Representing rotations
 	*/
-	union __declspec(align (16)) _DLL_EXPORT Quaternion
+	union alignas(16) _DLL_EXPORT Quaternion
 	{
 	public:
 		// ====================================== CONSTRUCTORS ======================================= // 

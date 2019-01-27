@@ -23,6 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/TextureAtlas.h"
 #include "System/Graphics/TextureSystem.h"
 #include "System/Graphics/GraphicsSystem.h"
+#include "Math/MathLib.h"
 
 #define FIELD_SIZE 140
 
@@ -189,7 +190,7 @@ void Editor::SpriteEditor::FieldTexture(void)
 
 			mnSelectedSection = 0;
 			if (!mpAtlas->GetAllSections().size())
-				mpAtlas->AddSection(Math::Vec2{ 0,0 }, mpTexture->GetWidth(), mpTexture->GetHeight());
+				mpAtlas->AddSection(Math::Vec2{ 0,0 }, mpTexture->GetWidth(), mpTexture->GetHeight(), 1, 1);
 
 			auto& sec = mpAtlas->GetAllSections()[mnSelectedSection];
 			mSectionPos = Math::Vec2{ sec.uStart, sec.vStart };

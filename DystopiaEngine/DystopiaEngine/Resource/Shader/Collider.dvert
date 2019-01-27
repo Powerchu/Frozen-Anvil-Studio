@@ -1,0 +1,29 @@
+#version 410 core
+
+out gl_PerVertex
+{
+  vec4 gl_Position;
+};
+
+uniform mat4 ProjectMat;
+uniform mat4 ViewMat;
+uniform mat4 ModelMat;
+uniform vec4 vUVBounds = vec4(0, 0, 1, 1);
+
+
+layout(location = 0) in vec3 vertexPos;
+layout(location = 1) in vec3 vertexNorm;
+
+layout(location = 0)out vec3 vPosition;
+layout(location = 1)out vec3 vNormal;
+
+void main()
+{
+  mat4 modelView = ViewMat * ModelMat;
+  vec4 temp = modelView * vec4(vertexPos, 1.f);
+  vPosition = temp.xyz;
+  vNormal   = (transpose(inverse(modelView)) * vec4(vertexNorm, .0f)).xyz;
+  
+  gl_Position = ProjectMat * temp;
+}
+

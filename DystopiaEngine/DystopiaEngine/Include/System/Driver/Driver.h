@@ -59,7 +59,8 @@ namespace Dystopia
 			class LoggerSystem,
 			class TextureSystem,
 			class TagSystem,
-			class Factory
+			class Factory,
+			class ShaderSystem
 		>::result;
 
 		static EngineCore* GetInstance(void) noexcept;
@@ -119,6 +120,7 @@ namespace Dystopia
 		void ParseMessage(const eSysMessage&, size_t);
 	};
 
+	using CORE = EngineCore;
 }
 
 

@@ -126,7 +126,6 @@ namespace Dystopia
 
 		void TintColorPicker();
 		Math::Vec4 mvTintCol;
-		float mfTintPerc = 1.f;
 	};
 }
 
