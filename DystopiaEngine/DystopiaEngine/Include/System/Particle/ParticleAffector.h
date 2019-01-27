@@ -35,9 +35,9 @@ namespace Dystopia
 	{
 		using UPDATE = AffectorTag::OnUpdate;
 
-		inline void Update(Emitter& e, float _dt) const noexcept
+		inline void Update(Emitter& e, float _dt) noexcept
 		{
-			Updator(e, _dt);
+			(this->*Updator)(e, _dt);
 		};
 
 		inline int GetID(void) const noexcept
@@ -46,10 +46,12 @@ namespace Dystopia
 		}
 
 	protected:
-		using UpdateFunc_t = void(*)(Emitter&, float);
+		using UpdateFunc_t = void(ParticleAffector::*)(Emitter&, float);
 
-		ParticleAffector(int _nID, UpdateFunc_t _upd) noexcept
-			: mID{ _nID }, Updator{ _upd }
+		template <typename C>
+		ParticleAffector(void(C::*_upd)(Emitter&, float)) noexcept
+			: mID{ Ut::MetaFind_t<C, AffectorList>::value }, 
+			Updator{ reinterpret_cast<UpdateFunc_t>(_upd) }
 		{}
 
 		alignas(16) char data[128];

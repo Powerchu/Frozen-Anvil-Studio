@@ -1122,6 +1122,9 @@
     <ClInclude Include="Include\System\Particle\ParticleAffector.h">
       <Filter>Game Engine\Systems\Particle\Affectors</Filter>
     </ClInclude>
+    <ClInclude Include="Include\System\Particle\Particle.h">
+      <Filter>Game Engine\Systems\Particle\Particle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1609,6 +1612,9 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Particle\Affectors">
       <UniqueIdentifier>{71fbe48b-3367-4a5b-9c82-5c2c2974947a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Particle\Particle">
+      <UniqueIdentifier>{633a32f4-2b08-4501-ad56-b9370881789a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

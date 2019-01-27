@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Component/Component.h"
 #include "Component/ComponentList.h"
+#include "System/Particle/Particle.h"
 #include "System/Particle/ParticleAffector.h"
 
 #include "DataStructure/AutoArray.h"
@@ -83,6 +84,8 @@ namespace Dystopia
 		AutoArray<ParticleAffector> mAttach;
 		AutoArray<ParticleAffector> mUpdate;
 		AutoArray<ParticleAffector> mFixedUpdate;
+
+		Particle mSpawn;
 
 		Shader* mpShader;
 		unsigned mVAO, mColourBuffer, mPosBuffer;
