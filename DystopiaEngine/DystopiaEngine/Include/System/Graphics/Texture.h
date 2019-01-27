@@ -16,9 +16,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _TEXTURE_H_
 #define _TEXTURE_H_
 
+#include "IO/Image.h"
 #include "DataStructure/HashString.h"
 
-#include <string>
 #include "Globals.h"
 
 
@@ -31,7 +31,7 @@ namespace Dystopia
 	public:
 
 		Texture(void) noexcept;
-		explicit Texture(unsigned _nType, HashString const& _strPath) noexcept;
+		explicit Texture(unsigned _nType, HashString const& _strPath, Image&) noexcept;
 		explicit Texture(unsigned _nWidth, unsigned _nHeight, unsigned _nType) noexcept;
 
 		Texture(Texture&&) noexcept;
@@ -48,16 +48,22 @@ namespace Dystopia
 		void SetType(unsigned) noexcept;
 
 		unsigned GetID(void) const noexcept;
+		bool Changed(void) const noexcept;
 
+		Image const& GetSettings(void) const;
 		HashString GetName(void) const;
 		HashString const& GetPath(void) const noexcept;
 
 		Texture& operator= (Texture&&) noexcept;
 
+		void OnEditorUI(void) noexcept;
+
 	protected:
 
 		HashString mstrPath;
-		unsigned mnWidth, mnHeight, mnType, mnID;
+		unsigned mnType, mnID;
+
+		Image mData;
 	};
 }
 

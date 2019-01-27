@@ -4,21 +4,16 @@
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
-	Experimental
-	Seems to be slower on member access but faster on function calls
-	All the inlining means that everything has to be in the header file
-
+	Math 4 Vector
 	Inform me if you need any utility functions
-
-	Reference: https://software.intel.com/sites/landingpage/IntrinsicsGuide
 
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _VECTOR4_H_
-#define _VECTOR4_H_
+#ifndef _MATHVECTOR4_H_
+#define _MATHVECTOR4_H_
 
 #include "Globals.h"
 #include "Math/MathFwd.h"
@@ -28,14 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/MetaAlgorithms.h"     // MetaSortV
 #include "Utility/MetaDataStructures.h" // IntegralList
 
-#if defined(DEBUG) | defined(_DEBUG)
 #include "Utility/DebugAssert.h"
-#endif // Debug only includes
-
-#if !defined(_WIN64)	// We need these for win32 - pending fix in auto array
-#include <new>		    // nothrow_t
-#include <exception>    // bad_alloc
-#endif
 
 #include <iostream>
 #include <xmmintrin.h>  // SSE
@@ -44,35 +32,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <smmintrin.h>  // SSE 4.1
 #include <immintrin.h>  // FMA
 
+
 namespace Math
 {
 	#define _CALL	__vectorcall
 	#define ALLIGN	16
 	#define USE_DP	1
-
-	struct Matrix4;
-
-	enum class NegateFlag : unsigned char
-	{
-		X = 1 << 0,
-		Y = 1 << 1,
-		Z = 1 << 2,
-		W = 1 << 3,
-
-		XY = X | Y,
-		XZ = X | Z,
-		XW = X | W,
-		YZ = Y | Z,
-		YW = Y | W,
-		ZW = Z | W,
-
-		XYZ = XY | Z,
-		XYW = XY | W,
-		XZW = XZ | W,
-		YZW = YZ | Z,
-
-		XYZW = XY | ZW
-	};
 
 	/*!
 	\struct Vector4
@@ -84,9 +49,11 @@ namespace Math
 		// ====================================== CONSTRUCTORS ======================================= // 
 
 		inline Vector4(void) noexcept;
-		inline Vector4 (const Vector4&) noexcept;
 		inline Vector4(float x, float y, float z, float w = 0) noexcept;
 		inline explicit Vector4(__m128) noexcept;
+
+		Vector4(Vector3 const&, float w) noexcept;
+		Vector4(Vector2 const&, float z, float w) noexcept;
 
 
 		// ==================================== VECTOR OPERATIONS ==================================== // 
@@ -121,12 +88,12 @@ namespace Math
 		inline float& _CALL operator[](const unsigned _nIndex);
 		inline const float _CALL operator[](const unsigned _nIndex) const;
 
-		inline Vector4  _CALL operator-(void) const;
-		inline Vector4& _CALL operator*=(const float);
-		inline Vector4& _CALL operator*=(const Vector4);
-		inline Vector4& _CALL operator/=(const float);
-		inline Vector4& _CALL operator+=(const Vector4);
-		inline Vector4& _CALL operator-=(const Vector4);
+		inline Vector4  _CALL operator -  (void) const;
+		inline Vector4& _CALL operator *= (const float);
+		inline Vector4& _CALL operator *= (const Vector4);
+		inline Vector4& _CALL operator /= (const float);
+		inline Vector4& _CALL operator += (const Vector4);
+		inline Vector4& _CALL operator -= (const Vector4);
 
 		inline bool _CALL operator==(const Vector4&) const;
 		inline bool _CALL operator!=(const Vector4& _rhs) const;
@@ -146,80 +113,87 @@ namespace Math
 		// this = this - u * v
 		inline Vector4& _CALL MultiplySub(const Vector4 u, const Vector4 v);
 
-#if !defined(_WIN64)	// We need these for win32 - pending fix in auto array
-
-		//inline void* operator new (std::size_t);
-		//inline void* operator new (std::size_t, const std::nothrow_t&) noexcept;
-		//inline void* operator new (std::size_t, void*) noexcept;
-
-		//inline void* operator new[] (std::size_t);
-		//inline void* operator new[] (std::size_t, const std::nothrow_t&) noexcept;
-		//inline void* operator new[] (std::size_t, void*) noexcept;
-
-		//inline void operator delete (void*) noexcept;
-		//inline void operator delete (void*, const std::nothrow_t&) noexcept;
-		//inline void operator delete (void*, void*) noexcept;
-
-		//inline void operator delete[] (void*) noexcept;
-		//inline void operator delete[] (void*, const std::nothrow_t&) noexcept;
-		//inline void operator delete[] (void*, void*) noexcept;
-
-#endif	// ! WIN64
-
 	private:
 		__m128 mData;
 
+		struct _DLL_EXPORT DataMember
+		{
+			explicit DataMember(__m128 v) noexcept : mData(v) {};
+
+		protected:
+			__m128 mData;
+		};
+
 		template <unsigned ... Vals>
-		struct _DLL_EXPORT SwizzleMask;
+		struct _DLL_EXPORT Swizzle;
 
 		template <unsigned N>
-		struct _DLL_EXPORT SwizzleMask<N>
+		struct _DLL_EXPORT Swizzle<N> : DataMember
 		{
-			inline SwizzleMask<N>& _CALL operator= (float _rhs);
+			inline Swizzle<N>& _CALL operator= (float _rhs);
 			inline _CALL operator float(void) const;
 
 		private:
-			__m128 mData;
-
 			static constexpr unsigned shuffleMask = _MM_SHUFFLE(N == 3 ? 0 : 3, N == 2 ? 0 : 2, N == 1 ? 0 : 1, N);
 		};
 
-		template <unsigned X, unsigned Y, unsigned Z, unsigned W>
-		struct IsLvalueSwizzle
+		template <unsigned X, unsigned Y>
+		struct _DLL_EXPORT Swizzle<X, Y> : DataMember
 		{
-			static constexpr bool value = (X != Y) && (X != Z) && (X != W) && (Y != Z) && (Y != W) && (Z != W);
-		};
-		
-		// While we're at it, might as well add swizzle masks
-		// SwizzleMask  -> 1 shuffle (read)
-		// SwizzleMask -> 1 shuffle (read & write)
-		template <unsigned X, unsigned Y, unsigned Z, unsigned W>
-		struct SwizzleMask<X, Y, Z, W>
-		{
-			SwizzleMask() = default;
-			SwizzleMask(__m128 _data) : mData{ _data } {}
-
-			template<bool = IsLvalueSwizzle<X, Y, Z, W>::value>
-			inline SwizzleMask& _CALL operator = (Vector4 _rhs);
+			template<bool = Ut::IsUniqueV<X, Y>::value>
+			inline Swizzle<X, Y>& _CALL operator = (Vector2 _rhs) noexcept;
 
 			template <>
-			inline SwizzleMask& _CALL operator = <false> (Vector4)
+			inline Swizzle& _CALL operator = <false> (Vector2) noexcept
 			{
 				static_assert(false, "Vector4 Error: lvalue cannot be duplicate.");
 				return *this;
 			}
 
-			template<unsigned Q, unsigned R, unsigned S, unsigned T, typename ret_t = Ut::EnableIf_t<IsLvalueSwizzle<X, Y, Z, W>::value, SwizzleMask>>
-			inline ret_t& _CALL operator = (SwizzleMask<Q, R, S, T> _rhs);
+			inline _CALL operator ::Math::Vector2 (void) const noexcept;
+		};
+		
+		template <unsigned X, unsigned Y, unsigned Z>
+		struct _DLL_EXPORT Swizzle<X, Y, Z> : DataMember
+		{
+			template<bool = Ut::IsUniqueV<X, Y, Z>::value>
+			inline Swizzle<X, Y, Z>& _CALL operator = (Vector3 _rhs) noexcept;
+
+			template <>
+			inline Swizzle& _CALL operator = <false> (Vector3) noexcept
+			{
+				static_assert(false, "Vector4 Error: lvalue cannot be duplicate.");
+				return *this;
+			}
+
+			inline _CALL operator Vector3 (void) const noexcept;
+		};
+
+		template <unsigned X, unsigned Y, unsigned Z, unsigned W>
+		struct Swizzle<X, Y, Z, W> : DataMember
+		{
+			Swizzle() = default;
+			Swizzle(__m128 _data) noexcept : DataMember{ _data } {}
+
+			template<bool = Ut::IsUniqueV<X, Y, Z, W>::value>
+			inline Swizzle& _CALL operator = (Vector4 _rhs) noexcept;
+
+			template <>
+			inline Swizzle& _CALL operator = <false> (Vector4) noexcept
+			{
+				static_assert(false, "Vector4 Error: lvalue cannot be duplicate.");
+				return *this;
+			}
+
+			template<unsigned Q, unsigned R, unsigned S, unsigned T, typename ret_t = Ut::EnableIf_t<Ut::IsUniqueV<X, Y, Z, W>::value, Swizzle&>>
+			inline ret_t _CALL operator = (Swizzle<Q, R, S, T> _rhs) noexcept;
 
 			inline __m128 _CALL GetRaw(void) const noexcept;
 			inline __m128 _CALL _GetRawUnshuf(void) const noexcept;
 
-			inline _CALL operator Math::Vector4 (void) const;
+			inline _CALL operator Math::Vector4 (void) const noexcept;
 
 		private:
-			__m128 mData;
-
 			static constexpr unsigned shuffleRead = _MM_SHUFFLE(W, Z, Y, X);
 			static constexpr unsigned shuffleWrite = (3 << (2*W)) | (2 << (2*Z)) | (1 << (2*Y)) | (0 << (2*X));
 		};
@@ -227,51 +201,98 @@ namespace Math
 		static inline __m128 _CALL InvSqrt(__m128);
 		static inline __m128 _CALL Dot(__m128, __m128);
 
-		// Matrix needs the __m128 member
-		friend struct Math::Matrix4;
-
 	public:
-		SwizzleMask<0> x;
-		SwizzleMask<1> y;
-		SwizzleMask<2> z;
-		SwizzleMask<3> w;
+		Swizzle<0> x;
+		Swizzle<1> y;
+		Swizzle<2> z;
+		Swizzle<3> w;
 
-		SwizzleMask<0, 0, 0, 0> xxxx;
-		SwizzleMask<0, 0, 1, 1> xxyy;
-		SwizzleMask<0, 0, 1, 2> xxyz;
-		SwizzleMask<0, 0, 2, 2> xxzz;
-		SwizzleMask<0, 1, 0, 1> xyxy;
-		SwizzleMask<0, 1, 1, 1> xyyy;
-		SwizzleMask<0, 1, 2, 3> xyzw;
-		SwizzleMask<0, 1, 3, 2> xywz;
-		SwizzleMask<0, 2, 1, 1> xzyy;
-		SwizzleMask<0, 2, 1, 3> xzyw;
-		SwizzleMask<0, 3, 0, 3> xwxw;
-		SwizzleMask<0, 3, 1, 2> xwyz;
-		SwizzleMask<0, 3, 2, 3> xwzw;
-		SwizzleMask<1, 0, 1, 0> yxyx;
-		SwizzleMask<1, 0, 2, 3> yxzw;
-		SwizzleMask<1, 0, 3, 2> yxwz;
-		SwizzleMask<1, 1, 1, 1> yyyy;
-		SwizzleMask<1, 3, 0, 2> ywxz;
-		SwizzleMask<1, 3, 1, 3> ywyw;
-		SwizzleMask<1, 3, 2, 0> ywzx;
-		SwizzleMask<2, 0, 1, 3> zxyw;
-		SwizzleMask<2, 0, 3, 1> zxwy;
-		SwizzleMask<2, 1, 2, 1> zyzy;
-		SwizzleMask<2, 2, 2, 3> zzzw;
-		SwizzleMask<2, 2, 2, 2> zzzz;
-		SwizzleMask<2, 3, 0, 0> zwxx;
-		SwizzleMask<2, 3, 0, 1> zwxy;
-		SwizzleMask<2, 3, 1, 0> zwyx;
-		SwizzleMask<2, 3, 2, 3> zwzw;
-		SwizzleMask<2, 3, 3, 2> zwwz;
-		SwizzleMask<3, 1, 2, 0> wyzx;
-		SwizzleMask<3, 2, 0, 1> wzxy;
-		SwizzleMask<3, 2, 1, 0> wzyx;
-		SwizzleMask<3, 2, 2, 3> wzzw;
-		SwizzleMask<3, 2, 3, 2> wzwz;
-		SwizzleMask<3, 3, 3, 3> wwww;
+		Swizzle<0, 0> xx; Swizzle<1, 0> yx; Swizzle<2, 0> zx; Swizzle<3, 0> wx;
+		Swizzle<0, 1> xy; Swizzle<1, 1> yy; Swizzle<2, 1> zy; Swizzle<3, 1> wy;
+		Swizzle<0, 2> xz; Swizzle<1, 2> yz; Swizzle<2, 2> zz; Swizzle<3, 2> wz;
+		Swizzle<0, 3> xw; Swizzle<1, 3> yw; Swizzle<2, 3> zw; Swizzle<3, 3> ww;
+
+		Swizzle<0, 0, 0> xxx; Swizzle<1, 0, 0> yxx; Swizzle<2, 0, 0> zxx; Swizzle<3, 0, 0> wxx;
+		Swizzle<0, 0, 1> xxy; Swizzle<1, 0, 1> yxy;	Swizzle<2, 0, 1> zxy; Swizzle<3, 0, 1> wxy;
+		Swizzle<0, 0, 2> xxz; Swizzle<1, 0, 2> yxz;	Swizzle<2, 0, 2> zxz; Swizzle<3, 0, 2> wxz;
+		Swizzle<0, 0, 3> xxw; Swizzle<1, 0, 3> yxw;	Swizzle<2, 0, 3> zxw; Swizzle<3, 0, 3> wxw;
+		Swizzle<0, 1, 0> xyx; Swizzle<1, 1, 0> yyx;	Swizzle<2, 1, 0> zyx; Swizzle<3, 1, 0> wyx;
+		Swizzle<0, 1, 1> xyy; Swizzle<1, 1, 1> yyy;	Swizzle<2, 1, 1> zyy; Swizzle<3, 1, 1> wyy;
+		Swizzle<0, 1, 2> xyz; Swizzle<1, 1, 2> yyz;	Swizzle<2, 1, 2> zyz; Swizzle<3, 1, 2> wyz;
+		Swizzle<0, 1, 3> xyw; Swizzle<1, 1, 3> yyw;	Swizzle<2, 1, 3> zyw; Swizzle<3, 1, 3> wyw;
+		Swizzle<0, 2, 0> xzx; Swizzle<1, 2, 0> yzx;	Swizzle<2, 2, 0> zzx; Swizzle<3, 2, 0> wzx;
+		Swizzle<0, 2, 1> xzy; Swizzle<1, 2, 1> yzy;	Swizzle<2, 2, 1> zzy; Swizzle<3, 2, 1> wzy;
+		Swizzle<0, 2, 2> xzz; Swizzle<1, 2, 2> yzz;	Swizzle<2, 2, 2> zzz; Swizzle<3, 2, 2> wzz;
+		Swizzle<0, 2, 3> xzw; Swizzle<1, 2, 3> yzw;	Swizzle<2, 2, 3> zzw; Swizzle<3, 2, 3> wzw;
+		Swizzle<0, 3, 0> xwx; Swizzle<1, 3, 0> ywx;	Swizzle<2, 3, 0> zwx; Swizzle<3, 3, 0> wwx;
+		Swizzle<0, 3, 1> xwy; Swizzle<1, 3, 1> ywy;	Swizzle<2, 3, 1> zwy; Swizzle<3, 3, 1> wwy;
+		Swizzle<0, 3, 2> xwz; Swizzle<1, 3, 2> ywz;	Swizzle<2, 3, 2> zwz; Swizzle<3, 3, 2> wwz;
+		Swizzle<0, 3, 3> xww; Swizzle<1, 3, 3> yww;	Swizzle<2, 3, 3> zww; Swizzle<3, 3, 3> www;
+
+		Swizzle<0, 0, 0, 0> xxxx; Swizzle<1, 0, 0, 0> yxxx; Swizzle<2, 0, 0, 0> zxxx; Swizzle<3, 0, 0, 0> wxxx;
+		Swizzle<0, 0, 0, 1> xxxy; Swizzle<1, 0, 0, 1> yxxy;	Swizzle<2, 0, 0, 1> zxxy; Swizzle<3, 0, 0, 1> wxxy;
+		Swizzle<0, 0, 0, 2> xxxz; Swizzle<1, 0, 0, 2> yxxz;	Swizzle<2, 0, 0, 2> zxxz; Swizzle<3, 0, 0, 2> wxxz;
+		Swizzle<0, 0, 0, 3> xxxw; Swizzle<1, 0, 0, 3> yxxw;	Swizzle<2, 0, 0, 3> zxxw; Swizzle<3, 0, 0, 3> wxxw;
+		Swizzle<0, 0, 1, 0> xxyx; Swizzle<1, 0, 1, 0> yxyx;	Swizzle<2, 0, 1, 0> zxyx; Swizzle<3, 0, 1, 0> wxyx;
+		Swizzle<0, 0, 1, 1> xxyy; Swizzle<1, 0, 1, 1> yxyy;	Swizzle<2, 0, 1, 1> zxyy; Swizzle<3, 0, 1, 1> wxyy;
+		Swizzle<0, 0, 1, 2> xxyz; Swizzle<1, 0, 1, 2> yxyz;	Swizzle<2, 0, 1, 2> zxyz; Swizzle<3, 0, 1, 2> wxyz;
+		Swizzle<0, 0, 1, 3> xxyw; Swizzle<1, 0, 1, 3> yxyw;	Swizzle<2, 0, 1, 3> zxyw; Swizzle<3, 0, 1, 3> wxyw;
+		Swizzle<0, 0, 2, 0> xxzx; Swizzle<1, 0, 2, 0> yxzx;	Swizzle<2, 0, 2, 0> zxzx; Swizzle<3, 0, 2, 0> wxzx;
+		Swizzle<0, 0, 2, 1> xxzy; Swizzle<1, 0, 2, 1> yxzy;	Swizzle<2, 0, 2, 1> zxzy; Swizzle<3, 0, 2, 1> wxzy;
+		Swizzle<0, 0, 2, 2> xxzz; Swizzle<1, 0, 2, 2> yxzz;	Swizzle<2, 0, 2, 2> zxzz; Swizzle<3, 0, 2, 2> wxzz;
+		Swizzle<0, 0, 2, 3> xxzw; Swizzle<1, 0, 2, 3> yxzw;	Swizzle<2, 0, 2, 3> zxzw; Swizzle<3, 0, 2, 3> wxzw;
+		Swizzle<0, 0, 3, 0> xxwx; Swizzle<1, 0, 3, 0> yxwx;	Swizzle<2, 0, 3, 0> zxwx; Swizzle<3, 0, 3, 0> wxwx;
+		Swizzle<0, 0, 3, 1> xxwy; Swizzle<1, 0, 3, 1> yxwy;	Swizzle<2, 0, 3, 1> zxwy; Swizzle<3, 0, 3, 1> wxwy;
+		Swizzle<0, 0, 3, 2> xxwz; Swizzle<1, 0, 3, 2> yxwz;	Swizzle<2, 0, 3, 2> zxwz; Swizzle<3, 0, 3, 2> wxwz;
+		Swizzle<0, 0, 3, 3> xxww; Swizzle<1, 0, 3, 3> yxww;	Swizzle<2, 0, 3, 3> zxww; Swizzle<3, 0, 3, 3> wxww;
+		Swizzle<0, 1, 0, 0> xyxx; Swizzle<1, 1, 0, 0> yyxx;	Swizzle<2, 1, 0, 0> zyxx; Swizzle<3, 1, 0, 0> wyxx;
+		Swizzle<0, 1, 0, 1> xyxy; Swizzle<1, 1, 0, 1> yyxy;	Swizzle<2, 1, 0, 1> zyxy; Swizzle<3, 1, 0, 1> wyxy;
+		Swizzle<0, 1, 0, 2> xyxz; Swizzle<1, 1, 0, 2> yyxz;	Swizzle<2, 1, 0, 2> zyxz; Swizzle<3, 1, 0, 2> wyxz;
+		Swizzle<0, 1, 0, 3> xyxw; Swizzle<1, 1, 0, 3> yyxw;	Swizzle<2, 1, 0, 3> zyxw; Swizzle<3, 1, 0, 3> wyxw;
+		Swizzle<0, 1, 1, 0> xyyx; Swizzle<1, 1, 1, 0> yyyx;	Swizzle<2, 1, 1, 0> zyyx; Swizzle<3, 1, 1, 0> wyyx;
+		Swizzle<0, 1, 1, 1> xyyy; Swizzle<1, 1, 1, 1> yyyy;	Swizzle<2, 1, 1, 1> zyyy; Swizzle<3, 1, 1, 1> wyyy;
+		Swizzle<0, 1, 1, 2> xyyz; Swizzle<1, 1, 1, 2> yyyz;	Swizzle<2, 1, 1, 2> zyyz; Swizzle<3, 1, 1, 2> wyyz;
+		Swizzle<0, 1, 1, 3> xyyw; Swizzle<1, 1, 1, 3> yyyw;	Swizzle<2, 1, 1, 3> zyyw; Swizzle<3, 1, 1, 3> wyyw;
+		Swizzle<0, 1, 2, 0> xyzx; Swizzle<1, 1, 2, 0> yyzx;	Swizzle<2, 1, 2, 0> zyzx; Swizzle<3, 1, 2, 0> wyzx;
+		Swizzle<0, 1, 2, 1> xyzy; Swizzle<1, 1, 2, 1> yyzy;	Swizzle<2, 1, 2, 1> zyzy; Swizzle<3, 1, 2, 1> wyzy;
+		Swizzle<0, 1, 2, 2> xyzz; Swizzle<1, 1, 2, 2> yyzz;	Swizzle<2, 1, 2, 2> zyzz; Swizzle<3, 1, 2, 2> wyzz;
+		Swizzle<0, 1, 2, 3> xyzw; Swizzle<1, 1, 2, 3> yyzw;	Swizzle<2, 1, 2, 3> zyzw; Swizzle<3, 1, 2, 3> wyzw;
+		Swizzle<0, 1, 3, 0> xywx; Swizzle<1, 1, 3, 0> yywx;	Swizzle<2, 1, 3, 0> zywx; Swizzle<3, 1, 3, 0> wywx;
+		Swizzle<0, 1, 3, 1> xywy; Swizzle<1, 1, 3, 1> yywy;	Swizzle<2, 1, 3, 1> zywy; Swizzle<3, 1, 3, 1> wywy;
+		Swizzle<0, 1, 3, 2> xywz; Swizzle<1, 1, 3, 2> yywz;	Swizzle<2, 1, 3, 2> zywz; Swizzle<3, 1, 3, 2> wywz;
+		Swizzle<0, 1, 3, 3> xyww; Swizzle<1, 1, 3, 3> yyww;	Swizzle<2, 1, 3, 3> zyww; Swizzle<3, 1, 3, 3> wyww;
+		Swizzle<0, 2, 0, 0> xzxx; Swizzle<1, 2, 0, 0> yzxx;	Swizzle<2, 2, 0, 0> zzxx; Swizzle<3, 2, 0, 0> wzxx;
+		Swizzle<0, 2, 0, 1> xzxy; Swizzle<1, 2, 0, 1> yzxy;	Swizzle<2, 2, 0, 1> zzxy; Swizzle<3, 2, 0, 1> wzxy;
+		Swizzle<0, 2, 0, 2> xzxz; Swizzle<1, 2, 0, 2> yzxz;	Swizzle<2, 2, 0, 2> zzxz; Swizzle<3, 2, 0, 2> wzxz;
+		Swizzle<0, 2, 0, 3> xzxw; Swizzle<1, 2, 0, 3> yzxw;	Swizzle<2, 2, 0, 3> zzxw; Swizzle<3, 2, 0, 3> wzxw;
+		Swizzle<0, 2, 1, 0> xzyx; Swizzle<1, 2, 1, 0> yzyx;	Swizzle<2, 2, 1, 0> zzyx; Swizzle<3, 2, 1, 0> wzyx;
+		Swizzle<0, 2, 1, 1> xzyy; Swizzle<1, 2, 1, 1> yzyy;	Swizzle<2, 2, 1, 1> zzyy; Swizzle<3, 2, 1, 1> wzyy;
+		Swizzle<0, 2, 1, 2> xzyz; Swizzle<1, 2, 1, 2> yzyz;	Swizzle<2, 2, 1, 2> zzyz; Swizzle<3, 2, 1, 2> wzyz;
+		Swizzle<0, 2, 1, 3> xzyw; Swizzle<1, 2, 1, 3> yzyw;	Swizzle<2, 2, 1, 3> zzyw; Swizzle<3, 2, 1, 3> wzyw;
+		Swizzle<0, 2, 2, 0> xzzx; Swizzle<1, 2, 2, 0> yzzx;	Swizzle<2, 2, 2, 0> zzzx; Swizzle<3, 2, 2, 0> wzzx;
+		Swizzle<0, 2, 2, 1> xzzy; Swizzle<1, 2, 2, 1> yzzy;	Swizzle<2, 2, 2, 1> zzzy; Swizzle<3, 2, 2, 1> wzzy;
+		Swizzle<0, 2, 2, 2> xzzz; Swizzle<1, 2, 2, 2> yzzz;	Swizzle<2, 2, 2, 2> zzzz; Swizzle<3, 2, 2, 2> wzzz;
+		Swizzle<0, 2, 2, 3> xzzw; Swizzle<1, 2, 2, 3> yzzw;	Swizzle<2, 2, 2, 3> zzzw; Swizzle<3, 2, 2, 3> wzzw;
+		Swizzle<0, 2, 3, 0> xzwx; Swizzle<1, 2, 3, 0> yzwx;	Swizzle<2, 2, 3, 0> zzwx; Swizzle<3, 2, 3, 0> wzwx;
+		Swizzle<0, 2, 3, 1> xzwy; Swizzle<1, 2, 3, 1> yzwy;	Swizzle<2, 2, 3, 1> zzwy; Swizzle<3, 2, 3, 1> wzwy;
+		Swizzle<0, 2, 3, 2> xzwz; Swizzle<1, 2, 3, 2> yzwz;	Swizzle<2, 2, 3, 2> zzwz; Swizzle<3, 2, 3, 2> wzwz;
+		Swizzle<0, 2, 3, 3> xzww; Swizzle<1, 2, 3, 3> yzww;	Swizzle<2, 2, 3, 3> zzww; Swizzle<3, 2, 3, 3> wzww;
+		Swizzle<0, 3, 0, 0> xwxx; Swizzle<1, 3, 0, 0> ywxx;	Swizzle<2, 3, 0, 0> zwxx; Swizzle<3, 3, 0, 0> wwxx;
+		Swizzle<0, 3, 0, 1> xwxy; Swizzle<1, 3, 0, 1> ywxy;	Swizzle<2, 3, 0, 1> zwxy; Swizzle<3, 3, 0, 1> wwxy;
+		Swizzle<0, 3, 0, 2> xwxz; Swizzle<1, 3, 0, 2> ywxz;	Swizzle<2, 3, 0, 2> zwxz; Swizzle<3, 3, 0, 2> wwxz;
+		Swizzle<0, 3, 0, 3> xwxw; Swizzle<1, 3, 0, 3> ywxw;	Swizzle<2, 3, 0, 3> zwxw; Swizzle<3, 3, 0, 3> wwxw;
+		Swizzle<0, 3, 1, 0> xwyx; Swizzle<1, 3, 1, 0> ywyx;	Swizzle<2, 3, 1, 0> zwyx; Swizzle<3, 3, 1, 0> wwyx;
+		Swizzle<0, 3, 1, 1> xwyy; Swizzle<1, 3, 1, 1> ywyy;	Swizzle<2, 3, 1, 1> zwyy; Swizzle<3, 3, 1, 1> wwyy;
+		Swizzle<0, 3, 1, 2> xwyz; Swizzle<1, 3, 1, 2> ywyz;	Swizzle<2, 3, 1, 2> zwyz; Swizzle<3, 3, 1, 2> wwyz;
+		Swizzle<0, 3, 1, 3> xwyw; Swizzle<1, 3, 1, 3> ywyw;	Swizzle<2, 3, 1, 3> zwyw; Swizzle<3, 3, 1, 3> wwyw;
+		Swizzle<0, 3, 2, 0> xwzx; Swizzle<1, 3, 2, 0> ywzx;	Swizzle<2, 3, 2, 0> zwzx; Swizzle<3, 3, 2, 0> wwzx;
+		Swizzle<0, 3, 2, 1> xwzy; Swizzle<1, 3, 2, 1> ywzy;	Swizzle<2, 3, 2, 1> zwzy; Swizzle<3, 3, 2, 1> wwzy;
+		Swizzle<0, 3, 2, 2> xwzz; Swizzle<1, 3, 2, 2> ywzz;	Swizzle<2, 3, 2, 2> zwzz; Swizzle<3, 3, 2, 2> wwzz;
+		Swizzle<0, 3, 2, 3> xwzw; Swizzle<1, 3, 2, 3> ywzw;	Swizzle<2, 3, 2, 3> zwzw; Swizzle<3, 3, 2, 3> wwzw;
+		Swizzle<0, 3, 3, 0> xwwx; Swizzle<1, 3, 3, 0> ywwx;	Swizzle<2, 3, 3, 0> zwwx; Swizzle<3, 3, 3, 0> wwwx;
+		Swizzle<0, 3, 3, 1> xwwy; Swizzle<1, 3, 3, 1> ywwy;	Swizzle<2, 3, 3, 1> zwwy; Swizzle<3, 3, 3, 1> wwwy;
+		Swizzle<0, 3, 3, 2> xwwz; Swizzle<1, 3, 3, 2> ywwz;	Swizzle<2, 3, 3, 2> zwwz; Swizzle<3, 3, 3, 2> wwwz;
+		Swizzle<0, 3, 3, 3> xwww; Swizzle<1, 3, 3, 3> ywww;	Swizzle<2, 3, 3, 3> zwww; Swizzle<3, 3, 3, 3> wwww;
 
 		inline __m128 _CALL GetRaw(void) const noexcept;
 	};
@@ -314,12 +335,12 @@ namespace Math
 
 	// ======================================== OPERATORS ======================================== // 
 
-	inline Vector4 _CALL operator-(const Vector4, const Vector4);
-	inline Vector4 _CALL operator+(const Vector4, const Vector4);
-	inline Vector4 _CALL operator*(const Vector4, const Vector4);
-	inline Vector4 _CALL operator*(const float, const Vector4);
-	inline Vector4 _CALL operator*(const Vector4, const float);
-	inline Vector4 _CALL operator/(const Vector4, const float);
+	inline Vector4 _CALL operator - (const Vector4, const Vector4);
+	inline Vector4 _CALL operator + (const Vector4, const Vector4);
+	inline Vector4 _CALL operator * (const Vector4, const Vector4);
+	inline Vector4 _CALL operator * (const float, const Vector4);
+	inline Vector4 _CALL operator * (const Vector4, const float);
+	inline Vector4 _CALL operator / (const Vector4, const float);
 
 	// Alternate + and -
 	// x1 + x2 , y1 - y2 , z1 + z2 , w1 - w2
@@ -353,11 +374,11 @@ inline Math::Vector4::Vector4(void) noexcept
 
 }
 
-inline Math::Vector4::Vector4(const Vector4& v) noexcept 
-	: mData( v.mData )
-{
-
-}
+//inline Math::Vector4::Vector4(const Vector4& v) noexcept 
+//	: mData( v.mData )
+//{
+//
+//}
 
 inline Math::Vector4::Vector4(float x, float y, float z, float w) noexcept 
 	: mData( _mm_set_ps(w, z, y, x) )
@@ -586,7 +607,7 @@ inline Math::Vector4 _CALL Math::MakeVector3D(float _x, float _y, float _z)
 
 
 template <unsigned N>
-inline Math::Vector4::SwizzleMask<N>& _CALL Math::Vector4::SwizzleMask<N>::operator= (float _rhs)
+inline Math::Vector4::Swizzle<N>& _CALL Math::Vector4::Swizzle<N>::operator= (float _rhs)
 {
 #if defined(_INCLUDED_SMM)	// SSE4.1 supported
 
@@ -608,7 +629,7 @@ inline Math::Vector4::SwizzleMask<N>& _CALL Math::Vector4::SwizzleMask<N>::opera
 }
 
 template<>
-inline Math::Vector4::SwizzleMask<0>& _CALL Math::Vector4::SwizzleMask<0>::operator= (float _rhs)
+inline Math::Vector4::Swizzle<0>& _CALL Math::Vector4::Swizzle<0>::operator= (float _rhs)
 {
 	mData = _mm_move_ss(mData, _mm_set_ss(_rhs));
 
@@ -616,14 +637,14 @@ inline Math::Vector4::SwizzleMask<0>& _CALL Math::Vector4::SwizzleMask<0>::opera
 }
 
 template <unsigned N>
-inline _CALL Math::Vector4::SwizzleMask<N>::operator float(void) const
+inline _CALL Math::Vector4::Swizzle<N>::operator float(void) const
 {
 	// Copy the wanted value everywhere, and return the first 32 bits as a float
 	return _mm_cvtss_f32(_mm_shuffle_ps(mData, mData, _MM_SHUFFLE(N, N, N, N)));
 }
 
 template<>
-inline _CALL Math::Vector4::SwizzleMask<0>::operator float(void) const
+inline _CALL Math::Vector4::Swizzle<0>::operator float(void) const
 {
 	// We happen to want the value that's already the first
 	// so we can skip the shuffle and just return it
@@ -635,14 +656,14 @@ inline _CALL Math::Vector4::SwizzleMask<0>::operator float(void) const
 
 
 template<unsigned X, unsigned Y, unsigned Z, unsigned W> template<bool>
-inline Math::Vector4::SwizzleMask<X, Y, Z, W>& _CALL Math::Vector4::SwizzleMask<X, Y, Z, W>::operator = (Math::Vector4 _rhs)
+inline Math::Vector4::Swizzle<X, Y, Z, W>& _CALL Math::Vector4::Swizzle<X, Y, Z, W>::operator = (Math::Vector4 _rhs) noexcept
 {
 	mData = _mm_shuffle_ps(_rhs.mData, _rhs.mData, shuffleWrite);
 	return *this;
 }
 
 template<> template<>
-inline Math::Vector4::SwizzleMask<0, 1, 2, 3>& _CALL Math::Vector4::SwizzleMask<0, 1, 2, 3>::operator = <true> (Math::Vector4 _rhs)
+inline Math::Vector4::Swizzle<0, 1, 2, 3>& _CALL Math::Vector4::Swizzle<0, 1, 2, 3>::operator = <true> (Math::Vector4 _rhs) noexcept
 {
 	mData = _rhs.mData;
 	return *this;
@@ -653,24 +674,24 @@ namespace
 	template <typename, typename>
 	struct SwizzleCompare;
 
-	template <typename T, T lhs, T rhs, T ... ls, T ... rs>
-	struct SwizzleCompare<Ut::IntegralList<T, lhs, ls...>, Ut::IntegralList<T, rhs, rs...>>
+	template <template <unsigned ...> class Set, unsigned lhs, unsigned rhs, unsigned ... ls, unsigned ... rs>
+	struct SwizzleCompare<Set<lhs, ls...>, Set<rhs, rs...>>
 	{
 		static constexpr bool value = lhs < rhs;
 	};
 }
 
-template<unsigned X, unsigned Y, unsigned Z, unsigned W> template<unsigned Q, unsigned R, unsigned S, unsigned T, typename ret_t>
-inline ret_t& _CALL Math::Vector4::SwizzleMask<X, Y, Z, W>::operator = (SwizzleMask<Q, R, S, T> _rhs)
+template<unsigned X, unsigned Y, unsigned Z, unsigned W> 
+template<unsigned Q, unsigned R, unsigned S, unsigned T, typename ret_t>
+inline ret_t _CALL Math::Vector4::Swizzle<X, Y, Z, W>::operator = (Swizzle<Q, R, S, T> _rhs) noexcept
 {
 	using ReSwizzle_t = Ut::MetaSortT_t <SwizzleCompare, 
 		Ut::Collection<
-			Ut::IntegralList<unsigned, X, Q>, 
-			Ut::IntegralList<unsigned, Y, R>,
-			Ut::IntegralList<unsigned, Z, S>,
-			Ut::IntegralList<unsigned, W, T>
-		>
-	>;
+			Swizzle<X, Q>, 
+			Swizzle<Y, R>,
+			Swizzle<Z, S>,
+			Swizzle<W, T>
+	>>;
 
 	using Result_t = Ut::MetaExtract_t< 1,
 		Ut::MetaExtract_t<0, ReSwizzle_t>,
@@ -679,37 +700,30 @@ inline ret_t& _CALL Math::Vector4::SwizzleMask<X, Y, Z, W>::operator = (SwizzleM
 		Ut::MetaExtract_t<3, ReSwizzle_t>
 	>;
 
-	using NewSwizzle_t = Math::Vector4::SwizzleMask <
-		Ut::MetaExtractV<0, Result_t>::value,
-		Ut::MetaExtractV<1, Result_t>::value,
-		Ut::MetaExtractV<2, Result_t>::value,
-		Ut::MetaExtractV<3, Result_t>::value
-	>;
-
-	mData = NewSwizzle_t { _rhs._GetRawUnshuf() }.GetRaw();
+	mData = Result_t { _rhs._GetRawUnshuf() }.GetRaw();
 	return *this;
 }
 
 template<unsigned X, unsigned Y, unsigned Z, unsigned W>
-inline _CALL Math::Vector4::SwizzleMask<X, Y, Z, W>::operator Math::Vector4(void) const
+inline _CALL Math::Vector4::Swizzle<X, Y, Z, W>::operator Math::Vector4 (void) const noexcept
 {
 	return Vector4{ GetRaw() };
 }
 
 template <unsigned X, unsigned Y, unsigned Z, unsigned W>
-inline __m128 _CALL Math::Vector4::SwizzleMask<X, Y, Z, W>::GetRaw(void) const noexcept
+inline __m128 _CALL Math::Vector4::Swizzle<X, Y, Z, W>::GetRaw(void) const noexcept
 {
 	return _mm_shuffle_ps(mData, mData, shuffleRead);
 }
 
 template<unsigned X, unsigned Y, unsigned Z, unsigned W>
-inline __m128 _CALL Math::Vector4::SwizzleMask<X, Y, Z, W>::_GetRawUnshuf(void) const noexcept
+inline __m128 _CALL Math::Vector4::Swizzle<X, Y, Z, W>::_GetRawUnshuf(void) const noexcept
 {
 	return mData;
 }
 
 template<>
-inline __m128 _CALL Math::Vector4::SwizzleMask<0, 1, 2, 3>::GetRaw(void) const noexcept
+inline __m128 _CALL Math::Vector4::Swizzle<0, 1, 2, 3>::GetRaw(void) const noexcept
 {
 	return mData;
 }
@@ -720,25 +734,25 @@ inline __m128 _CALL Math::Vector4::SwizzleMask<0, 1, 2, 3>::GetRaw(void) const n
 // Perhaps on older CPUs and moot on newer ones
 
 template<>
-inline __m128 _CALL Math::Vector4::SwizzleMask<0, 0, 1, 1>::GetRaw(void) const noexcept
+inline __m128 _CALL Math::Vector4::Swizzle<0, 0, 1, 1>::GetRaw(void) const noexcept
 {
 	return _mm_unpacklo_ps(mData, mData);
 }
 
 template<>
-inline __m128 _CALL Math::Vector4::SwizzleMask<2, 2, 3, 3>::GetRaw(void) const noexcept
+inline __m128 _CALL Math::Vector4::Swizzle<2, 2, 3, 3>::GetRaw(void) const noexcept
 {
 	return _mm_unpackhi_ps(mData, mData);
 }
 
 template<>
-inline __m128 _CALL Math::Vector4::SwizzleMask<0, 1, 0, 1>::GetRaw(void) const noexcept
+inline __m128 _CALL Math::Vector4::Swizzle<0, 1, 0, 1>::GetRaw(void) const noexcept
 {
 	return _mm_movelh_ps(mData, mData);
 }
 
 template<>
-inline __m128 _CALL Math::Vector4::SwizzleMask<2, 3, 2, 3>::GetRaw(void) const noexcept
+inline __m128 _CALL Math::Vector4::Swizzle<2, 3, 2, 3>::GetRaw(void) const noexcept
 {
 	return _mm_movelh_ps(mData, mData);
 }
@@ -746,13 +760,13 @@ inline __m128 _CALL Math::Vector4::SwizzleMask<2, 3, 2, 3>::GetRaw(void) const n
 #if defined(_INCLUDED_PMM)		// SSE 3
 
 template<>
-inline __m128 _CALL Math::Vector4::SwizzleMask<0, 0, 2, 2>::GetRaw(void) const noexcept
+inline __m128 _CALL Math::Vector4::Swizzle<0, 0, 2, 2>::GetRaw(void) const noexcept
 {
 	return _mm_moveldup_ps(mData);
 }
 
 template<>
-inline __m128 _CALL Math::Vector4::SwizzleMask<1, 1, 3, 3>::GetRaw(void) const noexcept
+inline __m128 _CALL Math::Vector4::Swizzle<1, 1, 3, 3>::GetRaw(void) const noexcept
 {
 	return _mm_movehdup_ps(mData);
 }
@@ -946,76 +960,6 @@ inline std::ostream& operator << (std::ostream& _lhs, const Math::Vector4& _rhs)
 
 	return _lhs;
 }
-
-//inline void* Math::Vector4::operator new (std::size_t _sz)
-//{
-//	void* ret = _aligned_malloc(_sz, ALLIGN);
-//
-//	if (ret)
-//		return ret;
-//	
-//	throw std::bad_alloc{};
-//}
-//
-//inline void* Math::Vector4::operator new (std::size_t _sz, const std::nothrow_t&) noexcept
-//{
-//	return _aligned_malloc(_sz, ALLIGN);
-//}
-//
-//inline void* Math::Vector4::operator new (std::size_t _sz, void* _ptr) noexcept
-//{
-//	return ::operator new(_sz, _ptr);
-//}
-//
-//inline void* Math::Vector4::operator new[](std::size_t _sz)
-//{
-//	void* ret = _aligned_malloc(_sz, ALLIGN);
-//
-//	if (ret)
-//		return ret;
-//
-//	throw std::bad_alloc{};
-//}
-//
-//inline void* Math::Vector4::operator new[](std::size_t _sz, const std::nothrow_t&) noexcept
-//{
-//	return _aligned_malloc(_sz, ALLIGN);
-//}
-//
-//inline void* Math::Vector4::operator new[](std::size_t _sz, void* _ptr) noexcept
-//{
-//	return ::operator new[](_sz, _ptr);
-//}
-//
-//inline void  Math::Vector4::operator delete (void* _ptr) noexcept
-//{
-//	_aligned_free(_ptr);
-//}
-//
-//inline void  Math::Vector4::operator delete (void* _ptr, const std::nothrow_t&) noexcept
-//{
-//	delete static_cast<Vector4*>(_ptr);
-//}
-//
-//inline void  Math::Vector4::operator delete (void*, void*) noexcept
-//{
-//	return;
-//}
-//
-//inline void  Math::Vector4::operator delete[](void* _ptr) noexcept
-//{
-//	_aligned_free(_ptr);
-//}
-//
-//inline void  Math::Vector4::operator delete[](void* _ptr, const std::nothrow_t&) noexcept
-//{
-//	delete[] static_cast<Vector4*>(_ptr);
-//}
-//
-//inline void  Math::Vector4::operator delete[](void*, void*) noexcept
-//{
-//	return;
-//}
 
 
 

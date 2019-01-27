@@ -51,11 +51,11 @@ namespace Dystopia
 
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 
-		void InsertEndBlock  (const char* = "");
-		void InsertStartBlock(const char* = "");
+		Serialiser_t& InsertEndBlock  (const char* = "");
+		Serialiser_t& InsertStartBlock(const char* = "");
 
-		void ConsumeEndBlock  (void);
-		void ConsumeStartBlock(void);
+		Serialiser_t& ConsumeEndBlock  (void);
+		Serialiser_t& ConsumeStartBlock(void);
 
 		bool EndOfInput(void) const;
 
@@ -118,29 +118,33 @@ inline T Dystopia::Serialiser::OpenFile(const char* _strFile, int _nFlags)
 }
 
 template<class Serialiser_t>
-inline void Dystopia::SerialiserBase<Serialiser_t>::InsertEndBlock(char const* _strBlockName)
+inline Serialiser_t& Dystopia::SerialiserBase<Serialiser_t>::InsertEndBlock(char const* _strBlockName)
 {
 	GetType().WriteEndBlock(_strBlockName);
+	return GetType();
 }
 
 template<class Serialiser_t>
-inline void Dystopia::SerialiserBase<Serialiser_t>::InsertStartBlock(char const* _strBlockName)
+inline Serialiser_t& Dystopia::SerialiserBase<Serialiser_t>::InsertStartBlock(char const* _strBlockName)
 {
 	GetType().WriteStartBlock(_strBlockName);
+	return GetType();
 }
 
 template<class Serialiser_t>
-inline void Dystopia::SerialiserBase<Serialiser_t>::ConsumeEndBlock(void)
+inline Serialiser_t& Dystopia::SerialiserBase<Serialiser_t>::ConsumeEndBlock(void)
 {
 	GetType().ReadEndBlock();
 
 	mbBlockRead = true;
+	return GetType();
 }
 
 template<class Serialiser_t>
-inline void Dystopia::SerialiserBase<Serialiser_t>::ConsumeStartBlock(void)
+inline Serialiser_t& Dystopia::SerialiserBase<Serialiser_t>::ConsumeStartBlock(void)
 {
 	mbBlockRead = !GetType().ReadStartBlock();
+	return GetType();
 }
 
 template<class Serialiser_t>

@@ -20,7 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/MeshSystem.h"
 #include "Object/GameObject.h"
 #include "Object/ObjectFlags.h"
-#include "Math/Vector4.h"
+#include "Math/Vectors.h"
 #include "Component/RigidBody.h"
 #include "Component/Circle.h"
 #include "IO/TextSerialiser.h"

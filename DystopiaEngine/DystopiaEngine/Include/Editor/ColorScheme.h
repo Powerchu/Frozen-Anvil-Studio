@@ -13,7 +13,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _COLOR_SCHEME_H_
 #define _COLOR_SCHEME_H_
-#include "Math/Vector4.h"
+#include "Math/Vectors.h"
 #include "DataStructure/Array.h"
 #include "Editor/EditorPanel.h"
 

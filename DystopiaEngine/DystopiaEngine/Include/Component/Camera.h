@@ -15,12 +15,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _CAMERA_H_
 
 #include "Math/Angles.h"
-#include "Math/Vector4.h"
+#include "Math/Vectors.h"
 #include "Math/Matrix4.h"
 
 #include "Component/Component.h"
 #include "System/Graphics/GraphicsDefs.h"
-#include "Math/Vector2.h"
 
 namespace Dystopia
 {

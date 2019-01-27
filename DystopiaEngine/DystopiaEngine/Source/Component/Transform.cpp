@@ -14,7 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Transform.h"
 #include "Object/GameObject.h"
 #include "Math/Matrix4.h"
-#include "Math/Vector4.h"
+#include "Math/Vectors.h"
 #include "IO/TextSerialiser.h"
 #include "System/Driver/Driver.h"
 #include "System/Scene/SceneSystem.h"

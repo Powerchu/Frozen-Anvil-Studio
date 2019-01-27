@@ -165,10 +165,10 @@ void Dystopia::Camera::SetPerspective(Math::Angle _fFOV, float _fAspectRatio, fl
 	float fDist = 1.f / std::tanf(_fFOV.Radians() * .5f);
 
 	mProjection = Math::Matrix4{
-		fDist * _fAspectRatio, .0f		, .0f				, .0f,
-		.0f                  , -fDist	, .0f				, .0f,
-		.0f                  , .0f		, -2.f * fDistZ		, (_fFar + _fNear) * fDistZ,
-		.0f                  , .0f		, -1.f				, .0f
+		fDist * _fAspectRatio, .0f		, .0f				        , .0f,
+		.0f                  , -fDist	, .0f				        , .0f,
+		.0f                  , .0f		, (_fFar + _fNear) * fDistZ, 2.f * _fFar * _fNear * fDistZ,
+		.0f                  , .0f		, -1.f				        , .0f
 	};
 }
 
@@ -181,7 +181,7 @@ void Dystopia::Camera::SetPerspective(float _fLeft, float _fRight, float _fTop, 
 	mProjection = Math::Matrix4{
 		(2.f * _fNear) * fWidth, .0f						, (_fRight + _fLeft) * fWidth  , .0f,
 		.0f                    , -(2.f * _fNear) * fHeight	, (_fTop + _fBottom) * fHeight , .0f,
-		.0f                    , .0f						, -(_fFar + _fNear) * fDistZ   , 2.f * _fFar * _fNear * fDistZ,
+		.0f                    , .0f						, (_fFar + _fNear) * fDistZ    , 2.f * _fFar * _fNear * fDistZ,
 		.0f                    , .0f						, -1.f                         , .0f
 	};
 }
@@ -193,7 +193,7 @@ void Dystopia::Camera::SetOrthographic(float _fWidth, float _fHeight, float _fNe
 	mProjection = Math::Matrix4{
 		2.f / _fWidth, .0f               , .0f          , .0f,
 		.0f          , -2.f / _fHeight   , .0f          , .0f,
-		.0f          , .0f               , -2.f * fDistZ, (_fNear + _fFar) * fDistZ,
+		.0f          , .0f               , 2.f * fDistZ , (_fNear + _fFar) * fDistZ,
 		.0f          , .0f               , .0f          , 1.f
 	};
 
