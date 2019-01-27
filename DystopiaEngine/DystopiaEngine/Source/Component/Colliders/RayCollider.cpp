@@ -9,7 +9,7 @@
 #include "Object/GameObject.h"
 #include "Object/ObjectFlags.h"
 
-#include "Math/Vectors.h"
+#include "Math/Vector4.h"
 
 #include "Component/RigidBody.h"
 #include "Component/Circle.h"
@@ -25,12 +25,12 @@
 namespace Dystopia
 {
 	Dystopia::RayCollider::RayCollider(void)
-		:Collider{}, mRayDir{0.f,0.f,0.f}, mMaxLength{0}
+		:Collider{}, mRayDir{ 0.f,0.f,0.f }, mMaxLength{ 0 }
 	{
 	}
 
 	Dystopia::RayCollider::RayCollider(Math::Point3D const & _Pos, Math::Vec3D const & _Dir, float const & _MaxLength, Math::Vec3D const & _Offset)
-		:Collider{_Offset,_Pos},mRayDir{ Math::Normalise(_Dir) }, mMaxLength{ _MaxLength }
+		: Collider{ _Offset,_Pos }, mRayDir{ Math::Normalise(_Dir) }, mMaxLength{ _MaxLength }
 	{
 	}
 
@@ -85,11 +85,13 @@ namespace Dystopia
 		_out << static_cast<float>(mRayDir[1]);
 		_out << static_cast<float>(mRayDir[2]);
 		_out << mMaxLength;
+		_out << static_cast<unsigned>(mColLayer);
 		_out.InsertEndBlock("Ray_Collider2D");
 	}
 
 	void Dystopia::RayCollider::Unserialise(TextSerialiser & _in)
 	{
+		unsigned collayer_temp = 0;
 		_in.ConsumeStartBlock();
 		Component::Unserialise(_in);
 		_in >> mv3Offset[0];
@@ -105,16 +107,17 @@ namespace Dystopia
 		_in >> mRayDir[1];
 		_in >> mRayDir[2];
 		_in >> mMaxLength;
-
+		_in >> collayer_temp;
 		_in.ConsumeEndBlock();
 
 		mDebugVertices.clear();
+		mColLayer = static_cast<eColLayer>(collayer_temp);
 	}
 
 	bool Dystopia::RayCollider::isColliding(Circle & other_col)
 	{
 		/*Check if it is infinite ray*/
-	    /*Ray going in opposite direction of Collider*/
+		/*Ray going in opposite direction of Collider*/
 		Math::Vec3D && v = other_col.GetGlobalPosition() - GetGlobalPosition();
 		if (GetGlobalRay().Dot(v) < 0.f)
 			return false;
@@ -152,14 +155,14 @@ namespace Dystopia
 		return isColliding(*other_col);
 	}
 
-	bool Dystopia::RayCollider::isColliding(AABB & )
+	bool Dystopia::RayCollider::isColliding(AABB &)
 	{
 
 
 		return false;
 	}
 
-	bool Dystopia::RayCollider::isColliding(AABB * const & )
+	bool Dystopia::RayCollider::isColliding(AABB * const &)
 	{
 		return false;
 	}
@@ -170,8 +173,8 @@ namespace Dystopia
 		Math::Vec3D && v = other_col.GetGlobalPosition() - GetGlobalPosition();
 		if (v.Dot(GetGlobalRay()) < 0.f)
 			return false;
-		auto && ListOfEdge   = other_col.GetConvexEdges();
-		bool    isColliding  = false;
+		auto && ListOfEdge = other_col.GetConvexEdges();
+		bool    isColliding = false;
 		CollisionEvent ColEvent{ GetOwner(), other_col.GetOwner() };
 		ColEvent.mTimeIntersection = mMaxLength ? mMaxLength : 9999.f;
 		for (auto const & elem : ListOfEdge)
@@ -181,9 +184,9 @@ namespace Dystopia
 				continue;
 			/*Check if the ray lies within the edge*/
 			auto && v1 = GetGlobalPosition() - elem.mPos;
-			auto && v2 = GetGlobalPosition() -(elem.mPos + elem.mVec3);
+			auto && v2 = GetGlobalPosition() - (elem.mPos + elem.mVec3);
 #if CLOCKWISE
-			
+
 #else
 			v1.Negate<Math::NegateFlag::Y>();
 			v2.Negate<Math::NegateFlag::Y>();
@@ -193,15 +196,15 @@ namespace Dystopia
 				return false;
 			/*Get the intersection time*/
 			float cosTheta = GetGlobalRay().Dot(elem.mNorm3);
-			float adj      = Math::Abs(v1.Dot(elem.mNorm3));
-			float time     = adj / cosTheta;
+			float adj = Math::Abs(v1.Dot(elem.mNorm3));
+			float time = adj / cosTheta;
 			/*If the time of intersection to the edge is less than the current time of intersection, update it*/
 			if (time < ColEvent.mTimeIntersection)
 			{
 				ColEvent.mTimeIntersection = ColEvent.mTimeIntersection > time ? time : ColEvent.mTimeIntersection;
-				ColEvent.mEdgeNormal       = elem.mNorm3;
-				ColEvent.mfPeneDepth       = 0;
-				ColEvent.mCollisionPoint   = GetGlobalPosition() + ColEvent.mTimeIntersection * GetGlobalRay();
+				ColEvent.mEdgeNormal = elem.mNorm3;
+				ColEvent.mfPeneDepth = 0;
+				ColEvent.mCollisionPoint = GetGlobalPosition() + ColEvent.mTimeIntersection * GetGlobalRay();
 				isColliding = true;
 			}
 		}
@@ -213,27 +216,27 @@ namespace Dystopia
 		return isColliding;
 	}
 
-	bool Dystopia::RayCollider::isColliding(Convex * const & )
+	bool Dystopia::RayCollider::isColliding(Convex * const &)
 	{
 		return false;
 	}
 
-	bool Dystopia::RayCollider::isColliding(PointCollider & )
+	bool Dystopia::RayCollider::isColliding(PointCollider &)
 	{
 		return false;
 	}
 
-	bool Dystopia::RayCollider::isColliding(PointCollider * const & )
+	bool Dystopia::RayCollider::isColliding(PointCollider * const &)
 	{
 		return false;
 	}
 
-	bool Dystopia::RayCollider::isColliding(RayCollider & )
+	bool Dystopia::RayCollider::isColliding(RayCollider &)
 	{
 		return false;
 	}
 
-	bool Dystopia::RayCollider::isColliding(RayCollider * const & )
+	bool Dystopia::RayCollider::isColliding(RayCollider * const &)
 	{
 		return false;
 	}
@@ -272,13 +275,13 @@ namespace Dystopia
 	bool RayCollider::Raycast_Circle(Math::Vec3D const & _RayDir, Math::Point3D const & _Pos, Circle * _Collider, CollisionEvent * _OutputResult, float _MaxLength)
 	{
 		/*Check if it is infinite ray*/
-        /*Ray going in opposite direction of Collider*/
+		/*Ray going in opposite direction of Collider*/
 		Math::Vec3D && v = _Collider->GetGlobalPosition() - _Pos;
-		bool isFinite    = _MaxLength;
+		bool isFinite = _MaxLength;
 		if (_RayDir.Dot(v) < 0.f)
 			return false;
 		auto l = v.Dot(_RayDir);
-		auto && w = (_RayDir) * l;
+		auto && w = (_RayDir)* l;
 		auto && u = w - v;
 		if (u.MagnitudeSqr() > _Collider->GetRadius() * _Collider->GetRadius())
 			return false;
@@ -297,10 +300,10 @@ namespace Dystopia
 		case false:
 
 			/*Insert Collision Info*/
-			_OutputResult->mEdgeNormal       = _Collider->GetGlobalPosition() - _Pos + (_RayDir*t);
+			_OutputResult->mEdgeNormal = _Collider->GetGlobalPosition() - _Pos + (_RayDir*t);
 			_OutputResult->mTimeIntersection = t;
-			_OutputResult->mCollisionPoint   = _Pos + (_RayDir*t);
-			_OutputResult->mCollidedWith     = _Collider->GetOwner();
+			_OutputResult->mCollisionPoint = _Pos + (_RayDir*t);
+			_OutputResult->mCollidedWith = _Collider->GetOwner();
 			return true;
 			break;
 		}
@@ -314,15 +317,15 @@ namespace Dystopia
 			return false;
 		auto && ListOfEdge = _Collider->GetConvexEdges();
 		bool    isColliding = false;
-		_OutputResult->mTimeIntersection =  99999.f;
+		_OutputResult->mTimeIntersection = 99999.f;
 		for (auto const & elem : ListOfEdge)
 		{
 			/*Check if the edge normal is facing the ray*/
 			if (elem.mNorm3.Dot(_RayDir) >= 0.f || (_Pos - elem.mPos).Dot(_RayDir) > 0.f)
 				continue;
 			/*Check if the ray lies within the edge*/
-			auto && v1      = _Pos - elem.mPos;
-			auto  v1_copy   = v1;
+			auto && v1 = _Pos - elem.mPos;
+			auto  v1_copy = v1;
 			auto && v2 = _Pos - (elem.mPos + elem.mVec3);
 			if (v1.Dot(elem.mVec3) < 0.f)
 			{
@@ -335,7 +338,7 @@ namespace Dystopia
 				v2.Negate<Math::NegateFlag::X>();
 #endif
 
-		}
+			}
 			else if (v1.Dot(elem.mVec3) > elem.mVec3.Dot(elem.mVec3))
 			{
 #if CLOCKWISE
@@ -368,7 +371,7 @@ namespace Dystopia
 
 			if (time < _OutputResult->mTimeIntersection)
 			{
-				if(_MaxLength)
+				if (_MaxLength)
 					if ((time * _RayDir).MagnitudeSqr() > _MaxLength * _MaxLength)
 						continue;
 				DEBUG_PRINT(eLog::ERROR, "My Pos      %f %f %f \n", static_cast<float>(_Pos.x), static_cast<float>(_Pos.y), static_cast<float>(_Pos.z));
@@ -376,7 +379,7 @@ namespace Dystopia
 				DEBUG_PRINT(eLog::ERROR, "Edge Normal %f %f %f \n", static_cast<float>(elem.mNorm3.x), static_cast<float>(elem.mNorm3.y), static_cast<float>(elem.mNorm3.z));
 				DEBUG_PRINT(eLog::ERROR, "CosTheta    %f", cosTheta);
 				DEBUG_PRINT(eLog::ERROR, "Adj         %f", adj);
-				DEBUG_PRINT(eLog::ERROR, "Time         %f",time);
+				DEBUG_PRINT(eLog::ERROR, "Time         %f", time);
 				_OutputResult->mTimeIntersection = _OutputResult->mTimeIntersection > time ? time : _OutputResult->mTimeIntersection;
 				_OutputResult->mEdgeNormal = elem.mNorm3;
 				_OutputResult->mfPeneDepth = 0;

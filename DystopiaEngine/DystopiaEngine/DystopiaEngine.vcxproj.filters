@@ -403,6 +403,9 @@
     <ClCompile Include="Source\Math\Vector\Vector2.cpp">
       <Filter>Math\Vector</Filter>
     </ClCompile>
+	 <ClCompile Include="Source\Component\AudioListener.cpp">
+      <Filter>Game Engine\Components\Audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -1118,6 +1121,9 @@
     </ClInclude>
     <ClInclude Include="Include\Math\Vectors.h">
       <Filter>Math\Vector</Filter>
+    </ClInclude>
+	<ClInclude Include="Include\Component\AudioListener.h">
+      <Filter>Game Engine\Components\Audio</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

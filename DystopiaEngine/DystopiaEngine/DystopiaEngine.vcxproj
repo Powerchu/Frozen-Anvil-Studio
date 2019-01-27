@@ -29,6 +29,7 @@
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
     <ClCompile Include="Include\IO\XMLParser.cpp" />
+    <ClCompile Include="Source\Component\AudioListener.cpp" />
     <ClCompile Include="Include\System\Database\DataSheet.cpp" />
     <ClCompile Include="Source\Math\Vector\Vector2.cpp" />
     <ClCompile Include="Source\Math\Vector\Vector3.cpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="Include\Allocator\StackAlloc.h" />
     <ClInclude Include="Include\Allocator\StackAllocImpl.h" />
     <ClInclude Include="Include\Behaviour\AI\AISystem.h" />
+    <ClInclude Include="Include\Component\AudioListener.h" />
     <ClInclude Include="Include\Component\RayCollider.h" />
     <ClInclude Include="Include\Component\PointCollider.h" />
     <ClInclude Include="Include\DataStructure\Delegate.h" />
