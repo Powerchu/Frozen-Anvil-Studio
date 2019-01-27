@@ -56,7 +56,7 @@ void Dystopia::SoundSystem::PreInit(void)
 
 bool Dystopia::SoundSystem::Init(void)
 {
-	if (!mpFMOD || mpFMOD->init(512, FMOD_INIT_3D_RIGHTHANDED, 0) != FMOD_OK)
+	if (!mpFMOD || mpFMOD->init(512, FMOD_INIT_NORMAL, 0) != FMOD_OK)
 		return false;
 
 	return true;
@@ -195,7 +195,7 @@ Dystopia::Sound* Dystopia::SoundSystem::LoadSound(const HashString& _file)
 		return mMapOfSounds[soundName];
 
 	FMOD::Sound *pSound;
-	FMOD_RESULT result = mpFMOD->createSound(path.c_str(), FMOD_CREATESAMPLE | FMOD_LOWMEM | FMOD_3D, nullptr, &pSound);
+	FMOD_RESULT result = mpFMOD->createSound(path.c_str(), FMOD_CREATESAMPLE | FMOD_LOWMEM | FMOD_3D | FMOD_3D_LINEARROLLOFF |  FMOD_3D_INVERSEROLLOFF, nullptr, &pSound);
 	if (result == FMOD_OK)
 		return mMapOfSounds[soundName] = new Sound{ pSound, soundName };
 
