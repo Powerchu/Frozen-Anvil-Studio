@@ -50,7 +50,7 @@
       <Filter>Game Engine\Systems\Window\Window</Filter>
     </ClCompile>
     <ClCompile Include="Source\IO\TextSerialiser.cpp">
-      <Filter>IO\TextSerialiser</Filter>
+      <Filter>Game Engine\Components\Colliders\IO\TextSerialiser</Filter>
     </ClCompile>
     <ClCompile Include="Source\Math\Matrix4.cpp">
       <Filter>Math\Matrix\Matrix4</Filter>
@@ -95,7 +95,7 @@
       <Filter>Game Engine\Systems\Event</Filter>
     </ClCompile>
     <ClCompile Include="Source\IO\BinarySerializer.cpp">
-      <Filter>IO\BinarySerialiser</Filter>
+      <Filter>Game Engine\Components\Colliders\IO\BinarySerialiser</Filter>
     </ClCompile>
     <ClCompile Include="Source\Component\RigidBody.cpp">
       <Filter>Game Engine\Components\Physics</Filter>
@@ -134,7 +134,7 @@
       <Filter>Game Engine\Systems\Profiler\ProfileInfo</Filter>
     </ClCompile>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp">
-      <Filter>IO\ImageParser\lodepng</Filter>
+      <Filter>Game Engine\Components\Colliders\IO\ImageParser\lodepng</Filter>
     </ClCompile>
     <ClCompile Include="Source\Editor\PLogInfo.cpp">
       <Filter>Editor\Main\Panels\Performance</Filter>
@@ -227,16 +227,16 @@
       <Filter>Game Engine\SubSystems\Texture\Texture\Atlas</Filter>
     </ClCompile>
     <ClCompile Include="Source\IO\Image.cpp">
-      <Filter>IO\ImageParser\Image</Filter>
+      <Filter>Game Engine\Components\Colliders\IO\ImageParser\Image</Filter>
     </ClCompile>
     <ClCompile Include="Source\IO\PNGParser.cpp">
-      <Filter>IO\ImageParser\PNG</Filter>
+      <Filter>Game Engine\Components\Colliders\IO\ImageParser\PNG</Filter>
     </ClCompile>
     <ClCompile Include="Source\IO\BitmapParser.cpp">
-      <Filter>IO\ImageParser\BMP</Filter>
+      <Filter>Game Engine\Components\Colliders\IO\ImageParser\BMP</Filter>
     </ClCompile>
     <ClCompile Include="Source\IO\DDSParser.cpp">
-      <Filter>IO\ImageParser\DDS</Filter>
+      <Filter>Game Engine\Components\Colliders\IO\ImageParser\DDS</Filter>
     </ClCompile>
     <ClCompile Include="Source\System\Graphics\MeshSystem.cpp">
       <Filter>Game Engine\SubSystems\Mesh\MeshSystem</Filter>
@@ -347,7 +347,7 @@
       <Filter>Game Engine\SubSystems\Texture\TextureSystem</Filter>
     </ClCompile>
     <ClCompile Include="Include\IO\XMLParser.cpp">
-      <Filter>IO\XMLParser</Filter>
+      <Filter>Game Engine\Components\Colliders\IO\XMLParser</Filter>
     </ClCompile>
     <ClCompile Include="Source\DataStructure\OString.cpp">
       <Filter>DataStructures\HashString</Filter>
@@ -361,7 +361,12 @@
     <ClCompile Include="Source\Component\Colliders\PointCollider.cpp">
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Component\Colliders\RayCollider.cpp" />
+    <ClCompile Include="Source\Component\Colliders\RayCollider.cpp">
+      <Filter>Game Engine\Components\Colliders</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\AudioListener.cpp">
+      <Filter>Game Engine\Components\Audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -440,7 +445,7 @@
       <Filter>Math\Quaternion</Filter>
     </ClInclude>
     <ClInclude Include="Include\IO\ImageParser.h">
-      <Filter>IO\ImageParser</Filter>
+      <Filter>Game Engine\Components\Colliders\IO\ImageParser</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Graphics\Texture2D.h">
       <Filter>Game Engine\SubSystems\Texture\Texture\Texture2D</Filter>
@@ -464,7 +469,7 @@
       <Filter>Game Engine\Objects</Filter>
     </ClInclude>
     <ClInclude Include="Include\IO\TextSerialiser.h">
-      <Filter>IO\TextSerialiser</Filter>
+      <Filter>Game Engine\Components\Colliders\IO\TextSerialiser</Filter>
     </ClInclude>
     <ClInclude Include="Include\Math\Matrix4.h">
       <Filter>Math\Matrix\Matrix4</Filter>
@@ -476,7 +481,7 @@
       <Filter>Game Engine\SubSystems\Mesh\Raw</Filter>
     </ClInclude>
     <ClInclude Include="Include\IO\Serialiser.h">
-      <Filter>IO</Filter>
+      <Filter>Game Engine\Components\Colliders\IO</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Graphics\Mesh.h">
       <Filter>Game Engine\SubSystems\Mesh\Mesh</Filter>
@@ -548,7 +553,7 @@
       <Filter>Game Engine\Systems\Event</Filter>
     </ClInclude>
     <ClInclude Include="Include\IO\BinarySerializer.h">
-      <Filter>IO\BinarySerialiser</Filter>
+      <Filter>Game Engine\Components\Colliders\IO\BinarySerialiser</Filter>
     </ClInclude>
     <ClInclude Include="Include\Component\Collider.h">
       <Filter>Game Engine\Components\Colliders</Filter>
@@ -593,7 +598,7 @@
       <Filter>Game Engine\Systems\Profiler\ProfileInfo</Filter>
     </ClInclude>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h">
-      <Filter>IO\ImageParser\lodepng</Filter>
+      <Filter>Game Engine\Components\Colliders\IO\ImageParser\lodepng</Filter>
     </ClInclude>
     <ClInclude Include="Include\Editor\PLogInfo.h">
       <Filter>Editor\Main\Panels\Performance</Filter>
@@ -761,7 +766,7 @@
       <Filter>Game Engine\SubSystems\Texture\Texture\Atlas</Filter>
     </ClInclude>
     <ClInclude Include="Include\IO\Image.h">
-      <Filter>IO\ImageParser\Image</Filter>
+      <Filter>Game Engine\Components\Colliders\IO\ImageParser\Image</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Graphics\MeshSystem.h">
       <Filter>Game Engine\SubSystems\Mesh\MeshSystem</Filter>
@@ -947,7 +952,7 @@
       <Filter>Game Engine\SubSystems\Font\FontSystem</Filter>
     </ClInclude>
     <ClInclude Include="Include\IO\XMLParser.h">
-      <Filter>IO\XMLParser</Filter>
+      <Filter>Game Engine\Components\Colliders\IO\XMLParser</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Graphics\ShaderSystem.h">
       <Filter>Game Engine\SubSystems\Shader\ShaderSystem</Filter>
@@ -1000,7 +1005,12 @@
     <ClInclude Include="Include\Component\PointCollider.h">
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Component\RayCollider.h" />
+    <ClInclude Include="Include\Component\RayCollider.h">
+      <Filter>Game Engine\Components\Colliders</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\AudioListener.h">
+      <Filter>Game Engine\Components\Audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1089,12 +1099,6 @@
     </Filter>
     <Filter Include="Editor\Editor">
       <UniqueIdentifier>{b67f1b8d-6bf4-43af-b410-6dbe80c16d23}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="IO">
-      <UniqueIdentifier>{71af5d2c-d76f-466e-86b2-86752b7aff0c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="IO\TextSerialiser">
-      <UniqueIdentifier>{500db7cd-deed-4efd-b173-f377dfb115d3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game Engine\Components\Camera">
       <UniqueIdentifier>{a431a473-6a2d-4d39-8e59-fa4404bc38b4}</UniqueIdentifier>
@@ -1246,24 +1250,6 @@
     <Filter Include="Game Engine\SubSystems\Texture\Texture\Atlas">
       <UniqueIdentifier>{21d68eec-32ed-4d4c-94be-94c181d2078c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="IO\BinarySerialiser">
-      <UniqueIdentifier>{d6c8bc2a-a1b7-4fde-9efc-c753457d7130}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="IO\ImageParser">
-      <UniqueIdentifier>{8fc9bc42-e537-436b-9608-0fb8466bebc6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="IO\ImageParser\Image">
-      <UniqueIdentifier>{4e5a18a1-9470-4410-b912-eeadf33ae0ac}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="IO\ImageParser\PNG">
-      <UniqueIdentifier>{f8bbf271-1003-43a6-9c54-71af498d2fea}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="IO\ImageParser\BMP">
-      <UniqueIdentifier>{dc3c0520-38ef-4426-b7d8-3b558bff7bc9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="IO\ImageParser\DDS">
-      <UniqueIdentifier>{44ee47a8-4e3d-4d72-bbf3-9ea5914144ec}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game Engine\SubSystems\Mesh\MeshSystem">
       <UniqueIdentifier>{a96e69f4-5b52-41c9-9c07-589491f8a8df}</UniqueIdentifier>
     </Filter>
@@ -1381,9 +1367,6 @@
     <Filter Include="Lib\GraphicsLib">
       <UniqueIdentifier>{e7a040d4-daaf-41bc-8530-1062480d5e84}</UniqueIdentifier>
     </Filter>
-    <Filter Include="IO\ImageParser\lodepng">
-      <UniqueIdentifier>{447b179b-b152-4f92-9cc2-48eb8f301131}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Math\Geo">
       <UniqueIdentifier>{83d13544-6880-4b8f-93ca-6c0aa0c54910}</UniqueIdentifier>
     </Filter>
@@ -1398,9 +1381,6 @@
     </Filter>
     <Filter Include="Game Engine\SubSystems\Font\FontData">
       <UniqueIdentifier>{baba61c1-0814-46a9-ac90-88e65658f6ee}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="IO\XMLParser">
-      <UniqueIdentifier>{637d81a6-d5ee-481d-8157-d3acba2c19d6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game Engine\SubSystems\Shader\ShaderSystem">
       <UniqueIdentifier>{f0232027-e837-4efa-8240-b5ba0faa7a63}</UniqueIdentifier>
@@ -1434,6 +1414,36 @@
     </Filter>
     <Filter Include="Preprocessor">
       <UniqueIdentifier>{af73041d-894d-4be1-9ac1-a597e6a69bf5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Colliders\IO">
+      <UniqueIdentifier>{71af5d2c-d76f-466e-86b2-86752b7aff0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Colliders\IO\TextSerialiser">
+      <UniqueIdentifier>{500db7cd-deed-4efd-b173-f377dfb115d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Colliders\IO\BinarySerialiser">
+      <UniqueIdentifier>{d6c8bc2a-a1b7-4fde-9efc-c753457d7130}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Colliders\IO\ImageParser">
+      <UniqueIdentifier>{8fc9bc42-e537-436b-9608-0fb8466bebc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Colliders\IO\ImageParser\Image">
+      <UniqueIdentifier>{4e5a18a1-9470-4410-b912-eeadf33ae0ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Colliders\IO\ImageParser\PNG">
+      <UniqueIdentifier>{f8bbf271-1003-43a6-9c54-71af498d2fea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Colliders\IO\ImageParser\BMP">
+      <UniqueIdentifier>{dc3c0520-38ef-4426-b7d8-3b558bff7bc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Colliders\IO\ImageParser\DDS">
+      <UniqueIdentifier>{44ee47a8-4e3d-4d72-bbf3-9ea5914144ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Colliders\IO\ImageParser\lodepng">
+      <UniqueIdentifier>{447b179b-b152-4f92-9cc2-48eb8f301131}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Colliders\IO\XMLParser">
+      <UniqueIdentifier>{637d81a6-d5ee-481d-8157-d3acba2c19d6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

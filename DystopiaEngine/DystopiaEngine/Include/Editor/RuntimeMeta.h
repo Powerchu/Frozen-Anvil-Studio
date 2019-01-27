@@ -50,6 +50,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/SpriteRenderer.h"
 #include "Component/Transform.h"
 #include "Component/TextRenderer.h"
+#include "Component/AudioListener.h"
 
 #include "IO/TextSerialiser.h"
 
