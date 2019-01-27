@@ -25,13 +25,13 @@ Dystopia::ProfilerAction::ProfilerAction(const std::string& _strModule, const st
 void Dystopia::ProfilerAction::PostDuration(ProfilerAction::Precision_t _dur)
 {
 #if !defined(DISABLE_PROFILER)
-	auto& info = EngineCore::GetInstance()->GetSystem<Profiler>()->GetInfo();
+	auto& info = CORE::Get<Profiler>()->GetInfo();
 
 	size_t time = _dur.count();
 	auto& mod = info[strModule];
 
 	mod.mTotal += time;
-	mod.mTimes[strFunction] = time;
+	mod.mTimes[strFunction] += time;
 #else
 	_dur;
 #endif

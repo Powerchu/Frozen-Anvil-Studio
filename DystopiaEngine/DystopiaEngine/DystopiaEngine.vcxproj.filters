@@ -1119,6 +1119,9 @@
     <ClInclude Include="Include\Math\Vectors.h">
       <Filter>Math\Vector</Filter>
     </ClInclude>
+    <ClInclude Include="Include\System\Particle\ParticleAffector.h">
+      <Filter>Game Engine\Systems\Particle\Affectors</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1603,6 +1606,9 @@
     </Filter>
     <Filter Include="Game Engine\Components\Emitter">
       <UniqueIdentifier>{179d56d1-c7a5-4165-9547-c4f0f0080531}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Particle\Affectors">
+      <UniqueIdentifier>{71fbe48b-3367-4a5b-9c82-5c2c2974947a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

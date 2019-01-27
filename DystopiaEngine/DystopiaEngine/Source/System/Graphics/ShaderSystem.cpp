@@ -188,20 +188,26 @@ void Dystopia::ShaderSystem::SaveCustomShaders(void) noexcept
 	auto path = pFileSys->GetProjectFolders<std::string>(eFileDir::eResource) + "ShaderList.txt";
 	auto file = Serialiser::OpenFile<TextSerialiser>(path.c_str(), Serialiser::MODE_WRITE);
 
-	char buffer[100]{};
-	auto start = Ut::Copy("Shader/", &buffer[0]);
+	char buffer[128]{};
+	auto start = Ut::Copy("Shader\\\\", &buffer[0]);
 
 	file.InsertStartBlock("PROGRAMS");
 	for (auto& e : mPrograms)
 	{
-		Ut::Copy(e.GetName(), start);
-		file << static_cast<char*>(buffer);
+		if (e.IsCustomProgram())
+		{
+			Ut::Copy(e.GetName(), start);
+			file << static_cast<char*>(buffer);
+		}
 	}
 
 	for (auto& e : mShaders)
 	{
-		file.InsertStartBlock("SHADER");
-		e.Unserialize(file);
+		if (e.IsCustomShader())
+		{
+			file.InsertStartBlock("SHADER");
+			e.Unserialize(file);
+		}
 	}
 }
 
