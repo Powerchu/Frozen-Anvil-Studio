@@ -224,8 +224,8 @@ char Dystopia::SoundSystem::RegisterNewListener(AudioListener * const & _Listene
 	else
 	{
 		char size = static_cast<char>(mMapOfListeners.size());
-		mpFMOD->set3DNumListeners(size + 1);
-		mMapOfListeners[_Listener] =  size + 1;
+		mpFMOD->set3DNumListeners(size);
+		mMapOfListeners[_Listener] =  size;
 		return size;
 	}
 }
