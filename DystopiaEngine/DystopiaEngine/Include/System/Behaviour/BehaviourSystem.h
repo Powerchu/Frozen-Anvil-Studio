@@ -95,11 +95,6 @@ namespace Dystopia
 
 		void ClearAllEditorBehaviours();
 
-		void Test(const char *, eFileTrackStatus)
-		{
-			int i;
-		}
-
 #if EDITOR
 
 		void PollChanges(void);
