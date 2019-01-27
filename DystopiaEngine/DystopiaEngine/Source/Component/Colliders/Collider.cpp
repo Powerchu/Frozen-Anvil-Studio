@@ -326,6 +326,22 @@ namespace Dystopia
 		return this->mv3Offset;
 	}
 
+	void Collider::SetOffSet(Math::Vec3D _offset)
+	{
+		this->mv3Offset = _offset;
+	}
+
+	Math::Vec3D Collider::GetScale() const
+	{
+		return this->mScale;
+	}
+
+	void Collider::SetScale(Math::Vec3D _scale)
+	{
+		mScale = _scale;
+	}
+	
+
 	AutoArray<Gfx::Vertex> Collider::GetVertexBuffer() const
 	{
 		return mDebugVertices;
