@@ -340,13 +340,13 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 	}
 
 	std::sort(set1.begin(), set1.end(), [](const auto& _rhs, const auto& _lhs) {
-		return _rhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z < _lhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
+		return _rhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z > _lhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
 	});
 	std::sort(set2.begin(), set2.end(), [](const auto& _rhs, const auto& _lhs) {
-		return _rhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z < _lhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
+		return _rhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z > _lhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
 	});
 	std::sort(set3.begin(), set3.end(), [](const auto& _rhs, const auto& _lhs) {
-		return _rhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z < _lhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
+		return _rhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z > _lhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
 	});
 
 	// Draw the game objects to screen based on the camera
