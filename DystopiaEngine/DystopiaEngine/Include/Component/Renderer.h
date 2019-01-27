@@ -39,6 +39,9 @@ namespace Dystopia
 
 	class _DLL_EXPORT Renderer : public Component
 	{
+	protected:
+		using ShaderVariant_t = Variant<int, bool, float, Math::Vec2, Math::Vec4>;
+
 	public:
 
 		using SYSTEM = GraphicsSystem;
@@ -82,6 +85,7 @@ namespace Dystopia
 
 		template <typename T>
 		void SetManualShaderOverride(char const*, T&&);
+		AutoArray<Tuple<OString, ::Gfx::eUniform_t, ShaderVariant_t>>& GetOverrides(void);
 
 		Renderer* Duplicate(void) const;
 

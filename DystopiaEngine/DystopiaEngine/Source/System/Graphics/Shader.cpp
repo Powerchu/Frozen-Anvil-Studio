@@ -36,8 +36,9 @@ namespace
 }
 
 
-Dystopia::Shader::Shader(OString const& _strName) noexcept :
-	mID{ pGfxAPI->CreateShaderPipeline() }, mStages{ ::Gfx::ShaderStage::NONE }, mstrName{ _strName }, mbUpdate{ true }
+Dystopia::Shader::Shader(OString const& _strName, bool _bIsCustom) noexcept :
+	mID{ pGfxAPI->CreateShaderPipeline() }, mStages{ ::Gfx::ShaderStage::NONE }, mstrName{ _strName }, 
+	mbUpdate{ true }, mbIsCustom{ _bIsCustom }
 {
 
 }
@@ -153,6 +154,11 @@ void Dystopia::Shader::Unbind(void) const
 OString const& Dystopia::Shader::GetName(void) const noexcept
 {
 	return mstrName;
+}
+
+bool Dystopia::Shader::IsCustomShader(void) const noexcept
+{
+	return mbIsCustom;
 }
 
 void Dystopia::Shader::Unserialize(TextSerialiser& _file)

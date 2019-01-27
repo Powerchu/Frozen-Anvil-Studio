@@ -59,6 +59,15 @@ namespace Dystopia
 
 	} FileErrorCode;
 
+	typedef enum eFileTrackStatus: char
+	{
+		MODIFIED,
+		ADDED,
+		REMOVE,
+		RENAME,
+
+	} FileTrackStatus;
+
 	typedef void* FileTrackInfoID_t;
 	typedef GUID_t FileEventCallBack_t;
 
@@ -159,9 +168,10 @@ namespace Dystopia
 		
 	private:
 
-		using PathTable     = std::map<eFileDir, std::string>;
-		using EventInfo     = std::pair<GUID_t, CallBackEvent>;
-		using FileTrackInfo = std::map<FileTrackInfoID_t, std::map<GUID_t, CallBackEvent>>;
+		using PathTable         = std::map<eFileDir, std::string>;
+		using EventInfo         = std::pair<GUID_t, CallBackEvent>;
+		using FileTrackInfo     = std::map<FileTrackInfoID_t, std::map<GUID_t, CallBackEvent>>;
+		using CallBackTrackInfo = std::pair<std::string, FileTrackStatus>;
 
 		/*Static Members*/
 		static PathTable            mPathTable;
@@ -174,7 +184,7 @@ namespace Dystopia
 
 		/*Private Function*/
 		unsigned GetChangesInfo(DetectionInfo & _DetectionInfo, std::string * _ChangesBuffer, size_t _size);
-
+		unsigned GetChangesInfo(DetectionInfo & _DetectionInfo, CallBackTrackInfo * _ChangesBuffer, size_t _size);
 		/*EXPERIMENTAL STUFF*/
 
 		/*Callback Function for ReadDirectoryChangesExW*/

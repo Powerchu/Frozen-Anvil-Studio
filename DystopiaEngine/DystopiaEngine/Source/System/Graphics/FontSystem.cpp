@@ -22,7 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/File/FileSystem.h"
 
 #include "Globals.h"
-#include "Math/Vector2.h"
+#include "Math/Vectors.h"
 #include "Utility/Utility.h"
 #include "DataStructure/AutoArray.h"
 #include "DataStructure/MagicArray.h"

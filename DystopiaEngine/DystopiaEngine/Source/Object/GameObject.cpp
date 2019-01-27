@@ -426,10 +426,14 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 	const auto& children = mTransform.GetAllChild();
 	for (const auto& child : children)
 	{
+		auto p_id = child->GetParentID();
+		child->SetParentID(0);
 		auto o = child->GetOwner()->Duplicate();
+		child->SetParentID(p_id);
 		o->mTransform.SetParentID(p->GetID());
 		o->Awake();
 	}
+
 	p->mTransform.SetGlobalPosition(mTransform.GetGlobalPosition());
 	p->mTransform.SetGlobalScale(mTransform.GetGlobalScale());
 	p->Awake();

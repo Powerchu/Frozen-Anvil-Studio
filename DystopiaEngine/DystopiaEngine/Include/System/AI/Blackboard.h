@@ -20,7 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <unordered_map>
 #include "DataStructure/SharedPtr.h"
 #include "Object/GameObject.h"
-#include "Math/Vector4.h"
+#include "Math/Vectors.h"
 #include "DataStructure/OString.h"
 
 

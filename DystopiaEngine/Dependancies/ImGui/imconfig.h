@@ -59,8 +59,7 @@
         ImVec4(const MyVec4& f) { x = f.x; y = f.y; z = f.z; w = f.w; }     \
         operator MyVec4() const { return MyVec4(x,y,z,w); }
 */
-#include "Math/Vector4.h"
-#include "Math/Vector2.h"
+#include "Math/Vectors.h"
 
 #define IM_VEC2_CLASS_EXTRA                                                 \
         ImVec2(const Math::Vec2& f) { x = f.x; y = f.y; }                       \

@@ -20,7 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/MeshSystem.h"
 #include "Object/GameObject.h"
 #include "Object/ObjectFlags.h"
-#include "Math/Vector4.h"
+#include "Math/Vectors.h"
 #include "Component/RigidBody.h"
 #include "Component/Circle.h"
 #include "IO/TextSerialiser.h"
@@ -156,11 +156,12 @@ namespace Dystopia
 		/*THIS IS THE REAL VERSION*/
 		_out << float(m_radius);
 		_out << mbIsTrigger;
-
+		_out << static_cast<unsigned>(mColLayer);
 		_out.InsertEndBlock("Circle_Collider2D");
 	}
 	void Circle::Unserialise(TextSerialiser& _in)
 	{
+		unsigned collayer_temp = 0;
 		_in.ConsumeStartBlock();
 		Component::Unserialise(_in);
 		_in >> mv3Offset[0];
@@ -172,12 +173,13 @@ namespace Dystopia
 		_in >> (mPosition[2]);
 		_in >> m_radius;
 		_in >> mbIsTrigger;
+		_in >> collayer_temp;
 		_in.ConsumeEndBlock();
 
 		mDebugVertices.clear();
 		mScale[0] = m_radius;
 		mScale[1] = m_radius;
-
+		mColLayer = static_cast<eColLayer>(collayer_temp);
 	}
 
 	/*Collision Check Functions*/
@@ -491,6 +493,7 @@ namespace Dystopia
 		ePositionOffsetVectorFields();
 		eScaleField();
 		eNumberOfContactsLabel();
+		Collider::EditorUI();
 	}
 #endif
 }

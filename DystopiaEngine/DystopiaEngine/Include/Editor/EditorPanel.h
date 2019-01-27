@@ -16,7 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/HashString.h"
 #include "Editor/EditorMessages.h"
 #include "IO/TextSerialiser.h"
-#include "Math/Vector2.h"
+#include "Math/Vectors.h"
 
 namespace Editor
 {

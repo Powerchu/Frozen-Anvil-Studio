@@ -17,7 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/AutoArray.h"
 #include "DataStructure/MagicArray.h"
 #include "Editor/EditorSystem.h"
-#include "Math/Vector4.h"
+#include "Math/Vectors.h"
 
 namespace Dystopia
 {

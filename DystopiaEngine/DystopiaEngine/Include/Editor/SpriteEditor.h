@@ -14,7 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _SPRITE_EDITOR_H_
 #define _SPRITE_EDITOR_H_
 #include "DataStructure/HashString.h"
-#include "Math/Vector2.h"
+#include "Math/Vectors.h"
 #include "Editor/EditorPanel.h"
 
 namespace Dystopia

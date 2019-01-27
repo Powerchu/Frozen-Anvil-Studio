@@ -16,8 +16,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Window/WindowManager.h"
 #include "System/Window/Window.h"
 #include "System/Driver/Driver.h"
-
-#include "Math/Vector2.h"
+#include "System/Time/TimeSystem.h"
+#include "Math/Vectors.h"
 
 #include <utility>
 
@@ -215,7 +215,6 @@ Dystopia::InputManager::~InputManager(void)
 bool Dystopia::InputManager::Init(void)
 {
 	EngineCore::GetInstance()->GetSystem<WindowManager>()->RegisterMouseData(&mMouseInput);
-	LoadDefaults();
 	mGamePad.PollInputs();
 	return true;
 }
@@ -271,6 +270,11 @@ void Dystopia::InputManager::Update(const float _dt)
 
 	}
 
+	if (mGamePad.mfTimer > 0.0f)
+		mGamePad.mfTimer -= mfDecay * _dt;
+
+	mGamePad.VibrateHelper();
+
 	/*Commenting this out makes the input smoother*/
 	//SetKeyboardState(Reset);
 }
@@ -297,6 +301,7 @@ void Dystopia::InputManager::LoadDefaults(void)
 
 void Dystopia::InputManager::LoadSettings(DysSerialiser_t& _in)
 {
+	mAxisMapping.clear();
 	int mapSize = 0;
 	_in >> mapSize;
 
@@ -314,6 +319,8 @@ void Dystopia::InputManager::LoadSettings(DysSerialiser_t& _in)
 		float sens;
 		int type;
 		int axis;
+		bool snap;
+		bool invert;
 
 		_in >> name;
 		_in >> mPosDes;
@@ -327,9 +334,11 @@ void Dystopia::InputManager::LoadSettings(DysSerialiser_t& _in)
 		_in >> sens;
 		_in >> type;
 		_in >> axis;
+		_in >> snap;
+		_in >> invert;
 
 		MapButton(VirtualButton(name, mPosDes, mNegDes, static_cast<eButton>(mPosBtn), static_cast<eButton>(mNegBtn)
-								, static_cast<eButton>(mAltPosBtn), static_cast<eButton>(mAltNegBtn), grav, deadR, sens, type, axis));
+								, static_cast<eButton>(mAltPosBtn), static_cast<eButton>(mAltNegBtn), grav, deadR, sens, type, axis, snap, invert));
 	}
 }
 
@@ -350,6 +359,8 @@ void Dystopia::InputManager::SaveSettings(DysSerialiser_t& _out)
 		_out << val.mfSensitivity;
 		_out << val.TypeSelectedInd;
 		_out << val.AxisSelectedInd;
+		_out << val.mbSnapping;
+		_out << val.mbInvert;
 	}
 }
 
@@ -571,14 +582,20 @@ bool Dystopia::InputManager::IsController() const
 	return mGamePad.IsConnected();
 }
 
-void Dystopia::InputManager::SetVibrate(unsigned short _ltrg, unsigned short _rtrg)
+void Dystopia::InputManager::SetVibrate(unsigned short _ltrg, unsigned short _rtrg) const
 {
 	mGamePad.Vibrate(_ltrg, _rtrg); //0-65534
 }
 
-void Dystopia::InputManager::StopVibrate()
+void Dystopia::InputManager::StopVibrate() const
 {
 	mGamePad.StopVibrate();
+}
+
+void Dystopia::InputManager::InvokeVibration(float _intensity, float _decay, float _maxTime, float _balance)
+{
+	mfDecay = _decay;
+	mGamePad.SetVibrationSetting(_intensity, _maxTime, _balance);
 }
 
 float Dystopia::InputManager::GetAnalogY(int _state) const
@@ -655,13 +672,17 @@ void Dystopia::InputManager::EditorUI()
 
 		static char buffer1[512];
 
-		auto tempComboStateCount = mAxisMapping.size();
-		for (auto i = 0; i < tempComboStateCount; i++)
+		const auto tempComboStateCount = mAxisMapping.size();
+		if (marrCombos.size() < tempComboStateCount)
 		{
-			marrCombos.Insert(ComboStruct());
+			for (auto i = 0; i < tempComboStateCount; i++)
+			{
+				marrCombos.Insert(ComboStruct());
+			}
 		}
 
 		EGUI::Indent();
+
 		int mapCount = 0;
 		for (auto &[key, val] : mAxisMapping)
 		{

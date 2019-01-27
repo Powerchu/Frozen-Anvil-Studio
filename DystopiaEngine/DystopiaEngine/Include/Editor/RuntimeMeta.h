@@ -50,6 +50,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/SpriteRenderer.h"
 #include "Component/Transform.h"
 #include "Component/TextRenderer.h"
+#include "Component/Emitter.h"
+#include "Component/AudioListener.h"
 
 #include "IO/TextSerialiser.h"
 
@@ -65,6 +67,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/GraphicsSystem.h"
 #include "System/Behaviour/BehaviourSystem.h"
 #include "System/Collision/CollisionSystem.h"
+#include "System/Particle/ParticleSystem.h"
 
 namespace Dystopia
 {

@@ -24,6 +24,8 @@ namespace Dystopia
 				std::make_pair(Tags::TAG_4, "Enemy"),
 				std::make_pair(Tags::TAG_5, "Skill"),
 				std::make_pair(Tags::TAG_6, "Form_Slam_Rock"),
+				std::make_pair(Tags::TAG_7, "Interactable"),
+				std::make_pair(Tags::TAG_8, "BlastInteractable"),
 				_TAG_(27) }
 	{
 	}

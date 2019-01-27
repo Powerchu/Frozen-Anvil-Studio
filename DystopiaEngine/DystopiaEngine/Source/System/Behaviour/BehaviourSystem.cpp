@@ -220,11 +220,6 @@ namespace Dystopia
 
 	void Dystopia::BehaviourSystem::PostInit(void)
 	{
-		/*TESTING*/
-		auto ptr = EngineCore::Get<FileSystem>();
-		auto fullname = ptr->GetFullPath("Test.txt", eFileDir::eResource);
-		auto temp = ptr->TrackFile("Font\\\\FileTest.txt", eFileDir::eResource);
-		EngineCore::Get<FileSystem>()->BindFileTrackEvent(temp, &Dystopia::BehaviourSystem::PreInit, this);
 	}
 
 	void Dystopia::BehaviourSystem::FixedUpdate(float _dt)

@@ -15,7 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/AutoArray.h"
 #include "DataStructure/HashString.h"
 #include "Utility/GUID.h"
-#include "Math/Vector2.h"
+#include "Math/Vectors.h"
 
 struct UserLinks
 {

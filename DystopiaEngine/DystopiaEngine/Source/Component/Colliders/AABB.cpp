@@ -169,11 +169,13 @@ namespace Dystopia
 		_out << mv3Offset[2];
 		_out << mfHeight;
 		_out << mfWidth;
+		_out << static_cast<unsigned>(mColLayer);
 		_out.InsertEndBlock("Box_Collider2D");
 
 	}
 	void  AABB::Unserialise(TextSerialiser& _in)
 	{
+		unsigned collayer_temp = 0;
 		_in.ConsumeStartBlock();
 		Component::Unserialise(_in);
 		_in >> mv3Offset[0];
@@ -181,7 +183,9 @@ namespace Dystopia
 		_in >> mv3Offset[2];
 		_in >> mfHeight;
 		_in >> mfWidth;
+		_in >> collayer_temp;
 		_in.ConsumeEndBlock();
+		mColLayer = static_cast<eColLayer>(collayer_temp);
 	}
 
 	//TODO: not yet

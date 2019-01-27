@@ -13,8 +13,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _GIZMO_H_
 #define _GIZMO_H_
-#include "Math/Vector4.h"
-#include "Math/Vector2.h"
+#include "Math/Vectors.h"
 #include "Editor/DragStatus.h"
 
 namespace EGUI
