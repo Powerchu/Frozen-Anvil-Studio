@@ -18,7 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Component/Component.h"		       /*Component Base Class*/
 #include "Component/ComponentList.h"           /*Component List*/
-#include "Math/Vector4.h"                      /*Vector*/
+#include "Math/Vectors.h"                      /*Vector*/
 #include "Math/Matrix4.h"
 #include "DataStructure/AutoArray.h"	       /*AutoArray Data Structure*/
 #include "Utility/MetaAlgorithms.h"		       // MetaFind

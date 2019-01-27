@@ -16,9 +16,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Component/Component.h"
 #include "Component/ComponentList.h"
-#include "Math/Vector4.h"
+#include "Math/Vectors.h"
 #include "Math/Matrix4.h"
-#include "Math/Vector2.h"
 #include "DataStructure/AutoArray.h"
 
 //#include "Math/Quaternion.h"

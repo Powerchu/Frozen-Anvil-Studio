@@ -167,7 +167,7 @@ void Dystopia::Renderer::Serialise(TextSerialiser& _out) const
 	_out.InsertStartBlock("Renderer");
 	Component::Serialise(_out);
 	//_out << EngineCore::GetInstance()->Get<FileSystem>()->ConvertToRelative(mTexturePath);
-	std::string rp = EngineCore::GetInstance()->Get<FileSystem>()->ConvertToRelative(std::string{ mTexturePath.c_str() });
+	std::string rp = CORE::Get<FileSystem>()->ConvertToRelative(std::string{ mTexturePath.c_str() });
 	auto pos = rp.find_last_of("/\\");
 	if (pos != std::string::npos)
 		_out << rp.substr(pos + 1);

@@ -29,8 +29,9 @@ namespace
 }
 
 
-Dystopia::ShaderProgram::ShaderProgram(void) noexcept
-	: mProgram{ pGfxAPI->CreateShaderProgram() }, mStage{ Gfx::ShaderStage::NONE }, mstrName{}, mVars{}
+Dystopia::ShaderProgram::ShaderProgram(bool _bIsCustom) noexcept
+	: mProgram{ pGfxAPI->CreateShaderProgram() }, mStage{ Gfx::ShaderStage::NONE }, mstrName{}, mVars{},
+	mbIsCustom{ _bIsCustom }
 {
 
 }
@@ -53,6 +54,11 @@ Dystopia::ShaderProgram::~ShaderProgram(void) noexcept
 OString const& Dystopia::ShaderProgram::GetName(void) const noexcept
 {
 	return mstrName;
+}
+
+bool Dystopia::ShaderProgram::IsCustomProgram(void) const noexcept
+{
+	return mbIsCustom;
 }
 
 void Dystopia::ShaderProgram::TrackChangesCallback(void)

@@ -74,12 +74,12 @@ Dystopia::Shader* Dystopia::ShaderSystem::GetShader(char const* _strName) const 
 	return nullptr;
 }
 
-Dystopia::Shader* Dystopia::ShaderSystem::CreateShader(char const* _strName) noexcept
+Dystopia::Shader* Dystopia::ShaderSystem::CreateShader(char const* _strName, bool _bCustom) noexcept
 {
 	if (auto p = GetShader(_strName))
 		return p;
 
-	return mShaders.Emplace(_strName);
+	return mShaders.Emplace(_strName, _bCustom);
 }
 
 Dystopia::ShaderProgram* Dystopia::ShaderSystem::CreateShaderProgram(::Gfx::ShaderStage _stage, char const* _strName, bool _bTrack) noexcept
@@ -89,7 +89,7 @@ Dystopia::ShaderProgram* Dystopia::ShaderSystem::CreateShaderProgram(::Gfx::Shad
 	if (auto ret = GetShaderProgram(strName.c_str()))
 		return ret;
 
-	auto p = mPrograms.Emplace();
+	auto p = mPrograms.Emplace(_bTrack);
 	if (p->LoadProgram(_stage, _strName, strName.c_str()))
 	{
 #		if EDITOR
@@ -166,7 +166,7 @@ void Dystopia::ShaderSystem::LoadShaderList(char const* _strPath, eFileDir _dir,
 	while (!file.EndOfInput())
 	{
 		file >> strName;
-		auto pShader = CreateShader(strName.c_str());
+		auto pShader = CreateShader(strName.c_str(), _bTrack);
 
 		if (pShader)
 		{

@@ -61,8 +61,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Globals.h"
 #include "Utility/DebugAssert.h"			// DEBUG_ASSERT
-#include "Math/Vector4.h"
-#include "Math/Vector2.h"
+#include "Math/Vectors.h"
 
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely used stuff from Windows headers
 #define NOMINMAX				// Disable Window header min & max macros
@@ -462,22 +461,22 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _View, Math::
 				auto Translation = Math::Translate(pos.x, pos.y);
 				s->UploadUniform("ModelMat", Translation * pOwner->GetComponent<Transform>()->GetGlobalRotation().Matrix() * Math::Translate(scaleV*Obj->GetOffSet()) * scaleM * Obj->GetTransformationMatrix());
 			}
-
+			
 			if (Obj->IsSleeping())
 			{
 				activeColor = SleepingColor;
 			}
-
+			
 			else if (Obj->HasCollision())
 			{
 				activeColor = CollidingColor;
 			}
-
+			
 			else if (Obj->IsTrigger())
 			{
 				activeColor = TriggerColor;
 			}
-
+			
 			else
 			{
 				activeColor = mvDebugColour;

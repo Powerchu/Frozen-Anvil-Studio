@@ -19,8 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/Framebuffer.h"
 #include "System/File/FileSystem.h"      // eFileDir
 #include "Math/MathFwd.h"
-#include "Math/Vector4.h"
-#include "Math/Vector2.h"
+#include "Math/Vectors.h"
 
 #include "Utility/Utility.h"
 

@@ -14,7 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 #ifndef _DOCK_H_
 #define _DOCK_H_
-#include "Math/Vector2.h"
+#include "Math/Vectors.h"
 
 // Work-In-Progress
 namespace EGUI

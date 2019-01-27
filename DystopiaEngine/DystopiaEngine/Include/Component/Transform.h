@@ -22,7 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/MetaAlgorithms.h"		// MetaFind
 
 #include "Math/Angles.h"
-#include "Math/Vector4.h"				// Vector4
+#include "Math/Vectors.h"				// Vector4
 #include "Math/Matrix4.h"				// Matrix4
 #include "Math/Quaternion.h"			// Quaternion
 

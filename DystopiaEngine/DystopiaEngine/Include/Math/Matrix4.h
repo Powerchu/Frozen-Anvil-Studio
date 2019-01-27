@@ -21,8 +21,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/DebugAssert.h"
 #endif // Debug only includes
 
-#include "Math/Vector4.h"		// Vector4
-#include "Math/Angles.h"		// Angle
+#include "Math/Angles.h"         // Angle
+#include "Math/Vector/Vector4.h" // Vector4
+
 
 namespace Math
 {
@@ -80,23 +81,6 @@ namespace Math
 
 		inline Vector4 _CALL operator* (const Vector4) const;
 
-#if !defined(_WIN64)	// We need these for win32 - pending fix in auto array
-		//inline void* operator new (std::size_t);
-		//inline void* operator new (std::size_t, const std::nothrow_t&) noexcept;
-		//inline void* operator new (std::size_t, void*) noexcept;
-
-		//inline void* operator new[](std::size_t);
-		//inline void* operator new[](std::size_t, const std::nothrow_t&) noexcept;
-		//inline void* operator new[](std::size_t, void*) noexcept;
-
-		//inline void operator delete (void*) noexcept;
-		//inline void operator delete (void*, const std::nothrow_t&) noexcept;
-		//inline void operator delete (void*, void*) noexcept;
-
-		//inline void operator delete[](void*) noexcept;
-		//inline void operator delete[](void*, const std::nothrow_t&) noexcept;
-		//inline void operator delete[](void*, void*) noexcept;
-#endif					// ! WIN64
 
 	private:
 		Vector4 mData[4];
@@ -203,17 +187,17 @@ inline Math::Matrix4& _CALL Math::Matrix4::Transpose(void) noexcept
 	// C D E F  ->  A E B F  ->  3 7 B F
 
 	// Transpose by moving around the internal floats. Note the row order
-	__m128 row0 = _mm_unpacklo_ps(mData[0].mData, mData[1].mData);
-	__m128 row2 = _mm_unpackhi_ps(mData[0].mData, mData[1].mData);
-	__m128 row1 = _mm_unpacklo_ps(mData[2].mData, mData[3].mData);
-	__m128 row3 = _mm_unpackhi_ps(mData[2].mData, mData[3].mData);
+	__m128 row0 = _mm_unpacklo_ps(mData[0].GetRaw(), mData[1].GetRaw());
+	__m128 row2 = _mm_unpackhi_ps(mData[0].GetRaw(), mData[1].GetRaw());
+	__m128 row1 = _mm_unpacklo_ps(mData[2].GetRaw(), mData[3].GetRaw());
+	__m128 row3 = _mm_unpackhi_ps(mData[2].GetRaw(), mData[3].GetRaw());
 
 	// movehl flips the order of assignment
-	// so we flip to get back the right order   // ie.
-	mData[0].mData = _mm_movelh_ps(row0, row1); // movelh : a1 a2 b1 b2
-	mData[1].mData = _mm_movehl_ps(row1, row0); // movehl : b3 b4 a3 a4
-	mData[2].mData = _mm_movelh_ps(row2, row3);
-	mData[3].mData = _mm_movehl_ps(row3, row2);
+	// so we flip to get back the right order     // ie.
+	mData[0] = Vec4{ _mm_movelh_ps(row0, row1) }; // movelh : a1 a2 b1 b2
+	mData[1] = Vec4{ _mm_movehl_ps(row1, row0) }; // movehl : b3 b4 a3 a4
+	mData[2] = Vec4{ _mm_movelh_ps(row2, row3) };
+	mData[3] = Vec4{ _mm_movehl_ps(row3, row2) };
 
 	return *this;
 }
@@ -428,76 +412,6 @@ inline Math::Matrix4 _CALL Math::operator/ (Matrix4 _lhs, const float _rhs)
 {
 	return _lhs /= _rhs;
 }
-
-//inline void* Math::Matrix4::operator new (std::size_t _sz)
-//{
-//	void* ret = _aligned_malloc(_sz, ALLIGN);
-//
-//	if (ret)
-//		return ret;
-//
-//	throw std::bad_alloc{};
-//}
-//
-//inline void* Math::Matrix4::operator new (std::size_t _sz, const std::nothrow_t&) noexcept
-//{
-//	return _aligned_malloc(_sz, ALLIGN);
-//}
-//
-//inline void* Math::Matrix4::operator new (std::size_t _sz, void* _ptr) noexcept
-//{
-//	return ::operator new(_sz, _ptr);
-//}
-//
-//inline void* Math::Matrix4::operator new[](std::size_t _sz)
-//{
-//	void* ret = _aligned_malloc(_sz, ALLIGN);
-//
-//	if (ret)
-//		return ret;
-//
-//	throw std::bad_alloc{};
-//}
-//
-//inline void* Math::Matrix4::operator new[](std::size_t _sz, const std::nothrow_t&) noexcept
-//{
-//	return _aligned_malloc(_sz, ALLIGN);
-//}
-//
-//inline void* Math::Matrix4::operator new[](std::size_t _sz, void* _ptr) noexcept
-//{
-//	return ::operator new[](_sz, _ptr);
-//}
-//
-//inline void Math::Matrix4::operator delete (void* _ptr) noexcept
-//{
-//	_aligned_free(_ptr);
-//}
-//
-//inline void Math::Matrix4::operator delete (void* _ptr, const std::nothrow_t&) noexcept
-//{
-//	delete static_cast<Matrix4*>(_ptr);
-//}
-//
-//inline void Math::Matrix4::operator delete (void*, void*) noexcept
-//{
-//	return;
-//}
-//
-//inline void Math::Matrix4::operator delete[](void* _ptr) noexcept
-//{
-//	_aligned_free(_ptr);
-//}
-//
-//inline void Math::Matrix4::operator delete[](void* _ptr, const std::nothrow_t&) noexcept
-//{
-//	delete[] static_cast<Matrix4*>(_ptr);
-//}
-//
-//inline void Math::Matrix4::operator delete[](void*, void*) noexcept
-//{
-//	return;
-//}
 
 
 

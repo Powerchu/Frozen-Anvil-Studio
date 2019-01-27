@@ -181,9 +181,6 @@
     <ClCompile Include="Source\Component\CollisionEvent.cpp">
       <Filter>Game Engine\Systems\Collision</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Math\Vector4.cpp">
-      <Filter>Math\Vector</Filter>
-    </ClCompile>
     <ClCompile Include="Source\System\Profiler\Profiler.cpp">
       <Filter>Game Engine\Systems\Profiler\ProfilerSystem</Filter>
     </ClCompile>
@@ -391,6 +388,21 @@
     <ClCompile Include="Include\System\Database\DataSheet.cpp">
       <Filter>Game Engine\Systems\Database</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Component\Particle\Emitter.cpp">
+      <Filter>Game Engine\Components\Emitter</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Particle\ParticleSystem.cpp">
+      <Filter>Game Engine\Systems\Particle\ParticleSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Math\Vector\Vector4.cpp">
+      <Filter>Math\Vector</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Math\Vector\Vector3.cpp">
+      <Filter>Math\Vector</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Math\Vector\Vector2.cpp">
+      <Filter>Math\Vector</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -446,9 +458,6 @@
     </ClInclude>
     <ClInclude Include="Include\Component\Transform.h">
       <Filter>Game Engine\Components\Transform</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Math\Vector4.h">
-      <Filter>Math\Vector</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Window\Window.h">
       <Filter>Game Engine\Systems\Window\Window</Filter>
@@ -510,16 +519,10 @@
     <ClInclude Include="Include\System\Graphics\Mesh.h">
       <Filter>Game Engine\SubSystems\Mesh\Mesh</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Math\Vector2.h">
-      <Filter>Math\Vector</Filter>
-    </ClInclude>
     <ClInclude Include="Include\System\Driver\Driver.h">
       <Filter>Game Engine\Systems\Driver</Filter>
     </ClInclude>
     <ClInclude Include="Include\Utility\MetaAlgorithms.h">
-      <Filter>Utility\Meta</Filter>
-    </ClInclude>
-    <ClInclude Include="Include\Utility\Meta.h">
       <Filter>Utility\Meta</Filter>
     </ClInclude>
     <ClInclude Include="Include\Utility\MetaDataStructures.h">
@@ -1083,6 +1086,39 @@
     <ClInclude Include="Include\Component\RayCollider.h">
       <Filter>Game Engine\Components\Colliders</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Utility\Meta.h">
+      <Filter>Utility\Meta</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Utility\MetaLogic.h">
+      <Filter>Utility\Meta\Logic</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Particle\ParticleSystem.h">
+      <Filter>Game Engine\Systems\Particle\ParticleSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\Emitter.h">
+      <Filter>Game Engine\Components\Emitter</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Utility\MetaBind.h">
+      <Filter>Utility\Meta\Functions</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\MathConstants.h">
+      <Filter>Math\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\Vector\Vector2.h">
+      <Filter>Math\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\Vector\Vector3.h">
+      <Filter>Math\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\Vector\Vector4.h">
+      <Filter>Math\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\Vector\SwizzleOps.h">
+      <Filter>Math\Vector</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Math\Vectors.h">
+      <Filter>Math\Vector</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1549,6 +1585,24 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Database">
       <UniqueIdentifier>{dda9b7bb-de84-43a5-b913-b15fc3672765}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\Meta\Logic">
+      <UniqueIdentifier>{7064b3c1-90fe-4f0f-9eba-0b149e638718}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\Meta\Types">
+      <UniqueIdentifier>{1cef4071-c0c1-4f04-ad49-56f3d596b300}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utility\Meta\Functions">
+      <UniqueIdentifier>{3a8acde2-f98a-4b30-9e61-1db34986e475}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Particle">
+      <UniqueIdentifier>{362babf2-f82e-4408-a11a-5f958686d001}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Particle\ParticleSystem">
+      <UniqueIdentifier>{7575db40-39e4-4d67-853b-147bc26dc099}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Emitter">
+      <UniqueIdentifier>{179d56d1-c7a5-4165-9547-c4f0f0080531}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
