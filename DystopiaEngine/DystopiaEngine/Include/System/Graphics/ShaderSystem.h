@@ -21,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Lib/Gfx/Shaders.h"
 #include "System/File/FileSystem.h"
 
+#include "Globals.h"
 
 namespace Dystopia
 {
@@ -40,7 +41,7 @@ namespace Dystopia
 		Shader* CreateShader(char const* _strName, bool _bCustom) noexcept;
 		ShaderProgram* CreateShaderProgram(::Gfx::ShaderStage, char const* _strName, bool _bTrack = true) noexcept;
 
-		Shader* GetShader(char const* _strName) const noexcept;
+		_DLL_EXPORT Shader* GetShader(char const* _strName) const noexcept;
 		ShaderProgram* GetShaderProgram(char const* _strName) const noexcept;
 
 		void NotifyReplace(ShaderProgram*) noexcept;
