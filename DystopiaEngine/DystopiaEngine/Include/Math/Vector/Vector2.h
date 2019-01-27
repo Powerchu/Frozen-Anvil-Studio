@@ -413,7 +413,7 @@ inline Math::Vector2& _CALL Math::Vector2::operator -= (Vector2 const& _rhs) noe
 
 inline Math::Vector2 _CALL Math::operator - (Math::Vector2 const& _v) noexcept
 {
-	return Vector2{ -_v.x, -_v.y };
+	return Vector2( -_v.x, -_v.y );
 }
 
 
@@ -432,32 +432,32 @@ inline bool _CALL Math::Vector2::operator != (Vector2 const& _rhs) const noexcep
 
 inline Math::Vector2 _CALL Math::operator - (Vector2 const& _lhs, Vector2 const& _rhs) noexcept
 {
-	return Vector2{ _lhs } -= _rhs;
+	return Vector2( _lhs ) -= _rhs;
 }
 
 inline Math::Vector2 _CALL Math::operator + (Vector2 const& _lhs, Vector2 const& _rhs) noexcept
 {
-	return Vector2{ _lhs } += _rhs;
+	return Vector2( _lhs ) += _rhs;
 }
 
 inline Math::Vector2 _CALL Math::operator * (Vector2 const& _lhs, Vector2 const& _rhs) noexcept
 {
-	return Vector2{ _lhs } *= _rhs;
+	return Vector2( _lhs ) *= _rhs;
 }
 
 inline Math::Vector2 _CALL Math::operator * (float _lhs, Vector2 const& _rhs) noexcept
 {
-	return Vector2{ _rhs } *= _lhs;
+	return Vector2( _rhs ) *= _lhs;
 }
 
 inline Math::Vector2 _CALL Math::operator * (Vector2 const& _lhs, float _rhs) noexcept
 {
-	return Vector2{ _lhs } *= _rhs;
+	return Vector2( _lhs ) *= _rhs;
 }
 
 inline Math::Vector2 _CALL Math::operator / (Vector2 const& _lhs, float _rhs)
 {
-	return Vector2{ _lhs } /= _rhs;
+	return Vector2( _lhs ) /= _rhs;
 }
 
 inline std::istream& operator >> (std::istream& _lhs, Math::Vector2& _rhs)

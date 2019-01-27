@@ -33,18 +33,18 @@ bool Dystopia::ParticleSystem::Init(void)
 
 void Dystopia::ParticleSystem::Update(float)
 {
-	for (auto& e : mComponents)
+	/*for (auto& e : mComponents)
 	{
 
-	}
+	}*/
 }
 
 void Dystopia::ParticleSystem::FixedUpdate(float)
 {
-	for (auto& e : mComponents)
+	/*for (auto& e : mComponents)
 	{
 
-	}
+	}*/
 }
 
 void Dystopia::ParticleSystem::Shutdown(void)

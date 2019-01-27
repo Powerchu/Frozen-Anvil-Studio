@@ -284,7 +284,7 @@ inline Math::Vector3& _CALL Math::Vector3::Normalise(void)
 
 inline Math::Vector3 _CALL Math::Normalise(Vector3 const& _v)
 {
-	return Vector3{ _v }.Normalise();
+	return Vector3( _v ).Normalise();
 }
 
 
@@ -299,7 +299,7 @@ inline Math::Vector3& _CALL Math::Vector3::Reciprocal(void)
 
 inline Math::Vector3 _CALL Math::Reciprocal(Vector3 const& _v)
 {
-	return Vector3{ _v }.Reciprocal();
+	return Vector3( _v ).Reciprocal();
 }
 
 
@@ -528,32 +528,32 @@ inline Math::Vector3 _CALL Math::Vector3::operator - (void) const noexcept
 
 inline Math::Vector3 _CALL Math::operator-(Vector3 const& _lhs, Vector3 const& _rhs) noexcept
 {
-	return Vector3{ _lhs } -= _rhs;
+	return Vector3( _lhs ) -= _rhs;
 }
 
 inline Math::Vector3 _CALL Math::operator + (Vector3 const& _lhs, Vector3 const& _rhs) noexcept
 {
-	return Vector3{ _lhs } += _rhs;
+	return Vector3( _lhs ) += _rhs;
 }
 
 inline Math::Vector3 _CALL Math::operator * (Vector3 const& _lhs, Vector3 const& _rhs) noexcept
 {
-	return Vector3{ _lhs } *= _rhs;
+	return Vector3( _lhs ) *= _rhs;
 }
 
 inline Math::Vector3 _CALL Math::operator * (float _lhs, Vector3 const& _rhs) noexcept
 {
-	return Vector3{ _rhs } *= _lhs;
+	return Vector3( _rhs ) *= _lhs;
 }
 
 inline Math::Vector3 _CALL Math::operator * (Vector3 const& _lhs, float _rhs) noexcept
 {
-	return Vector3{ _lhs } *= _rhs;
+	return Vector3( _lhs ) *= _rhs;
 }
 
 inline Math::Vector3 _CALL Math::operator / (Vector3 const& _lhs, float _rhs)
 {
-	return Vector3{ _lhs } /= _rhs;
+	return Vector3( _lhs ) /= _rhs;
 }
 
 inline bool _CALL Math::Vector3::operator == (Math::Vector3 const& _rhs) const noexcept
