@@ -2,6 +2,7 @@
 #include "System/Driver/Driver.h"
 #include "System/Base/ComponentDonor.h"
 #include "System/Sound/SoundSystem.h"
+#include "Math/Vectors.h"
 
 #include "fmod.hpp"
 

@@ -17,7 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #pragma warning(disable : 4251)
 #include "Component/ComponentList.h"	
 #include "Component/Component.h"
-#include "Math/Vector4.h"
+#include "Math/Vectors.h"
 #include "System/Sound/SoundTypes.h"
 
 #include <string>

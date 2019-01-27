@@ -3,7 +3,7 @@
 #define _AUDIO_LISTENER_H
 #include "Component/Component.h"
 #include "System/Sound/SoundTypes.h"
-#include "Math/Vector4.h"
+#include "Math/MathFwd.h"
 struct FMOD_VECTOR;
 
 namespace Dystopia
@@ -51,7 +51,7 @@ namespace Dystopia
 		float GetMaxRange() const;
 		void  SetMaxRange(float const & _Range);
 		FMOD_VECTOR* GetFMODPos() const;
-		void         UpdateFMODPos(Math::Vec3D const & _vec);
+		void         UpdateFMODPos(Math::Vec4 const & _vec);
 	private:
 		float mMaxRange;
 		FMOD_VECTOR * mPos;
