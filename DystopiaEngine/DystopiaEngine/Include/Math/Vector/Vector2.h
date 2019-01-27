@@ -14,9 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _MATHVECTOR2_H_
 #define _MATHVECTOR2_H_
 
-#if defined(DEBUG) | defined(_DEBUG)
 #include "Utility/DebugAssert.h"
-#endif // Debug only includes
 
 #include "../MathFwd.h"
 #include "../MathUtility.h"
@@ -206,9 +204,7 @@ inline constexpr Math::Vector2::Vector2(float _x, float _y) noexcept
 
 inline Math::Vector2& _CALL Math::Vector2::Normalise(void)
 {
-#if defined(DEBUG) | defined(_DEBUG)
 	DEBUG_ASSERT(IsZero(Dot(*this)), "Vector2 Error: Normalising a zero vector.\n");
-#endif
 
 	const float invSqrt = 1.f / MagnitudeSqr();
 
@@ -243,9 +239,7 @@ inline float _CALL Math::Cross(Vector2 _lhs, Vector2 _rhs)
 
 inline Math::Vector2& _CALL Math::Vector2::Project(const Vector2 _rhs)
 {
-#if defined(DEBUG) | defined(_DEBUG)
 	DEBUG_ASSERT(IsZero(_rhs.Dot(_rhs)), "Vector2 Error: Projection onto zero vector.\n");
-#endif
 
 	float mag = Dot(*this) / _rhs.Dot(_rhs);
 

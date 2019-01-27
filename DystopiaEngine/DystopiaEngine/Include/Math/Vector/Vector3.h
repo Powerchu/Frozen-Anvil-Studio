@@ -22,9 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/MetaAlgorithms.h"     // MetaSortV
 #include "Utility/MetaDataStructures.h" // IntegralList
 
-#if defined(DEBUG) | defined(_DEBUG)
 #include "Utility/DebugAssert.h"
-#endif // Debug only includes
 
 
 namespace Math
@@ -478,7 +476,7 @@ inline constexpr float& _CALL Math::Vector3::operator [] (const unsigned _nIndex
 
 inline constexpr float const& _CALL Math::Vector3::operator [] (const unsigned _nIndex) const noexcept
 {
-	DEBUG_ASSERT(_nIndex > 2, "Vector4 Error: Index out of range.");
+	DEBUG_ASSERT(_nIndex > 3, "Vector3 Error: Index out of range.");
 	return mData[_nIndex];
 }
 
