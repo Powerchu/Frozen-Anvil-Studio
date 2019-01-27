@@ -58,7 +58,7 @@ namespace Dystopia
 		void Render(void) const noexcept;
 
 		template <typename Ty>
-		auto AddEmitter(Ty&&) noexcept -> Ut::EnableIf_t<std::is_base_of_v<ParticleAffector, Ty>>;
+		auto AddAffector(Ty&&) noexcept -> Ut::EnableIf_t<std::is_base_of_v<ParticleAffector, Ty>>;
 
 		Shader& GetShader(void) noexcept;
 		AutoArray<Math::Vec4>& GetColour(void) noexcept;
@@ -88,11 +88,11 @@ namespace Dystopia
 		unsigned mVAO, mColourBuffer, mPosBuffer;
 
 		template <typename Ty>
-		auto AddEmitter(Ty&&, AffectorTag::OnAttach) noexcept;
+		auto AddAffector(Ty&&, AffectorTag::OnAttach) noexcept;
 		template <typename Ty>
-		auto AddEmitter(Ty&&, AffectorTag::OnUpdate) noexcept;
+		auto AddAffector(Ty&&, AffectorTag::OnUpdate) noexcept;
 		template <typename Ty>
-		auto AddEmitter(Ty&&, AffectorTag::OnFixedUpdate) noexcept;
+		auto AddAffector(Ty&&, AffectorTag::OnFixedUpdate) noexcept;
 	};
 }
 
@@ -104,26 +104,26 @@ namespace Dystopia
 // ============================================ FUNCTION DEFINITIONS ============================================ // 
 
 template <typename Ty>
-inline auto Dystopia::Emitter::AddEmitter(Ty&& _affector) noexcept -> Ut::EnableIf_t<std::is_base_of_v<ParticleAffector, Ty>>
+inline auto Dystopia::Emitter::AddAffector(Ty&& _affector) noexcept -> Ut::EnableIf_t<std::is_base_of_v<ParticleAffector, Ty>>
 {
 	AddEmitter(Ut::Fwd<Ty>(emitter), typename Ut::RemoveRef_t<Ty>::UPDATE{});
 }
 
 template <typename Ty>
-inline auto Dystopia::Emitter::AddEmitter(Ty&& _affector, AffectorTag::OnAttach) noexcept
+inline auto Dystopia::Emitter::AddAffector(Ty&& _affector, AffectorTag::OnAttach) noexcept
 {
 	_affector.Update(*this, 1);
 	mUpdate.EmplaceBack(Ut::Fwd<Ty>(_affector));
 }
 
 template <typename Ty>
-inline auto Dystopia::Emitter::AddEmitter(Ty&& _affector, AffectorTag::OnUpdate) noexcept
+inline auto Dystopia::Emitter::AddAffector(Ty&& _affector, AffectorTag::OnUpdate) noexcept
 {
 	mUpdate.EmplaceBack(Ut::Fwd<Ty>(_affector));
 }
 
 template <typename Ty>
-inline auto Dystopia::Emitter::AddEmitter(Ty&& _affector, AffectorTag::OnFixedUpdate) noexcept
+inline auto Dystopia::Emitter::AddAffector(Ty&& _affector, AffectorTag::OnFixedUpdate) noexcept
 {
 	mFixedUpdate.EmplaceBack(Ut::Fwd<Ty>(_affector));
 }
