@@ -1119,11 +1119,11 @@
     <ClInclude Include="Include\Math\Vectors.h">
       <Filter>Math\Vector</Filter>
     </ClInclude>
-    <ClInclude Include="Include\System\Particle\ParticleAffector.h">
-      <Filter>Game Engine\Systems\Particle\Affectors</Filter>
-    </ClInclude>
     <ClInclude Include="Include\System\Particle\Particle.h">
       <Filter>Game Engine\Systems\Particle\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Particle\ParticleAffector.h">
+      <Filter>Game Engine\Systems\Particle\Affectors\Base</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1615,6 +1615,12 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Particle\Particle">
       <UniqueIdentifier>{633a32f4-2b08-4501-ad56-b9370881789a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Particle\Affectors\Base">
+      <UniqueIdentifier>{00ca27f8-881d-4bb5-ab25-352c2783374e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Particle\Affectors\CircleSpawner">
+      <UniqueIdentifier>{3f294084-541f-4a2d-8053-4ef5c42ae1fc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

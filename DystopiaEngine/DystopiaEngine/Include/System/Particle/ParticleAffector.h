@@ -21,7 +21,8 @@ namespace Dystopia
 {
 	namespace AffectorTag
 	{
-		struct OnAttach      {}; // DT is 1 on attach and 0 on detach
+		struct OnSpawn       {};
+		struct OnDeath       {};
 		struct OnUpdate      {};
 		struct OnFixedUpdate {};
 	}
@@ -31,7 +32,7 @@ namespace Dystopia
 
 	class Emitter;
 
-	struct ParticleAffector
+	struct alignas(16) ParticleAffector
 	{
 		using UPDATE = AffectorTag::OnUpdate;
 
@@ -54,9 +55,14 @@ namespace Dystopia
 			Updator{ reinterpret_cast<UpdateFunc_t>(_upd) }
 		{}
 
-		alignas(16) char data[128];
+		alignas(16) char data[16];
+
+	private:
 		UpdateFunc_t Updator;
 		int const mID;
+
+	protected:
+		int mReserved;
 	};
 }
 

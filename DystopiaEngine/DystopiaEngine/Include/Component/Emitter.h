@@ -53,15 +53,22 @@ namespace Dystopia
 		void Awake(void);
 		void Init(void);
 
+		// Update "physics"!
+		void FixedUpdate(float _dt);
+
 		void Bind(void) const noexcept;
 		void Unbind(void) const noexcept;
 		void UploadBuffers(void) const noexcept;
 		void Render(void) const noexcept;
 
+		void KillParticle(unsigned _nIdx) noexcept;
+		void SpawnParticle(void) noexcept;
+
 		template <typename Ty>
 		auto AddAffector(Ty&&) noexcept -> Ut::EnableIf_t<std::is_base_of_v<ParticleAffector, Ty>>;
 
 		Shader& GetShader(void) noexcept;
+		Particle& GetSpawnDefaults(void) noexcept;
 		AutoArray<Math::Vec4>& GetColour(void) noexcept;
 		AutoArray<Math::Vec4>& GetPosition(void) noexcept;
 		AutoArray<Math::Vec3>& GetVelocity(void) noexcept;
@@ -75,23 +82,24 @@ namespace Dystopia
 
 	private:
 
+		AutoArray<float>      mLifetime;
 		AutoArray<Math::Vec4> mColour;
 		AutoArray<Math::Vec3> mAccel;
 		AutoArray<Math::Vec3> mVelocity;
 		AutoArray<Math::Vec4> mPosition;
-		AutoArray<float> mLifetime;
 
-		AutoArray<ParticleAffector> mAttach;
+		AutoArray<ParticleAffector> mSpawn;
 		AutoArray<ParticleAffector> mUpdate;
 		AutoArray<ParticleAffector> mFixedUpdate;
 
-		Particle mSpawn;
+		Particle mParticle;
 
 		Shader* mpShader;
 		unsigned mVAO, mColourBuffer, mPosBuffer;
+		unsigned mSpawnCount;
 
 		template <typename Ty>
-		auto AddAffector(Ty&&, AffectorTag::OnAttach) noexcept;
+		auto AddAffector(Ty&&, AffectorTag::OnSpawn) noexcept;
 		template <typename Ty>
 		auto AddAffector(Ty&&, AffectorTag::OnUpdate) noexcept;
 		template <typename Ty>
@@ -113,21 +121,32 @@ inline auto Dystopia::Emitter::AddAffector(Ty&& _affector) noexcept -> Ut::Enabl
 }
 
 template <typename Ty>
-inline auto Dystopia::Emitter::AddAffector(Ty&& _affector, AffectorTag::OnAttach) noexcept
+inline auto Dystopia::Emitter::AddAffector(Ty&& _affector, AffectorTag::OnSpawn) noexcept
 {
-	_affector.Update(*this, 1);
-	mUpdate.EmplaceBack(Ut::Fwd<Ty>(_affector));
+	for (auto& e : mSpawn)
+		if (_affector.GetID() == e.GetID())
+			return;
+
+	mSpawn.EmplaceBack(Ut::Fwd<Ty>(_affector));
 }
 
 template <typename Ty>
 inline auto Dystopia::Emitter::AddAffector(Ty&& _affector, AffectorTag::OnUpdate) noexcept
 {
+	for (auto& e : mUpdate)
+		if (_affector.GetID() == e.GetID())
+			return;
+
 	mUpdate.EmplaceBack(Ut::Fwd<Ty>(_affector));
 }
 
 template <typename Ty>
 inline auto Dystopia::Emitter::AddAffector(Ty&& _affector, AffectorTag::OnFixedUpdate) noexcept
 {
+	for (auto& e : mFixedUpdate)
+		if (_affector.GetID() == e.GetID())
+			return;
+
 	mFixedUpdate.EmplaceBack(Ut::Fwd<Ty>(_affector));
 }
 

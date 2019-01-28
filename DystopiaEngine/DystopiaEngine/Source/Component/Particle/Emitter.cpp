@@ -12,6 +12,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "Component/Emitter.h"
+#include "Component/Component.h"
+#include "Component/Transform.h"
+#include "Object/GameObject.h"
 
 #include "System/Driver/Driver.h"
 #include "System/Particle/ParticleAffector.h"
@@ -19,12 +22,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/ShaderSystem.h"
 
 #include "Math/Vectors.h"
+#include "Math/Matrix4.h"
+#include "Utility/DebugAssert.h"
 
+#include "Editor/EGUI.h"
 #include <GL/glew.h>
 
 
 Dystopia::Emitter::Emitter(void) noexcept
-	: mColour{}, mPosition{}, mVelocity{}, mAccel{}, mLifetime{}, 
+	: mColour{}, mPosition{}, mVelocity{}, mAccel{}, mLifetime{}, mSpawnCount{},
 	mUpdate{}, mFixedUpdate{}
 {
 	glGenVertexArrays(1, &mVAO);
@@ -51,7 +57,7 @@ Dystopia::Emitter::~Emitter(void) noexcept
 	glDeleteBuffers(2, &mColourBuffer);
 	glDeleteVertexArrays(1, &mVAO);
 
-	glBindVertexArray(0);
+	Unbind();
 }
 
 void Dystopia::Emitter::Awake(void)
@@ -85,6 +91,20 @@ void Dystopia::Emitter::Init(void)
 	glBufferData(GL_ARRAY_BUFFER, limit * sizeof(decltype(mColour)::Val_t), nullptr, GL_DYNAMIC_DRAW);
 }
 
+void Dystopia::Emitter::FixedUpdate(float _fDT)
+{
+	auto pVel   = mVelocity.begin();
+	auto pAccel = mAccel   .begin();
+
+	for (auto& e : mPosition)
+	{
+		*pVel +=  *pAccel       * _fDT;
+		 e    += (*pAccel).xyz0 * _fDT;
+
+		 ++pVel; ++pAccel;
+	}
+}
+
 void Dystopia::Emitter::Bind(void) const noexcept
 {
 	glBindVertexArray(mVAO);
@@ -111,9 +131,45 @@ void Dystopia::Emitter::Render(void) const noexcept
 	glDrawArraysInstanced(GL_POINTS, 0, 1, static_cast<GLsizei>(mPosition.size()));
 }
 
+void Dystopia::Emitter::KillParticle(unsigned _nIdx) noexcept
+{
+	DEBUG_ASSERT(!mSpawnCount, "Particle System Error: No particles to kill!");
+	--mSpawnCount;
+
+	mLifetime.FastRemove(_nIdx);
+	mColour  .FastRemove(_nIdx);
+	mAccel   .FastRemove(_nIdx);
+	mVelocity.FastRemove(_nIdx);
+	mPosition.FastRemove(_nIdx);
+}
+
+void Dystopia::Emitter::SpawnParticle(void) noexcept
+{
+	++mSpawnCount;
+
+	for (auto& e : mSpawn)
+		e.Update(*this, 0);
+
+	auto transform = GetOwner()->GetComponent<Transform>();
+	auto pos = transform->GetGlobalPosition() + transform->GetTransformMatrix() * mParticle.mPos.xyz1;
+
+	pos.w = mParticle.mfSize;
+
+	mLifetime.EmplaceBack(mParticle.mfLifeDur);
+	mColour  .EmplaceBack(mParticle.mColour  );
+	mAccel   .EmplaceBack(                   );
+	mVelocity.EmplaceBack(mParticle.mVelocity);
+	mPosition.EmplaceBack(pos                );
+}
+
 Dystopia::Shader& Dystopia::Emitter::GetShader(void) noexcept
 {
 	return *mpShader;
+}
+
+Dystopia::Particle& Dystopia::Emitter::GetSpawnDefaults(void) noexcept
+{
+	return mParticle;
 }
 
 AutoArray<Math::Vec4>& Dystopia::Emitter::GetColour(void) noexcept
@@ -150,28 +206,18 @@ AutoArray<Dystopia::ParticleAffector>& Dystopia::Emitter::GetFixedUpdateAffector
 void Dystopia::Emitter::Serialise(TextSerialiser& _out) const
 {
 	if (mpShader)
-	{
 		_out << mpShader->GetName();
-	}
 	else
-	{
 		_out << "Default Particle";
-	}
 
-	for (auto& e : mAttach)
-	{
+	for (auto& e : mSpawn)
 		_out << e.GetID();
-	}
 
 	for (auto& e : mUpdate)
-	{
 		_out << e.GetID();
-	}
 
 	for (auto& e : mFixedUpdate)
-	{
 		_out << e.GetID();
-	}
 }
 
 void Dystopia::Emitter::Unserialise(TextSerialiser& _in)
@@ -186,6 +232,7 @@ void Dystopia::Emitter::Unserialise(TextSerialiser& _in)
 
 void Dystopia::Emitter::EditorUI(void) noexcept
 {
+	EGUI::Display::Label("Particle Count: %u", mSpawnCount);
 }
 
 

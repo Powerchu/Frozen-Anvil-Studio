@@ -97,6 +97,8 @@ void Dystopia::ParticleSystem::FixedUpdate(float _dt)
 		{
 			for (auto& worker : e.GetFixedUpdateAffectors())
 				worker.Update(e, _dt);
+
+			e.FixedUpdate(_dt);
 		}
 	}
 }
