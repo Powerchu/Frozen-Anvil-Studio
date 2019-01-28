@@ -114,6 +114,8 @@ namespace Dystopia
 			mOrientation = Math::RotateZ(Math::Degrees{ P_TX->GetGlobalRotation().ToEuler().z });
 			mInverseOrientation = Math::AffineInverse(mOrientation);
 			mfZAngleDeg = P_TX->GetGlobalRotation().ToEuler().z;
+			mfXAngleDeg = P_TX->GetGlobalRotation().ToEuler().x;
+			mfYAngleDeg = P_TX->GetGlobalRotation().ToEuler().y;
 		}
 	}
 
@@ -145,6 +147,8 @@ namespace Dystopia
 			mOrientation = Math::RotateZ(Math::Degrees{ P_TX->GetGlobalRotation().ToEuler().z });
 			mInverseOrientation = Math::AffineInverse(mOrientation);
 			mfZAngleDeg = P_TX->GetGlobalRotation().ToEuler().z;
+			mfXAngleDeg = P_TX->GetGlobalRotation().ToEuler().x;
+			mfYAngleDeg = P_TX->GetGlobalRotation().ToEuler().y;
 		}
 
 		if (mfMass > 0.0F)
@@ -388,17 +392,28 @@ namespace Dystopia
 		mPosition += mLinearVelocity * _dt;
 
 		if (!mbFixedRot)
-			mfZAngleDeg += Math::Radians{ mAngularVelocity.Magnitude() }.Degrees() * _dt;
+		{
+			mfZAngleDeg += Math::Radians{ mAngularVelocity.z }.Degrees() * _dt;
+			mfXAngleDeg += Math::Radians{ mAngularVelocity.x }.Degrees() * _dt;
+			mfYAngleDeg += Math::Radians{ mAngularVelocity.y }.Degrees() * _dt;
+		}
+
 
 		if (mfZAngleDeg < -180.0F) mfZAngleDeg = 179.999F;
 		if (mfZAngleDeg > 180.0F) mfZAngleDeg = -179.999F;
+
+		if (mfXAngleDeg < -180.0F) mfXAngleDeg = 179.999F;
+		if (mfXAngleDeg > 180.0F) mfXAngleDeg = -179.999F;
+
+		if (mfYAngleDeg < -180.0F) mfYAngleDeg = 179.999F;
+		if (mfYAngleDeg > 180.0F) mfYAngleDeg = -179.999F;
 	}
 
 	void RigidBody::UpdateResult(float) const
 	{
 		// Update Position
 		GetOwner()->GetComponent<Transform>()->SetGlobalPosition(mPosition);
-		GetOwner()->GetComponent<Transform>()->SetRotation(Math::Radians{ 0 }, Math::Radians{ 0 }, Math::Degrees{ mfZAngleDeg });
+		GetOwner()->GetComponent<Transform>()->SetRotation(Math::Degrees{ mfXAngleDeg }, Math::Degrees{ mfYAngleDeg }, Math::Degrees{ mfZAngleDeg });
 	}
 
 	/*void RigidBody::Update(float _dt)
