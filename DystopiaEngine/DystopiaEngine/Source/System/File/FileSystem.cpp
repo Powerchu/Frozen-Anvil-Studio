@@ -95,11 +95,10 @@ namespace Dystopia
 				break;
 			}
 		}
-		mPathTable[eFileDir::eSolution] = GetProjectFolders < std::string >(eFileDir::eSolution);
-		mPathTable[eFileDir::eResource] = GetProjectFolders < std::string >(eFileDir::eResource);
-		mPathTable[eFileDir::eHeader] = GetProjectFolders < std::string >  (eFileDir::eHeader);
-		mPathTable[eFileDir::eSource] = GetProjectFolders < std::string >  (eFileDir::eSource);
-
+		mPathTable[eFileDir::eSolution] = GetProjectFolders<std::string>(eFileDir::eSolution);
+		mPathTable[eFileDir::eHeader] = GetProjectFolders<std::string>(eFileDir::eHeader);
+		mPathTable[eFileDir::eSource] = GetProjectFolders<std::string>(eFileDir::eSource);
+		mPathTable[eFileDir::eResource] = GetProjectFolders<std::string>(eFileDir::eResource);
 	}
 
 	FileSystem::~FileSystem()
@@ -120,33 +119,22 @@ namespace Dystopia
 	void FileSystem::Update(float)
 	{
 		/*Loop through all File Tracking Jobs and poll for updates*/
-		static std::string ListOfFileNames[100];
+		CallBackTrackInfo ListOfFileNames[20];
 		for (auto & TrackJob : mDetectionFiles)
 		{
 			/*Get the list of file changes in the directory*/
-			auto num = GetChangesInfo(*TrackJob, ListOfFileNames, 100);
+			unsigned num  = 0;
+			unsigned prev = 0;
 
-			for (unsigned i=0;i<num;++i)
+			while (num = GetChangesInfo(*TrackJob, ListOfFileNames, 20))
 			{
-				auto & names = ListOfFileNames[i];
-				/*
-				  Check that the list of names contains the file that the user is
-				  interested in(Stored in DetectionInfo.FileName
-				*/
-				//size_t pos;
+				prev = num;
+			}
+			for (unsigned i=0;i< prev;++i)
+			{
+				auto & names = ListOfFileNames[i].first;
+
 				names = Normalize(names);
-				//while ((pos = names.find_first_of("//")) != OString::nPos)
-				//{
-				//	names.replace(pos, strlen("//") - 1, "/");
-				//}
-				//while ((pos = names.find_first_of("\\\\")) != OString::nPos)
-				//{
-				//	names.replace(pos, strlen("\\\\") - 1, "/");
-				//}
-				//while ((pos = names.find_first_of("\\"))  != OString::nPos)
-				//{
-				//	names.replace(pos, strlen("\\") - 1, "/");
-				//}
 
 				names = Ut::Move(TrackJob->mParentDirectory + "/" + names);
 				if ((names  == TrackJob->mFileName) || names == TrackJob->mParentDirectory + "/" + TrackJob->mFileName)
@@ -155,8 +143,9 @@ namespace Dystopia
 					auto & ref = mMapOfTrackInfo[TrackJob->mFileHandle];
 					for (auto & f : ref)
 					{
-						f.second(TrackJob->mFileName.c_str());
+						//f.second(TrackJob->mFileName.c_str());
 						f.second();
+						f.second(names.c_str(), ListOfFileNames[i].second);
 					}
 					break;
 				}
@@ -612,6 +601,114 @@ namespace Dystopia
 		return 0;
 	}
 
+	unsigned FileSystem::GetChangesInfo(DetectionInfo & _DetectionInfo, CallBackTrackInfo * _ChangesBuffer, size_t _size)
+	{
+		unsigned count = 0;
+		DWORD byte_read;
+
+		if (_DetectionInfo.mFileHandle == INVALID_HANDLE_VALUE || _DetectionInfo.mOverlappedInfo.hEvent == INVALID_HANDLE_VALUE)
+			return count;
+
+		while (GetOverlappedResult(_DetectionInfo.mFileHandle, &_DetectionInfo.mOverlappedInfo, &byte_read, false))
+		{
+			for (FILE_NOTIFY_INFORMATION * pstart = reinterpret_cast<FILE_NOTIFY_INFORMATION*>(&_DetectionInfo.mFileInfo.front());
+				pstart != nullptr;
+				pstart = pstart->NextEntryOffset ? reinterpret_cast<FILE_NOTIFY_INFORMATION*>(reinterpret_cast<char *>(pstart) + (pstart->NextEntryOffset)) : nullptr)
+			{
+				std::wstring FileName{ pstart->FileName, pstart->FileName + (pstart->FileNameLength / sizeof(*(pstart->FileName))) };
+
+				switch (pstart->Action)
+				{
+				case FILE_ACTION_ADDED:
+				{
+					if (count < _size)
+						_ChangesBuffer[count++] = std::make_pair(std::string{ FileName.begin() , FileName.end() }, eFileTrackStatus::ADDED);
+				}
+				break;
+				case FILE_ACTION_MODIFIED:
+				{
+					bool found = false;
+					std::string name{ FileName.begin(),FileName.end() };
+					for (unsigned i = 0; i < count; ++i)
+					{
+						if (IsSameFile(name, _ChangesBuffer[i].first))
+						{
+							_ChangesBuffer[i] = std::make_pair(std::string{ FileName.begin(),FileName.end() }, eFileTrackStatus::MODIFIED);
+							found = true;
+							break;
+						}
+					}
+					if (count < _size && !found)
+						_ChangesBuffer[count++].first = name;
+				}
+				break;
+
+				case FILE_ACTION_REMOVED:
+				{
+					if (count < _size)
+						_ChangesBuffer[count++] = std::make_pair(std::string{ FileName.begin() , FileName.end() }, eFileTrackStatus::REMOVE);
+				}
+				break;
+
+				case FILE_ACTION_RENAMED_NEW_NAME:
+				{
+					for (unsigned i = 0; i < count; ++i)
+					{
+						if (_ChangesBuffer[i].first == "")
+						{
+							_ChangesBuffer[i].first = std::string{ FileName.begin(),FileName.end() };
+							_ChangesBuffer[i].second = eFileTrackStatus::MODIFIED;
+							break;
+						}
+					}
+				}
+				break;
+				case FILE_ACTION_RENAMED_OLD_NAME:
+				{
+					std::string name{ FileName.begin(),FileName.end() };
+					for (unsigned i = 0; i < count; ++i)
+					{
+						if (IsSameFile(name, _ChangesBuffer[i].first))
+						{
+							_ChangesBuffer[i].first = "";
+							_ChangesBuffer[i].second = eFileTrackStatus::MODIFIED;
+							break;
+						}
+					}
+				}
+				break;
+				}
+
+				mLastKnownError = eFileSystemError::NONE;
+
+			}
+			/*Do ReadFirst Function again*/
+			if (ReadDirectoryChangesW((_DetectionInfo).mFileHandle,
+				&(_DetectionInfo).mFileInfo.front(),
+				static_cast<DWORD>((_DetectionInfo).mFileInfo.size()),
+				false,
+				FILE_NOTIFY_CHANGE_FILE_NAME | FILE_NOTIFY_CHANGE_CREATION | FILE_NOTIFY_CHANGE_LAST_WRITE,
+				&byte_read,
+				&(_DetectionInfo).mOverlappedInfo,
+				NULL))
+
+			{
+				/*Success*/
+				return count;
+			}
+			if (GetLastError() == ERROR_NOTIFY_ENUM_DIR || byte_read == 0)
+			{
+				mLastKnownError = eFileSystemError::READ_DIRECTORY_ERROR;
+				CloseHandle((_DetectionInfo).mFileHandle);
+				CloseHandle((_DetectionInfo).mOverlappedInfo.hEvent);
+				_DetectionInfo.mOverlappedInfo.hEvent = _DetectionInfo.mFileHandle = INVALID_HANDLE_VALUE;
+				return 0;
+			}
+
+		}
+		return 0;
+	}
+
 	void FileSystem::FileTrackCallBack(unsigned long dwErrorCode, unsigned long /*dwNumOfBytes*/, _OVERLAPPED * lpOverlapped)
 	{
 		/*Extract following info from OVERLAPPED object
@@ -765,7 +862,6 @@ namespace Dystopia
 
 	FileTrackInfoID_t FileSystem::TrackFile(HashString _EventName, eFileDir _ParentDirectory)
 	{
-		//size_t pos;
 		_EventName = Normalize(_EventName.c_str()).c_str();
 		//while ((pos = _EventName.find_first_of("//")) != OString::nPos)
 		//{

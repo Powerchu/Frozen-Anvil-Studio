@@ -17,16 +17,19 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #pragma warning(disable : 4251)
 #include "Component/ComponentList.h"	
 #include "Component/Component.h"
-
+#include "Math/Vectors.h"
 #include "System/Sound/SoundTypes.h"
 
 #include <string>
 #include "Utility/MetaAlgorithms.h"
 
+struct FMOD_VECTOR;
+
 namespace Dystopia
 {
-	class Sound;
-	class SoundSystem;
+	class  Sound;
+	class  SoundSystem;
+
 	class _DLL_EXPORT AudioSource : public Component
 	{
 	public:
@@ -72,6 +75,8 @@ namespace Dystopia
 		void		SetSoundType(eSoundType);
 		Channel&	GetChannel(void);
 		void		SetChannel(const Channel &);
+		void        SetMinMax(float _Min, float _Max = 10000.f);
+		void        ResetMinMax();
 
 		void Play(void);
 		void Pause(void);
@@ -84,11 +89,12 @@ namespace Dystopia
 		bool IsPlaying(void) const;
 		bool IsALoop(void) const;
 		void SetReady(bool);
-
+		FMOD_VECTOR* GetFMODPos() const;
+		void         UpdateFMODPos(Math::Vec3D const & _vec);
 	private:
-		Sound		*mpSound;
-		Channel		mChannel;
-
+		Sound		* mpSound;
+		Channel		  mChannel;
+		FMOD_VECTOR * mPos;
 		/* allow UI edit */
 		int			mSoundType;
 		bool		mPlayOnStart;
@@ -96,7 +102,8 @@ namespace Dystopia
 		float		mVolume;
 		float		mFrequency;
 		float		mPitch;
-
+		float       mRange;
+		float       mMaxRange;
 		/* no UI edit allowed*/
 		std::string mSoundName;
 		bool		mPaused;
