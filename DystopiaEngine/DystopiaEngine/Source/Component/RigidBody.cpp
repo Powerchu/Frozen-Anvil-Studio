@@ -388,7 +388,7 @@ namespace Dystopia
 		mPosition += mLinearVelocity * _dt;
 
 		if (!mbFixedRot)
-			mfZAngleDeg += Math::Radians{ mAngularVelocity.Magnitude() }.Degrees() * _dt;
+			mfZAngleDeg += Math::Radians{ mAngularVelocity.z }.Degrees() * _dt;
 
 		if (mfZAngleDeg < -180.0F) mfZAngleDeg = 179.999F;
 		if (mfZAngleDeg > 180.0F) mfZAngleDeg = -179.999F;
