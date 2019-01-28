@@ -1,5 +1,5 @@
 [START_PROGRAMS]
-"Shader\\DefaultVert.dvert","Shader\\DefaultFrag.dfrag","Shader\\NoTextureFrag.dfrag","Shader\\ColourFrag.dfrag","Shader\\FinalStage.dfrag","Shader\\LogoFrag.dfrag","Shader\\Font.dvert","Shader\\FontFrag.dfrag","Shader\\Collider.dvert","Shader\\Collider.dfrag","Shader\\ShakeQuad.dvert",
+"Shader\\DefaultVert.dvert","Shader\\DefaultFrag.dfrag","Shader\\NoTextureFrag.dfrag","Shader\\ColourFrag.dfrag","Shader\\FinalStage.dfrag","Shader\\LogoFrag.dfrag","Shader\\Font.dvert","Shader\\FontFrag.dfrag","Shader\\Collider.dvert","Shader\\Collider.dfrag","Shader\\ShakeQuad.dvert","Shader\\VineShear.dvert",
 [START_SHADER]
 "Default Shader","Shader\DefaultVert.dvert","Shader\DefaultFrag.dfrag",
 [START_SHADER]
@@ -16,3 +16,5 @@
 "Collider Shader","Shader\Collider.dvert","Shader\Collider.dfrag",
 [START_SHADER]
 "Shake Quad","Shader\ShakeQuad.dvert","Shader\DefaultFrag.dfrag",
+[START_SHADER]
+"Vine Shear","Shader\VineShear.dvert","Shader\DefaultFrag.dfrag",
