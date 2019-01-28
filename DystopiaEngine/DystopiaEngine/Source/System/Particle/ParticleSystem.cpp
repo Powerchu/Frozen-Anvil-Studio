@@ -25,6 +25,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Math/Vectors.h"
 
+#include <GL/glew.h>
+
 
 Dystopia::ParticleSystem::ParticleSystem(void) noexcept
 {
@@ -56,6 +58,11 @@ void Dystopia::ParticleSystem::Update(float _dt)
 			e.Bind();
 			e.UploadBuffers();
 		}
+
+#   if defined(DEBUG) | defined(_DEBUG)
+		if (auto err = glGetError())
+			__debugbreak();
+#    endif
 	}
 
 	for (auto& e : mComponents)
@@ -81,6 +88,11 @@ void Dystopia::ParticleSystem::Update(float _dt)
 				e.Render();
 			}
 		}
+
+#   if defined(DEBUG) | defined(_DEBUG)
+		if (auto err = glGetError())
+			__debugbreak();
+#    endif
 	}
 }
 

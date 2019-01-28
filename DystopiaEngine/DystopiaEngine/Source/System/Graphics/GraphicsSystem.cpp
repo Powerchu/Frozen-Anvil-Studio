@@ -360,7 +360,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 			if (r->GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 
 		auto s = r->GetShader();
-		if (s && r->GetTexture())
+		if (s && s->IsValid() && r->GetTexture())
 		{
 			s->Bind();
 			s->UploadUniform("vUVBounds", 0.f, 0.f, 1.f, 1.f);
@@ -380,6 +380,11 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 		}
 	}
 
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
+
 	for (auto& r : set2)
 	{
 		if constexpr (EDITOR)
@@ -387,6 +392,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 		
 		auto s = r->GetShader();
 		s = r->GetTexture() ? s : CORE::Get<ShaderSystem>()->GetShader("No Texture");
+		s = s->IsValid() ? s : CORE::Get<ShaderSystem>()->GetShader("No Texture");
 		s->Bind();
 		s->UploadUniform("ProjectMat", _Proj);
 		s->UploadUniform("ViewMat", _View);

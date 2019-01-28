@@ -62,7 +62,7 @@ namespace Dystopia
 		int const mID;
 
 	protected:
-		int mReserved;
+		char reserved[4];
 	};
 }
 

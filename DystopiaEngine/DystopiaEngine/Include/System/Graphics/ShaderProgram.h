@@ -29,6 +29,7 @@ namespace Dystopia
 		ShaderProgram(bool = true) noexcept;
 		~ShaderProgram(void) noexcept;
 
+		bool IsValid(void) const noexcept;
 		bool LoadProgram(::Gfx::ShaderStage, char const* _strFile, char const* _strName) noexcept;
 
 		::Gfx::ShaderStage const& GetStage(void) const noexcept;
@@ -46,7 +47,7 @@ namespace Dystopia
 		::Gfx::ShaderProg mProgram;
 		::Gfx::ShaderStage mStage;
 
-		bool mbIsCustom;
+		bool mbIsCustom, mbValid;
 
 		AutoArray<std::pair<OString, ::Gfx::eUniform_t>> mVars;
 	};

@@ -68,11 +68,12 @@ namespace Dystopia
 		auto AddAffector(Ty&&) noexcept -> Ut::EnableIf_t<std::is_base_of_v<ParticleAffector, Ty>>;
 
 		Shader& GetShader(void) noexcept;
-		Particle& GetSpawnDefaults(void) noexcept;
+		GfxParticle& GetSpawnDefaults(void) noexcept;
 		AutoArray<Math::Vec4>& GetColour(void) noexcept;
 		AutoArray<Math::Vec4>& GetPosition(void) noexcept;
 		AutoArray<Math::Vec3>& GetVelocity(void) noexcept;
 		AutoArray<Math::Vec3>& GetAcceleration(void) noexcept;
+		AutoArray<ParticleAffector>& GetSpawnAffectors(void) noexcept;
 		AutoArray<ParticleAffector>& GetUpdateAffectors(void) noexcept;
 		AutoArray<ParticleAffector>& GetFixedUpdateAffectors(void) noexcept;
 
@@ -92,7 +93,7 @@ namespace Dystopia
 		AutoArray<ParticleAffector> mUpdate;
 		AutoArray<ParticleAffector> mFixedUpdate;
 
-		Particle mParticle;
+		GfxParticle mParticle;
 
 		Shader* mpShader;
 		unsigned mVAO, mColourBuffer, mPosBuffer;

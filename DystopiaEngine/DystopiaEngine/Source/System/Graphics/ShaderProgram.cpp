@@ -31,7 +31,7 @@ namespace
 
 Dystopia::ShaderProgram::ShaderProgram(bool _bIsCustom) noexcept
 	: mProgram{ pGfxAPI->CreateShaderProgram() }, mStage{ Gfx::ShaderStage::NONE }, mstrName{}, mVars{},
-	mbIsCustom{ _bIsCustom }
+	mbIsCustom{ _bIsCustom }, mbValid{ false }
 {
 
 }
@@ -54,6 +54,11 @@ Dystopia::ShaderProgram::~ShaderProgram(void) noexcept
 OString const& Dystopia::ShaderProgram::GetName(void) const noexcept
 {
 	return mstrName;
+}
+
+bool Dystopia::ShaderProgram::IsValid(void) const noexcept
+{
+	return mbValid;
 }
 
 bool Dystopia::ShaderProgram::IsCustomProgram(void) const noexcept
@@ -95,26 +100,29 @@ bool Dystopia::ShaderProgram::LoadProgram(Gfx::ShaderStage _stage, char const* _
 	pData[sz] = '\0';
 	auto shader = pGfxAPI->CompileGLSL(_stage, pData);
 
-	if (!shader)
-		return false;
-
-	bool ret = pGfxAPI->LinkShader(mProgram, shader);
-	pGfxAPI->Free(shader);
-
 	mStage   = _stage;
-	mstrName = _file;
 	mstrName = _strName;
 
+	if (!shader)
+	{
+		// TODO
+		return false;
+	}
+
+	if (pGfxAPI->LinkShader(mProgram, shader))
+	{
 #	if EDITOR
 		mVars = pGfxAPI->QueryVariables(mProgram);
 #	endif
+	}
 
+	pGfxAPI->Free(shader);
 #   if defined(_DEBUG) | defined(DEBUG)
 		if (auto err = glGetError())
 			__debugbreak();
 #   endif 
 
-	return ret;
+	return mbValid = true;
 }
 
 

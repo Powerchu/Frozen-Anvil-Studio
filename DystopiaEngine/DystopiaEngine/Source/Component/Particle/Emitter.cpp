@@ -31,7 +31,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Dystopia::Emitter::Emitter(void) noexcept
 	: mColour{}, mPosition{}, mVelocity{}, mAccel{}, mLifetime{}, mSpawnCount{},
-	mUpdate{}, mFixedUpdate{}
+	mSpawn{}, mUpdate{}, mFixedUpdate{}
 {
 	glGenVertexArrays(1, &mVAO);
 	glGenBuffers(2, &mColourBuffer);
@@ -155,11 +155,11 @@ void Dystopia::Emitter::SpawnParticle(void) noexcept
 
 	pos.w = mParticle.mfSize;
 
-	mLifetime.EmplaceBack(mParticle.mfLifeDur);
-	mColour  .EmplaceBack(mParticle.mColour  );
-	mAccel   .EmplaceBack(                   );
-	mVelocity.EmplaceBack(mParticle.mVelocity);
-	mPosition.EmplaceBack(pos                );
+	mLifetime.TryEmplaceBack(mParticle.mfLifeDur);
+	mColour  .TryEmplaceBack(mParticle.mColour  );
+	mAccel   .TryEmplaceBack(                   );
+	mVelocity.TryEmplaceBack(mParticle.mVelocity);
+	mPosition.TryEmplaceBack(pos                );
 }
 
 Dystopia::Shader& Dystopia::Emitter::GetShader(void) noexcept
@@ -167,7 +167,7 @@ Dystopia::Shader& Dystopia::Emitter::GetShader(void) noexcept
 	return *mpShader;
 }
 
-Dystopia::Particle& Dystopia::Emitter::GetSpawnDefaults(void) noexcept
+Dystopia::GfxParticle& Dystopia::Emitter::GetSpawnDefaults(void) noexcept
 {
 	return mParticle;
 }
@@ -190,6 +190,11 @@ AutoArray<Math::Vec3>& Dystopia::Emitter::GetVelocity(void) noexcept
 AutoArray<Math::Vec3>& Dystopia::Emitter::GetAcceleration(void) noexcept
 {
 	return mAccel;
+}
+
+AutoArray<Dystopia::ParticleAffector>& Dystopia::Emitter::GetSpawnAffectors(void) noexcept
+{
+	return mSpawn;
 }
 
 AutoArray<Dystopia::ParticleAffector>& Dystopia::Emitter::GetUpdateAffectors(void) noexcept
@@ -222,12 +227,13 @@ void Dystopia::Emitter::Serialise(TextSerialiser& _out) const
 
 void Dystopia::Emitter::Unserialise(TextSerialiser& _in)
 {
-	char buf[128];
+	std::string buf;
+	buf.reserve(128);
 
 	_in >> buf;
 
 
-	mpShader = CORE::Get<ShaderSystem>()->GetShader(buf);
+	mpShader = CORE::Get<ShaderSystem>()->GetShader(buf.c_str());
 }
 
 void Dystopia::Emitter::EditorUI(void) noexcept

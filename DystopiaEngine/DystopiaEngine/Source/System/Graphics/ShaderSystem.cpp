@@ -149,7 +149,6 @@ void Dystopia::ShaderSystem::LoadShaderList(char const* _strPath, eFileDir _dir,
 {
 	auto pFileSys = CORE::Get<FileSystem>();
 	auto file = Serialiser::OpenFile<TextSerialiser>(pFileSys->GetFullPath(_strPath, _dir).c_str(), Serialiser::MODE_READ);
-	//auto file = Serialiser::OpenFile<TextSerialiser>(pFileSys->GetFullPath(_strPath, _dir).c_str(), Serialiser::MODE_READ);
 	std::string strName;
 
 	// Load shader programs
@@ -157,7 +156,6 @@ void Dystopia::ShaderSystem::LoadShaderList(char const* _strPath, eFileDir _dir,
 	while (!file.EndOfInput())
 	{
 		file >> strName;
-		//strName = pFileSys->GetFullPath(strName, _dir);
 
 		ResolveShaderProgram(strName, _dir, _bTrack);
 	}
@@ -185,7 +183,7 @@ void Dystopia::ShaderSystem::SaveCustomShaders(void) noexcept
 {
 	auto pFileSys = CORE::Get<FileSystem>();
 
-	auto path = pFileSys->GetProjectFolders<std::string>(eFileDir::eResource) + "ShaderList.txt";
+	auto path = pFileSys->GetProjectFolders<std::string>(eFileDir::eResource) + "/Shader/ShaderList.txt";
 	auto file = Serialiser::OpenFile<TextSerialiser>(path.c_str(), Serialiser::MODE_WRITE);
 
 	char buffer[128]{};
