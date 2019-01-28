@@ -26,7 +26,7 @@ void main()
   mat4 modelView = ViewMat * ModelMat;
   vec4 temp = modelView * vec4(vertexPos, 1.f);
   
-  temp.x += (vertexUV.x * (Intensity * sin(Time * 3.14159265f)));
+  temp.x += (vertexUV.y * (Intensity * sin(Time * 3.14159265f)));
   
   vPosition = temp.xyz;
   vNormal   = (transpose(inverse(modelView)) * vec4(vertexNorm, .0f)).xyz;
