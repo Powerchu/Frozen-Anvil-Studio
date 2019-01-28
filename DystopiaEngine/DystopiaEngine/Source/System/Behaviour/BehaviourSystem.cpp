@@ -159,7 +159,7 @@ namespace Dystopia
 
 		FileSys = EngineCore::GetInstance()->Get<FileSystem>();
 
-		std::wstring IncludeFolderPath = L"/I" + FileSys->GetProjectFolders<std::wstring>(eFileDir::eHeader);
+		std::wstring IncludeFolderPath = L"/I \"" + FileSys->GetProjectFolders<std::wstring>(eFileDir::eHeader) + L"\"";
 
 #if _DEBUG
 		FileSys->CreateFiles("BehaviourDLL",         eFileDir::eAppData);

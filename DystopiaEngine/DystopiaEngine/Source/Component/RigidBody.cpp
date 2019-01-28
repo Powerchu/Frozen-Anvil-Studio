@@ -225,7 +225,7 @@ namespace Dystopia
 		 ********************************************************************/
 		 //Store previous Position
 		mPrevPosition = mPosition = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
-		mfZAngleDeg   = GetOwner()->GetComponent<Transform>()->GetGlobalRotation().ToEuler().z;
+		//mfZAngleDeg   = GetOwner()->GetComponent<Transform>()->GetGlobalRotation().ToEuler().z;
 
 		if (Get_IsKinematic()) return;
 
@@ -390,8 +390,8 @@ namespace Dystopia
 		if (!mbFixedRot)
 			mfZAngleDeg += Math::Radians{ mAngularVelocity.Magnitude() }.Degrees() * _dt;
 
-		if (mfZAngleDeg <= -180.0F) mfZAngleDeg = 179.999F;
-		if (mfZAngleDeg >= 180.0F) mfZAngleDeg = -179.999F;
+		if (mfZAngleDeg < -180.0F) mfZAngleDeg = 179.999F;
+		if (mfZAngleDeg > 180.0F) mfZAngleDeg = -179.999F;
 	}
 
 	void RigidBody::UpdateResult(float) const
@@ -449,6 +449,7 @@ namespace Dystopia
 		_out << mbIsAwake;				// Awake State
 		_out << mbCanSleep;				// Can Sleep Boolean
 		_out << static_cast<int>(mPhysicsType);
+		_out << mbFixedRot;
 		_out.InsertEndBlock("RigidBody");
 	}
 
@@ -472,6 +473,7 @@ namespace Dystopia
 		_in >> mbIsAwake;				// Awake State
 		_in >> mbCanSleep;				// Can Sleep Boolean
 		_in >> type;
+		_in >> mbFixedRot;
 		_in.ConsumeEndBlock();
 
 		mPhysicsType = static_cast<PhysicsType>(type);

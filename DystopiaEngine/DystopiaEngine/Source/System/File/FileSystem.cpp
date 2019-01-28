@@ -126,7 +126,7 @@ namespace Dystopia
 			unsigned num  = 0;
 			unsigned prev = 0;
 
-			while (num = GetChangesInfo(*TrackJob, ListOfFileNames, 20))
+			while ((num = GetChangesInfo(*TrackJob, ListOfFileNames, 20)))
 			{
 				prev = num;
 			}
