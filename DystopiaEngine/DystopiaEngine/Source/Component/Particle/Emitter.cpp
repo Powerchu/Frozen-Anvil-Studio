@@ -26,6 +26,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/Vectors.h"
 #include "Math/Matrix4.h"
 #include "Utility/DebugAssert.h"
+#include "Utility/Meta.h"
+#include "Utility/MetaAlgorithms.h"
+
+#include "Editor/RuntimeMeta.h"
 
 #include <GL/glew.h>
 
@@ -42,7 +46,7 @@ Dystopia::Emitter::Emitter(void) noexcept
 	glGenVertexArrays(1, &mVAO);
 	glGenBuffers(2, &mColourBuffer);
 
-	Bind();
+	glBindVertexArray(mVAO);
 
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
@@ -50,7 +54,7 @@ Dystopia::Emitter::Emitter(void) noexcept
 	glVertexAttribDivisor(0, 4);
 	glVertexAttribDivisor(1, 4);
 
-	Unbind();
+	glBindVertexArray(0);
 }
 
 Dystopia::Emitter::~Emitter(void) noexcept
@@ -74,7 +78,7 @@ void Dystopia::Emitter::Awake(void)
 	}
 	if (!mpTexture)
 	{
-		mpTexture = CORE::Get<TextureSystem>()->GetTexture("checker_dxt3.dds");
+		mpTexture = CORE::Get<TextureSystem>()->GetTexture("EditorStartup.png");
 	}
 }
 
@@ -93,6 +97,15 @@ void Dystopia::Emitter::Init(void)
 	mVelocity.reserve(limit);
 	mAccel   .reserve(limit);
 	mLifetime.reserve(limit);
+
+	if (!mpShader)
+	{
+		mpShader = CORE::Get<ShaderSystem>()->GetShader("Default Particle");
+	}
+	if (!mpTexture)
+	{
+		mpTexture = CORE::Get<TextureSystem>()->GetTexture("EditorStartup.png");
+	}
 
 	Bind();
 	glBindBuffer(GL_ARRAY_BUFFER, mColourBuffer);
@@ -222,42 +235,118 @@ AutoArray<Dystopia::ParticleAffector>& Dystopia::Emitter::GetFixedUpdateAffector
 
 void Dystopia::Emitter::Serialise(TextSerialiser& _out) const
 {
-	Component::Serialise(_out);
 	_out.InsertStartBlock("Emitter");
+	Component::Serialise(_out);
 	if (mpShader)
 		_out << mpShader->GetName();
 	else
 		_out << "Default Particle";
-
 	if (mpTexture)
 		_out << mpTexture->GetName();
 	else
 		_out << "checker_dxt3.dds";
+	_out.InsertEndBlock("Emitter");
 
+
+
+
+	_out.InsertStartBlock("Spawn affectors");
+	_out << mSpawn.size();
 	for (auto& e : mSpawn)
 		_out << e.GetID();
+	_out.InsertEndBlock("Spawn affectors");
+	for (auto& e : mSpawn)
+		e.Serialise(_out);
 
+
+
+
+	_out.InsertStartBlock("Update affectors");
+	_out << mUpdate.size();
 	for (auto& e : mUpdate)
 		_out << e.GetID();
+	_out.InsertEndBlock("Update affectors");
+	for (auto& e : mUpdate)
+		e.Serialise(_out);
 
+
+
+
+	_out.InsertStartBlock("Fixed Update affectors");
+	_out << mFixedUpdate.size();
 	for (auto& e : mFixedUpdate)
 		_out << e.GetID();
-	_out.InsertEndBlock("Emitter");
+	_out.InsertEndBlock("Fixed Update affectors");
+	for (auto& e : mFixedUpdate)
+		e.Serialise(_out);
 }
 
 void Dystopia::Emitter::Unserialise(TextSerialiser& _in)
 {
-	Component::Unserialise(_in);
 	_in.ConsumeStartBlock();
+	Component::Unserialise(_in);
+
 	std::string buf;
 	buf.reserve(128);
+
 	_in >> buf;
 	mpShader = CORE::Get<ShaderSystem>()->GetShader(buf.c_str());
-
 	_in >> buf;
 	mpTexture = CORE::Get<TextureSystem>()->GetTexture(buf.c_str());
-
 	_in.ConsumeEndBlock();
+
+	static AffectorGet affectorsList;
+	unsigned id = 0;
+	size_t size = 0;
+
+
+
+
+	_in.ConsumeStartBlock();
+	_in >> size;
+	mSpawn.clear();
+	for (size_t i = 0; i < size; i++)
+	{
+		_in >> id;
+		auto pa = affectorsList.Get(id);
+		mSpawn.EmplaceBack(pa);
+	}
+	_in.ConsumeEndBlock();
+	for (auto& elem : mSpawn)
+		elem.UnSerialise(_in);
+
+
+
+
+	_in.ConsumeStartBlock();
+	_in >> size;
+	mUpdate.clear();
+	for (size_t i = 0; i < size; i++)
+	{
+		_in >> id;
+		auto pa = affectorsList.Get(id);
+		mUpdate.EmplaceBack(pa);
+	}
+	_in.ConsumeEndBlock();
+	for (auto& elem : mUpdate)
+		elem.UnSerialise(_in);
+
+
+
+
+	_in.ConsumeStartBlock();
+	_in >> size;
+	mFixedUpdate.clear();
+	for (size_t i = 0; i < size; i++)
+	{
+		_in >> id;
+		auto pa = affectorsList.Get(id);
+		mFixedUpdate.EmplaceBack(pa);
+	}
+	_in.ConsumeEndBlock();
+	for (auto& elem : mFixedUpdate)
+		elem.UnSerialise(_in);
+
 }
 
 void Dystopia::Emitter::EditorUI(void) noexcept

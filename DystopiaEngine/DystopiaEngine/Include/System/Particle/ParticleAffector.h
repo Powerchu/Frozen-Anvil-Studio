@@ -15,7 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _PARTICLEAFFECTOR_H_
 
 #include "Utility/MetaAlgorithms.h"
-
+#include "IO/TextSerialiser.h"
 
 namespace Dystopia
 {
@@ -45,6 +45,33 @@ namespace Dystopia
 		inline int GetID(void) const noexcept
 		{
 			return mID;
+		}
+
+		inline void Serialise(TextSerialiser& _out) const
+		{
+			_out.InsertStartBlock("Affector");
+			for (unsigned i = 0; i < 16; ++i)
+				_out << data[i];
+			for (unsigned i = 0; i < 4; ++i)
+				_out << reserved[i];
+			_out.InsertEndBlock("Affector");
+		}
+
+		inline void UnSerialise(TextSerialiser& _in)
+		{
+			_in.ConsumeStartBlock();
+			char c = '\0';
+			for (unsigned i = 0; i < 16; ++i)
+			{
+				_in >> c;
+				data[i] = c;
+			}
+			for (unsigned i = 0; i < 4; ++i)
+			{
+				_in >> c;
+				reserved[i] = c;
+			}
+			_in.ConsumeEndBlock();
 		}
 
 	protected:

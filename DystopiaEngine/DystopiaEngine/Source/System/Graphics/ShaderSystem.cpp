@@ -217,9 +217,9 @@ void Dystopia::ShaderSystem::SaveCustomShaders(void) noexcept
 		{
 			file.InsertStartBlock("SHADER");
 			e.Unserialize(file);
+			file.InsertEndBlock("SHADER");
 		}
 	}
-	file.InsertEndBlock("SHADER");
 }
 
 

@@ -122,7 +122,5 @@ inline void Dystopia::TextSerialiser::ApplyRead<bool>(bool& _rhs)
 	_rhs = !!ch;
 }
 
-
-
 #endif		// INCLUDE GUARD
 
