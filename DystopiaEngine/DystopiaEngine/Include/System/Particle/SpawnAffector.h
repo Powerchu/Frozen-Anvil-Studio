@@ -19,9 +19,11 @@ namespace Dystopia
 	struct SpawnAffector : ParticleAffector
 	{
 		SpawnAffector(void);
-		
-		void AffectorUpdate(Emitter&, float);
+		~SpawnAffector(void);
 
+
+		void SetSpawnDelay(float);
+		void AffectorUpdate(Emitter&, float);
 	};
 
 }

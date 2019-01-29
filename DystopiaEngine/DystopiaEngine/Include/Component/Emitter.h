@@ -119,7 +119,7 @@ namespace Dystopia
 template <typename Ty>
 inline auto Dystopia::Emitter::AddAffector(Ty&& _affector) noexcept -> Ut::EnableIf_t<std::is_base_of_v<ParticleAffector, Ty>>
 {
-	AddEmitter(Ut::Fwd<Ty>(emitter), typename Ut::RemoveRef_t<Ty>::UPDATE{});
+	AddAffector(Ut::Fwd<Ty>(_affector), typename Ut::RemoveRef_t<Ty>::UPDATE{});
 }
 
 template <typename Ty>
