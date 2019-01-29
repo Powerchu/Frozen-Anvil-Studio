@@ -47,9 +47,6 @@ Dystopia::Emitter::Emitter(void) noexcept
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 
-	glVertexAttribDivisor(0, 4);
-	glVertexAttribDivisor(1, 4);
-
 	glBindVertexArray(0);
 }
 
@@ -80,7 +77,7 @@ void Dystopia::Emitter::Awake(void)
 
 void Dystopia::Emitter::Init(void)
 {
-	size_t limit = 0;
+	size_t limit = 100000;
 	
 	mColour  .clear();
 	mPosition.clear();
@@ -96,9 +93,17 @@ void Dystopia::Emitter::Init(void)
 
 	Bind();
 	glBindBuffer(GL_ARRAY_BUFFER, mColourBuffer);
-	glBufferData(GL_ARRAY_BUFFER, limit * sizeof(decltype(mColour)::Val_t), nullptr, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, limit * sizeof(decltype(mColour)::Val_t), nullptr, GL_STREAM_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, mPosBuffer);
-	glBufferData(GL_ARRAY_BUFFER, limit * sizeof(decltype(mColour)::Val_t), nullptr, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, limit * sizeof(decltype(mColour)::Val_t), nullptr, GL_STREAM_DRAW);
+
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, 0);
+
+	glVertexAttribDivisor(0, 4);
+	glVertexAttribDivisor(1, 4);
+
+	Unbind();
 }
 
 void Dystopia::Emitter::FixedUpdate(float _fDT)
@@ -129,6 +134,7 @@ void Dystopia::Emitter::Unbind(void) const noexcept
 
 void Dystopia::Emitter::UploadBuffers(void) const noexcept
 {
+	auto sz = mPosition.size();
 	glBindBuffer(GL_ARRAY_BUFFER, mColourBuffer);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, mColour.size(), mColour.begin());
 
@@ -140,6 +146,7 @@ void Dystopia::Emitter::UploadBuffers(void) const noexcept
 
 void Dystopia::Emitter::Render(void) const noexcept
 {
+	auto sz = mPosition.size();
 	glDrawArraysInstanced(GL_POINTS, 0, 1, static_cast<GLsizei>(mPosition.size()));
 }
 
@@ -163,7 +170,7 @@ void Dystopia::Emitter::SpawnParticle(void) noexcept
 		e.Update(*this, 0);
 
 	auto transform = GetOwner()->GetComponent<Transform>();
-	auto pos = transform->GetGlobalPosition() + transform->GetTransformMatrix() * mParticle.mPos.xyz1;
+	auto pos = transform->GetTransformMatrix() * mParticle.mPos.xyz1;
 
 	pos.w = mParticle.mfSize;
 
