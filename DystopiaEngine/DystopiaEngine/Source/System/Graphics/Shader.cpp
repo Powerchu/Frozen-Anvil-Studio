@@ -37,8 +37,8 @@ namespace
 
 
 Dystopia::Shader::Shader(OString const& _strName, bool _bIsCustom) noexcept :
-	mID{ pGfxAPI->CreateShaderPipeline() }, mStages{ ::Gfx::ShaderStage::NONE }, mstrName{ _strName }, 
-	mbUpdate{ true }, mbIsCustom{ _bIsCustom }
+	mID{ pGfxAPI->CreateShaderPipeline() }, mStages{ ::Gfx::ShaderStage::NONE }, mstrName{ _strName },
+	mbUpdate{ true }, mbIsCustom{ _bIsCustom }, mbValid{ true }
 {
 
 }
@@ -86,18 +86,30 @@ void Dystopia::Shader::AttachProgram(ShaderProgram* _prog)
 		mPrograms.EmplaceBack(_prog);
 	}
 
-	pGfxAPI->AttachShaderProgram(mID, _prog->GetID(), _prog->GetStage());
+	mbValid = mbValid && _prog->IsValid();
 	mbUpdate = true;
+
+#if EDITOR
+	if (_prog->IsValid())
+#endif
+	pGfxAPI->AttachShaderProgram(mID, _prog->GetID(), _prog->GetStage());
+
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
 }
 
 void Dystopia::Shader::ReattachProgram(ShaderProgram* _prog)
 {
+	mbValid = true;
 	for (auto& e : mPrograms)
-		if (e == _prog)
-		{
+	{
+		if (e == _prog && e->IsValid())
 			pGfxAPI->AttachShaderProgram(mID, _prog->GetID(), _prog->GetStage());
-			break;
-		}
+
+		mbValid = mbValid && e->IsValid();
+	}
 
 	mbUpdate = true;
 }
@@ -140,16 +152,21 @@ void Dystopia::Shader::DetachProgram(Gfx::ShaderStage _stage)
 }
 
 
-void Dystopia::Shader::Bind(void) const
+void Dystopia::Shader::Bind(void) const noexcept
 {
 	pGfxAPI->UseShaderPipeline(mID);
 }
 
-void Dystopia::Shader::Unbind(void) const
+void Dystopia::Shader::Unbind(void) const noexcept
 {
 	//pGfxAPI->UseShaderPipeline(0);
 }
 
+
+bool Dystopia::Shader::IsValid(void) const noexcept
+{
+	return mbValid;
+}
 
 OString const& Dystopia::Shader::GetName(void) const noexcept
 {
@@ -163,6 +180,8 @@ bool Dystopia::Shader::IsCustomShader(void) const noexcept
 
 void Dystopia::Shader::Unserialize(TextSerialiser& _file)
 {
+	_file << GetName();
+
 	for (auto& e : mPrograms)
 		_file << e->GetName();
 }

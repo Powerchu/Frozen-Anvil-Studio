@@ -29,6 +29,9 @@ namespace Dystopia
 		ShaderProgram(bool = true) noexcept;
 		~ShaderProgram(void) noexcept;
 
+		ShaderProgram(ShaderProgram&&) noexcept;
+
+		bool IsValid(void) const noexcept;
 		bool LoadProgram(::Gfx::ShaderStage, char const* _strFile, char const* _strName) noexcept;
 
 		::Gfx::ShaderStage const& GetStage(void) const noexcept;
@@ -40,13 +43,15 @@ namespace Dystopia
 		void TrackChangesCallback(void);
 		AutoArray<std::pair<OString, ::Gfx::eUniform_t>> const& GetVariables(void) noexcept;
 
+		ShaderProgram& operator= (ShaderProgram&&) noexcept;
+
 	private:
 
 		OString mstrName;
 		::Gfx::ShaderProg mProgram;
 		::Gfx::ShaderStage mStage;
 
-		bool mbIsCustom;
+		bool mbIsCustom, mbValid;
 
 		AutoArray<std::pair<OString, ::Gfx::eUniform_t>> mVars;
 	};

@@ -109,6 +109,11 @@ void Dystopia::Renderer::SetShader(const std::string&) noexcept
 
 Dystopia::Shader* Dystopia::Renderer::GetShader(void) const noexcept
 {
+#   if EDITOR
+	if (!mpShader || !mpShader->IsValid())
+		return CORE::Get<ShaderSystem>()->GetShader("Error Shader");
+#   endif
+
 	return mpShader;
 }
 
@@ -272,6 +277,7 @@ void Dystopia::Renderer::MeshField()
 
 void Dystopia::Renderer::ShaderField()
 {
+	static bool debug = false;
 	EGUI::PushLeftAlign(80);
 	static void(*x[])(ShaderVariant_t&) {
 		[](ShaderVariant_t& v) { v = Ut::MetaExtract_t<0, ShaderTypeList>::type{}; },
@@ -295,7 +301,15 @@ void Dystopia::Renderer::ShaderField()
 	}
 	if (EGUI::Display::EmptyBox("Shader", 150, str, true))
 	{
-
+		debug = !debug;
+	}
+	OString buffer{ str };
+	if (debug && EGUI::Display::TextField("Manual", buffer, true, 150))
+	{
+		if (auto pShader = CORE::Get<ShaderSystem>()->GetShader(buffer.c_str()))
+		{
+			SetShader(pShader);
+		}
 	}
 	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::FILE))
 	{

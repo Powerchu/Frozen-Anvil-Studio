@@ -387,7 +387,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 			if (r->GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 
 		auto s = r->GetShader();
-		if (s && r->GetTexture())
+		if (s && s->IsValid() && r->GetTexture())
 		{
 			s->Bind();
 			s->UploadUniform("vUVBounds", 0.f, 0.f, 1.f, 1.f);

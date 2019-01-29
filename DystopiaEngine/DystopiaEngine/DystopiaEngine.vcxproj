@@ -273,6 +273,8 @@
     <ClInclude Include="Include\System\Graphics\TextureAtlas.h" />
     <ClInclude Include="Include\System\Logger\FileLogger.h" />
     <ClInclude Include="Include\Component\Emitter.h" />
+    <ClInclude Include="Include\System\Particle\Particle.h" />
+    <ClInclude Include="Include\System\Particle\ParticleAffector.h" />
     <ClInclude Include="Include\System\Particle\ParticleSystem.h" />
     <ClInclude Include="Include\System\Physics\CollisionResolution.h" />
     <ClInclude Include="Include\Component\Collider.h" />

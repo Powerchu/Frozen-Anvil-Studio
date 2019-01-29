@@ -1,0 +1,16 @@
+#version 410 core
+
+layout(location = 2) in vec2 vUV;
+
+layout(location = 0) out vec4 fragColor;
+
+void main()
+{
+  vec2 idx = vec2(mod(vUV.x, 0.2f), mod(vUV.y, 0.2f));
+  
+  if ((idx.x < 0.1f && idx.y < 0.1f) || (idx.x >= 0.1f && idx.y >= 0.1f))
+    fragColor = vec4(0.8, 0.5, 1, 1);
+  else
+    fragColor = vec4(0.9, 0.6, 1, 1);
+}
+
