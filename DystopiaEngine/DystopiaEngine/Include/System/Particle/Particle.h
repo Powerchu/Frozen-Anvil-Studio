@@ -30,6 +30,8 @@ namespace Dystopia
 
 		Math::Vec3 mVelocity;
 		float mfLifeDur;
+
+		size_t mnLimit = 10000;
 	};
 }
 

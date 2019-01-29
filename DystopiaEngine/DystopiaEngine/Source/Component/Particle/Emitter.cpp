@@ -77,25 +77,23 @@ void Dystopia::Emitter::Awake(void)
 
 void Dystopia::Emitter::Init(void)
 {
-	size_t limit = 100000;
-	
 	mColour  .clear();
 	mPosition.clear();
 	mVelocity.clear();
 	mAccel   .clear();
 	mLifetime.clear();
 
-	mColour  .reserve(limit);
-	mPosition.reserve(limit);
-	mVelocity.reserve(limit);
-	mAccel   .reserve(limit);
-	mLifetime.reserve(limit);
+	mColour  .reserve(mParticle.mnLimit);
+	mPosition.reserve(mParticle.mnLimit);
+	mVelocity.reserve(mParticle.mnLimit);
+	mAccel   .reserve(mParticle.mnLimit);
+	mLifetime.reserve(mParticle.mnLimit);
 
 	Bind();
 	glBindBuffer(GL_ARRAY_BUFFER, mColourBuffer);
-	glBufferData(GL_ARRAY_BUFFER, limit * sizeof(decltype(mColour)::Val_t), nullptr, GL_STREAM_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, mParticle.mnLimit * sizeof(decltype(mColour)::Val_t), nullptr, GL_STREAM_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, mPosBuffer);
-	glBufferData(GL_ARRAY_BUFFER, limit * sizeof(decltype(mColour)::Val_t), nullptr, GL_STREAM_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, mParticle.mnLimit * sizeof(decltype(mColour)::Val_t), nullptr, GL_STREAM_DRAW);
 
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, 0);
@@ -134,7 +132,6 @@ void Dystopia::Emitter::Unbind(void) const noexcept
 
 void Dystopia::Emitter::UploadBuffers(void) const noexcept
 {
-	auto sz = mPosition.size();
 	glBindBuffer(GL_ARRAY_BUFFER, mColourBuffer);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, mColour.size(), mColour.begin());
 
@@ -146,7 +143,6 @@ void Dystopia::Emitter::UploadBuffers(void) const noexcept
 
 void Dystopia::Emitter::Render(void) const noexcept
 {
-	auto sz = mPosition.size();
 	glDrawArraysInstanced(GL_POINTS, 0, 1, static_cast<GLsizei>(mPosition.size()));
 }
 
@@ -164,21 +160,24 @@ void Dystopia::Emitter::KillParticle(unsigned _nIdx) noexcept
 
 void Dystopia::Emitter::SpawnParticle(void) noexcept
 {
-	++mSpawnCount;
+	if (mParticle.mnLimit > mSpawnCount)
+	{
+		++mSpawnCount;
 
-	for (auto& e : mSpawn)
-		e.Update(*this, 0);
+		for (auto& e : mSpawn)
+			e.Update(*this, 0);
 
-	auto transform = GetOwner()->GetComponent<Transform>();
-	auto pos = transform->GetTransformMatrix() * mParticle.mPos.xyz1;
+		auto transform = GetOwner()->GetComponent<Transform>();
+		auto pos = transform->GetTransformMatrix() * mParticle.mPos.xyz1;
+		pos.w    = mParticle.mfSize;
 
-	pos.w = mParticle.mfSize;
+		mLifetime.EmplaceBackUnsafe(mParticle.mfLifeDur);
+		mColour  .EmplaceBackUnsafe(mParticle.mColour  );
+		mAccel   .EmplaceBackUnsafe(                   );
+		mVelocity.EmplaceBackUnsafe(mParticle.mVelocity);
+		mPosition.EmplaceBackUnsafe(pos                );
+	}
 
-	mLifetime.TryEmplaceBack(mParticle.mfLifeDur);
-	mColour  .TryEmplaceBack(mParticle.mColour  );
-	mAccel   .TryEmplaceBack(                   );
-	mVelocity.TryEmplaceBack(mParticle.mVelocity);
-	mPosition.TryEmplaceBack(pos                );
 }
 
 Dystopia::Shader& Dystopia::Emitter::GetShader(void) noexcept
@@ -239,7 +238,7 @@ void Dystopia::Emitter::Serialise(TextSerialiser& _out) const
 	if (mpTexture)
 		_out << mpTexture->GetName();
 	else
-		_out << "checker_dxt3.dds";
+		_out << "EditorStartup.png";
 
 	for (auto& e : mSpawn)
 		_out << e.GetID();

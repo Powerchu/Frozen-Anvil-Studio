@@ -35,21 +35,21 @@ namespace Gfx
 		bool LinkShaderImpl(ShaderProg const&, Shader const*, size_t) noexcept override;
 
 		int GetUniformLocation(ShaderProg const&, char const*) noexcept override;
-		void UploadUniform1f(ShaderProg const&, unsigned _nLoc, unsigned _nCount, float    const*) noexcept override;
-		void UploadUniform2f(ShaderProg const&, unsigned _nLoc, unsigned _nCount, float    const*) noexcept override;
-		void UploadUniform3f(ShaderProg const&, unsigned _nLoc, unsigned _nCount, float    const*) noexcept override;
-		void UploadUniform4f(ShaderProg const&, unsigned _nLoc, unsigned _nCount, float    const*) noexcept override;
-		void UploadUniform1i(ShaderProg const&, unsigned _nLoc, unsigned _nCount, int      const*) noexcept override;
-		void UploadUniform2i(ShaderProg const&, unsigned _nLoc, unsigned _nCount, int      const*) noexcept override;
-		void UploadUniform3i(ShaderProg const&, unsigned _nLoc, unsigned _nCount, int      const*) noexcept override;
-		void UploadUniform4i(ShaderProg const&, unsigned _nLoc, unsigned _nCount, int      const*) noexcept override;
-		void UploadUniform1u(ShaderProg const&, unsigned _nLoc, unsigned _nCount, unsigned const*) noexcept override;
-		void UploadUniform2u(ShaderProg const&, unsigned _nLoc, unsigned _nCount, unsigned const*) noexcept override;
-		void UploadUniform3u(ShaderProg const&, unsigned _nLoc, unsigned _nCount, unsigned const*) noexcept override;
-		void UploadUniform4u(ShaderProg const&, unsigned _nLoc, unsigned _nCount, unsigned const*) noexcept override;
+		void UploadUniform1f(ShaderProg const&, int _nLoc, unsigned _nCount, float    const*) noexcept override;
+		void UploadUniform2f(ShaderProg const&, int _nLoc, unsigned _nCount, float    const*) noexcept override;
+		void UploadUniform3f(ShaderProg const&, int _nLoc, unsigned _nCount, float    const*) noexcept override;
+		void UploadUniform4f(ShaderProg const&, int _nLoc, unsigned _nCount, float    const*) noexcept override;
+		void UploadUniform1i(ShaderProg const&, int _nLoc, unsigned _nCount, int      const*) noexcept override;
+		void UploadUniform2i(ShaderProg const&, int _nLoc, unsigned _nCount, int      const*) noexcept override;
+		void UploadUniform3i(ShaderProg const&, int _nLoc, unsigned _nCount, int      const*) noexcept override;
+		void UploadUniform4i(ShaderProg const&, int _nLoc, unsigned _nCount, int      const*) noexcept override;
+		void UploadUniform1u(ShaderProg const&, int _nLoc, unsigned _nCount, unsigned const*) noexcept override;
+		void UploadUniform2u(ShaderProg const&, int _nLoc, unsigned _nCount, unsigned const*) noexcept override;
+		void UploadUniform3u(ShaderProg const&, int _nLoc, unsigned _nCount, unsigned const*) noexcept override;
+		void UploadUniform4u(ShaderProg const&, int _nLoc, unsigned _nCount, unsigned const*) noexcept override;
 
-		void UploadMatrix2(ShaderProg const&, unsigned _nLoc, unsigned _nCount, float const*, bool _bTranspose = true) noexcept override;
-		void UploadMatrix4(ShaderProg const&, unsigned _nLoc, unsigned _nCount, float const*, bool _bTranspose = true) noexcept override;
+		void UploadMatrix2(ShaderProg const&, int _nLoc, unsigned _nCount, float const*, bool _bTranspose = true) noexcept override;
+		void UploadMatrix4(ShaderProg const&, int _nLoc, unsigned _nCount, float const*, bool _bTranspose = true) noexcept override;
 
 		void UseShaderPipeline(ShaderPipeline const&) noexcept override;
 		void AttachShaderProgram(ShaderPipeline const&, ShaderProg const&, ShaderStage const&) noexcept override;

@@ -228,12 +228,12 @@ void Dystopia::Shader::ImportVariables(void) noexcept
 namespace
 {
 	template <typename T, typename C, typename ... U>
-	inline void UploadUniformAux(C const& _target, T _func, char const* _strName, U const& ... _args) noexcept
+	inline void UploadUniformAux(C const& _target, T _func, char const* _strName, U&& ... _args) noexcept
 	{
 		for (auto& e : _target)
 		{
 			auto loc = pGfxAPI->GetUniformLocation(e->GetID(), _strName);
-			(pGfxAPI->*_func)(e->GetID(), loc, _args ...);
+			(pGfxAPI->*_func)(e->GetID(), loc, Ut::Fwd<U>(_args)...);
 		}
 	}
 }

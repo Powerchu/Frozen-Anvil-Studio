@@ -308,72 +308,72 @@ int Gfx::OpenGL_API::GetUniformLocation(ShaderProg const& _prog, char const* _st
 	return glGetUniformLocation(StrongToGLType<GLuint>(_prog), _strName);
 }
 
-void Gfx::OpenGL_API::UploadUniform1f(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, float const* _pVal) noexcept
+void Gfx::OpenGL_API::UploadUniform1f(ShaderProg const& _prog, int _nLoc, unsigned _nCount, float const* _pVal) noexcept
 {
 	glProgramUniform1fv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _pVal);
 }
 
-void Gfx::OpenGL_API::UploadUniform2f(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, float const* _pVal) noexcept
+void Gfx::OpenGL_API::UploadUniform2f(ShaderProg const& _prog, int _nLoc, unsigned _nCount, float const* _pVal) noexcept
 {
 	glProgramUniform2fv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _pVal);
 }
 
-void Gfx::OpenGL_API::UploadUniform3f(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, float const* _pVal) noexcept
+void Gfx::OpenGL_API::UploadUniform3f(ShaderProg const& _prog, int _nLoc, unsigned _nCount, float const* _pVal) noexcept
 {
 	glProgramUniform3fv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _pVal);
 }
 
-void Gfx::OpenGL_API::UploadUniform4f(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, float const* _pVal) noexcept
+void Gfx::OpenGL_API::UploadUniform4f(ShaderProg const& _prog, int _nLoc, unsigned _nCount, float const* _pVal) noexcept
 {
 	glProgramUniform4fv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _pVal);
 }
 
-void Gfx::OpenGL_API::UploadUniform1i(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, int const* _pVal) noexcept
+void Gfx::OpenGL_API::UploadUniform1i(ShaderProg const& _prog, int _nLoc, unsigned _nCount, int const* _pVal) noexcept
 {
 	glProgramUniform1iv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _pVal);
 }
 
-void Gfx::OpenGL_API::UploadUniform2i(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, int const* _pVal) noexcept
+void Gfx::OpenGL_API::UploadUniform2i(ShaderProg const& _prog, int _nLoc, unsigned _nCount, int const* _pVal) noexcept
 {
 	glProgramUniform2iv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _pVal);
 }
 
-void Gfx::OpenGL_API::UploadUniform3i(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, int const* _pVal) noexcept
+void Gfx::OpenGL_API::UploadUniform3i(ShaderProg const& _prog, int _nLoc, unsigned _nCount, int const* _pVal) noexcept
 {
 	glProgramUniform3iv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _pVal);
 }
 
-void Gfx::OpenGL_API::UploadUniform4i(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, int const* _pVal) noexcept
+void Gfx::OpenGL_API::UploadUniform4i(ShaderProg const& _prog, int _nLoc, unsigned _nCount, int const* _pVal) noexcept
 {
 	glProgramUniform4iv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _pVal);
 }
 
-void Gfx::OpenGL_API::UploadUniform1u(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, unsigned const* _pVal) noexcept
+void Gfx::OpenGL_API::UploadUniform1u(ShaderProg const& _prog, int _nLoc, unsigned _nCount, unsigned const* _pVal) noexcept
 {
 	glProgramUniform1uiv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _pVal);
 }
 
-void Gfx::OpenGL_API::UploadUniform2u(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, unsigned const* _pVal) noexcept
+void Gfx::OpenGL_API::UploadUniform2u(ShaderProg const& _prog, int _nLoc, unsigned _nCount, unsigned const* _pVal) noexcept
 {
 	glProgramUniform2uiv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _pVal);
 }
 
-void Gfx::OpenGL_API::UploadUniform3u(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, unsigned const* _pVal) noexcept
+void Gfx::OpenGL_API::UploadUniform3u(ShaderProg const& _prog, int _nLoc, unsigned _nCount, unsigned const* _pVal) noexcept
 {
 	glProgramUniform3uiv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _pVal);
 }
 
-void Gfx::OpenGL_API::UploadUniform4u(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, unsigned const* _pVal) noexcept
+void Gfx::OpenGL_API::UploadUniform4u(ShaderProg const& _prog, int _nLoc, unsigned _nCount, unsigned const* _pVal) noexcept
 {
 	glProgramUniform4uiv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _pVal);
 }
 
-void Gfx::OpenGL_API::UploadMatrix2(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, float const* _pVal, bool _bTrans) noexcept
+void Gfx::OpenGL_API::UploadMatrix2(ShaderProg const& _prog, int _nLoc, unsigned _nCount, float const* _pVal, bool _bTrans) noexcept
 {
 	glProgramUniformMatrix2fv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _bTrans ? GL_TRUE : GL_FALSE, _pVal);
 }
 
-void Gfx::OpenGL_API::UploadMatrix4(ShaderProg const& _prog, unsigned _nLoc, unsigned _nCount, float const* _pVal, bool _bTrans) noexcept
+void Gfx::OpenGL_API::UploadMatrix4(ShaderProg const& _prog, int _nLoc, unsigned _nCount, float const* _pVal, bool _bTrans) noexcept
 {
 	glProgramUniformMatrix4fv(StrongToGLType<GLuint>(_prog), _nLoc, _nCount, _bTrans ? GL_TRUE : GL_FALSE, _pVal);
 }
