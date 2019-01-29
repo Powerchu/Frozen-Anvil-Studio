@@ -18,19 +18,33 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Behaviour/Behaviour.h"
 #include "Object/GameObject.h"
 #include "System/Graphics/MeshSystem.h"
+#include "Editor/EGUI.h"
 
 
 namespace Dystopia
 {
+	std::string Collider::arrColLayer[33] = 
+	{
+				"Default","Player", "Enemy", "Flying",
+				"Passable","Foreground", "Midground", "Background",
+				"Terrain","Particle", "Form", "Force",
+				"Projectile","Layer 14", "Layer 15", "Layer 16",
+				"Layer 17","Layer 18", "Layer 19", "Layer 20",
+				"Layer 21","Layer 22", "Layer 23", "Layer 24",
+				"Layer 25","Layer 26", "Layer 27", "Layer 28",
+				"Layer 29","Layer 30", "Layer 31", "Layer 32","Layer_Global"
+	};
+
+
 	Collider::Collider()
 		: mv3Offset{0, 0, 0, 0}, mpMesh{nullptr}, mbColliding{false}, mPosition{Math::MakePoint3D(0.f, 0.f, 0.f)},
-		  mbIsTrigger(false), mbIsSleeping(false), mScale{1, 1, 1}, mBoundingCircle{GenerateBoardPhaseCircle()}
+		  mbIsTrigger(false), mbIsSleeping(false), mScale{1, 1, 1}, mBoundingCircle{GenerateBoardPhaseCircle()}, mColLayer{ eColLayer::LAYER_NONE }
 	{
 	}
 
 	Collider::Collider(const Math::Point3D & _offset, const Math::Point3D & _origin)
 		: mv3Offset{_offset}, mpMesh{nullptr}, mbColliding{false}, mPosition{_origin}, mbIsTrigger(false),
-		  mbIsSleeping(false), mScale{1, 1, 1}, mBoundingCircle{GenerateBoardPhaseCircle()}
+		  mbIsSleeping(false), mScale{1, 1, 1}, mBoundingCircle{GenerateBoardPhaseCircle()}, mColLayer{ eColLayer::LAYER_NONE }
 	{
 	}
 
@@ -133,6 +147,16 @@ namespace Dystopia
 				return &elem;
 
 		return nullptr;
+	}
+
+	void Collider::ResetColLayer()
+	{
+		mColLayer = eColLayer::LAYER_NONE;
+	}
+
+	void Collider::RemoveColLayer(eColLayer _Layer)
+	{
+		mColLayer = static_cast<eColLayer>(mColLayer & (_Layer ^ 0xFFFFFFFFu));
 	}
 
 	void Collider::ClearCollisionEvent()
@@ -263,6 +287,11 @@ namespace Dystopia
 		return false;
 	}
 
+	eColLayer Collider::GetColLayer() const
+	{
+		return mColLayer;
+	}
+
 	BroadPhaseCircle Collider::GetBroadPhaseCircle() const
 	{
 		return mBoundingCircle;
@@ -309,6 +338,11 @@ namespace Dystopia
 		mRotation = _rot;
 	}
 
+	void Collider::SetColLayer(eColLayer _Layer)
+	{
+		mColLayer  = static_cast<eColLayer>(mColLayer | _Layer);
+	}
+
 	Math::Point3D Collider::GetGlobalPosition() const
 	{
 		auto point =  mOwnerTransformation * Math::Translate(mv3Offset.x, mv3Offset.y , mv3Offset.z) * GetTransformationMatrix() *  mPosition;
@@ -325,6 +359,22 @@ namespace Dystopia
 	{
 		return this->mv3Offset;
 	}
+
+	void Collider::SetOffSet(Math::Vec3D _offset)
+	{
+		this->mv3Offset = _offset;
+	}
+
+	Math::Vec3D Collider::GetScale() const
+	{
+		return this->mScale;
+	}
+
+	void Collider::SetScale(Math::Vec3D _scale)
+	{
+		mScale = _scale;
+	}
+	
 
 	AutoArray<Gfx::Vertex> Collider::GetVertexBuffer() const
 	{
@@ -418,4 +468,89 @@ namespace Dystopia
 
 
 	}
+	void Collider::EditorUI(void) noexcept
+	{
+		const int totalLayers = 32;
+
+
+		if (EGUI::Display::CollapsingHeader("Collision Layer", false))
+		{
+			if (EGUI::Display::Button("Add Layer", {128,24}))
+			{
+				EGUI::Display::OpenPopup("List of layers", false);
+			}
+			AddLayerUI();
+			EGUI::SameLine();
+			if (EGUI::Display::Button("Remove All", { 128,24 }))
+			{
+				ResetColLayer();
+			};
+			if(mColLayer)
+			{
+				if(mColLayer == eColLayer::LAYER_GLOBAL)
+				{
+					if (EGUI::Display::IconCross("Layer_Global"))
+					{
+						RemoveColLayer(static_cast<eColLayer>((0xFFFFFFFF)));
+					}
+					EGUI::SameLine();
+					EGUI::Display::Label("Layer_Global");
+				}
+				else
+				{
+					for (unsigned i = 0; i < sizeof(eColLayer) * 8; ++i)
+					{
+						if (mColLayer & (0x01u << i))
+						{
+							if (EGUI::Display::IconCross(arrColLayer[i].c_str()))
+							{
+								RemoveColLayer(static_cast<eColLayer>((0x01u << i)));
+							}
+							EGUI::SameLine();
+							EGUI::Display::Label(arrColLayer[i].c_str());
+						}
+					}
+				}
+			}
+			//for (auto i = 0; i<totalLayers;++i)
+			//{
+			//	EGUI::PushID(i);
+			//	EGUI::PushLeftAlign(50);
+			//	if (EGUI::Display::IconCross("Remove"))
+			//	{
+			//		// Remove from flag
+			//	};
+			//	EGUI::SameLine();
+			//	EGUI::Display::DropDownSelection(std::to_string(i).c_str(), indexDropDown, arr, 200);
+			//	EGUI::PopLeftAlign();
+			//	EGUI::PopID();
+			//}
+		}
+	}
+
+	void Collider::AddLayerUI(void) noexcept
+	{
+		if (EGUI::Display::StartPopup("List of layers"))
+		{
+			for (auto i = 0; i < sizeof(arrColLayer)/sizeof(arrColLayer[0]); ++i)
+			{
+				EGUI::PushID(i);
+				EGUI::PushLeftAlign(50);
+
+				if (EGUI::Display::SelectableTxt(arrColLayer[i].c_str(), false))
+				{
+					if(i == sizeof(arrColLayer) / sizeof(arrColLayer[0])-1)
+					{
+						SetColLayer(eColLayer::LAYER_GLOBAL);
+					}
+					else
+						SetColLayer(static_cast<eColLayer>((0x01u << i)));
+				}
+				EGUI::PopLeftAlign();
+				EGUI::PopID();
+			}
+			EGUI::Display::EndPopup();
+		}
+	}
+
 }

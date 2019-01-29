@@ -72,7 +72,7 @@ void Dystopia::Component::Awake(void)
 
 void Dystopia::Component::Init(void)
 {
-	__debugbreak();
+	//__debugbreak();
 }
 
 void Dystopia::Component::GameObjectDestroy(void)

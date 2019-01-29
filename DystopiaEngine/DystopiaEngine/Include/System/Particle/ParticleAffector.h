@@ -28,6 +28,7 @@ namespace Dystopia
 	}
 
 	using AffectorList = Ut::MetaAutoIndexer_t<
+		struct SpawnAffector
 	>;
 
 	class Emitter;

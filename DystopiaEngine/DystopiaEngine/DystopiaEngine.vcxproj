@@ -29,6 +29,7 @@
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
     <ClCompile Include="Include\IO\XMLParser.cpp" />
+    <ClCompile Include="Source\Component\AudioListener.cpp" />
     <ClCompile Include="Include\System\Database\DataSheet.cpp" />
     <ClCompile Include="Source\Math\Vector\Vector2.cpp" />
     <ClCompile Include="Source\Math\Vector\Vector3.cpp" />
@@ -98,6 +99,7 @@
     <ClCompile Include="Source\System\Graphics\TextureSystem.cpp" />
     <ClCompile Include="Source\System\Logger\FileLogger.cpp" />
     <ClCompile Include="Source\System\Logger\LoggerSystem.cpp" />
+    <ClCompile Include="Source\System\Particle\SpawnAffector.cpp" />
     <ClCompile Include="Source\System\Physics\CollisionResolution.cpp" />
     <ClCompile Include="Source\System\Profiler\ProfileInfo.cpp" />
     <ClCompile Include="Source\System\Profiler\Profiler.cpp" />
@@ -162,6 +164,7 @@
     <ClInclude Include="Include\Allocator\StackAlloc.h" />
     <ClInclude Include="Include\Allocator\StackAllocImpl.h" />
     <ClInclude Include="Include\Behaviour\AI\AISystem.h" />
+    <ClInclude Include="Include\Component\AudioListener.h" />
     <ClInclude Include="Include\Component\RayCollider.h" />
     <ClInclude Include="Include\Component\PointCollider.h" />
     <ClInclude Include="Include\DataStructure\Delegate.h" />
@@ -274,6 +277,7 @@
     <ClInclude Include="Include\System\Particle\Particle.h" />
     <ClInclude Include="Include\System\Particle\ParticleAffector.h" />
     <ClInclude Include="Include\System\Particle\ParticleSystem.h" />
+    <ClInclude Include="Include\System\Particle\SpawnAffector.h" />
     <ClInclude Include="Include\System\Physics\CollisionResolution.h" />
     <ClInclude Include="Include\Component\Collider.h" />
     <ClInclude Include="Include\Component\Renderer.h" />

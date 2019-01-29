@@ -14,9 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _MATHVECTOR2_H_
 #define _MATHVECTOR2_H_
 
-#if defined(DEBUG) | defined(_DEBUG)
 #include "Utility/DebugAssert.h"
-#endif // Debug only includes
 
 #include "../MathFwd.h"
 #include "../MathUtility.h"
@@ -206,9 +204,7 @@ inline constexpr Math::Vector2::Vector2(float _x, float _y) noexcept
 
 inline Math::Vector2& _CALL Math::Vector2::Normalise(void)
 {
-#if defined(DEBUG) | defined(_DEBUG)
 	DEBUG_ASSERT(IsZero(Dot(*this)), "Vector2 Error: Normalising a zero vector.\n");
-#endif
 
 	const float invSqrt = 1.f / MagnitudeSqr();
 
@@ -243,9 +239,7 @@ inline float _CALL Math::Cross(Vector2 _lhs, Vector2 _rhs)
 
 inline Math::Vector2& _CALL Math::Vector2::Project(const Vector2 _rhs)
 {
-#if defined(DEBUG) | defined(_DEBUG)
 	DEBUG_ASSERT(IsZero(_rhs.Dot(_rhs)), "Vector2 Error: Projection onto zero vector.\n");
-#endif
 
 	float mag = Dot(*this) / _rhs.Dot(_rhs);
 
@@ -419,7 +413,7 @@ inline Math::Vector2& _CALL Math::Vector2::operator -= (Vector2 const& _rhs) noe
 
 inline Math::Vector2 _CALL Math::operator - (Math::Vector2 const& _v) noexcept
 {
-	return Vector2{ -_v.x, -_v.y };
+	return Vector2( -_v.x, -_v.y );
 }
 
 
@@ -438,32 +432,32 @@ inline bool _CALL Math::Vector2::operator != (Vector2 const& _rhs) const noexcep
 
 inline Math::Vector2 _CALL Math::operator - (Vector2 const& _lhs, Vector2 const& _rhs) noexcept
 {
-	return Vector2{ _lhs } -= _rhs;
+	return Vector2( _lhs ) -= _rhs;
 }
 
 inline Math::Vector2 _CALL Math::operator + (Vector2 const& _lhs, Vector2 const& _rhs) noexcept
 {
-	return Vector2{ _lhs } += _rhs;
+	return Vector2( _lhs ) += _rhs;
 }
 
 inline Math::Vector2 _CALL Math::operator * (Vector2 const& _lhs, Vector2 const& _rhs) noexcept
 {
-	return Vector2{ _lhs } *= _rhs;
+	return Vector2( _lhs ) *= _rhs;
 }
 
 inline Math::Vector2 _CALL Math::operator * (float _lhs, Vector2 const& _rhs) noexcept
 {
-	return Vector2{ _rhs } *= _lhs;
+	return Vector2( _rhs ) *= _lhs;
 }
 
 inline Math::Vector2 _CALL Math::operator * (Vector2 const& _lhs, float _rhs) noexcept
 {
-	return Vector2{ _lhs } *= _rhs;
+	return Vector2( _lhs ) *= _rhs;
 }
 
 inline Math::Vector2 _CALL Math::operator / (Vector2 const& _lhs, float _rhs)
 {
-	return Vector2{ _lhs } /= _rhs;
+	return Vector2( _lhs ) /= _rhs;
 }
 
 inline std::istream& operator >> (std::istream& _lhs, Math::Vector2& _rhs)

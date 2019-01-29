@@ -403,6 +403,12 @@
     <ClCompile Include="Source\Math\Vector\Vector2.cpp">
       <Filter>Math\Vector</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Component\AudioListener.cpp">
+      <Filter>Game Engine\Components\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Particle\SpawnAffector.cpp">
+      <Filter>Game Engine\Systems\Particle\Affectors\Spawn</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -1125,6 +1131,12 @@
     <ClInclude Include="Include\System\Particle\ParticleAffector.h">
       <Filter>Game Engine\Systems\Particle\Affectors\Base</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Component\AudioListener.h">
+      <Filter>Game Engine\Components\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Particle\SpawnAffector.h">
+      <Filter>Game Engine\Systems\Particle\Affectors\Spawn</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1621,6 +1633,9 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Particle\Affectors\CircleSpawner">
       <UniqueIdentifier>{3f294084-541f-4a2d-8053-4ef5c42ae1fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Particle\Affectors\Spawn">
+      <UniqueIdentifier>{fe57a809-de60-4d89-ba03-10e68d8c3862}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
