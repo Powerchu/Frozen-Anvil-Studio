@@ -119,24 +119,24 @@ namespace Dystopia
 	void FileSystem::Update(float)
 	{
 		/*Loop through all File Tracking Jobs and poll for updates*/
-		CallBackTrackInfo ListOfFileNames[20];
+		std::string ListOfFileNames[20];
 		for (auto & TrackJob : mDetectionFiles)
 		{
 			/*Get the list of file changes in the directory*/
 			unsigned num  = 0;
 			unsigned prev = 0;
 
-			while ((num = GetChangesInfo(*TrackJob, ListOfFileNames, 20)))
+			if ((num = GetChangesInfo(*TrackJob, ListOfFileNames, 20)))
 			{
 				prev = num;
 			}
 			for (unsigned i=0;i< prev;++i)
 			{
-				auto & names = ListOfFileNames[i].first;
+				auto & names = ListOfFileNames[i];// .first;
 
-				names = Normalize(names);
+				//names = Normalize(names);
 
-				names = Ut::Move(TrackJob->mParentDirectory + "/" + names);
+				names = Ut::Move(Normalize(TrackJob->mParentDirectory + "/" + names));
 				if ((names  == TrackJob->mFileName) || names == TrackJob->mParentDirectory + "/" + TrackJob->mFileName)
 				{
 					/*Find the Arrays of EventCallBack for the current Job and invoke them*/
@@ -145,7 +145,7 @@ namespace Dystopia
 					{
 						//f.second(TrackJob->mFileName.c_str());
 						f.second();
-						f.second(names.c_str(), ListOfFileNames[i].second);
+						//f.second(names.c_str(), ListOfFileNames[i].second);
 					}
 					break;
 				}

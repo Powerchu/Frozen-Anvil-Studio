@@ -239,6 +239,9 @@ void Dystopia::Emitter::Unserialise(TextSerialiser& _in)
 void Dystopia::Emitter::EditorUI(void) noexcept
 {
 	EGUI::Display::Label("Particle Count: %u", mSpawnCount);
+	EGUI::Display::HorizontalSeparator();
+
+
 }
 
 
