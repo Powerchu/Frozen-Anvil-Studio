@@ -33,12 +33,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Dystopia::Emitter::Emitter(void) noexcept
 	: mColour{}, mPosition{}, mVelocity{}, mAccel{}, mLifetime{}, mSpawnCount{},
-	mSpawn{}, mUpdate{}, mFixedUpdate{}, mpShader{}, mpTexture{}
+	mSpawn{}, mUpdate{}, mFixedUpdate{}, mpShader{ nullptr }, mpTexture{ nullptr }
 {
 	glGenVertexArrays(1, &mVAO);
 	glGenBuffers(2, &mColourBuffer);
 
-	Bind();
+	glBindVertexArray(mVAO);
 
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
@@ -46,7 +46,7 @@ Dystopia::Emitter::Emitter(void) noexcept
 	glVertexAttribDivisor(0, 4);
 	glVertexAttribDivisor(1, 4);
 
-	Unbind();
+	glBindVertexArray(0);
 }
 
 Dystopia::Emitter::~Emitter(void) noexcept
@@ -66,11 +66,11 @@ void Dystopia::Emitter::Awake(void)
 {
 	if (!mpShader)
 	{
-		CORE::Get<ShaderSystem>()->GetShader("Default Particle");
+		mpShader = CORE::Get<ShaderSystem>()->GetShader("Default Particle");
 	}
 	if (!mpTexture)
 	{
-		CORE::Get<TextureSystem>()->GetTexture("checker_dxt3.dds");
+		mpTexture = CORE::Get<TextureSystem>()->GetTexture("EditorStartup.png");
 	}
 }
 
