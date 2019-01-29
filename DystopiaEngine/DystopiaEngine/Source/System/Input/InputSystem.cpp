@@ -216,7 +216,9 @@ bool Dystopia::InputManager::Init(void)
 {
 	EngineCore::GetInstance()->GetSystem<WindowManager>()->RegisterMouseData(&mMouseInput);
 	mGamePad.PollInputs();
+	mGamePad.StopVibrate();
 	return true;
+
 }
 
 void Dystopia::InputManager::Update(const float _dt)
