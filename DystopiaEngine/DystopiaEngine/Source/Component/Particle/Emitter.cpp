@@ -70,7 +70,7 @@ void Dystopia::Emitter::Awake(void)
 	}
 	if (!mpTexture)
 	{
-		CORE::Get<TextureSystem>()->GetTexture("checker_dxt3");
+		CORE::Get<TextureSystem>()->GetTexture("checker_dxt3.dds");
 	}
 }
 
