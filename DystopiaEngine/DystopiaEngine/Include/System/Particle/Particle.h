@@ -26,7 +26,7 @@ namespace Dystopia
 		Math::Vec4 mColour;
 
 		Math::Vec3 mPos;
-		float mfSize;
+		float mfSize= 100.f;
 
 		Math::Vec3 mVelocity;
 		float mfLifeDur;

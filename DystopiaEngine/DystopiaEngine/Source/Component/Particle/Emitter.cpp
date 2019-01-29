@@ -25,13 +25,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/Matrix4.h"
 #include "Utility/DebugAssert.h"
 
-#include "Editor/EGUI.h"
 #include <GL/glew.h>
+
+#if EDITOR
+#include "Editor/EGUI.h"
+#include "System/Particle/SpawnAffector.h"
+#endif 
 
 
 Dystopia::Emitter::Emitter(void) noexcept
 	: mColour{}, mPosition{}, mVelocity{}, mAccel{}, mLifetime{}, mSpawnCount{},
-	mSpawn{}, mUpdate{}, mFixedUpdate{}
+	mSpawn{}, mUpdate{}, mFixedUpdate{}, mpShader{ nullptr }
 {
 	glGenVertexArrays(1, &mVAO);
 	glGenBuffers(2, &mColourBuffer);
@@ -64,7 +68,7 @@ void Dystopia::Emitter::Awake(void)
 {
 	if (!mpShader)
 	{
-		CORE::Get<ShaderSystem>()->GetShader("Default Particle");
+		mpShader = CORE::Get<ShaderSystem>()->GetShader("Default Particle");
 	}
 }
 
@@ -210,6 +214,8 @@ AutoArray<Dystopia::ParticleAffector>& Dystopia::Emitter::GetFixedUpdateAffector
 
 void Dystopia::Emitter::Serialise(TextSerialiser& _out) const
 {
+	Component::Serialise(_out);
+	_out.InsertStartBlock("Emitter");
 	if (mpShader)
 		_out << mpShader->GetName();
 	else
@@ -223,15 +229,18 @@ void Dystopia::Emitter::Serialise(TextSerialiser& _out) const
 
 	for (auto& e : mFixedUpdate)
 		_out << e.GetID();
+	_out.InsertEndBlock("Emitter");
 }
 
 void Dystopia::Emitter::Unserialise(TextSerialiser& _in)
 {
+	Component::Unserialise(_in);
+	_in.ConsumeStartBlock();
 	std::string buf;
 	buf.reserve(128);
 
 	_in >> buf;
-
+	_in.ConsumeEndBlock();
 
 	mpShader = CORE::Get<ShaderSystem>()->GetShader(buf.c_str());
 }
@@ -241,6 +250,15 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 	EGUI::Display::Label("Particle Count: %u", mSpawnCount);
 	EGUI::Display::HorizontalSeparator();
 
+	static float delay = 0.f;
+	EGUI::Display::DragFloat("Spawn Delay", &delay, 0.1f, 0.f, 1.f);
+	if (EGUI::Display::Button("Add spawn affector"))
+	{
+		SpawnAffector sa{};
+
+		sa.SetSpawnDelay(delay);
+		AddAffector(Ut::Move(sa));
+	}
 
 }
 
