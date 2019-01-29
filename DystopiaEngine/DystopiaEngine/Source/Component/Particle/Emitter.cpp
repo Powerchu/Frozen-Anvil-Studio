@@ -20,6 +20,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Particle/ParticleAffector.h"
 #include "System/Graphics/Shader.h"
 #include "System/Graphics/ShaderSystem.h"
+#include "System/Graphics/Texture.h"
+#include "System/Graphics/TextureSystem.h"
 
 #include "Math/Vectors.h"
 #include "Math/Matrix4.h"
@@ -31,7 +33,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Dystopia::Emitter::Emitter(void) noexcept
 	: mColour{}, mPosition{}, mVelocity{}, mAccel{}, mLifetime{}, mSpawnCount{},
-	mSpawn{}, mUpdate{}, mFixedUpdate{}
+	mSpawn{}, mUpdate{}, mFixedUpdate{}, mpShader{}, mpTexture{}
 {
 	glGenVertexArrays(1, &mVAO);
 	glGenBuffers(2, &mColourBuffer);
@@ -65,6 +67,10 @@ void Dystopia::Emitter::Awake(void)
 	if (!mpShader)
 	{
 		CORE::Get<ShaderSystem>()->GetShader("Default Particle");
+	}
+	if (!mpTexture)
+	{
+		CORE::Get<TextureSystem>()->GetTexture("checker_dxt3");
 	}
 }
 
@@ -108,10 +114,12 @@ void Dystopia::Emitter::FixedUpdate(float _fDT)
 void Dystopia::Emitter::Bind(void) const noexcept
 {
 	glBindVertexArray(mVAO);
+	mpTexture->Bind();
 }
 
 void Dystopia::Emitter::Unbind(void) const noexcept
 {
+	mpTexture->Unbind();
 	glBindVertexArray(0);
 }
 
@@ -215,6 +223,11 @@ void Dystopia::Emitter::Serialise(TextSerialiser& _out) const
 	else
 		_out << "Default Particle";
 
+	if (mpTexture)
+		_out << mpTexture->GetName();
+	else
+		_out << "checker_dxt3.dds";
+
 	for (auto& e : mSpawn)
 		_out << e.GetID();
 
@@ -231,9 +244,10 @@ void Dystopia::Emitter::Unserialise(TextSerialiser& _in)
 	buf.reserve(128);
 
 	_in >> buf;
-
-
 	mpShader = CORE::Get<ShaderSystem>()->GetShader(buf.c_str());
+
+	_in >> buf;
+	mpTexture = CORE::Get<TextureSystem>()->GetTexture(buf.c_str());
 }
 
 void Dystopia::Emitter::EditorUI(void) noexcept
