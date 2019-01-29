@@ -41,6 +41,16 @@ Dystopia::ShaderProgram::~ShaderProgram(void) noexcept
 	pGfxAPI->Free(mProgram);
 }
 
+Dystopia::ShaderProgram::ShaderProgram(ShaderProgram&& _obj) noexcept
+	: mProgram{ Ut::Move(_obj.mProgram) }, mStage{ Ut::Move(_obj.mStage) }, 
+	mstrName{ Ut::Move(_obj.mstrName) }, mVars{ Ut::Move(_obj.mVars) },
+	mbIsCustom{ Ut::Move(_obj.mbIsCustom) }, mbValid{ Ut::Move(_obj.mbValid) }
+{
+	_obj.mProgram = ::Gfx::ShaderProg{ 0 };
+	_obj.mStage = ::Gfx::ShaderStage::NONE;
+	_obj.mbValid = false;
+}
+
 ::Gfx::ShaderStage const& Dystopia::ShaderProgram::GetStage(void) const noexcept
 {
 	return mStage;
@@ -76,6 +86,18 @@ AutoArray<std::pair<HashString, Gfx::eUniform_t>> const& Dystopia::ShaderProgram
 	return mVars;
 }
 
+Dystopia::ShaderProgram& Dystopia::ShaderProgram::operator=(ShaderProgram&& _rhs) noexcept
+{
+	Ut::Swap(mstrName  , _rhs.mstrName  );
+	Ut::Swap(mProgram  , _rhs.mProgram  );
+	Ut::Swap(mStage    , _rhs.mStage    );
+	Ut::Swap(mbIsCustom, _rhs.mbIsCustom);
+	Ut::Swap(mbValid   , _rhs.mbValid   );
+	Ut::Swap(mVars     , _rhs.mVars     );
+
+	return *this;
+}
+
 bool Dystopia::ShaderProgram::LoadProgram(Gfx::ShaderStage _stage, char const* _file, char const* _strName) noexcept
 {
 	std::ifstream file{ _file, std::ios::ate | std::ios::in | std::ios::binary };
@@ -106,7 +128,7 @@ bool Dystopia::ShaderProgram::LoadProgram(Gfx::ShaderStage _stage, char const* _
 	if (!shader)
 	{
 		// TODO
-		return false;
+		return true;
 	}
 
 	if (pGfxAPI->LinkShader(mProgram, shader))

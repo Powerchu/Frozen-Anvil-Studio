@@ -86,9 +86,18 @@ void Dystopia::Shader::AttachProgram(ShaderProgram* _prog)
 		mPrograms.EmplaceBack(_prog);
 	}
 
-	pGfxAPI->AttachShaderProgram(mID, _prog->GetID(), _prog->GetStage());
-	mbUpdate = true;
 	mbValid = mbValid && _prog->IsValid();
+	mbUpdate = true;
+
+#if EDITOR
+	if (_prog->IsValid())
+#endif
+	pGfxAPI->AttachShaderProgram(mID, _prog->GetID(), _prog->GetStage());
+
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif 
 }
 
 void Dystopia::Shader::ReattachProgram(ShaderProgram* _prog)
@@ -171,6 +180,8 @@ bool Dystopia::Shader::IsCustomShader(void) const noexcept
 
 void Dystopia::Shader::Unserialize(TextSerialiser& _file)
 {
+	_file << GetName();
+
 	for (auto& e : mPrograms)
 		_file << e->GetName();
 }
@@ -223,11 +234,6 @@ namespace
 		{
 			auto loc = pGfxAPI->GetUniformLocation(e->GetID(), _strName);
 			(pGfxAPI->*_func)(e->GetID(), loc, _args ...);
-
-#   if defined(_DEBUG) | defined(DEBUG)
-			if (auto err = glGetError())
-				__debugbreak();
-#   endif 
 		}
 	}
 }

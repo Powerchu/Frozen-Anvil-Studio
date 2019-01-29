@@ -109,6 +109,11 @@ void Dystopia::Renderer::SetShader(const std::string&) noexcept
 
 Dystopia::Shader* Dystopia::Renderer::GetShader(void) const noexcept
 {
+#   if EDITOR
+	if (!mpShader || !mpShader->IsValid())
+		return CORE::Get<ShaderSystem>()->GetShader("Error Shader");
+#   endif
+
 	return mpShader;
 }
 
@@ -294,7 +299,7 @@ void Dystopia::Renderer::ShaderField()
 		debug = !debug;
 	}
 	OString buffer{ str };
-	if (debug && EGUI::Display::TextField("Manual Set", buffer))
+	if (debug && EGUI::Display::TextField("Manual", buffer, true, 150))
 	{
 		if (auto pShader = CORE::Get<ShaderSystem>()->GetShader(buffer.c_str()))
 		{
