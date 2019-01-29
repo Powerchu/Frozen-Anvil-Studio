@@ -29,6 +29,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	class Shader;
+	class Texture;
 	class ParticleSystem;
 	struct ParticleAffector;
 
@@ -95,7 +96,7 @@ namespace Dystopia
 
 		GfxParticle mParticle;
 
-		Shader* mpShader;
+		Shader* mpShader; Texture* mpTexture;
 		unsigned mVAO, mColourBuffer, mPosBuffer;
 		unsigned mSpawnCount;
 
