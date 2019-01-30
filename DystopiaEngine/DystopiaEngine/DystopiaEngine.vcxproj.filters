@@ -412,6 +412,9 @@
     <ClCompile Include="Source\Editor\ParticleEditor.cpp">
       <Filter>Editor\Main\Panels\Particle System</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Particle\ParticleAffector.cpp">
+      <Filter>Game Engine\Systems\Particle\Affectors\Base</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">

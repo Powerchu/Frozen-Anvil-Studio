@@ -14,6 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _PARTICLEAFFECTOR_H_
 #define _PARTICLEAFFECTOR_H_
 
+#include "Utility/Utility.h"
 #include "Utility/MetaAlgorithms.h"
 #include "IO/TextSerialiser.h"
 
@@ -40,7 +41,7 @@ namespace Dystopia
 		inline void Update(Emitter& e, float _dt) noexcept
 		{
 			(this->*Updator)(e, _dt);
-		};
+		}
 
 		inline int GetID(void) const noexcept
 		{
@@ -74,6 +75,9 @@ namespace Dystopia
 			_in.ConsumeEndBlock();
 		}
 
+		inline ParticleAffector(ParticleAffector&&) noexcept;
+		ParticleAffector& operator = (ParticleAffector&&) noexcept;
+
 	protected:
 		using UpdateFunc_t = void(ParticleAffector::*)(Emitter&, float);
 
@@ -93,6 +97,12 @@ namespace Dystopia
 	protected:
 		char reserved[4];
 	};
+}
+
+inline Dystopia::ParticleAffector::ParticleAffector(Dystopia::ParticleAffector&& _obj) noexcept
+	: mID{ _obj.mID }
+{
+	*this = Ut::Move(_obj);
 }
 
 

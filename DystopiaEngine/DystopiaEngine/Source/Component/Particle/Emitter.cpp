@@ -41,9 +41,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Dystopia::Emitter::Emitter(void) noexcept
 	: mColour{}, mPosition{}, mVelocity{}, mAccel{}, mLifetime{}, mSpawnCount{},
-	mSpawn{}, mUpdate{}, mFixedUpdate{}, mpShader{ nullptr }, mpTexture{ nullptr },
-	mnSpawnRate{ 10 }, mnBurstCountHigh{ 0 }, mnBurstCountLow{ 0 }, mfSpawnDelay{ 0.f },	// spawn affector settings
-	mbContinuous{ true }, mbBurst{ false }, mbBurstRandom{ false }							// spawn affector settings
+	mSpawn{}, mUpdate{}, mFixedUpdate{}, mpShader{ nullptr }, mpTexture{ nullptr }
 {
 	glGenVertexArrays(1, &mVAO);
 	glGenBuffers(2, &mColourBuffer);
@@ -63,10 +61,7 @@ Dystopia::Emitter::Emitter(const Dystopia::Emitter& _rhs) noexcept
 	: mColour{ _rhs.mColour }, mPosition{ _rhs.mPosition }, mVelocity{ _rhs.mVelocity }, mAccel{ _rhs.mAccel }, 
 	mLifetime{ _rhs.mLifetime }, mSpawnCount{ _rhs.mSpawnCount },
 	mSpawn{ _rhs.mSpawn }, mUpdate{ _rhs.mUpdate }, mFixedUpdate{ _rhs.mFixedUpdate }, 
-	mpShader{ nullptr }, mpTexture{ nullptr },
-	mnSpawnRate{ _rhs.mnSpawnRate }, mnBurstCountHigh{ _rhs.mnBurstCountHigh },						// spawn affector settings
-	mnBurstCountLow{ _rhs.mnBurstCountLow }, mfSpawnDelay{ _rhs.mfSpawnDelay },						// spawn affector settings
-	mbContinuous{ _rhs.mbContinuous }, mbBurst{ _rhs.mbBurst }, mbBurstRandom{ _rhs.mbBurstRandom } // spawn affector settings
+	mpShader{ nullptr }, mpTexture{ nullptr }
 {
 	mpShader = CORE::Get<ShaderSystem>()->GetShader(_rhs.mpShader ? _rhs.mpShader->GetName().c_str() : "Default Particle");
 	mpTexture = CORE::Get<TextureSystem>()->GetTexture(_rhs.mpTexture ? _rhs.mpTexture->GetName().c_str() : "EditorStartup.png");
@@ -392,64 +387,51 @@ void Dystopia::Emitter::Unserialise(TextSerialiser& _in)
 
 void Dystopia::Emitter::EditorUI(void) noexcept
 {
+#if EDITOR
+	static const auto affectorNames = Dystopia::AffectorUI<Dystopia::AffectorList>::GetUIName();
+
 	EGUI::Display::Label("Particle Count: %u", mSpawnCount);
 	EGUI::Display::HorizontalSeparator();
-
-	EGUI::Display::HorizontalSeparator();
-	if (EGUI::Display::StartTreeNode("Spawn Affector"))
+	if (EGUI::Display::StartTreeNode("Spawn Affectors"))
 	{
-		EGUI::PushLeftAlign(120.f);
-		if (EGUI::Display::DragFloat("Spawn Delay", &mfSpawnDelay, 0.1f, 0.f, FLT_MAX))
+		for (int i = 0; i < mSpawn.size(); ++i)
 		{
+			EGUI::PushID(static_cast<int>(i));
+			EGUI::Indent(30.f);
+			EGUI::Display::Label((mSpawn[i].*affectorNames[mSpawn[i].GetID()])());
+			EGUI::UnIndent();
+			EGUI::PopID();
 		}
-
-		if (EGUI::Display::CheckBox("Continuous", &mbContinuous))
-		{
-		}
-
-		int out = static_cast<int>(mnSpawnRate);
-		if (EGUI::Display::DragInt("Spawn Rate", &out, 1.f, 0, static_cast<int>(mParticle.mnLimit)))
-		{
-			mnSpawnRate = static_cast<unsigned short>(out);
-		}
-
-		if (EGUI::Display::CheckBox("Burst", &mbBurst))
-		{
-		}
-
-		if (EGUI::Display::CheckBox("Burst Random", &mbBurstRandom))
-		{
-		}
-
-		out = static_cast<int>(mnBurstCountHigh);
-		if (EGUI::Display::DragInt("Burst High", &out, 1.f, 0, 65535))
-		{
-			mnBurstCountHigh = static_cast<unsigned short>(out);
-		}
-
-		out = static_cast<int>(mnBurstCountLow);
-		if (EGUI::Display::DragInt("Burst Low", &out, 1.f, 0, mnBurstCountHigh))
-		{
-			mnBurstCountLow = static_cast<unsigned short>(out);
-		}
-
-		if (EGUI::Display::Button("Add Spawn Affector", Math::Vec2{ 220.f, 24.f }))
-		{
-			SpawnAffector sa{};
-			sa.SetSpawnRate(mnSpawnRate);
-			sa.SetBurstCount(mnBurstCountHigh);
-			sa.SetBurstLow(mnBurstCountLow);
-			sa.SetInitialDelay(mfSpawnDelay);
-			sa.EnableContinuous(mbContinuous);
-			sa.EnableBurst(mbBurst);
-			sa.EnableRandomBurst(mbBurstRandom);
-			AddAffector(Ut::Move(sa));
-		}
-
-		EGUI::PopLeftAlign();
 		EGUI::Display::EndTreeNode();
 	}
-
+	EGUI::Display::HorizontalSeparator();
+	ImGui::NextColumn();
+	if (EGUI::Display::StartTreeNode("Update Affectors"))
+	{
+		for (int i = 0; i < mUpdate.size(); ++i)
+		{
+			EGUI::PushID(static_cast<int>(i));
+			EGUI::Indent(30.f);
+			EGUI::Display::Label((mUpdate[i].*affectorNames[mUpdate[i].GetID()])());
+			EGUI::UnIndent();
+			EGUI::PopID();
+		}
+		EGUI::Display::EndTreeNode();
+	}
+	ImGui::NextColumn();
+	if (EGUI::Display::StartTreeNode("Fixed Update Affectors"))
+	{
+		for (int i = 0; i < mFixedUpdate.size(); ++i)
+		{
+			EGUI::PushID(static_cast<int>(i));
+			EGUI::Indent(30.f);
+			EGUI::Display::Label((mFixedUpdate[i].*affectorNames[mFixedUpdate[i].GetID()])());
+			EGUI::UnIndent();
+			EGUI::PopID();
+		}
+		EGUI::Display::EndTreeNode();
+	}
+#endif 
 }
 
 

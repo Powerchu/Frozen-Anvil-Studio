@@ -29,6 +29,7 @@
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
     <ClCompile Include="Include\IO\XMLParser.cpp" />
+    <ClCompile Include="Source\System\Particle\ParticleAffector.cpp" />
     <ClCompile Include="Source\Component\AudioListener.cpp" />
     <ClCompile Include="Include\System\Database\DataSheet.cpp" />
     <ClCompile Include="Source\Editor\ParticleEditor.cpp" />

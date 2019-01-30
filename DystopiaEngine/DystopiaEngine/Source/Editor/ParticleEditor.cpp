@@ -205,7 +205,6 @@ void Editor::ParticleEditor::EmitterAffectors(void)
 	auto& existingUpdateAffectors = pEmitter->GetUpdateAffectors();
 	auto& existingFixedUpdateAffectors = pEmitter->GetFixedUpdateAffectors();
 
-
 	ImGui::BeginGroup();
 	ImGui::Columns(3, "Columns Affectors");
 	if (EGUI::Display::StartTreeNode("Spawners"))
@@ -213,12 +212,22 @@ void Editor::ParticleEditor::EmitterAffectors(void)
 		for (int i = 0; i < existingSpawnAffectors.size(); ++i)
 		{
 			EGUI::PushID(static_cast<int>(i));
-			if (EGUI::Display::StartTreeNode((affectorGet.Get(i).*affectorNames[i])()))
+			bool open = EGUI::Display::StartTreeNode((affectorGet.Get(i).*affectorNames[i])());
+			bool toRemove = false;
+			if (ImGui::BeginPopupContextItem())
+			{
+				if (EGUI::Display::SelectableTxt("Remove"))
+					toRemove = true;
+				ImGui::EndPopup();
+			}
+			if (open)
 			{
 				(existingSpawnAffectors[i].*affectorUI[i])();
 				EGUI::Display::EndTreeNode();
 			}
 			EGUI::PopID();
+			if (toRemove)
+				existingSpawnAffectors.FastRemove(i--);
 		}
 		EGUI::Display::EndTreeNode();
 	}
@@ -228,12 +237,22 @@ void Editor::ParticleEditor::EmitterAffectors(void)
 		for (int i = 0; i < existingUpdateAffectors.size(); ++i)
 		{
 			EGUI::PushID(static_cast<int>(i));
-			if (EGUI::Display::StartTreeNode((affectorGet.Get(i).*affectorNames[i])()))
+			bool open = EGUI::Display::StartTreeNode((affectorGet.Get(i).*affectorNames[i])());
+			bool toRemove = false;
+			if (ImGui::BeginPopupContextItem())
+			{
+				if (EGUI::Display::SelectableTxt("Remove"))
+					toRemove = true;
+				ImGui::EndPopup();
+			}
+			if (open)
 			{
 				(existingUpdateAffectors[i].*affectorUI[i])();
 				EGUI::Display::EndTreeNode();
 			}
 			EGUI::PopID();
+			if (toRemove)
+				existingUpdateAffectors.FastRemove(i--);
 		}
 		EGUI::Display::EndTreeNode();
 	}
@@ -243,12 +262,22 @@ void Editor::ParticleEditor::EmitterAffectors(void)
 		for (int i = 0; i < existingFixedUpdateAffectors.size(); ++i)
 		{
 			EGUI::PushID(static_cast<int>(i));
-			if (EGUI::Display::StartTreeNode((affectorGet.Get(i).*affectorNames[i])()))
+			bool open = EGUI::Display::StartTreeNode((affectorGet.Get(i).*affectorNames[i])());
+			bool toRemove = false;
+			if (ImGui::BeginPopupContextItem())
+			{
+				if (EGUI::Display::SelectableTxt("Remove"))
+					toRemove = true;
+				ImGui::EndPopup();
+			}
+			if (open)
 			{
 				(existingFixedUpdateAffectors[i].*affectorUI[i])();
 				EGUI::Display::EndTreeNode();
 			}
 			EGUI::PopID();
+			if (toRemove)
+				existingFixedUpdateAffectors.FastRemove(i--);
 		}
 		EGUI::Display::EndTreeNode();
 	}

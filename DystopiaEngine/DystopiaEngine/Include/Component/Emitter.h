@@ -109,22 +109,6 @@ namespace Dystopia
 		template <typename Ty>
 		auto AddAffector(Ty&&, AffectorTag::OnFixedUpdate) noexcept;
 
-
-
-		/* 
-			Temporary variables for editor to set affector settings 
-			No Serialisation needed 
-		*/
-
-		/* Spawn Affector settings */
-		unsigned short mnSpawnRate;
-		unsigned short mnBurstCountHigh;
-		unsigned short mnBurstCountLow;
-		float mfSpawnDelay;
-		bool mbContinuous;
-		bool mbBurst;
-		bool mbBurstRandom;
-
 	};
 }
 

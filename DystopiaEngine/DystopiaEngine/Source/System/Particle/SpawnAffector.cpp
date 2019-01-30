@@ -195,7 +195,7 @@ void Dystopia::SpawnAffector::EditorUI(void)
 
 	unsigned short low = *reinterpret_cast<unsigned short*>(data + 8);
 	out = static_cast<int>(low);
-	if (EGUI::Display::DragInt("Burst Low", &out, 1.f, 0, static_cast<float>(high)))
+	if (EGUI::Display::DragInt("Burst Low", &out, 1.f, 0, static_cast<int>(high)))
 		SetBurstLow(static_cast<unsigned short>(out));
 
 	EGUI::PopLeftAlign();
