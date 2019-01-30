@@ -115,6 +115,18 @@ void Dystopia::ParticleSystem::FixedUpdate(float _dt)
 	}
 }
 
+void Dystopia::ParticleSystem::PostUpdate(void) 
+{
+	for (auto& emitters : mComponents)
+	{
+		if (nullptr == emitters.GetOwner()) continue;
+
+		if (emitters.GetFlags() & FLAG_REMOVE)
+			mComponents.Remove(&emitters);
+	}
+}
+
+
 void Dystopia::ParticleSystem::Shutdown(void)
 {
 	mComponents.clear();

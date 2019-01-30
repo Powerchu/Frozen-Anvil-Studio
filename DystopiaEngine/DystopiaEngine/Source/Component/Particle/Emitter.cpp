@@ -344,8 +344,7 @@ void Dystopia::Emitter::Unserialise(TextSerialiser& _in)
 	for (size_t i = 0; i < size; i++)
 	{
 		_in >> id;
-		auto pa = affectorsList.Get(id);
-		mSpawn.EmplaceBack(pa);
+		mSpawn.EmplaceBack(affectorsList.Get(id));
 	}
 	_in.ConsumeEndBlock();
 	for (auto& elem : mSpawn)
@@ -360,8 +359,7 @@ void Dystopia::Emitter::Unserialise(TextSerialiser& _in)
 	for (size_t i = 0; i < size; i++)
 	{
 		_in >> id;
-		auto pa = affectorsList.Get(id);
-		mUpdate.EmplaceBack(pa);
+		mUpdate.EmplaceBack(affectorsList.Get(id));
 	}
 	_in.ConsumeEndBlock();
 	for (auto& elem : mUpdate)
@@ -376,8 +374,7 @@ void Dystopia::Emitter::Unserialise(TextSerialiser& _in)
 	for (size_t i = 0; i < size; i++)
 	{
 		_in >> id;
-		auto pa = affectorsList.Get(id);
-		mFixedUpdate.EmplaceBack(pa);
+		mFixedUpdate.EmplaceBack(affectorsList.Get(id));
 	}
 	_in.ConsumeEndBlock();
 	for (auto& elem : mFixedUpdate)

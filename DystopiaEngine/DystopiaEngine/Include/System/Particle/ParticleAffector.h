@@ -76,7 +76,9 @@ namespace Dystopia
 		}
 
 		inline ParticleAffector(ParticleAffector&&) noexcept;
-		ParticleAffector& operator = (ParticleAffector&&) noexcept;
+		inline ParticleAffector(ParticleAffector const&) noexcept;
+		inline ParticleAffector& operator = (ParticleAffector&&) noexcept;
+		ParticleAffector& operator = (ParticleAffector const&) noexcept;
 
 	protected:
 		using UpdateFunc_t = void(ParticleAffector::*)(Emitter&, float);
@@ -100,9 +102,19 @@ namespace Dystopia
 }
 
 inline Dystopia::ParticleAffector::ParticleAffector(Dystopia::ParticleAffector&& _obj) noexcept
+	: ParticleAffector{ _obj }
+{
+}
+
+inline Dystopia::ParticleAffector::ParticleAffector(Dystopia::ParticleAffector const& _obj) noexcept
 	: mID{ _obj.mID }
 {
-	*this = Ut::Move(_obj);
+	*this = _obj;
+}
+
+inline Dystopia::ParticleAffector& Dystopia::ParticleAffector::operator = (Dystopia::ParticleAffector&& _rhs) noexcept
+{
+	return *this = _rhs;
 }
 
 

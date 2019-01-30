@@ -131,9 +131,11 @@ void Dystopia::SpawnAffector::AffectorUpdate(Dystopia::Emitter& _emitter, float 
 			unsigned short min = *reinterpret_cast<unsigned short*>(data + 8);
 			unsigned short max = *reinterpret_cast<unsigned short*>(data + 6);
 
-			std::default_random_engine generator;
-			std::uniform_int_distribution<unsigned short> distribution(min, max);
-			unsigned short rand = distribution(generator);
+			std::random_device rd; // obtain a random number from hardware
+			std::mt19937 eng(rd()); // seed the generator
+			std::uniform_int_distribution<unsigned short> distr(min, max); // define the range
+
+			unsigned short rand = distr(eng);
 			while (rand)
 			{
 				_emitter.SpawnParticle();
@@ -150,7 +152,7 @@ void Dystopia::SpawnAffector::AffectorUpdate(Dystopia::Emitter& _emitter, float 
 				count--;
 			}
 		}
-		reserved[0] &= (1 << 3);
+		reserved[0] |= (1 << 3);
 	}
 
 	//_emitter.SpawnParticle();
