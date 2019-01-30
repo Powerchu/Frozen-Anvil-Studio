@@ -1,0 +1,24 @@
+#version 410 core
+
+out gl_PerVertex
+{
+  vec4 gl_Position;
+};
+
+uniform mat4 ModelMat;
+
+layout(location = 0) in vec3 vertexPos;
+layout(location = 2) in vec2 vertexUV;
+
+layout(location = 0)out vec3 vPosition;
+layout(location = 2)out vec2 vUV;
+
+void main()
+{
+  vec4 temp = ModelMat * vec4(vertexPos, 1.f);
+  vPosition = temp.xyz;
+  vUV       = vertexUV;
+  
+  gl_Position = temp;
+}
+

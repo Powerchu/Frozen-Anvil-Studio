@@ -193,11 +193,6 @@ bool Dystopia::GraphicsSystem::Init(void)
 	shader->UploadUniformi("texGame", 0);
 	shader->UploadUniformi("texUI", 1);
 
-#   if defined(_DEBUG) | defined(DEBUG)
-	if (auto err = glGetError())
-		__debugbreak();
-#   endif 
-
 	return true;
 }
 
@@ -387,7 +382,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 			if (r->GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 
 		auto s = r->GetShader();
-		if (s && r->GetTexture())
+		if (s && s->IsValid() && r->GetTexture())
 		{
 			s->Bind();
 			s->UploadUniform("vUVBounds", 0.f, 0.f, 1.f, 1.f);
@@ -689,12 +684,9 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 	GetGameView().AsTexture()->Bind(0);
 	GetUIView().AsTexture()->Bind(1);
 
-	static Math::Matrix4 const Identity{};
 	auto const model =  Math::Scale(2.f, (float) Ut::Constant<int, EDITOR ? -2 : 2>::value);
 	Shader* shader = CORE::Get<ShaderSystem>()->GetShader("FinalStage");
 	shader->Bind();
-	shader->UploadUniform("ViewMat", Identity);
-	shader->UploadUniform("ProjectMat", Identity);
 	shader->UploadUniform("ModelMat", model);
 	//shader->UploadUniform("Gamma", mfGamma);
 

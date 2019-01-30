@@ -59,21 +59,21 @@ namespace Gfx
 		virtual AutoArray<std::pair<OString, eUniform_t>> QueryVariables(ShaderProg const&) = 0;
 
 		virtual int GetUniformLocation(ShaderProg const&, char const*) noexcept = 0;
-		virtual void UploadUniform1f(ShaderProg const&, unsigned _nLoc, unsigned _nCount, float    const*) noexcept = 0;
-		virtual void UploadUniform2f(ShaderProg const&, unsigned _nLoc, unsigned _nCount, float    const*) noexcept = 0;
-		virtual void UploadUniform3f(ShaderProg const&, unsigned _nLoc, unsigned _nCount, float    const*) noexcept = 0;
-		virtual void UploadUniform4f(ShaderProg const&, unsigned _nLoc, unsigned _nCount, float    const*) noexcept = 0;
-		virtual void UploadUniform1i(ShaderProg const&, unsigned _nLoc, unsigned _nCount, int      const*) noexcept = 0;
-		virtual void UploadUniform2i(ShaderProg const&, unsigned _nLoc, unsigned _nCount, int      const*) noexcept = 0;
-		virtual void UploadUniform3i(ShaderProg const&, unsigned _nLoc, unsigned _nCount, int      const*) noexcept = 0;
-		virtual void UploadUniform4i(ShaderProg const&, unsigned _nLoc, unsigned _nCount, int      const*) noexcept = 0;
-		virtual void UploadUniform1u(ShaderProg const&, unsigned _nLoc, unsigned _nCount, unsigned const*) noexcept = 0;
-		virtual void UploadUniform2u(ShaderProg const&, unsigned _nLoc, unsigned _nCount, unsigned const*) noexcept = 0;
-		virtual void UploadUniform3u(ShaderProg const&, unsigned _nLoc, unsigned _nCount, unsigned const*) noexcept = 0;
-		virtual void UploadUniform4u(ShaderProg const&, unsigned _nLoc, unsigned _nCount, unsigned const*) noexcept = 0;
+		virtual void UploadUniform1f(ShaderProg const&, int _nLoc, unsigned _nCount, float    const*) noexcept = 0;
+		virtual void UploadUniform2f(ShaderProg const&, int _nLoc, unsigned _nCount, float    const*) noexcept = 0;
+		virtual void UploadUniform3f(ShaderProg const&, int _nLoc, unsigned _nCount, float    const*) noexcept = 0;
+		virtual void UploadUniform4f(ShaderProg const&, int _nLoc, unsigned _nCount, float    const*) noexcept = 0;
+		virtual void UploadUniform1i(ShaderProg const&, int _nLoc, unsigned _nCount, int      const*) noexcept = 0;
+		virtual void UploadUniform2i(ShaderProg const&, int _nLoc, unsigned _nCount, int      const*) noexcept = 0;
+		virtual void UploadUniform3i(ShaderProg const&, int _nLoc, unsigned _nCount, int      const*) noexcept = 0;
+		virtual void UploadUniform4i(ShaderProg const&, int _nLoc, unsigned _nCount, int      const*) noexcept = 0;
+		virtual void UploadUniform1u(ShaderProg const&, int _nLoc, unsigned _nCount, unsigned const*) noexcept = 0;
+		virtual void UploadUniform2u(ShaderProg const&, int _nLoc, unsigned _nCount, unsigned const*) noexcept = 0;
+		virtual void UploadUniform3u(ShaderProg const&, int _nLoc, unsigned _nCount, unsigned const*) noexcept = 0;
+		virtual void UploadUniform4u(ShaderProg const&, int _nLoc, unsigned _nCount, unsigned const*) noexcept = 0;
 
-		virtual void UploadMatrix2(ShaderProg const&, unsigned _nLoc, unsigned _nCount, float const*, bool _bTranspose = true) noexcept = 0;
-		virtual void UploadMatrix4(ShaderProg const&, unsigned _nLoc, unsigned _nCount, float const*, bool _bTranspose = true) noexcept = 0;
+		virtual void UploadMatrix2(ShaderProg const&, int _nLoc, unsigned _nCount, float const*, bool _bTranspose = true) noexcept = 0;
+		virtual void UploadMatrix4(ShaderProg const&, int _nLoc, unsigned _nCount, float const*, bool _bTranspose = true) noexcept = 0;
 
 
 	protected:

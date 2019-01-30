@@ -1,0 +1,56 @@
+#version 410 core
+
+layout(points) in;
+layout(triangle_strip, max_vertices = 4) out;
+
+out gl_PerVertex
+{
+  vec4 gl_Position;
+};
+
+layout(location = 0) flat in vec4 vPosition[];
+
+layout(location = 0) out vec2 vUV;
+
+uniform mat4 ProjectMat;
+
+
+void main()
+{
+  vec3 right = normalize(cross(vec3(0, 1, 0), vPosition[0].xyz));
+  vec3 up    = normalize(cross(vPosition[0].xyz, right));
+  vec3 pos   = (ProjectMat * vPosition[0]).xyz;
+  
+  up    *= vec3(0,0.1,0);
+  right *= vec3(0.1,0,0);
+  
+  gl_Position = vec4(pos - up - right, 1);
+  vUV = vec2(0, 0);
+  EmitVertex();
+  gl_Position = vec4(pos + up - right, 1);
+  vUV = vec2(0, 1);
+  EmitVertex();
+  gl_Position = vec4(pos + up + right, 1);
+  vUV = vec2(1, 1);
+  EmitVertex();
+  gl_Position = vec4(pos - up + right, 1);
+  vUV = vec2(1, 0);
+  EmitVertex();
+  
+  //up    *= vPosition[0].w * 0.5f;
+  //right *= vPosition[0].w * 0.5f;
+  
+  //gl_Position = ProjectMat * vec4(pos - up - right, 1);
+  //vUV = vec2(0, 0);
+  //EmitVertex();
+  //gl_Position = ProjectMat * vec4(pos + up - right, 1);
+  //vUV = vec2(0, 1);
+  //EmitVertex();
+  //gl_Position = ProjectMat * vec4(pos + up + right, 1);
+  //vUV = vec2(1, 1);
+  //EmitVertex();
+  //gl_Position = ProjectMat * vec4(pos - up + right, 1);
+  //vUV = vec2(1, 0);
+  //EmitVertex();
+}
+

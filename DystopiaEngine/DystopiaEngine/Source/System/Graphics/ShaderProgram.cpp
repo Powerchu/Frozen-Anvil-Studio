@@ -31,7 +31,7 @@ namespace
 
 Dystopia::ShaderProgram::ShaderProgram(bool _bIsCustom) noexcept
 	: mProgram{ pGfxAPI->CreateShaderProgram() }, mStage{ Gfx::ShaderStage::NONE }, mstrName{}, mVars{},
-	mbIsCustom{ _bIsCustom }
+	mbIsCustom{ _bIsCustom }, mbValid{ false }
 {
 
 }
@@ -39,6 +39,16 @@ Dystopia::ShaderProgram::ShaderProgram(bool _bIsCustom) noexcept
 Dystopia::ShaderProgram::~ShaderProgram(void) noexcept
 {
 	pGfxAPI->Free(mProgram);
+}
+
+Dystopia::ShaderProgram::ShaderProgram(ShaderProgram&& _obj) noexcept
+	: mProgram{ Ut::Move(_obj.mProgram) }, mStage{ Ut::Move(_obj.mStage) }, 
+	mstrName{ Ut::Move(_obj.mstrName) }, mVars{ Ut::Move(_obj.mVars) },
+	mbIsCustom{ Ut::Move(_obj.mbIsCustom) }, mbValid{ Ut::Move(_obj.mbValid) }
+{
+	_obj.mProgram = ::Gfx::ShaderProg{ 0 };
+	_obj.mStage = ::Gfx::ShaderStage::NONE;
+	_obj.mbValid = false;
 }
 
 ::Gfx::ShaderStage const& Dystopia::ShaderProgram::GetStage(void) const noexcept
@@ -56,6 +66,11 @@ OString const& Dystopia::ShaderProgram::GetName(void) const noexcept
 	return mstrName;
 }
 
+bool Dystopia::ShaderProgram::IsValid(void) const noexcept
+{
+	return mbValid;
+}
+
 bool Dystopia::ShaderProgram::IsCustomProgram(void) const noexcept
 {
 	return mbIsCustom;
@@ -69,6 +84,18 @@ void Dystopia::ShaderProgram::TrackChangesCallback(void)
 AutoArray<std::pair<HashString, Gfx::eUniform_t>> const& Dystopia::ShaderProgram::GetVariables(void) noexcept
 {
 	return mVars;
+}
+
+Dystopia::ShaderProgram& Dystopia::ShaderProgram::operator=(ShaderProgram&& _rhs) noexcept
+{
+	Ut::Swap(mstrName  , _rhs.mstrName  );
+	Ut::Swap(mProgram  , _rhs.mProgram  );
+	Ut::Swap(mStage    , _rhs.mStage    );
+	Ut::Swap(mbIsCustom, _rhs.mbIsCustom);
+	Ut::Swap(mbValid   , _rhs.mbValid   );
+	Ut::Swap(mVars     , _rhs.mVars     );
+
+	return *this;
 }
 
 bool Dystopia::ShaderProgram::LoadProgram(Gfx::ShaderStage _stage, char const* _file, char const* _strName) noexcept
@@ -95,26 +122,29 @@ bool Dystopia::ShaderProgram::LoadProgram(Gfx::ShaderStage _stage, char const* _
 	pData[sz] = '\0';
 	auto shader = pGfxAPI->CompileGLSL(_stage, pData);
 
-	if (!shader)
-		return false;
-
-	bool ret = pGfxAPI->LinkShader(mProgram, shader);
-	pGfxAPI->Free(shader);
-
 	mStage   = _stage;
-	mstrName = _file;
 	mstrName = _strName;
 
+	if (!shader)
+	{
+		// TODO
+		return true;
+	}
+
+	if (pGfxAPI->LinkShader(mProgram, shader))
+	{
 #	if EDITOR
 		mVars = pGfxAPI->QueryVariables(mProgram);
 #	endif
+	}
 
+	pGfxAPI->Free(shader);
 #   if defined(_DEBUG) | defined(DEBUG)
 		if (auto err = glGetError())
 			__debugbreak();
 #   endif 
 
-	return ret;
+	return mbValid = true;
 }
 
 

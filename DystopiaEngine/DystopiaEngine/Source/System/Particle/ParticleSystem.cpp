@@ -12,10 +12,20 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System/Particle/ParticleSystem.h"
+#include "System/Particle/ParticleAffector.h"
+#include "System/Graphics/Shader.h"
+#include "System/Camera/CameraSystem.h"
+
+#include "System/Driver/Driver.h"
+#include "System/Time/ScopedTimer.h"
+#include "System/Profiler/ProfilerAction.h"
 
 #include "Component/Emitter.h"
+#include "Component/Camera.h"
 
 #include "Math/Vectors.h"
+
+#include <GL/glew.h>
 
 
 Dystopia::ParticleSystem::ParticleSystem(void) noexcept
@@ -31,24 +41,83 @@ bool Dystopia::ParticleSystem::Init(void)
 	return true;
 }
 
-void Dystopia::ParticleSystem::Update(float)
+void Dystopia::ParticleSystem::Update(float _dt)
 {
-	/*for (auto& e : mComponents)
-	{
+	ScopedTimer<ProfilerAction> timeKeeper{ "Particle System", "Update" };
 
-	}*/
+	for (auto& e : mComponents)
+	{
+		if constexpr (EDITOR)
+			if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+
+		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE &&	nullptr != e.GetOwner())
+		{
+			for (auto& worker : e.GetUpdateAffectors())
+				worker.Update(e, _dt);
+
+			e.Bind();
+			e.UploadBuffers();
+		}
+
+#   if defined(DEBUG) | defined(_DEBUG)
+		if (auto err = glGetError())
+			__debugbreak();
+#    endif
+	}
+
+	for (auto& e : mComponents)
+	{
+		if constexpr (EDITOR)
+			if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+
+		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE &&	nullptr != e.GetOwner())
+		{
+			auto& shader = e.GetShader();
+
+			e.Bind();
+			shader.Bind();
+
+			for (auto& cam : CORE::Get<CameraSystem>()->GetAllCameras())
+			{
+				auto const& M = cam.GetViewMatrix();
+				auto const& P = cam.GetProjectionMatrix();
+
+				shader.UploadUniform("ProjectMat", P);
+				shader.UploadUniform("ModelViewMat", M);
+
+				e.Render();
+			}
+		}
+
+#   if defined(DEBUG) | defined(_DEBUG)
+		if (auto err = glGetError())
+			__debugbreak();
+#    endif
+	}
 }
 
-void Dystopia::ParticleSystem::FixedUpdate(float)
+void Dystopia::ParticleSystem::FixedUpdate(float _dt)
 {
-	/*for (auto& e : mComponents)
-	{
+	ScopedTimer<ProfilerAction> timeKeeper{ "Particle System", "Fixed Update" };
 
-	}*/
+	for (auto& e : mComponents)
+	{
+		if constexpr (EDITOR)
+			if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+
+		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE &&	nullptr != e.GetOwner())
+		{
+			for (auto& worker : e.GetFixedUpdateAffectors())
+				worker.Update(e, _dt);
+
+			e.FixedUpdate(_dt);
+		}
+	}
 }
 
 void Dystopia::ParticleSystem::Shutdown(void)
 {
+	mComponents.clear();
 }
 
 

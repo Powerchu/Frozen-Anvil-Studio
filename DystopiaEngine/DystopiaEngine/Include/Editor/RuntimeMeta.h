@@ -69,6 +69,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Collision/CollisionSystem.h"
 #include "System/Particle/ParticleSystem.h"
 
+#include "System/Particle/ParticleAffector.h"
+#include "System/Particle/SpawnAffector.h"
+
 namespace Dystopia
 {
 	template<typename A, typename B>
@@ -282,6 +285,39 @@ namespace Dystopia
 			for (size_t i = 0; i < sizeof...(Ns); ++i)
 				SystemArray[i](_in);
 		}
+	};
+
+	template<typename C>
+	struct RequestAffector
+	{
+		static ParticleAffector Get(void)
+		{
+			return C{};
+		}
+	};
+
+	struct AffectorGet
+	{
+		static constexpr size_t size = Ut::SizeofList<AffectorList>::value;
+
+		template<typename A>
+		struct Collection;
+		template<size_t ... Ns>
+		struct Collection<std::index_sequence<Ns ...>>
+		{
+			static ParticleAffector Get(unsigned _n)
+			{
+				static auto mData = Ctor::MakeArray<ParticleAffector(*)(void)>(RequestAffector<typename Ut::MetaExtract<Ns, AffectorList>::result::type>::Get...);
+				return mData[_n]();
+			}
+		};
+
+		ParticleAffector Get(unsigned _i)
+		{
+			return mCollection.Get(_i);
+		}
+
+		Collection<std::make_index_sequence<size>> mCollection;
 	};
 
 
