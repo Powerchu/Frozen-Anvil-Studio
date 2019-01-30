@@ -81,7 +81,7 @@ namespace Dystopia
 		ParticleAffector(void(C::*_upd)(Emitter&, float)) noexcept
 			: mID{ Ut::MetaFind_t<C, AffectorList>::value }, 
 			Updator{ reinterpret_cast<UpdateFunc_t>(_upd) },
-			data{}
+			data{}, reserved{}
 		{}
 
 		alignas(16) char data[16];

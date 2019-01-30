@@ -303,7 +303,9 @@ void Dystopia::Renderer::ShaderField()
 	{
 		debug = !debug;
 	}
+
 	OString buffer{ str };
+	buffer += "                               ";
 	if (debug && EGUI::Display::TextField("Manual", buffer, true, 150))
 	{
 		if (auto pShader = CORE::Get<ShaderSystem>()->GetShader(buffer.c_str()))
