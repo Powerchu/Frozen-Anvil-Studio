@@ -61,7 +61,7 @@ namespace Dystopia
 
 			eStatus Tick() 
 			{
-				if (mStatus != eStatus::RUNNING) {
+				if (mStatus != eStatus::RUNNING || mStatus == eStatus::INVALID) {
 					Init();
 				}
 

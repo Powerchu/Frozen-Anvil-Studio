@@ -165,10 +165,10 @@ void Dystopia::Camera::SetPerspective(Math::Angle _fFOV, float _fAspectRatio, fl
 	float fDist = 1.f / std::tanf(_fFOV.Radians() * .5f);
 
 	mProjection = Math::Matrix4{
-		fDist * _fAspectRatio, .0f		, .0f				, .0f,
-		.0f                  , -fDist	, .0f				, .0f,
-		.0f                  , .0f		, -2.f * fDistZ		, (_fFar + _fNear) * fDistZ,
-		.0f                  , .0f		, -1.f				, .0f
+		fDist * _fAspectRatio, .0f		, .0f				           , .0f,
+		.0f                  , -fDist	, .0f				           , .0f,
+		.0f                  , .0f						, -(_fFar + _fNear) * fDistZ   , -2.f * _fFar * _fNear * fDistZ,
+		.0f                  , .0f		, -1.f				           , .0f
 	};
 }
 
@@ -181,7 +181,7 @@ void Dystopia::Camera::SetPerspective(float _fLeft, float _fRight, float _fTop, 
 	mProjection = Math::Matrix4{
 		(2.f * _fNear) * fWidth, .0f						, (_fRight + _fLeft) * fWidth  , .0f,
 		.0f                    , -(2.f * _fNear) * fHeight	, (_fTop + _fBottom) * fHeight , .0f,
-		.0f                    , .0f						, -(_fFar + _fNear) * fDistZ   , 2.f * _fFar * _fNear * fDistZ,
+		.0f                    , .0f						, -(_fFar + _fNear) * fDistZ   , -2.f * _fFar * _fNear * fDistZ,
 		.0f                    , .0f						, -1.f                         , .0f
 	};
 }
@@ -215,7 +215,7 @@ void Dystopia::Camera::SetCamera(void)
 		//	.0f, .0f, .0f, 1.f
 		//}; // Screen space -> Viewport space -> projection space
 
-	mView.AffineInverse();
+	mView = mView.AffineInverse();
 }
 
 void Dystopia::Camera::SetDebugDraw(bool _bDebugDraw) noexcept
@@ -331,7 +331,7 @@ void Dystopia::Camera::EditorUI(void) noexcept
 
 	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
 	int surfaceID = mnSurfaceID;
-	if (EGUI::Display::DropDownSelection<59>("Surface", surfaceID, 4))
+	if (EGUI::Display::DropDownSelection<21>("Surface", surfaceID, 4))
 	{
 		cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand<Camera, int>(&Camera::SetSurface, mnSurfaceID),
 										   cmd->MakeFnCommand<Camera, int>(&Camera::SetSurface, surfaceID));
@@ -358,18 +358,18 @@ void Dystopia::Camera::EditorMasterCameraCheckbox()
 
 void Dystopia::Camera::EditorDebugCheckbox()
 {
-	//bool tempBool = mbDebugDraw;
-	//if (EGUI::Display::CheckBox("Debug Draw", &tempBool))
-	//{
-	//	SetDebugDraw(tempBool);
-	//}
+	bool tempBool = mbDebugDraw;
+	if (EGUI::Display::CheckBox("Debug Draw", &tempBool))
+	{
+		SetDebugDraw(tempBool);
+	}
 }
 
 void Dystopia::Camera::EditorProjectionDropdown(void)
 {
 	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
 	
-	static std::string arr[2]{ " Orthographic"," Perspective"};
+	std::string arr[2]{ " Orthographic"," Perspective"};
 
 	if (EGUI::Display::DropDownSelection("Projection", mnProjectionIndex, arr, 160.f))
 	{

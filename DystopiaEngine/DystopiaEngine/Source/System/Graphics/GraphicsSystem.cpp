@@ -61,8 +61,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Globals.h"
 #include "Utility/DebugAssert.h"			// DEBUG_ASSERT
-#include "Math/Vector4.h"
-#include "Math/Vector2.h"
+#include "Math/Vectors.h"
 
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely used stuff from Windows headers
 #define NOMINMAX				// Disable Window header min & max macros
@@ -289,17 +288,44 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 
 namespace
 {
+	struct ShaderUploadVisitor
+	{
+		Dystopia::Shader*& s;
+		OString& strName;
+
+		template <typename T>
+		void operator()(T&& value)
+		{
+			s->UploadUniform(strName.c_str(), Ut::Fwd<T>(value));
+		}
+
+		template <>
+		void operator() < int > (int&& value)
+		{
+			s->UploadUniformi(strName.c_str(), value);
+		}
+		template <>
+		void operator() <int&> (int& value)
+		{
+			s->UploadUniformi(strName.c_str(), value);
+		}
+	};
+
 	template <typename T>
 	inline void DrawRenderer(T& _renderer, Dystopia::Shader* s, float _fGamma)
 	{
 		auto t = _renderer->GetTexture();
-
 		auto m = _renderer->GetOwner()->GetComponent<Dystopia::Transform>()->GetTransformMatrix();
 
 		if (t) t->Bind();
 
 		s->UploadUniform("ModelMat", m);
 		s->UploadUniform("Gamma", _fGamma);
+
+		for (auto&e : _renderer->GetOverrides())
+		{
+			e.Get<2>().Visit(ShaderUploadVisitor{ s, e.Get<0>() });
+		}
 
 		_renderer->Draw();
 
@@ -361,7 +387,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 			if (r->GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 
 		auto s = r->GetShader();
-		if (s && r->GetTexture())
+		if (s && s->IsValid() && r->GetTexture())
 		{
 			s->Bind();
 			s->UploadUniform("vUVBounds", 0.f, 0.f, 1.f, 1.f);
@@ -455,29 +481,29 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _View, Math::
 			else
 			{
 				auto pos = pOwner->GetComponent<Transform>()->GetGlobalPosition();
-				auto scaleV = pOwner->GetComponent<Transform>()->GetScale();
+				auto scaleV = pOwner->GetComponent<Transform>()->GetGlobalScale();
 				//auto LocalScale = Math::Scale(scaleV.x, scaleV.y);
 				auto scale = Math::Abs(scaleV[0]) > Math::Abs(scaleV[1]) ? Math::Abs(scaleV[0]) : Math::Abs(scaleV[1]);
 				auto scaleM = Math::Scale(scale, scale);
 				auto Translation = Math::Translate(pos.x, pos.y);
 				s->UploadUniform("ModelMat", Translation * pOwner->GetComponent<Transform>()->GetGlobalRotation().Matrix() * Math::Translate(scaleV*Obj->GetOffSet()) * scaleM * Obj->GetTransformationMatrix());
 			}
-
+			
 			if (Obj->IsSleeping())
 			{
 				activeColor = SleepingColor;
 			}
-
+			
 			else if (Obj->HasCollision())
 			{
 				activeColor = CollidingColor;
 			}
-
+			
 			else if (Obj->IsTrigger())
 			{
 				activeColor = TriggerColor;
 			}
-
+			
 			else
 			{
 				activeColor = mvDebugColour;

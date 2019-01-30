@@ -6,7 +6,7 @@
 \brief
 	Creates and manages Win32 windows.
 
-All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+All Content Copyright ï¿½ 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -15,7 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _INPUT_MANAGER_H_
 
 #include "System/Base/Systems.h"    // Base Class
-#include "Math/Vector2.h"           // Vector2
+#include "Math/Vectors.h"           // Vector2
 //#include "Math\Vector4.h"		    // Vector4
 #include "System/Input/InputMap.h"
 #include "System/Input/MouseData.h"
@@ -97,8 +97,11 @@ namespace Dystopia
 		_DLL_EXPORT bool IsController() const;
 
 		// left is low frequency motor, right is high frequency motor
-		_DLL_EXPORT void SetVibrate(unsigned short _ltrg = 32000, unsigned short _rtrg = 16000); //0-65534
-		_DLL_EXPORT void StopVibrate();
+		_DLL_EXPORT void SetVibrate(unsigned short _ltrg = 32000, unsigned short _rtrg = 16000) const; //0-65534
+		_DLL_EXPORT void StopVibrate() const;
+
+		//
+		_DLL_EXPORT void InvokeVibration(float _intensity, float _decay = 1.0f, float _maxTime = 3.0f, float _balance = 0.0f);
 
 		_DLL_EXPORT float GetAnalogY(int) const;	//0 for left analog, all others for right
 		_DLL_EXPORT float GetAnalogX(int) const;	//0 for left analog, all others for right
@@ -133,6 +136,8 @@ namespace Dystopia
 
 		MouseData mMouseInput;
 		XGamePad mGamePad;
+
+		float mfDecay = 1.0f;
 
 		KeyboardState mKeyBoardState;
 		KeyboardState mPrevKeyBoardState;
@@ -177,21 +182,21 @@ namespace Dystopia
 						 , eButton _posBtn = NONE, eButton _negBtn = NONE
 						 , eButton _altPosBtn = NONE, eButton _altNegBtn = NONE
 						 , float _grav = 3.0f, float _deadR = 0.001f, float _sens = 3.0f
-						 , int _type = 0, int _axis = 0)
+						 , int _type = 0, int _axis = 0, bool _snap = false, bool _invert = false)
 				: mName(_name)
-				, mPosDescription(_posDesc)
-				, mNegDescription(_negDesc)
-				, mPosBtn(_posBtn)
-				, mNegBtn(_negBtn)
-				, mAltPosBtn(_altPosBtn)
-				, mAltNegBtn(_altNegBtn)
-				, mfGravity(_grav)
-				, mfDeadRange(_deadR)
-				, mfSensitivity(_sens)
-				, TypeSelectedInd(_type)
-				, AxisSelectedInd(_axis)
+				  , mPosDescription(_posDesc)
+				  , mNegDescription(_negDesc)
+				  , mPosBtn(_posBtn)
+				  , mNegBtn(_negBtn)
+				  , mAltPosBtn(_altPosBtn)
+				  , mAltNegBtn(_altNegBtn)
+				  , mfGravity(_grav)
+				  , mfDeadRange(_deadR)
+				  , mfSensitivity(_sens)
+				  , mbSnapping(_snap)
+				  , mbInvert(_invert), TypeSelectedInd(_type)
+				  , AxisSelectedInd(_axis)
 			{
-
 			}
 
 			VirtualButton(const char* _name, int _type, int _axis)
@@ -219,8 +224,8 @@ namespace Dystopia
 			float mfDeadRange		= 0.010F;
 			float mfSensitivity		= 3.000F;
 
-			bool mbSnapping = false;
-			bool mbInvert = false;
+			bool mbSnapping;
+			bool mbInvert;
 
 			int TypeSelectedInd = 0;
 			int AxisSelectedInd = 0;

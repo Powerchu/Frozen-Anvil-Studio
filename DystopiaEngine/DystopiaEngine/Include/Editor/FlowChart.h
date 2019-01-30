@@ -15,7 +15,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _FLOW_CHART_H_
 #include "DataStructure/AutoArray.h"
 #include "DataStructure/HashString.h"
-#include "Math/Vector2.h"
+#include "Math/Vectors.h"
 #include "Editor/EditorPanel.h"
 #include "Editor/FlowChartData.h"
 

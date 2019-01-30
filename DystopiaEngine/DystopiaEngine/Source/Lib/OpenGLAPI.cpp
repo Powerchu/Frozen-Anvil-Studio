@@ -38,7 +38,7 @@ namespace
 		auto buffer = Dystopia::StackAlloc_t::GetBufferAs<char>();					        \
 		_PROC_(_SHADER_, static_cast<GLsizei>(StackA_t::GetUsableSize()), nullptr, buffer); \
 														                                    \
-		DEBUG_PRINT(eLog::ERROR, _ERR_MSG_ ": %s", buffer);                                 \
+		DEBUG_PRINT(eLog::ERROR, _ERR_MSG_ " %s", buffer);                                  \
 	} while (false)
 
 	template <typename T, typename U>

@@ -8,7 +8,6 @@ out gl_PerVertex
 uniform mat4 ProjectMat;
 uniform mat4 ViewMat;
 uniform mat4 ModelMat;
-uniform vec4 vUVBounds = vec4(0, 0, 1, 1);
 
 
 layout(location = 0) in vec3 vertexPos;

@@ -97,8 +97,13 @@ public:
 	void Insert(const T& _obj, const Sz_t _nIndex);
 
 	// In-place insert an element to the back of the array
-	template<typename ...Args>
-	void EmplaceBack(Args &&...args);
+	template<typename ... Args>
+	void EmplaceBack(Args&&...args);
+
+	// Attempts to in-place insert to the back of the array
+	// without causing the array to grow
+	template<typename ... Args>
+	bool TryEmplaceBack(Args&& ...args);
 
 	// Removes the last element of the array
 	inline void Remove(void) noexcept;
@@ -347,6 +352,17 @@ void AutoArray<T, A>::EmplaceBack(Args &&...args)
 
 	new (mpLast) T{ Ut::Forward<Args>(args)... };
 	++mpLast;
+}
+
+template <class T, class A> template<typename ... Args>
+inline bool AutoArray<T, A>::TryEmplaceBack(Args&& ...args)
+{
+	if (mpLast == mpEnd)
+		return false;
+
+	new (mpLast) T{ Ut::Forward<Args>(args)... };
+	++mpLast;
+	return true;
 }
 
 

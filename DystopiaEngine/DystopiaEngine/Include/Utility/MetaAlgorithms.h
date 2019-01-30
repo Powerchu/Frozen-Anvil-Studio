@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/MetaHelper.h"
 #include "Utility/MetaDataStructures.h"
 
+
 namespace Ut
 {
 	// =========================================== COMPILE TIME FIND =========================================== //
@@ -233,6 +234,18 @@ namespace Ut
 
 	template <typename ... Ty>
 	using MetaUnique_t = typename MetaUnique<Ty ...>::type;
+
+	template <auto ... Vs>
+	struct IsUniqueV
+	{
+		static constexpr bool value = true;
+	};
+
+	template <auto V, auto ... Vs>
+	struct IsUniqueV<V, Vs...>
+	{
+		static constexpr bool value = !IsAnySameV<V, Vs...>::value && IsUniqueV<Vs...>::value;
+	};
 }
 
 

@@ -39,9 +39,9 @@ public:
 	explicit Delegate(Ty&&) noexcept;
 
 	template <typename C>
-	explicit Delegate(C*, R_t(C::*)(P...)) noexcept;
+	explicit Delegate(C*, R_t(Ut::Decay_t<C>::*)(P...)) noexcept;
 	template <typename C>
-	explicit Delegate(C*, R_t(C::*)(P...) const) noexcept;
+	explicit Delegate(C*, R_t(Ut::Decay_t<C>::*)(P...) const) noexcept;
 	template <typename C>
 	explicit Delegate(C&&, R_t(Ut::Decay_t<C>::*)(P...)) noexcept;
 	template <typename C>
@@ -117,25 +117,25 @@ inline Delegate<R_t (P...)>::Delegate(Ty&& _f) noexcept
 }
 
 template <typename R_t, typename ... P> template <typename C>
-inline Delegate<R_t (P...)>::Delegate(C* _obj, R_t(C::*_f)(P...)) noexcept
-	: mAlloc{ nullptr }, mObj{ reinterpret_cast<D*>(_obj) }, mFunc{ MemPtrCast<Func_t>(_f, Ut::Fwd<C>(_obj)) }
+inline Delegate<R_t (P...)>::Delegate(C* _obj, R_t(Ut::Decay_t<C>::* _f)(P...)) noexcept
+	: mAlloc{ nullptr }, mObj{ reinterpret_cast<D*>(_obj) }, mFunc{ MemPtrCast<Func_t>(_f, *_obj) }
 {
 }
 
 template <typename R_t, typename ... P> template <typename C>
-inline Delegate<R_t (P...)>::Delegate(C* _obj, R_t(C::*_f)(P...) const) noexcept
-	: mAlloc{ nullptr }, mObj{ reinterpret_cast<D*>(_obj) }, mFunc{ MemPtrCast<Func_t>(_f, Ut::Fwd<C>(_obj)) }
+inline Delegate<R_t (P...)>::Delegate(C* _obj, R_t(Ut::Decay_t<C>::* _f)(P...) const) noexcept
+	: mAlloc{ nullptr }, mObj{ reinterpret_cast<D*>(_obj) }, mFunc{ MemPtrCast<Func_t>(_f, *_obj) }
 {
 }
 
 template <typename R_t, typename ... P> template <typename C>
-inline Delegate<R_t (P...)>::Delegate(C&& _obj, R_t(Ut::Decay_t<C>::*_f)(P...)) noexcept
+inline Delegate<R_t (P...)>::Delegate(C&& _obj, R_t(Ut::Decay_t<C>::* _f)(P...)) noexcept
 	: mAlloc{ nullptr }, mObj{ GetObject(Ut::Fwd<C>(_obj)) }, mFunc{ MemPtrCast<Func_t>(_f, Ut::Fwd<C>(_obj)) }
 {
 }
 
 template <typename R_t, typename ... P> template <typename C>
-inline Delegate<R_t (P...)>::Delegate(C&& _obj, R_t(Ut::Decay_t<C>::*_f)(P...) const) noexcept
+inline Delegate<R_t (P...)>::Delegate(C&& _obj, R_t(Ut::Decay_t<C>::* _f)(P...) const) noexcept
 	: mAlloc{ nullptr }, mObj{ GetObject(Ut::Fwd<C>(_obj)) }, mFunc{ MemPtrCast<Func_t>(_f, Ut::Fwd<C>(_obj)) }
 {
 }

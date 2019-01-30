@@ -274,6 +274,14 @@ namespace Ut
 	template <typename T>
 	struct IsSame<T, T> : Constant <bool, true> {};
 
+	template <auto V, auto ... Vs>
+	struct IsAnySameV : Constant<bool, false> {};
+
+	template <auto L, auto R, auto ... Vs>
+	struct IsAnySameV<L, R, Vs...> : 
+		Constant <bool, L == R || IsAnySameV<L, Vs...>::value> 
+	{};
+
 
 	// Is l-value ref
 	// ================ ====================================================

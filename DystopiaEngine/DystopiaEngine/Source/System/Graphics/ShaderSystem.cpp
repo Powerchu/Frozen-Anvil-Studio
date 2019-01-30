@@ -55,12 +55,24 @@ void Dystopia::ShaderSystem::EditorUpdate(void)
 
 		if (temp.LoadProgram(e->GetStage(), pFileSys->GetFullPath(e->GetName().c_str(), eFileDir::eResource).c_str(), e->GetName().c_str()))
 			Ut::Swap(*e, temp);
+#		if defined(_DEBUG) | defined(DEBUG)
+		if (auto err = glGetError())
+			__debugbreak();
+#		endif 
 
 		for (auto& s : mShaders)
 			s.ReattachProgram(e);
+#		if defined(_DEBUG) | defined(DEBUG)
+		if (auto err = glGetError())
+			__debugbreak();
+#		endif 
 	}
 
 	mChanges.clear();
+#	if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#	endif 
 }
 
 Dystopia::Shader* Dystopia::ShaderSystem::GetShader(char const* _strName) const noexcept
@@ -74,12 +86,12 @@ Dystopia::Shader* Dystopia::ShaderSystem::GetShader(char const* _strName) const 
 	return nullptr;
 }
 
-Dystopia::Shader* Dystopia::ShaderSystem::CreateShader(char const* _strName) noexcept
+Dystopia::Shader* Dystopia::ShaderSystem::CreateShader(char const* _strName, bool _bCustom) noexcept
 {
 	if (auto p = GetShader(_strName))
 		return p;
 
-	return mShaders.Emplace(_strName);
+	return mShaders.Emplace(_strName, _bCustom);
 }
 
 Dystopia::ShaderProgram* Dystopia::ShaderSystem::CreateShaderProgram(::Gfx::ShaderStage _stage, char const* _strName, bool _bTrack) noexcept
@@ -89,7 +101,7 @@ Dystopia::ShaderProgram* Dystopia::ShaderSystem::CreateShaderProgram(::Gfx::Shad
 	if (auto ret = GetShaderProgram(strName.c_str()))
 		return ret;
 
-	auto p = mPrograms.Emplace();
+	auto p = mPrograms.Emplace(_bTrack);
 	if (p->LoadProgram(_stage, _strName, strName.c_str()))
 	{
 #		if EDITOR
@@ -149,7 +161,6 @@ void Dystopia::ShaderSystem::LoadShaderList(char const* _strPath, eFileDir _dir,
 {
 	auto pFileSys = CORE::Get<FileSystem>();
 	auto file = Serialiser::OpenFile<TextSerialiser>(pFileSys->GetFullPath(_strPath, _dir).c_str(), Serialiser::MODE_READ);
-	//auto file = Serialiser::OpenFile<TextSerialiser>(pFileSys->GetFullPath(_strPath, _dir).c_str(), Serialiser::MODE_READ);
 	std::string strName;
 
 	// Load shader programs
@@ -157,7 +168,6 @@ void Dystopia::ShaderSystem::LoadShaderList(char const* _strPath, eFileDir _dir,
 	while (!file.EndOfInput())
 	{
 		file >> strName;
-		//strName = pFileSys->GetFullPath(strName, _dir);
 
 		ResolveShaderProgram(strName, _dir, _bTrack);
 	}
@@ -166,7 +176,7 @@ void Dystopia::ShaderSystem::LoadShaderList(char const* _strPath, eFileDir _dir,
 	while (!file.EndOfInput())
 	{
 		file >> strName;
-		auto pShader = CreateShader(strName.c_str());
+		auto pShader = CreateShader(strName.c_str(), _bTrack);
 
 		if (pShader)
 		{
@@ -185,23 +195,30 @@ void Dystopia::ShaderSystem::SaveCustomShaders(void) noexcept
 {
 	auto pFileSys = CORE::Get<FileSystem>();
 
-	auto path = pFileSys->GetProjectFolders<std::string>(eFileDir::eResource) + "ShaderList.txt";
+	auto path = pFileSys->GetProjectFolders<std::string>(eFileDir::eResource) + "/Shader/ShaderList.txt";
 	auto file = Serialiser::OpenFile<TextSerialiser>(path.c_str(), Serialiser::MODE_WRITE);
 
-	char buffer[100]{};
-	auto start = Ut::Copy("Shader/", &buffer[0]);
+	char buffer[128]{};
 
 	file.InsertStartBlock("PROGRAMS");
 	for (auto& e : mPrograms)
 	{
-		Ut::Copy(e.GetName(), start);
-		file << static_cast<char*>(buffer);
+		if (e.IsCustomProgram())
+		{
+			Ut::Copy(e.GetName(), &buffer[0]);
+			file << static_cast<char*>(buffer);
+		}
 	}
 
+	file.InsertEndBlock("PROGRAMS");
 	for (auto& e : mShaders)
 	{
-		file.InsertStartBlock("SHADER");
-		e.Unserialize(file);
+		if (e.IsCustomShader())
+		{
+			file.InsertStartBlock("SHADER");
+			e.Unserialize(file);
+			file.InsertEndBlock("SHADER");
+		}
 	}
 }
 

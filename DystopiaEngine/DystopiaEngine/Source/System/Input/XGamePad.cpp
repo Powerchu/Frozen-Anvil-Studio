@@ -27,7 +27,7 @@ static constexpr unsigned short g_ControllerHexa[14] =
 	XINPUT_GAMEPAD_Y                
 };
 
-XGamePad::XGamePad(const unsigned _id)
+XGamePad::XGamePad(const unsigned _id, float maxTimer)
 	:
 	mArrXBtnStates{},
 	mxLeftThumb{},
@@ -42,7 +42,9 @@ XGamePad::XGamePad(const unsigned _id)
 	mfDeadZoneR{ XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE }, 
 	mfTriggerThresh{ XINPUT_GAMEPAD_TRIGGER_THRESHOLD },
 	mfMaxThumbVal{ 32767 },
-	mpxVibrate{ new XINPUT_VIBRATION{} }
+	mpxVibrate{ new XINPUT_VIBRATION{} },
+	mfMaxTimer(maxTimer),
+	mfTimer(0.0f)
 {
 }
 
@@ -163,8 +165,9 @@ void XGamePad::UpdateButtons(void)
 	}
 }
 
-void XGamePad::Vibrate(unsigned short _speedL, unsigned short _speedR)
+void XGamePad::Vibrate(unsigned short _speedL, unsigned short _speedR) const
 {
+	//0-65534
 	if (mbConnected)
 	{
 		ZeroMemory(&*mpxVibrate, sizeof(XINPUT_VIBRATION));
@@ -174,9 +177,45 @@ void XGamePad::Vibrate(unsigned short _speedL, unsigned short _speedR)
 	}
 }
 
-void XGamePad::StopVibrate(void)
+void XGamePad::StopVibrate(void) const
 {
 	Vibrate(0, 0);
+}
+
+void XGamePad::SetVibrationSetting(float intensity, float maxTime, float bal)
+{
+	if (intensity > 1.f) intensity = 1.f;
+	else if (intensity < 0.f) intensity = 0.f;
+
+	if (maxTime > mfMaxTimer) mfMaxTimer = maxTime;
+
+	mfTimer = mfMaxTimer;
+	mfIntensity = intensity;
+	mfBalance = bal;
+}
+
+void XGamePad::VibrateHelper()
+{
+	if (mfIntensity <= 0 || mfTimer <= 0) return;
+
+	//0-65534
+	if (mfBalance > 1.f) mfBalance = 1.f;
+	else if (mfBalance < -1.f) mfBalance = -1.f;
+
+	const unsigned maxFreq = 65535;
+	const unsigned _lowFreq = static_cast<unsigned>((1.f - (mfBalance + 1.f)) * (static_cast<float>(maxFreq) / 2) + (static_cast<float>(maxFreq) / 2));
+	const unsigned _highFreq = maxFreq - _lowFreq;
+
+	if (mfTimer > 0.f)
+	{
+		Vibrate( static_cast<unsigned short>( mfIntensity * _lowFreq * (mfTimer/mfMaxTimer)), static_cast<unsigned short>(mfIntensity * _highFreq * (mfTimer / mfMaxTimer)));
+	}
+	else
+	{
+		mfTimer = 0.0f;
+		mfIntensity = 0.0f;
+		StopVibrate();
+	}
 }
 
 float XGamePad::GetAnalogX(int _i) const
