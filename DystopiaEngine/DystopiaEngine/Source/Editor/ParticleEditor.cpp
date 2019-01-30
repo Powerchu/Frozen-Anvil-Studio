@@ -164,7 +164,6 @@ void Editor::ParticleEditor::ListOfAffectors(void)
 	static Dystopia::AffectorGet affectorGet;
 	static const auto affectorNames = Dystopia::AffectorUI<Dystopia::AffectorList>::GetUIName();
 
-
 	for (int i = 0; i < static_cast<int>(Dystopia::AffectorGet::size); i++)
 	{
 		EGUI::PushID(i);
@@ -177,20 +176,23 @@ void Editor::ParticleEditor::ListOfAffectors(void)
 		else
 		{
 			EGUI::Display::Label((affectorGet.Get(i).*affectorNames[i])());
-			EGUI::SameLine();
+			EGUI::SameLine(5.f, 150.f);
 			if (EGUI::Display::Button("Add", Math::Vec2{ 100.f, 24.f }))
 				AddAffector(i);
 		}
-		EGUI::Display::HorizontalSeparator();
 		EGUI::PopID();
 	}
+	EGUI::Display::HorizontalSeparator();
 }
 
 void Editor::ParticleEditor::AddAffector(int _id)
 {
 	Dystopia::Emitter* pEmitter = mpObject->GetComponent<Dystopia::Emitter>();
 	static Dystopia::AffectorGet affectorGet;
-	pEmitter->AddAffector(Ut::Move(affectorGet.Get(_id)));
+	if (_id == 1 || _id == 2)
+		pEmitter->AddAffector(Ut::Move(affectorGet.Get(_id)), Dystopia::AffectorTag::OnSpawn{});
+	else
+		pEmitter->AddAffector(Ut::Move(affectorGet.Get(_id)));
 }
 
 void Editor::ParticleEditor::EmitterAffectors(void)
@@ -212,7 +214,7 @@ void Editor::ParticleEditor::EmitterAffectors(void)
 		for (int i = 0; i < existingSpawnAffectors.size(); ++i)
 		{
 			EGUI::PushID(static_cast<int>(i));
-			bool open = EGUI::Display::StartTreeNode((affectorGet.Get(i).*affectorNames[i])());
+			bool open = EGUI::Display::StartTreeNode((affectorGet.Get(existingSpawnAffectors[i].GetID()).*affectorNames[existingSpawnAffectors[i].GetID()])());
 			bool toRemove = false;
 			if (ImGui::BeginPopupContextItem())
 			{
@@ -222,7 +224,7 @@ void Editor::ParticleEditor::EmitterAffectors(void)
 			}
 			if (open)
 			{
-				(existingSpawnAffectors[i].*affectorUI[i])();
+				(existingSpawnAffectors[i].*affectorUI[existingSpawnAffectors[i].GetID()])();
 				EGUI::Display::EndTreeNode();
 			}
 			EGUI::PopID();
@@ -237,7 +239,7 @@ void Editor::ParticleEditor::EmitterAffectors(void)
 		for (int i = 0; i < existingUpdateAffectors.size(); ++i)
 		{
 			EGUI::PushID(static_cast<int>(i));
-			bool open = EGUI::Display::StartTreeNode((affectorGet.Get(i).*affectorNames[i])());
+			bool open = EGUI::Display::StartTreeNode((affectorGet.Get(existingUpdateAffectors[i].GetID()).*affectorNames[existingUpdateAffectors[i].GetID()])());
 			bool toRemove = false;
 			if (ImGui::BeginPopupContextItem())
 			{
@@ -247,7 +249,7 @@ void Editor::ParticleEditor::EmitterAffectors(void)
 			}
 			if (open)
 			{
-				(existingUpdateAffectors[i].*affectorUI[i])();
+				(existingUpdateAffectors[i].*affectorUI[existingUpdateAffectors[i].GetID()])();
 				EGUI::Display::EndTreeNode();
 			}
 			EGUI::PopID();
@@ -262,7 +264,7 @@ void Editor::ParticleEditor::EmitterAffectors(void)
 		for (int i = 0; i < existingFixedUpdateAffectors.size(); ++i)
 		{
 			EGUI::PushID(static_cast<int>(i));
-			bool open = EGUI::Display::StartTreeNode((affectorGet.Get(i).*affectorNames[i])());
+			bool open = EGUI::Display::StartTreeNode((affectorGet.Get(existingFixedUpdateAffectors[i].GetID()).*affectorNames[existingFixedUpdateAffectors[i].GetID()])());
 			bool toRemove = false;
 			if (ImGui::BeginPopupContextItem())
 			{
@@ -272,7 +274,7 @@ void Editor::ParticleEditor::EmitterAffectors(void)
 			}
 			if (open)
 			{
-				(existingFixedUpdateAffectors[i].*affectorUI[i])();
+				(existingFixedUpdateAffectors[i].*affectorUI[existingFixedUpdateAffectors[i].GetID()])();
 				EGUI::Display::EndTreeNode();
 			}
 			EGUI::PopID();

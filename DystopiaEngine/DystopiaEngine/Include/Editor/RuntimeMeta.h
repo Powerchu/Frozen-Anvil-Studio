@@ -71,6 +71,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "System/Particle/ParticleAffector.h"
 #include "System/Particle/SpawnAffector.h"
+#include "System/Particle/LocationAffector.h"
+#include "System/Particle/LifetimeAffector.h"
+#include "System/Particle/ColorAffector.h"
+#include "System/Particle/VelocityAffector.h"
+#include "System/Particle/SizeAffector.h"
 
 namespace Dystopia
 {

@@ -29,6 +29,9 @@
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
     <ClCompile Include="Include\IO\XMLParser.cpp" />
+    <ClCompile Include="Source\System\Particle\ColorAffector.cpp" />
+    <ClCompile Include="Source\System\Particle\LifetimeAffector.cpp" />
+    <ClCompile Include="Source\System\Particle\LocationAffector.cpp" />
     <ClCompile Include="Source\System\Particle\ParticleAffector.cpp" />
     <ClCompile Include="Source\Component\AudioListener.cpp" />
     <ClCompile Include="Include\System\Database\DataSheet.cpp" />
@@ -101,7 +104,9 @@
     <ClCompile Include="Source\System\Graphics\TextureSystem.cpp" />
     <ClCompile Include="Source\System\Logger\FileLogger.cpp" />
     <ClCompile Include="Source\System\Logger\LoggerSystem.cpp" />
+    <ClCompile Include="Source\System\Particle\SizeAffector.cpp" />
     <ClCompile Include="Source\System\Particle\SpawnAffector.cpp" />
+    <ClCompile Include="Source\System\Particle\VelocityAffector.cpp" />
     <ClCompile Include="Source\System\Physics\CollisionResolution.cpp" />
     <ClCompile Include="Source\System\Profiler\ProfileInfo.cpp" />
     <ClCompile Include="Source\System\Profiler\Profiler.cpp" />
@@ -277,10 +282,15 @@
     <ClInclude Include="Include\System\Graphics\TextureAtlas.h" />
     <ClInclude Include="Include\System\Logger\FileLogger.h" />
     <ClInclude Include="Include\Component\Emitter.h" />
+    <ClInclude Include="Include\System\Particle\ColorAffector.h" />
+    <ClInclude Include="Include\System\Particle\LifetimeAffector.h" />
+    <ClInclude Include="Include\System\Particle\LocationAffector.h" />
     <ClInclude Include="Include\System\Particle\Particle.h" />
     <ClInclude Include="Include\System\Particle\ParticleAffector.h" />
     <ClInclude Include="Include\System\Particle\ParticleSystem.h" />
+    <ClInclude Include="Include\System\Particle\SizeAffector.h" />
     <ClInclude Include="Include\System\Particle\SpawnAffector.h" />
+    <ClInclude Include="Include\System\Particle\VelocityAffector.h" />
     <ClInclude Include="Include\System\Physics\CollisionResolution.h" />
     <ClInclude Include="Include\Component\Collider.h" />
     <ClInclude Include="Include\Component\Renderer.h" />

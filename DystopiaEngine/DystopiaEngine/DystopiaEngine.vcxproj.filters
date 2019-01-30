@@ -415,6 +415,21 @@
     <ClCompile Include="Source\System\Particle\ParticleAffector.cpp">
       <Filter>Game Engine\Systems\Particle\Affectors\Base</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Particle\LocationAffector.cpp">
+      <Filter>Game Engine\Systems\Particle\Affectors\Location</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Particle\ColorAffector.cpp">
+      <Filter>Game Engine\Systems\Particle\Affectors\Color</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Particle\VelocityAffector.cpp">
+      <Filter>Game Engine\Systems\Particle\Affectors\Velocity</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Particle\SizeAffector.cpp">
+      <Filter>Game Engine\Systems\Particle\Affectors\Size</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Particle\LifetimeAffector.cpp">
+      <Filter>Game Engine\Systems\Particle\Affectors\Lifetime</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -1146,6 +1161,21 @@
     <ClInclude Include="Include\Editor\ParticleEditor.h">
       <Filter>Editor\Main\Panels\Particle System</Filter>
     </ClInclude>
+    <ClInclude Include="Include\System\Particle\LocationAffector.h">
+      <Filter>Game Engine\Systems\Particle\Affectors\Location</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Particle\ColorAffector.h">
+      <Filter>Game Engine\Systems\Particle\Affectors\Color</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Particle\VelocityAffector.h">
+      <Filter>Game Engine\Systems\Particle\Affectors\Velocity</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Particle\SizeAffector.h">
+      <Filter>Game Engine\Systems\Particle\Affectors\Size</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Particle\LifetimeAffector.h">
+      <Filter>Game Engine\Systems\Particle\Affectors\Lifetime</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1640,14 +1670,26 @@
     <Filter Include="Game Engine\Systems\Particle\Affectors\Base">
       <UniqueIdentifier>{00ca27f8-881d-4bb5-ab25-352c2783374e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game Engine\Systems\Particle\Affectors\CircleSpawner">
-      <UniqueIdentifier>{3f294084-541f-4a2d-8053-4ef5c42ae1fc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Game Engine\Systems\Particle\Affectors\Spawn">
       <UniqueIdentifier>{fe57a809-de60-4d89-ba03-10e68d8c3862}</UniqueIdentifier>
     </Filter>
     <Filter Include="Editor\Main\Panels\Particle System">
       <UniqueIdentifier>{618fe555-8ee3-427d-8956-0bdcc3a2844c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Particle\Affectors\Location">
+      <UniqueIdentifier>{3c0a37d7-9e00-454a-b5c0-dd3bfc3a9132}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Particle\Affectors\Lifetime">
+      <UniqueIdentifier>{2393b2b3-674a-408a-8d73-5180101c2e19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Particle\Affectors\Velocity">
+      <UniqueIdentifier>{eff9a190-ef35-4129-a47f-d1ead874152e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Particle\Affectors\Size">
+      <UniqueIdentifier>{3f294084-541f-4a2d-8053-4ef5c42ae1fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Particle\Affectors\Color">
+      <UniqueIdentifier>{77c047d2-7180-4cc4-ba80-2593a96fdeed}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

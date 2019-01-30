@@ -84,6 +84,14 @@ namespace Dystopia
 		void Unserialise(TextSerialiser&) override;
 		void EditorUI(void) noexcept override;
 
+
+		template <typename Ty>
+		auto AddAffector(Ty&&, AffectorTag::OnSpawn) noexcept;
+		template <typename Ty>
+		auto AddAffector(Ty&&, AffectorTag::OnUpdate) noexcept;
+		template <typename Ty>
+		auto AddAffector(Ty&&, AffectorTag::OnFixedUpdate) noexcept;
+
 	private:
 
 		AutoArray<float>      mLifetime;
@@ -101,13 +109,6 @@ namespace Dystopia
 		Shader* mpShader; Texture* mpTexture;
 		unsigned mVAO, mColourBuffer, mPosBuffer;
 		unsigned mSpawnCount;
-
-		template <typename Ty>
-		auto AddAffector(Ty&&, AffectorTag::OnSpawn) noexcept;
-		template <typename Ty>
-		auto AddAffector(Ty&&, AffectorTag::OnUpdate) noexcept;
-		template <typename Ty>
-		auto AddAffector(Ty&&, AffectorTag::OnFixedUpdate) noexcept;
 
 	};
 }

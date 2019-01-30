@@ -28,8 +28,18 @@ namespace Dystopia
 		struct OnFixedUpdate {};
 	}
 
+	//	HOT_FIX : 
+	//		need manually specify affector tag in ParticleEditor.cpp 
+	//	TODO :
+	//		automatically deduce affector tag somehow 
 	using AffectorList = Ut::MetaAutoIndexer_t<
-		struct SpawnAffector
+		struct SpawnAffector,
+		struct LocationAffector,
+		struct LifetimeAffector,
+		struct ColorAffector,
+		struct VelocityAffector,
+		struct InitialSizeAffector,
+		struct SizeOverLifeAffector
 	>;
 
 	class Emitter;
