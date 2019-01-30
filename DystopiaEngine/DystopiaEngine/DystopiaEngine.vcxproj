@@ -31,6 +31,7 @@
     <ClCompile Include="Include\IO\XMLParser.cpp" />
     <ClCompile Include="Source\Component\AudioListener.cpp" />
     <ClCompile Include="Include\System\Database\DataSheet.cpp" />
+    <ClCompile Include="Source\Editor\ParticleEditor.cpp" />
     <ClCompile Include="Source\Math\Vector\Vector2.cpp" />
     <ClCompile Include="Source\Math\Vector\Vector3.cpp" />
     <ClCompile Include="Source\System\Particle\ParticleSystem.cpp" />
@@ -191,6 +192,7 @@
     <ClInclude Include="Include\Editor\FlowChart.h" />
     <ClInclude Include="Include\Editor\FlowChartData.h" />
     <ClInclude Include="Include\Editor\GameView.h" />
+    <ClInclude Include="Include\Editor\ParticleEditor.h" />
     <ClInclude Include="Include\Factory\Factory.h" />
     <ClInclude Include="Include\Lib\Gfx\GfxOptions.h" />
     <ClInclude Include="Include\Lib\Gfx\OpenGLAPI.h" />

@@ -409,6 +409,9 @@
     <ClCompile Include="Source\System\Particle\SpawnAffector.cpp">
       <Filter>Game Engine\Systems\Particle\Affectors\Spawn</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Editor\ParticleEditor.cpp">
+      <Filter>Editor\Main\Panels\Particle System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -1137,6 +1140,9 @@
     <ClInclude Include="Include\System\Particle\SpawnAffector.h">
       <Filter>Game Engine\Systems\Particle\Affectors\Spawn</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Editor\ParticleEditor.h">
+      <Filter>Editor\Main\Panels\Particle System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1636,6 +1642,9 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Particle\Affectors\Spawn">
       <UniqueIdentifier>{fe57a809-de60-4d89-ba03-10e68d8c3862}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Editor\Main\Panels\Particle System">
+      <UniqueIdentifier>{618fe555-8ee3-427d-8956-0bdcc3a2844c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

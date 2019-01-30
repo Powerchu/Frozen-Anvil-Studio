@@ -41,8 +41,35 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Dystopia::Emitter::Emitter(void) noexcept
 	: mColour{}, mPosition{}, mVelocity{}, mAccel{}, mLifetime{}, mSpawnCount{},
-	mSpawn{}, mUpdate{}, mFixedUpdate{}, mpShader{ nullptr }, mpTexture{ nullptr }
+	mSpawn{}, mUpdate{}, mFixedUpdate{}, mpShader{ nullptr }, mpTexture{ nullptr },
+	mnSpawnRate{ 10 }, mnBurstCountHigh{ 0 }, mnBurstCountLow{ 0 }, mfSpawnDelay{ 0.f },	// spawn affector settings
+	mbContinuous{ true }, mbBurst{ false }, mbBurstRandom{ false }							// spawn affector settings
 {
+	glGenVertexArrays(1, &mVAO);
+	glGenBuffers(2, &mColourBuffer);
+
+	glBindVertexArray(mVAO);
+
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+
+	//glVertexAttribDivisor(0, 4);
+	//glVertexAttribDivisor(1, 4);
+
+	glBindVertexArray(0);
+}
+
+Dystopia::Emitter::Emitter(const Dystopia::Emitter& _rhs) noexcept
+	: mColour{ _rhs.mColour }, mPosition{ _rhs.mPosition }, mVelocity{ _rhs.mVelocity }, mAccel{ _rhs.mAccel }, 
+	mLifetime{ _rhs.mLifetime }, mSpawnCount{ _rhs.mSpawnCount },
+	mSpawn{ _rhs.mSpawn }, mUpdate{ _rhs.mUpdate }, mFixedUpdate{ _rhs.mFixedUpdate }, 
+	mpShader{ nullptr }, mpTexture{ nullptr },
+	mnSpawnRate{ _rhs.mnSpawnRate }, mnBurstCountHigh{ _rhs.mnBurstCountHigh },						// spawn affector settings
+	mnBurstCountLow{ _rhs.mnBurstCountLow }, mfSpawnDelay{ _rhs.mfSpawnDelay },						// spawn affector settings
+	mbContinuous{ _rhs.mbContinuous }, mbBurst{ _rhs.mbBurst }, mbBurstRandom{ _rhs.mbBurstRandom } // spawn affector settings
+{
+	mpShader = CORE::Get<ShaderSystem>()->GetShader(_rhs.mpShader ? _rhs.mpShader->GetName().c_str() : "Default Particle");
+	mpTexture = CORE::Get<TextureSystem>()->GetTexture(_rhs.mpTexture ? _rhs.mpTexture->GetName().c_str() : "EditorStartup.png");
 	glGenVertexArrays(1, &mVAO);
 	glGenBuffers(2, &mColourBuffer);
 
@@ -241,6 +268,11 @@ AutoArray<Dystopia::ParticleAffector>& Dystopia::Emitter::GetFixedUpdateAffector
 	return mFixedUpdate;
 }
 
+Dystopia::Emitter * Dystopia::Emitter::Duplicate(void) const
+{
+	return static_cast<ComponentDonor<Emitter> *>(EngineCore::GetInstance()->GetSystem<Emitter::SYSTEM>())->RequestComponent(*this);
+}
+
 
 void Dystopia::Emitter::Serialise(TextSerialiser& _out) const
 {
@@ -363,14 +395,59 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 	EGUI::Display::Label("Particle Count: %u", mSpawnCount);
 	EGUI::Display::HorizontalSeparator();
 
-	static float delay = 0.f;
-	EGUI::Display::DragFloat("Spawn Delay", &delay, 0.1f, 0.f, 1.f);
-	if (EGUI::Display::Button("Add spawn affector"))
+	EGUI::Display::HorizontalSeparator();
+	if (EGUI::Display::StartTreeNode("Spawn Affector"))
 	{
-		SpawnAffector sa{};
+		EGUI::PushLeftAlign(120.f);
+		if (EGUI::Display::DragFloat("Spawn Delay", &mfSpawnDelay, 0.1f, 0.f, FLT_MAX))
+		{
+		}
 
-		sa.SetSpawnDelay(delay);
-		AddAffector(Ut::Move(sa));
+		if (EGUI::Display::CheckBox("Continuous", &mbContinuous))
+		{
+		}
+
+		int out = static_cast<int>(mnSpawnRate);
+		if (EGUI::Display::DragInt("Spawn Rate", &out, 1.f, 0, static_cast<int>(mParticle.mnLimit)))
+		{
+			mnSpawnRate = static_cast<unsigned short>(out);
+		}
+
+		if (EGUI::Display::CheckBox("Burst", &mbBurst))
+		{
+		}
+
+		if (EGUI::Display::CheckBox("Burst Random", &mbBurstRandom))
+		{
+		}
+
+		out = static_cast<int>(mnBurstCountHigh);
+		if (EGUI::Display::DragInt("Burst High", &out, 1.f, 0, 65535))
+		{
+			mnBurstCountHigh = static_cast<unsigned short>(out);
+		}
+
+		out = static_cast<int>(mnBurstCountLow);
+		if (EGUI::Display::DragInt("Burst Low", &out, 1.f, 0, mnBurstCountHigh))
+		{
+			mnBurstCountLow = static_cast<unsigned short>(out);
+		}
+
+		if (EGUI::Display::Button("Add Spawn Affector", Math::Vec2{ 220.f, 24.f }))
+		{
+			SpawnAffector sa{};
+			sa.SetSpawnRate(mnSpawnRate);
+			sa.SetBurstCount(mnBurstCountHigh);
+			sa.SetBurstLow(mnBurstCountLow);
+			sa.SetInitialDelay(mfSpawnDelay);
+			sa.EnableContinuous(mbContinuous);
+			sa.EnableBurst(mbBurst);
+			sa.EnableRandomBurst(mbBurstRandom);
+			AddAffector(Ut::Move(sa));
+		}
+
+		EGUI::PopLeftAlign();
+		EGUI::Display::EndTreeNode();
 	}
 
 }

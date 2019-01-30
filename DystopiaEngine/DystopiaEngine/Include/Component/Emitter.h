@@ -49,6 +49,7 @@ namespace Dystopia
 		const std::string GetEditorName(void) const { return GetCompileName(); }
 
 		Emitter(void) noexcept;
+		Emitter(const Emitter&) noexcept;
 		~Emitter(void) noexcept;
 
 		void Awake(void);
@@ -78,6 +79,7 @@ namespace Dystopia
 		AutoArray<ParticleAffector>& GetUpdateAffectors(void) noexcept;
 		AutoArray<ParticleAffector>& GetFixedUpdateAffectors(void) noexcept;
 
+		Emitter * Duplicate(void) const;
 		void Serialise(TextSerialiser&) const override;
 		void Unserialise(TextSerialiser&) override;
 		void EditorUI(void) noexcept override;
@@ -106,6 +108,23 @@ namespace Dystopia
 		auto AddAffector(Ty&&, AffectorTag::OnUpdate) noexcept;
 		template <typename Ty>
 		auto AddAffector(Ty&&, AffectorTag::OnFixedUpdate) noexcept;
+
+
+
+		/* 
+			Temporary variables for editor to set affector settings 
+			No Serialisation needed 
+		*/
+
+		/* Spawn Affector settings */
+		unsigned short mnSpawnRate;
+		unsigned short mnBurstCountHigh;
+		unsigned short mnBurstCountLow;
+		float mfSpawnDelay;
+		bool mbContinuous;
+		bool mbBurst;
+		bool mbBurstRandom;
+
 	};
 }
 

@@ -320,6 +320,22 @@ namespace Dystopia
 		Collection<std::make_index_sequence<size>> mCollection;
 	};
 
+	template <typename>
+	struct AffectorUI;
+
+	template <typename ... Ts, unsigned ... N>
+	struct AffectorUI<Ut::Collection<Ut::Indexer<N, Ts>...>>
+	{
+		inline static auto GetPtrsToUIFunction(void) noexcept
+		{
+			return Ctor::MakeArray<void(ParticleAffector::*)(void)>(reinterpret_cast<void(ParticleAffector::*)(void)>(&Ts::EditorUI) ...);
+		}
+		inline static auto GetUIName(void) noexcept
+		{
+			return Ctor::MakeArray<const char*(ParticleAffector::*)(void)>(reinterpret_cast<const char*(ParticleAffector::*)(void)>(&Ts::EditorDisplayLabel) ...);
+		}
+	};
+
 
 #if EDITOR
 	struct SuperReflectFunctor
