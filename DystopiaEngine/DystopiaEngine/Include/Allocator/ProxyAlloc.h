@@ -54,8 +54,10 @@ namespace Dystopia
 			void* mPointer;
 			size_t mReqSz;
 			size_t mAlignment;
+			size_t mAllocNo;
 		};
 
+		size_t mAllocCount;
 		std::list<AllocInfo> mData;
 	};
 }
@@ -70,7 +72,7 @@ namespace Dystopia
 
 template <typename A> template <typename ... Ps>
 inline Dystopia::ProxyAlloc<A>::ProxyAlloc(Ps&& ... _args) :
-	mAlloc{ Ut::Forward<Ps>(_args)... }
+	mAlloc{ Ut::Forward<Ps>(_args)... }, mAllocCount{ 0 }
 {
 
 }
@@ -118,7 +120,7 @@ template <typename A>
 
 		DEBUG_BREAK((_align - 1) & reinterpret_cast<uintptr_t>(ptr), "Alloc Error: Pointer is misaligned!");
 
-		mData.push_back(AllocInfo{ ptr, _sz, _align });
+		mData.push_back(AllocInfo{ ptr, _sz, _align, mAllocCount++ });
 		return ptr;
 	}
 
@@ -158,9 +160,9 @@ template<typename Alloc_t>
 inline void Dystopia::ProxyAlloc<Alloc_t>::WriteActiveAllocations(FileLogger& _out) const
 {
 	for (auto& e : mData)
-	{
-		_out.Write("Allocation at %p: %zu bytes with %zu alignment.\n", e.mPointer, e.mReqSz, e.mAlignment);
-	}
+		_out.Write("Allocation #%zu at %p: %zu bytes with %zu alignment.\n", 
+			e.mAllocNo, e.mPointer, e.mReqSz, e.mAlignment
+		);
 }
 
 template<typename A>
