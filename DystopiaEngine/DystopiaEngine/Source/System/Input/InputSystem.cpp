@@ -272,7 +272,7 @@ void Dystopia::InputManager::Update(const float _dt)
 
 	}
 
-	if (mGamePad.mfTimer > 0.0f)
+	if (mGamePad.mfTimer >= 0.0f)
 		mGamePad.mfTimer -= mfDecay * _dt;
 
 	mGamePad.VibrateHelper();

@@ -21,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Math/MathFwd.h"
 
+#include "Globals.h"
 
 namespace Dystopia
 {

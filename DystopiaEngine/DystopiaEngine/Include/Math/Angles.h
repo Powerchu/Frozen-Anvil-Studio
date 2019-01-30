@@ -7,7 +7,7 @@
 Contains commonly used Math functions to make life easier.
 Tell me if more is needed and I'll add them! (or you can DIY)
 
-All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+All Content Copyright ï¿½ 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -17,10 +17,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Utility\Meta.h"
 #include "Math\MathUtility.h"
-
+#include "Globals.h"
 namespace Math
 {
-	class Angle
+	class _DLL_EXPORT Angle
 	{
 		static constexpr float RadToDeg = 180.f / Math::pi;
 
@@ -44,7 +44,7 @@ namespace Math
 		const float mfAngle;
 	};
 
-	class Radians : public Angle
+	class _DLL_EXPORT Radians : public Angle
 	{
 	public:
 		explicit constexpr Radians(float _angle) :
@@ -52,7 +52,7 @@ namespace Math
 		{}
 	};
 
-	class Degrees : public Angle
+	class _DLL_EXPORT Degrees : public Angle
 	{
 		static constexpr float DegToRad = Math::pi / 180.f;
 
