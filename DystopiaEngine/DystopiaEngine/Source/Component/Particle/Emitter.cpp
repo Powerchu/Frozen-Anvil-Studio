@@ -167,6 +167,7 @@ void Dystopia::Emitter::FixedUpdate(float _fDT)
 
 void Dystopia::Emitter::Bind(void) const noexcept
 {
+	glPointSize(100.f);
 	glBindVertexArray(mVAO);
 	mpTexture->Bind();
 }
@@ -372,7 +373,7 @@ void Dystopia::Emitter::Unserialise(TextSerialiser& _in)
 	for (size_t i = 0; i < size; i++)
 	{
 		_in >> id;
-		mSpawn.EmplaceBack(affectorsList.Get(id));
+		affectorsList.Get(id, *this);
 	}
 	_in.ConsumeEndBlock();
 	for (auto& elem : mSpawn)
@@ -387,7 +388,7 @@ void Dystopia::Emitter::Unserialise(TextSerialiser& _in)
 	for (size_t i = 0; i < size; i++)
 	{
 		_in >> id;
-		mUpdate.EmplaceBack(affectorsList.Get(id));
+		affectorsList.Get(id, *this);
 	}
 	_in.ConsumeEndBlock();
 	for (auto& elem : mUpdate)
@@ -402,7 +403,7 @@ void Dystopia::Emitter::Unserialise(TextSerialiser& _in)
 	for (size_t i = 0; i < size; i++)
 	{
 		_in >> id;
-		mFixedUpdate.EmplaceBack(affectorsList.Get(id));
+		affectorsList.Get(id, *this);
 	}
 	_in.ConsumeEndBlock();
 	for (auto& elem : mFixedUpdate)

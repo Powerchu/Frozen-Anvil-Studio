@@ -22,6 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Component/Emitter.h"
 #include "Component/Camera.h"
+#include "Object/GameObject.h"
 
 #include "Math/Vectors.h"
 
@@ -67,9 +68,9 @@ void Dystopia::ParticleSystem::Update(float _dt)
 			if (e.GetInitialLifetime()[idx] < 0.f)
 				continue;
 
-			life -= _dt;
-			if (life <= 0.f)
-				e.KillParticle(idx);
+			//life -= _dt;
+			//if (life <= 0.f)
+			//	e.KillParticle(idx);
 		}
 		
 #   if defined(DEBUG) | defined(_DEBUG)
@@ -84,7 +85,7 @@ void Dystopia::ParticleSystem::Update(float _dt)
 		if constexpr (EDITOR)
 			if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 
-		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE &&	nullptr != e.GetOwner())
+		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE &&	e.GetOwner())
 		{
 			auto& shader = e.GetShader();
 
@@ -93,13 +94,26 @@ void Dystopia::ParticleSystem::Update(float _dt)
 
 			for (auto& cam : CORE::Get<CameraSystem>()->GetAllCameras())
 			{
-				auto const& M = cam.GetViewMatrix();
-				auto const& P = cam.GetProjectionMatrix();
+				if constexpr (EDITOR)
+					if (cam.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 
-				shader.UploadUniform("ProjectMat", P);
-				shader.UploadUniform("ModelViewMat", M);
+				// Check valid Camera
+				auto ActiveFlags = cam.GetOwner()->GetFlags();
+				if (cam.GetOwner() && (ActiveFlags & eObjFlag::FLAG_ACTIVE))
+				{
+					ActiveFlags &= eObjFlag::FLAG_ALL_LAYERS;
 
-				e.Render();
+					if (e.GetOwner()->GetFlags() & ActiveFlags)
+					{
+						auto const& M = cam.GetViewMatrix();
+						auto const& P = cam.GetProjectionMatrix();
+
+						shader.UploadUniform("ProjectMat", P);
+						shader.UploadUniform("ModelViewMat", M);
+
+						e.Render();
+					}
+				}
 			}
 		}
 

@@ -406,15 +406,15 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 	{
 		if constexpr (EDITOR)
 			if (r->GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
-		
-		auto s = r->GetShader();
-		s = r->GetTexture() ? s : CORE::Get<ShaderSystem>()->GetShader("No Texture");
-		s->Bind();
-		s->UploadUniform("ProjectMat", _Proj);
-		s->UploadUniform("ViewMat", _View);
-		s->UploadUniform("vColor", r->GetTint());
+
 		if (r->GetOwner()->GetFlags() & ActiveFlags)
 		{
+			auto s = r->GetShader();
+			s = r->GetTexture() ? s : CORE::Get<ShaderSystem>()->GetShader("No Texture");
+			s->Bind();
+			s->UploadUniform("ProjectMat", _Proj);
+			s->UploadUniform("ViewMat", _View);
+			s->UploadUniform("vColor", r->GetTint());
 			DrawRenderer(r, s, mfGamma);
 		}
 	}
@@ -588,7 +588,6 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 		if constexpr (EDITOR)
 			if (Cam.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 
-		if (Cam.GetOwner() == nullptr) continue;
 		// If the camera is inactive, skip
 		if (Cam.GetOwner() && Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE)
 		{
@@ -604,7 +603,9 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 
 			// Temporary code
 			surface->Bind();
+			//Cam.GetSurface().SetBlendMode();
 			//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
 
 			DrawScene(Cam, View, Proj);
 

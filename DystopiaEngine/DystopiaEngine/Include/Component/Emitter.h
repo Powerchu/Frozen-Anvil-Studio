@@ -130,7 +130,7 @@ inline auto Dystopia::Emitter::AddAffector(Ty&& _affector) noexcept -> Ut::Enabl
 }
 
 template <typename Ty>
-inline auto Dystopia::Emitter::AddAffector(Ty&& _affector, AffectorTag::OnSpawn) noexcept
+inline void Dystopia::Emitter::AddAffector(Ty&& _affector, AffectorTag::OnSpawn) noexcept
 {
 	for (auto& e : mSpawn)
 		if (_affector.GetID() == e.GetID())
@@ -140,7 +140,7 @@ inline auto Dystopia::Emitter::AddAffector(Ty&& _affector, AffectorTag::OnSpawn)
 }
 
 template <typename Ty>
-inline auto Dystopia::Emitter::AddAffector(Ty&& _affector, AffectorTag::OnUpdate) noexcept
+inline void Dystopia::Emitter::AddAffector(Ty&& _affector, AffectorTag::OnUpdate) noexcept
 {
 	for (auto& e : mUpdate)
 		if (_affector.GetID() == e.GetID())
@@ -150,7 +150,7 @@ inline auto Dystopia::Emitter::AddAffector(Ty&& _affector, AffectorTag::OnUpdate
 }
 
 template <typename Ty>
-inline auto Dystopia::Emitter::AddAffector(Ty&& _affector, AffectorTag::OnFixedUpdate) noexcept
+inline void Dystopia::Emitter::AddAffector(Ty&& _affector, AffectorTag::OnFixedUpdate) noexcept
 {
 	for (auto& e : mFixedUpdate)
 		if (_affector.GetID() == e.GetID())
