@@ -69,6 +69,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Collision/CollisionSystem.h"
 #include "System/Particle/ParticleSystem.h"
 
+#include "System/Particle/ParticleAffector.h"
+#include "System/Particle/SpawnAffector.h"
+#include "System/Particle/LocationAffector.h"
+#include "System/Particle/LifetimeAffector.h"
+#include "System/Particle/ColorAffector.h"
+#include "System/Particle/VelocityAffector.h"
+#include "System/Particle/SizeAffector.h"
+
 namespace Dystopia
 {
 	template<typename A, typename B>
@@ -281,6 +289,55 @@ namespace Dystopia
 
 			for (size_t i = 0; i < sizeof...(Ns); ++i)
 				SystemArray[i](_in);
+		}
+	};
+
+	template<typename C>
+	struct RequestAffector
+	{
+		static ParticleAffector Get(void)
+		{
+			return C{};
+		}
+	};
+
+	struct AffectorGet
+	{
+		static constexpr size_t size = Ut::SizeofList<AffectorList>::value;
+
+		template<typename A>
+		struct Collection;
+		template<size_t ... Ns>
+		struct Collection<std::index_sequence<Ns ...>>
+		{
+			static ParticleAffector Get(unsigned _n)
+			{
+				static auto mData = Ctor::MakeArray<ParticleAffector(*)(void)>(RequestAffector<typename Ut::MetaExtract<Ns, AffectorList>::result::type>::Get...);
+				return mData[_n]();
+			}
+		};
+
+		ParticleAffector Get(unsigned _i)
+		{
+			return mCollection.Get(_i);
+		}
+
+		Collection<std::make_index_sequence<size>> mCollection;
+	};
+
+	template <typename>
+	struct AffectorUI;
+
+	template <typename ... Ts, unsigned ... N>
+	struct AffectorUI<Ut::Collection<Ut::Indexer<N, Ts>...>>
+	{
+		inline static auto GetPtrsToUIFunction(void) noexcept
+		{
+			return Ctor::MakeArray<void(ParticleAffector::*)(void)>(reinterpret_cast<void(ParticleAffector::*)(void)>(&Ts::EditorUI) ...);
+		}
+		inline static auto GetUIName(void) noexcept
+		{
+			return Ctor::MakeArray<const char*(ParticleAffector::*)(void)>(reinterpret_cast<const char*(ParticleAffector::*)(void)>(&Ts::EditorDisplayLabel) ...);
 		}
 	};
 

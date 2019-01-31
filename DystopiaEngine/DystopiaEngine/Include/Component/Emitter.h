@@ -49,6 +49,7 @@ namespace Dystopia
 		const std::string GetEditorName(void) const { return GetCompileName(); }
 
 		Emitter(void) noexcept;
+		Emitter(const Emitter&) noexcept;
 		~Emitter(void) noexcept;
 
 		void Awake(void);
@@ -70,6 +71,8 @@ namespace Dystopia
 
 		Shader& GetShader(void) noexcept;
 		GfxParticle& GetSpawnDefaults(void) noexcept;
+		AutoArray<float>& GetInitialLifetime(void) noexcept;
+		AutoArray<float>& GetLifetime(void) noexcept;
 		AutoArray<Math::Vec4>& GetColour(void) noexcept;
 		AutoArray<Math::Vec4>& GetPosition(void) noexcept;
 		AutoArray<Math::Vec3>& GetVelocity(void) noexcept;
@@ -78,12 +81,14 @@ namespace Dystopia
 		AutoArray<ParticleAffector>& GetUpdateAffectors(void) noexcept;
 		AutoArray<ParticleAffector>& GetFixedUpdateAffectors(void) noexcept;
 
+		Emitter * Duplicate(void) const;
 		void Serialise(TextSerialiser&) const override;
 		void Unserialise(TextSerialiser&) override;
 		void EditorUI(void) noexcept override;
 
 	private:
 
+		AutoArray<float>      mInitialLife;
 		AutoArray<float>      mLifetime;
 		AutoArray<Math::Vec4> mColour;
 		AutoArray<Math::Vec3> mAccel;
@@ -94,18 +99,20 @@ namespace Dystopia
 		AutoArray<ParticleAffector> mUpdate;
 		AutoArray<ParticleAffector> mFixedUpdate;
 
+		int mnParticleLimit;
 		GfxParticle mParticle;
 
 		Shader* mpShader; Texture* mpTexture;
 		unsigned mVAO, mColourBuffer, mPosBuffer;
 		unsigned mSpawnCount;
 
+
 		template <typename Ty>
-		auto AddAffector(Ty&&, AffectorTag::OnSpawn) noexcept;
+		void AddAffector(Ty&&, AffectorTag::OnSpawn) noexcept;
 		template <typename Ty>
-		auto AddAffector(Ty&&, AffectorTag::OnUpdate) noexcept;
+		void AddAffector(Ty&&, AffectorTag::OnUpdate) noexcept;
 		template <typename Ty>
-		auto AddAffector(Ty&&, AffectorTag::OnFixedUpdate) noexcept;
+		void AddAffector(Ty&&, AffectorTag::OnFixedUpdate) noexcept;
 	};
 }
 
