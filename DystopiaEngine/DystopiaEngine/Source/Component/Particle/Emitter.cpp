@@ -22,6 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/ShaderSystem.h"
 #include "System/Graphics/Texture.h"
 #include "System/Graphics/TextureSystem.h"
+#include "System/Particle/SpawnAffector.h"
 
 #include "Math/Vectors.h"
 #include "Math/Matrix4.h"
@@ -35,14 +36,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #if EDITOR
 #include "Editor/EGUI.h"
-#include "System/Particle/SpawnAffector.h"
+#include "Editor/EditorMain.h"
+#include "Editor/EditorCommands.h"
 #endif 
 
 
 Dystopia::Emitter::Emitter(void) noexcept
 	: mColour{}, mPosition{}, mVelocity{}, mAccel{}, mLifetime{}, mSpawnCount{},
 	mSpawn{}, mUpdate{}, mFixedUpdate{}, mpShader{ nullptr }, mpTexture{ nullptr },
-	mInitialLife{}
+	mInitialLife{}, mnParticleLimit{}
 {
 	glGenVertexArrays(1, &mVAO);
 	glGenBuffers(2, &mColourBuffer);
@@ -147,6 +149,10 @@ void Dystopia::Emitter::Init(void)
 
 void Dystopia::Emitter::FixedUpdate(float _fDT)
 {
+#if EDITOR
+	mParticle.mnLimit = static_cast<size_t>(mnParticleLimit); // incase editor commands externally changes it 
+#endif 
+
 	auto pVel   = mVelocity.begin();
 	auto pAccel = mAccel   .begin();
 
@@ -298,6 +304,7 @@ void Dystopia::Emitter::Serialise(TextSerialiser& _out) const
 		_out << mpTexture->GetName();
 	else
 		_out << "EditorStartup.png";
+	_out << mnParticleLimit;
 	_out.InsertEndBlock("Emitter");
 
 
@@ -346,6 +353,10 @@ void Dystopia::Emitter::Unserialise(TextSerialiser& _in)
 	mpShader = CORE::Get<ShaderSystem>()->GetShader(buf.c_str());
 	_in >> buf;
 	mpTexture = CORE::Get<TextureSystem>()->GetTexture(buf.c_str());
+	int n = 0;
+	_in >> n;
+	mnParticleLimit = n;
+	mParticle.mnLimit = static_cast<size_t>(mnParticleLimit);
 	_in.ConsumeEndBlock();
 
 	static AffectorGet affectorsList;
@@ -403,6 +414,19 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 {
 #if EDITOR
 	static const auto affectorNames = Dystopia::AffectorUI<Dystopia::AffectorList>::GetUIName();
+
+	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
+	switch (EGUI::Display::DragInt("Maximum Particle Count", &mnParticleLimit, 1.f, 0, INT_MAX))
+	{
+	case EGUI::eDragStatus::eSTART_DRAG:
+		cmd->StartRec(&Emitter::mnParticleLimit, this);
+		break;
+	case EGUI::eDragStatus::eEND_DRAG:
+	case EGUI::eDragStatus::eDEACTIVATED:
+	case EGUI::eDragStatus::eENTER:
+		cmd->EndRec(&Emitter::mnParticleLimit, this);
+		break;
+	}
 
 	EGUI::Display::Label("Particle Count: %u", mSpawnCount);
 	EGUI::Display::HorizontalSeparator();

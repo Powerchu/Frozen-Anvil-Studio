@@ -107,6 +107,7 @@ namespace Dystopia
 		AutoArray<ParticleAffector> mUpdate;
 		AutoArray<ParticleAffector> mFixedUpdate;
 
+		int mnParticleLimit;
 		GfxParticle mParticle;
 
 		Shader* mpShader; Texture* mpTexture;
