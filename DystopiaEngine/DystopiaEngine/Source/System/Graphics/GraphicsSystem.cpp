@@ -88,7 +88,7 @@ namespace
 }
 
 
-int Dystopia::GraphicsSystem::DRAW_MODE = GL_TRIANGLES;
+int Dystopia::GraphicsSystem::DRAW_MODE = GL_POINTS;
 const int& Dystopia::GraphicsSystem::GetDrawMode(void) noexcept
 {
 	return DRAW_MODE;
@@ -202,6 +202,8 @@ void Dystopia::GraphicsSystem::PostInit(void)
 
 	if (CORE::Get<FileSystem>()->CheckFileExist("Shader/ShaderList.txt", eFileDir::eResource))
 		CORE::Get<ShaderSystem>()->LoadShaderList("Shader/ShaderList.txt", eFileDir::eResource);
+
+	glPointSize(10);
 
 #   if defined(_DEBUG) | defined(DEBUG)
 	if (auto err = glGetError())

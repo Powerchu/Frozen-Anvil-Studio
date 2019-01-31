@@ -51,8 +51,8 @@ Dystopia::Emitter::Emitter(void) noexcept
 
 	glBindVertexArray(mVAO);
 
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
+	//glEnableVertexAttribArray(0);
+	//glEnableVertexAttribArray(1);
 
 	//glVertexAttribDivisor(0, 4);
 	//glVertexAttribDivisor(1, 4);
@@ -60,22 +60,20 @@ Dystopia::Emitter::Emitter(void) noexcept
 	glBindVertexArray(0);
 }
 
-Dystopia::Emitter::Emitter(const Dystopia::Emitter& _rhs) noexcept
+Dystopia::Emitter::Emitter(Dystopia::Emitter const& _rhs) noexcept
 	: mColour{ _rhs.mColour }, mPosition{ _rhs.mPosition }, mVelocity{ _rhs.mVelocity }, mAccel{ _rhs.mAccel }, 
 	mLifetime{ _rhs.mLifetime }, mSpawnCount{ _rhs.mSpawnCount },
 	mSpawn{ _rhs.mSpawn }, mUpdate{ _rhs.mUpdate }, mFixedUpdate{ _rhs.mFixedUpdate }, 
-	mpShader{ nullptr }, mpTexture{ nullptr },
+	mpShader{ _rhs.mpShader }, mpTexture{ _rhs.mpTexture },
 	mInitialLife{ _rhs.mInitialLife }
 {
-	mpShader = CORE::Get<ShaderSystem>()->GetShader(_rhs.mpShader ? _rhs.mpShader->GetName().c_str() : "Default Particle");
-	mpTexture = CORE::Get<TextureSystem>()->GetTexture(_rhs.mpTexture ? _rhs.mpTexture->GetName().c_str() : "EditorStartup.png");
 	glGenVertexArrays(1, &mVAO);
 	glGenBuffers(2, &mColourBuffer);
 
 	glBindVertexArray(mVAO);
 
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
+	//glEnableVertexAttribArray(0);
+	//glEnableVertexAttribArray(1);
 
 	//glVertexAttribDivisor(0, 4);
 	//glVertexAttribDivisor(1, 4);
@@ -132,17 +130,23 @@ void Dystopia::Emitter::Init(void)
 		mpTexture = CORE::Get<TextureSystem>()->GetTexture("EditorStartup.png");
 	}
 
+	mPosition.EmplaceBackUnsafe(-50.f, 50.f, 0.f);
+	mPosition.EmplaceBackUnsafe(-50.f, -50.f, 0.f);
+	mPosition.EmplaceBackUnsafe(50.f, 50.f, 0.f);
+
 	Bind();
+	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, mColourBuffer);
 	glBufferData(GL_ARRAY_BUFFER, mParticle.mnLimit * sizeof(decltype(mColour)::Val_t), nullptr, GL_STREAM_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, mPosBuffer);
-	glBufferData(GL_ARRAY_BUFFER, mParticle.mnLimit * sizeof(decltype(mColour)::Val_t), nullptr, GL_STREAM_DRAW);
-
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+
+	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ARRAY_BUFFER, mPosBuffer);
+	glBufferData(GL_ARRAY_BUFFER, mParticle.mnLimit * sizeof(decltype(mPosition)::Val_t), &mPosition[0], GL_STREAM_DRAW);
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
-	glVertexAttribDivisor(0, 4);
-	glVertexAttribDivisor(1, 4);
+	//glVertexAttribDivisor(0, 4);
+	//glVertexAttribDivisor(1, 4);
 
 	Unbind();
 }
@@ -158,8 +162,8 @@ void Dystopia::Emitter::FixedUpdate(float _fDT)
 
 	for (auto& e : mPosition)
 	{
-		*pVel +=  *pAccel       * _fDT;
-		 e    += (*pAccel).xyz0 * _fDT;
+		*pVel +=  *pAccel     * _fDT;
+		 e    += (*pVel).xyz0 * _fDT;
 
 		 ++pVel; ++pAccel;
 	}
@@ -168,6 +172,7 @@ void Dystopia::Emitter::FixedUpdate(float _fDT)
 void Dystopia::Emitter::Bind(void) const noexcept
 {
 	glPointSize(100.f);
+	mpShader->Bind();
 	glBindVertexArray(mVAO);
 	mpTexture->Bind();
 }
@@ -176,22 +181,26 @@ void Dystopia::Emitter::Unbind(void) const noexcept
 {
 	mpTexture->Unbind();
 	glBindVertexArray(0);
+	mpShader->Unbind();
 }
 
 void Dystopia::Emitter::UploadBuffers(void) const noexcept
 {
 	glBindBuffer(GL_ARRAY_BUFFER, mColourBuffer);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, mColour.size(), mColour.begin());
+	glBufferSubData(GL_ARRAY_BUFFER, 0, mColour.size() * sizeof(Math::Vec4), mColour.begin());
 
 	glBindBuffer(GL_ARRAY_BUFFER, mPosBuffer);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, mPosition.size(), mPosition.begin());
+	glBufferSubData(GL_ARRAY_BUFFER, 0, mPosition.size() * sizeof(Math::Vec4), mPosition.begin());
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void Dystopia::Emitter::Render(void) const noexcept
 {
-	glDrawArraysInstanced(GL_POINTS, 0, 1, static_cast<GLsizei>(mPosition.size()));
+	glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(mPosition.size()));
+
+	if (auto err = glGetError())
+		__debugbreak();
 }
 
 void Dystopia::Emitter::KillParticle(unsigned _nIdx) noexcept
