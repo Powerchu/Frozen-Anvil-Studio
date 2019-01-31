@@ -78,6 +78,11 @@ namespace Dystopia
 		void        SetMinMax(float _Min, float _Max = 10000.f);
 		void        ResetMinMax();
 
+		void		SetFrequency(float _freq);
+		float		GetFrequency(void) const;
+		void		SetPitch(float _pitch);
+		float		GetPitch(void) const;
+
 		void Play(void);
 		void Pause(void);
 		void Stop(void);
