@@ -43,8 +43,9 @@ namespace Dystopia
 
 	{
 		// Share ownership
-		bTree->SetBlackboard(_copy.mpBlackboard->Clone());
-		mpBlackboard = bTree->GetBlackboard();
+		//bTree->SetBlackboard(_copy.mpBlackboard->Clone());
+		mpBlackboard = Ctor::CreateShared<Blackboard>(*_copy.mpBlackboard);
+		bTree->SetBlackboard(mpBlackboard);
 	};
 
 	/*void AiController::Load()
@@ -624,20 +625,23 @@ namespace Dystopia
 
 	void AiController::EditorCurrentStatus()
 	{
-		if (bTree->IsValidTree())
+		if (bTree != nullptr)
 		{
-			HashString _eStatus = "INVALID";
-			switch (mNodeStatus)
+			if (bTree->IsValidTree())
 			{
-			case Node::eStatus::INVALID: break;
-			case Node::eStatus::CANCELLED: _eStatus = "CANCELLED"; break;
-			case Node::eStatus::RUNNING: _eStatus = "RUNNING"; break;
-			case Node::eStatus::SUCCESS: _eStatus = "SUCCESS"; break;
-			case Node::eStatus::FAIL: _eStatus = "FAIL"; break;
-			default:;
+				HashString _eStatus = "INVALID";
+				switch (mNodeStatus)
+				{
+				case Node::eStatus::INVALID: break;
+				case Node::eStatus::CANCELLED: _eStatus = "CANCELLED"; break;
+				case Node::eStatus::RUNNING: _eStatus = "RUNNING"; break;
+				case Node::eStatus::SUCCESS: _eStatus = "SUCCESS"; break;
+				case Node::eStatus::FAIL: _eStatus = "FAIL"; break;
+				default:;
+				}
+				EGUI::Display::EmptyBox("Current eStatus:", 128.f, _eStatus.c_str());
+				EGUI::Display::Dummy(0, 15);
 			}
-			EGUI::Display::EmptyBox("Current eStatus:", 128.f, _eStatus.c_str());
-			EGUI::Display::Dummy(0, 15);
 		}
 	}
 

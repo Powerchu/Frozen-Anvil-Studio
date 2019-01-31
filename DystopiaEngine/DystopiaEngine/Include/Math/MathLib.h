@@ -25,6 +25,7 @@
 #include "Math/Quaternion.h"
 #include "Math/Matrix2.h"
 #include "Math/Matrix4.h"
+#include "Math/PerlinNoise.h"
 
 #else		// Fallback for x86 Mode
 

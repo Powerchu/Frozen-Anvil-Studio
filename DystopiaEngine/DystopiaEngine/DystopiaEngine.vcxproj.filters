@@ -1137,6 +1137,9 @@
     <ClInclude Include="Include\System\Particle\SpawnAffector.h">
       <Filter>Game Engine\Systems\Particle\Affectors\Spawn</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Math\PerlinNoise.h">
+      <Filter>Math\Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

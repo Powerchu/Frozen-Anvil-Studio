@@ -25,6 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/Meta.h"
 #include "Utility/Utility.h"
 
+#include "Globals.h"
 
 namespace Dystopia
 {
