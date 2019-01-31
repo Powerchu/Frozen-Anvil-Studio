@@ -41,7 +41,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Dystopia::Emitter::Emitter(void) noexcept
 	: mColour{}, mPosition{}, mVelocity{}, mAccel{}, mLifetime{}, mSpawnCount{},
-	mSpawn{}, mUpdate{}, mFixedUpdate{}, mpShader{ nullptr }, mpTexture{ nullptr }
+	mSpawn{}, mUpdate{}, mFixedUpdate{}, mpShader{ nullptr }, mpTexture{ nullptr },
+	mInitialLife{}
 {
 	glGenVertexArrays(1, &mVAO);
 	glGenBuffers(2, &mColourBuffer);
@@ -61,7 +62,8 @@ Dystopia::Emitter::Emitter(const Dystopia::Emitter& _rhs) noexcept
 	: mColour{ _rhs.mColour }, mPosition{ _rhs.mPosition }, mVelocity{ _rhs.mVelocity }, mAccel{ _rhs.mAccel }, 
 	mLifetime{ _rhs.mLifetime }, mSpawnCount{ _rhs.mSpawnCount },
 	mSpawn{ _rhs.mSpawn }, mUpdate{ _rhs.mUpdate }, mFixedUpdate{ _rhs.mFixedUpdate }, 
-	mpShader{ nullptr }, mpTexture{ nullptr }
+	mpShader{ nullptr }, mpTexture{ nullptr },
+	mInitialLife{ _rhs.mInitialLife }
 {
 	mpShader = CORE::Get<ShaderSystem>()->GetShader(_rhs.mpShader ? _rhs.mpShader->GetName().c_str() : "Default Particle");
 	mpTexture = CORE::Get<TextureSystem>()->GetTexture(_rhs.mpTexture ? _rhs.mpTexture->GetName().c_str() : "EditorStartup.png");
@@ -117,6 +119,7 @@ void Dystopia::Emitter::Init(void)
 	mVelocity.reserve(mParticle.mnLimit);
 	mAccel   .reserve(mParticle.mnLimit);
 	mLifetime.reserve(mParticle.mnLimit);
+	mInitialLife.reserve(mParticle.mnLimit);
 
 	if (!mpShader)
 	{
@@ -194,6 +197,7 @@ void Dystopia::Emitter::KillParticle(unsigned _nIdx) noexcept
 	mAccel   .FastRemove(_nIdx);
 	mVelocity.FastRemove(_nIdx);
 	mPosition.FastRemove(_nIdx);
+	mInitialLife.FastRemove(_nIdx);
 }
 
 void Dystopia::Emitter::SpawnParticle(void) noexcept
@@ -209,11 +213,14 @@ void Dystopia::Emitter::SpawnParticle(void) noexcept
 		auto pos = transform->GetTransformMatrix() * mParticle.mPos.xyz1;
 		pos.w    = mParticle.mfSize;
 
+		mParticle.mfLifeDur = mParticle.mfInitialLife; // to always start at initial (lifeDur = counter)
+
 		mLifetime.EmplaceBackUnsafe(mParticle.mfLifeDur);
 		mColour  .EmplaceBackUnsafe(mParticle.mColour  );
 		mAccel   .EmplaceBackUnsafe(                   );
 		mVelocity.EmplaceBackUnsafe(mParticle.mVelocity);
 		mPosition.EmplaceBackUnsafe(pos                );
+		mInitialLife.EmplaceBackUnsafe(mParticle.mfInitialLife);
 	}
 
 }
@@ -226,6 +233,11 @@ Dystopia::Shader& Dystopia::Emitter::GetShader(void) noexcept
 Dystopia::GfxParticle& Dystopia::Emitter::GetSpawnDefaults(void) noexcept
 {
 	return mParticle;
+}
+
+AutoArray<float>& Dystopia::Emitter::GetInitialLifetime(void) noexcept
+{
+	return mInitialLife;
 }
 
 AutoArray<Math::Vec4>& Dystopia::Emitter::GetColour(void) noexcept
@@ -246,6 +258,11 @@ AutoArray<Math::Vec3>& Dystopia::Emitter::GetVelocity(void) noexcept
 AutoArray<Math::Vec3>& Dystopia::Emitter::GetAcceleration(void) noexcept
 {
 	return mAccel;
+}
+
+AutoArray<float>& Dystopia::Emitter::GetLifetime(void) noexcept
+{
+	return mLifetime;
 }
 
 AutoArray<Dystopia::ParticleAffector>& Dystopia::Emitter::GetSpawnAffectors(void) noexcept
@@ -402,7 +419,6 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 		EGUI::Display::EndTreeNode();
 	}
 	EGUI::Display::HorizontalSeparator();
-	ImGui::NextColumn();
 	if (EGUI::Display::StartTreeNode("Update Affectors"))
 	{
 		for (int i = 0; i < mUpdate.size(); ++i)
@@ -415,7 +431,7 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 		}
 		EGUI::Display::EndTreeNode();
 	}
-	ImGui::NextColumn();
+	EGUI::Display::HorizontalSeparator();
 	if (EGUI::Display::StartTreeNode("Fixed Update Affectors"))
 	{
 		for (int i = 0; i < mFixedUpdate.size(); ++i)

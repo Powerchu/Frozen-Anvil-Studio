@@ -189,7 +189,7 @@ void Editor::ParticleEditor::AddAffector(int _id)
 {
 	Dystopia::Emitter* pEmitter = mpObject->GetComponent<Dystopia::Emitter>();
 	static Dystopia::AffectorGet affectorGet;
-	if (_id == 1 || _id == 2)
+	if (_id == 1 || _id == 2 || _id == 3 || _id == 5 || _id == 7)
 		pEmitter->AddAffector(Ut::Move(affectorGet.Get(_id)), Dystopia::AffectorTag::OnSpawn{});
 	else
 		pEmitter->AddAffector(Ut::Move(affectorGet.Get(_id)));

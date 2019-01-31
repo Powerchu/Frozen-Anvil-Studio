@@ -20,8 +20,11 @@ namespace Dystopia
 		location affector bytes and bits:
 
 		data[0,1,2,3] for delta
-		data[4,5,6,7] for inital size
+		data[4,5,6,7] for inital size min 
+		data[8,9,10,11] for inital size max
 
+		reserved[0]
+			- 1 << 1 for bounce to target 2
 	*/
 	
 	struct InitialSizeAffector : ParticleAffector
@@ -30,7 +33,9 @@ namespace Dystopia
 		~InitialSizeAffector(void);
 
 		/* sizes */
-		void SetInitialSize(float _val);
+		void SetInitialSizeMin(float _val);
+		void SetInitialSizeMax(float _val);
+		void EnableRandomInitial(bool _enable);
 
 		void AffectorSpawn(Emitter&, float);
 
@@ -44,7 +49,10 @@ namespace Dystopia
 		data[0,1,2,3] for delta
 		data[4,5,6,7] for target size
 		data[8,9,10,11] for duration to hit (0 - 1)
+		data[12,13,14,15] for target 2
 
+		reserved[0] 
+			- 1 << 1 for bounce to target 2
 	*/
 
 	struct SizeOverLifeAffector : ParticleAffector
@@ -55,6 +63,8 @@ namespace Dystopia
 		/* sizes */
 		void SetTargetSize(float _val);
 		void SetTargetDuration(float _val);
+		void SetTargetSizeAfter(float _val);
+		void EnableBounceback(bool);
 
 		void AffectorUpdate(Emitter&, float);
 

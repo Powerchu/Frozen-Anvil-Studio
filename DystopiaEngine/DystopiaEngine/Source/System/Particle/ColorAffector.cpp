@@ -22,25 +22,65 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EGUI.h"
 #endif 
 
-Dystopia::ColorAffector::ColorAffector(void)
-	: ParticleAffector{ &ColorAffector::AffectorSpawn }
-{}
-
-Dystopia::ColorAffector::~ColorAffector(void)
-{}
-
-void Dystopia::ColorAffector::AffectorSpawn(Emitter&, float)
-{}
-
-const char * Dystopia::ColorAffector::EditorDisplayLabel(void) const
+Dystopia::InitialColorAffector::InitialColorAffector(void)
+	: ParticleAffector{ &InitialColorAffector::AffectorSpawn }
 {
-	return "Color";
+	memset(data, 0, 16);
+	memset(reserved, 0, 4);
 }
 
-void Dystopia::ColorAffector::EditorUI(void)
+Dystopia::InitialColorAffector::~InitialColorAffector(void)
+{}
+
+void Dystopia::InitialColorAffector::AffectorSpawn(Emitter&, float)
 {
+
 }
 
+const char * Dystopia::InitialColorAffector::EditorDisplayLabel(void) const
+{
+	return "Initial Color";
+}
+
+void Dystopia::InitialColorAffector::EditorUI(void)
+{
+#if EDITOR
+
+
+
+#endif 
+}
+
+/********************************************************************************************************************/
+
+Dystopia::ColorOverLifeAffector::ColorOverLifeAffector(void)
+	: ParticleAffector{ &ColorOverLifeAffector::AffectorUpdate }
+{
+	memset(data, 0, 16);
+	memset(reserved, 0, 4);
+}
+
+Dystopia::ColorOverLifeAffector::~ColorOverLifeAffector(void)
+{}
+
+void Dystopia::ColorOverLifeAffector::AffectorUpdate(Emitter&, float)
+{
+
+}
+
+const char * Dystopia::ColorOverLifeAffector::EditorDisplayLabel(void) const
+{
+	return "Color Over Life";
+}
+
+void Dystopia::ColorOverLifeAffector::EditorUI(void)
+{
+#if EDITOR
+
+
+
+#endif 
+}
 
 
 

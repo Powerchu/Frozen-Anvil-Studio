@@ -59,11 +59,25 @@ void Dystopia::ParticleSystem::Update(float _dt)
 			e.UploadBuffers();
 		}
 
+		unsigned int idx = static_cast<unsigned int>(e.GetLifetime().size());
+		for (auto& life : Ut::Range(e.GetLifetime()).Reverse())
+		{
+			--idx;
+
+			if (e.GetInitialLifetime()[idx] < 0.f)
+				continue;
+
+			life -= _dt;
+			if (life <= 0.f)
+				e.KillParticle(idx);
+		}
+		
 #   if defined(DEBUG) | defined(_DEBUG)
 		if (auto err = glGetError())
 			__debugbreak();
 #    endif
 	}
+
 
 	for (auto& e : mComponents)
 	{

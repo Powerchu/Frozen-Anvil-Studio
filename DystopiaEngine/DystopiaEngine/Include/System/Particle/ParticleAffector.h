@@ -36,8 +36,10 @@ namespace Dystopia
 		struct SpawnAffector,
 		struct LocationAffector,
 		struct LifetimeAffector,
-		struct ColorAffector,
-		struct VelocityAffector,
+		struct InitialColorAffector,
+		struct ColorOverLifeAffector,
+		struct InitialVelocityAffector,
+		struct VelocityOverLifeAffector,
 		struct InitialSizeAffector,
 		struct SizeOverLifeAffector
 	>;

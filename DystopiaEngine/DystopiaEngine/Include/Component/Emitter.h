@@ -71,6 +71,8 @@ namespace Dystopia
 
 		Shader& GetShader(void) noexcept;
 		GfxParticle& GetSpawnDefaults(void) noexcept;
+		AutoArray<float>& GetInitialLifetime(void) noexcept;
+		AutoArray<float>& GetLifetime(void) noexcept;
 		AutoArray<Math::Vec4>& GetColour(void) noexcept;
 		AutoArray<Math::Vec4>& GetPosition(void) noexcept;
 		AutoArray<Math::Vec3>& GetVelocity(void) noexcept;
@@ -94,6 +96,7 @@ namespace Dystopia
 
 	private:
 
+		AutoArray<float>      mInitialLife;
 		AutoArray<float>      mLifetime;
 		AutoArray<Math::Vec4> mColour;
 		AutoArray<Math::Vec3> mAccel;
