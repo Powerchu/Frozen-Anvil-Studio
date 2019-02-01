@@ -26,6 +26,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/PointCollider.h"
 #include "Math/Quaternion.h"
 #include "Editor/EditorCommands.h"
+#include "System/Graphics/Mesh.h"
+#include "System/Graphics/MeshSystem.h"
 
 #if EDITOR
 #include "Editor/EGUI.h"
@@ -654,14 +656,25 @@ namespace Dystopia
 					case EGUI::eDragStatus::eDRAGGING:
 						break;
 					case EGUI::eDragStatus::eSTART_DRAG:
-						//EGUI::GetCommandHND()->StartRecording<Convex>(mnOwner, &Convex::mVertices[i].mPosition);
+						Collider::mDebugVertices[i].x = mVertices[i].mPosition.x;
+						Collider::mDebugVertices[i].y = mVertices[i].mPosition.y;
+						Collider::mDebugVertices[i].z = mVertices[i].mPosition.z;
+						//Collider::Awake();
+
+						mpMesh->UpdateBuffer<VertexBuffer>(mDebugVertices);
 						break;
 					case EGUI::eDragStatus::eDEACTIVATED:
 					case EGUI::eDragStatus::eEND_DRAG:
 					case EGUI::eDragStatus::eENTER:
 					case EGUI::eDragStatus::eTABBED:
 						//EGUI::GetCommandHND()->EndRecording();
-						Awake();
+						//Awake();
+						Collider::mDebugVertices[i].x = mVertices[i].mPosition.x;
+						Collider::mDebugVertices[i].y = mVertices[i].mPosition.y;
+						Collider::mDebugVertices[i].z = mVertices[i].mPosition.z;
+						//Collider::Awake();
+						
+						mpMesh->UpdateBuffer<VertexBuffer>(mDebugVertices);
 						break;
 					default:
 						break;
@@ -670,6 +683,14 @@ namespace Dystopia
 				EGUI::PopID();
 			}
 			eUseTransformScaleButton(); // Update Vertices
+
+			//mDebugVertices.clear();
+
+			//for (auto & elem : mVertices)
+			//{
+				//Collider::mDebugVertices.EmplaceBack(elem.mPosition.x, elem.mPosition.y, elem.mPosition.z);
+			//}
+
 		}
 	}
 
