@@ -79,7 +79,7 @@ namespace Dystopia
 	{
 		_in.ConsumeStartBlock();
 		Component::Unserialise(_in);
-		_in.ConsumeEndBlock();
+		//_in.ConsumeEndBlock();
 	}
 
 #if EDITOR

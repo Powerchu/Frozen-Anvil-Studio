@@ -196,26 +196,28 @@ void XGamePad::SetVibrationSetting(float intensity, float maxTime, float bal)
 
 void XGamePad::VibrateHelper()
 {
-	if (mfIntensity <= 0 || mfTimer <= 0) return;
-
+	if (mfIntensity < 0 || mfTimer < 0)
+	{
+		mfTimer = 0.0f;
+		mfIntensity = 0.0f;
+		StopVibrate();
+		return;
+	}
 	//0-65534
-	if (mfBalance > 1.f) mfBalance = 1.f;
-	else if (mfBalance < -1.f) mfBalance = -1.f;
+	
 
 	const unsigned maxFreq = 65535;
 	const unsigned _lowFreq = static_cast<unsigned>((1.f - (mfBalance + 1.f)) * (static_cast<float>(maxFreq) / 2) + (static_cast<float>(maxFreq) / 2));
 	const unsigned _highFreq = maxFreq - _lowFreq;
 
-	if (mfTimer > 0.f)
+	if (mfTimer >= 0.f)
 	{
+		if (mfBalance > 1.f || mfBalance < -1.f)
+			Vibrate(static_cast<unsigned short>(mfIntensity * maxFreq * (mfTimer / mfMaxTimer)), static_cast<unsigned short>(mfIntensity * maxFreq * (mfTimer / mfMaxTimer)));
+
 		Vibrate( static_cast<unsigned short>( mfIntensity * _lowFreq * (mfTimer/mfMaxTimer)), static_cast<unsigned short>(mfIntensity * _highFreq * (mfTimer / mfMaxTimer)));
 	}
-	else
-	{
-		mfTimer = 0.0f;
-		mfIntensity = 0.0f;
-		StopVibrate();
-	}
+
 }
 
 float XGamePad::GetAnalogX(int _i) const

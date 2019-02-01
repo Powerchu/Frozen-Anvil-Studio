@@ -140,6 +140,13 @@ void Dystopia::SoundSystem::PostUpdate(void)
 			ComponentDonor<AudioSource>::mComponents.Remove(&c);
 		}
 	}
+	for (auto& c : ComponentDonor<AudioListener>::mComponents)
+	{
+		if (c.GetFlags() & FLAG_REMOVE)
+		{
+			ComponentDonor<AudioListener>::mComponents.Remove(&c);
+		}
+	}
 }
 
 void Dystopia::SoundSystem::Shutdown(void)

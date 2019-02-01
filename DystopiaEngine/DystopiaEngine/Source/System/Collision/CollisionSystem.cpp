@@ -71,6 +71,11 @@ namespace Dystopia
 			if (col.GetFlags() & FLAG_REMOVE)
 				ComponentDonor<PointCollider>::mComponents.Remove(&col);
 		}
+		for (auto & col : ComponentDonor<RayCollider>::mComponents)
+		{
+			if (col.GetFlags() & FLAG_REMOVE)
+				ComponentDonor<RayCollider>::mComponents.Remove(&col);
+		}
 	}
 
 	void CollisionSystem::FixedUpdate(float _dt)

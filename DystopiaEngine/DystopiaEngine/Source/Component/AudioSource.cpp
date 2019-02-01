@@ -27,7 +27,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #endif 
 
 #define MAX_VOLUME 3
-#define MAX_CAP_SCALE 2
+#define MAX_CAP_SCALE 5
 #define FREQUENCY 44100
 #define MAX_RANGE 10000.f
 Dystopia::AudioSource::AudioSource(void) 
@@ -287,12 +287,37 @@ void Dystopia::AudioSource::ResetMinMax()
 {
 }
 
+void Dystopia::AudioSource::SetFrequency(float _freq)
+{
+	mFrequency = _freq;
+}
+
+float Dystopia::AudioSource::GetFrequency() const
+{
+	return mFrequency;
+}
+
+void Dystopia::AudioSource::SetPitch(float _pitch)
+{
+	mPitch = _pitch;
+}
+
+float Dystopia::AudioSource::GetPitch() const
+{
+	return mPitch;
+}
+
 void Dystopia::AudioSource::Play(void)
 {
-	if (!mChannel.mpChannel || !mpSound) return;
+	if (!mpSound) return;
 
 	if (mPaused)
-		mChannel.mpChannel->setPaused(false);
+	{
+		if (mChannel.mpChannel)
+			mChannel.mpChannel->setPaused(false);
+		else
+			return;
+	}
 	else
 		mReady = true;
 }
