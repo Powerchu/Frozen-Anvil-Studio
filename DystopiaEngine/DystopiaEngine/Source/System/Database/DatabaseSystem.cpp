@@ -71,24 +71,26 @@ void Dystopia::DatabaseSystem::SaveSettings(DysSerialiser_t& _out)
 
 bool Dystopia::DatabaseSystem::NewData(const HashString& _name)
 {
-	for (const auto& elem : mArrDataSheets)
-		if (elem.first == _name)
-			return false;
-
-	auto n = GetPathFormatted(_name);
-	if (!n.length())
-		return false;
-
-	HashString name{ _name };
-	mArrDataSheets.Insert(std::make_pair(name, DataSheet{ n.c_str() }));
-	mArrSheetNames.Insert(mArrDataSheets.back().first.c_str());
-
 	HashString temp{ _name };
 	if (temp.find(".ddata") == HashString::nPos)
 	{
 		temp += '.';
 		temp += Gbl::DATASHEET_EXT;
 	}
+
+	for (const auto& elem : mArrDataSheets)
+		if (elem.first == temp)
+			return false;
+
+	auto n = GetPathFormatted(temp);
+	if (!n.length())
+		return false;
+
+
+	//HashString name{ _name };
+	mArrDataSheets.Insert(std::make_pair(temp, DataSheet{ n.c_str() }));
+	mArrSheetNames.Insert(mArrDataSheets.back().first.c_str());
+
 
 	auto found = EngineCore::Get<FileSystem>()->GetFullPath(temp.c_str(), eFileDir::eResource);
 	if (!found.length())
@@ -99,9 +101,16 @@ bool Dystopia::DatabaseSystem::NewData(const HashString& _name)
 
 bool Dystopia::DatabaseSystem::OpenData(const HashString& _name)
 {
+	HashString n{ _name };
+	if (_name.find(".ddata") == HashString::nPos)
+	{
+		n += '.';
+		n += Gbl::DATASHEET_EXT;
+	}
+
 	for (auto& elem : mArrDataSheets)
 	{
-		if (elem.first == _name)
+		if (elem.first == n)
 		{
 			auto& db = elem.second;
 			if (!db.IsOpened())
@@ -114,9 +123,16 @@ bool Dystopia::DatabaseSystem::OpenData(const HashString& _name)
 
 bool Dystopia::DatabaseSystem::CloseData(const HashString& _name)
 {
+	HashString n{ _name };
+	if (_name.find(".ddata") == HashString::nPos)
+	{
+		n += '.';
+		n += Gbl::DATASHEET_EXT;
+	}
+
 	for (auto& elem : mArrDataSheets)
 	{
-		if (elem.first == _name)
+		if (elem.first == n)
 		{
 			auto& db = elem.second;
 			if (db.IsOpened())
@@ -129,9 +145,16 @@ bool Dystopia::DatabaseSystem::CloseData(const HashString& _name)
 
 void Dystopia::DatabaseSystem::UnloadData(const HashString& _name)
 {
+	HashString n{ _name };
+	if (_name.find(".ddata") == HashString::nPos)
+	{
+		n += '.';
+		n += Gbl::DATASHEET_EXT;
+	}
+
 	for (size_t i = 0; i < mArrDataSheets.size(); i++)
 	{
-		if (mArrDataSheets[i].first == _name)
+		if (mArrDataSheets[i].first == n)
 		{
 			mArrDataSheets[i].second.CloseSheet();
 			mArrDataSheets.FastRemove(i);
@@ -143,8 +166,15 @@ void Dystopia::DatabaseSystem::UnloadData(const HashString& _name)
 
 Dystopia::DataSheet* Dystopia::DatabaseSystem::GetDatabase(const HashString& _name)
 {
+	HashString n{ _name };
+	if (_name.find(".ddata") == HashString::nPos)
+	{
+		n += '.';
+		n += Gbl::DATASHEET_EXT;
+	}
+
 	for (auto& elem : mArrDataSheets)
-		if (elem.first == _name)
+		if (elem.first == n)
 			return &elem.second;
 	return nullptr;
 }
