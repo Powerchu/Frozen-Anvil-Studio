@@ -27,6 +27,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <string>
 
+namespace
+{
+	static inline constexpr Dystopia::ParticleAffector* DUMMY = nullptr;
+}
+
 Editor::ParticleEditor::ParticleEditor(void)
 	: mLabel{ "Particle System" },
 	mnObjectID{ 0 },
@@ -169,13 +174,13 @@ void Editor::ParticleEditor::ListOfAffectors(void)
 		EGUI::PushID(i);
 		if (AffectorIsUsed(i))
 		{
-			EGUI::Display::Label((affectorGet.Get(i).*affectorNames[i])());
+			EGUI::Display::Label((DUMMY->*affectorNames[i])());
 			EGUI::SameLine();
 			EGUI::Display::Label("already added!");
 		}
 		else
 		{
-			EGUI::Display::Label((affectorGet.Get(i).*affectorNames[i])());
+			EGUI::Display::Label((DUMMY->*affectorNames[i])());
 			EGUI::SameLine(5.f, 150.f);
 			if (EGUI::Display::Button("Add", Math::Vec2{ 100.f, 24.f }))
 				AddAffector(i);
@@ -189,10 +194,7 @@ void Editor::ParticleEditor::AddAffector(int _id)
 {
 	Dystopia::Emitter* pEmitter = mpObject->GetComponent<Dystopia::Emitter>();
 	static Dystopia::AffectorGet affectorGet;
-	if (_id == 1 || _id == 2 || _id == 3 || _id == 5 || _id == 7)
-		pEmitter->AddAffector(Ut::Move(affectorGet.Get(_id)), Dystopia::AffectorTag::OnSpawn{});
-	else
-		pEmitter->AddAffector(Ut::Move(affectorGet.Get(_id)));
+	affectorGet.Get(_id, *pEmitter);
 }
 
 void Editor::ParticleEditor::EmitterAffectors(void)
@@ -214,7 +216,7 @@ void Editor::ParticleEditor::EmitterAffectors(void)
 		for (int i = 0; i < existingSpawnAffectors.size(); ++i)
 		{
 			EGUI::PushID(static_cast<int>(i));
-			bool open = EGUI::Display::StartTreeNode((affectorGet.Get(existingSpawnAffectors[i].GetID()).*affectorNames[existingSpawnAffectors[i].GetID()])());
+			bool open = EGUI::Display::StartTreeNode((DUMMY->*affectorNames[existingSpawnAffectors[i].GetID()])());
 			bool toRemove = false;
 			if (ImGui::BeginPopupContextItem())
 			{
@@ -239,7 +241,7 @@ void Editor::ParticleEditor::EmitterAffectors(void)
 		for (int i = 0; i < existingUpdateAffectors.size(); ++i)
 		{
 			EGUI::PushID(static_cast<int>(i));
-			bool open = EGUI::Display::StartTreeNode((affectorGet.Get(existingUpdateAffectors[i].GetID()).*affectorNames[existingUpdateAffectors[i].GetID()])());
+			bool open = EGUI::Display::StartTreeNode((DUMMY->*affectorNames[existingUpdateAffectors[i].GetID()])());
 			bool toRemove = false;
 			if (ImGui::BeginPopupContextItem())
 			{
@@ -264,7 +266,7 @@ void Editor::ParticleEditor::EmitterAffectors(void)
 		for (int i = 0; i < existingFixedUpdateAffectors.size(); ++i)
 		{
 			EGUI::PushID(static_cast<int>(i));
-			bool open = EGUI::Display::StartTreeNode((affectorGet.Get(existingFixedUpdateAffectors[i].GetID()).*affectorNames[existingFixedUpdateAffectors[i].GetID()])());
+			bool open = EGUI::Display::StartTreeNode((DUMMY->*affectorNames[existingFixedUpdateAffectors[i].GetID()])());
 			bool toRemove = false;
 			if (ImGui::BeginPopupContextItem())
 			{

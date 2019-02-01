@@ -69,13 +69,13 @@ namespace Dystopia
 		~EngineCore(void) = default;
 
 		template <class T>
-		T* const GetSystem(void) const;
+		T* const GetSystem(void) const noexcept;
 
 		template <unsigned N, class T = typename Ut::MetaExtract_t<N, AllSys>::type>
-		T* const GetSystem(void) const;
+		T* const GetSystem(void) const noexcept;
 
 		template <class T>
-		T* const GetSubSystem(void) const;
+		T* const GetSubSystem(void) const noexcept;
 
 		template <class T>
 		static inline T* const Get(void);
@@ -133,7 +133,7 @@ namespace Dystopia
 
 
 template <class T>
-inline T* const Dystopia::EngineCore::Get(void)
+inline T* const Dystopia::EngineCore::Get(void) noexcept
 {
 	if constexpr (Ut::MetaFind<T, AllSys>::value)
 	{
@@ -146,7 +146,7 @@ inline T* const Dystopia::EngineCore::Get(void)
 }
 
 template <class T>
-inline T* const Dystopia::EngineCore::GetSystem(void) const
+inline T* const Dystopia::EngineCore::GetSystem(void) const noexcept
 {
 	using type = Ut::MetaFind<T, AllSys>;
 	static_assert(type::value, "Error: System not found!");
@@ -155,13 +155,13 @@ inline T* const Dystopia::EngineCore::GetSystem(void) const
 }
 
 template <unsigned _N, class T>
-inline T* const Dystopia::EngineCore::GetSystem(void) const
+inline T* const Dystopia::EngineCore::GetSystem(void) const noexcept
 {
 	return static_cast<T*>(mSystemTable[_N]);
 }
 
 template <class T>
-inline T* const Dystopia::EngineCore::GetSubSystem(void) const
+inline T* const Dystopia::EngineCore::GetSubSystem(void) const noexcept
 {
 	using type = Ut::MetaFind<T, SubSys>;
 	static_assert(type::value, "Error: Sub-System not found!");

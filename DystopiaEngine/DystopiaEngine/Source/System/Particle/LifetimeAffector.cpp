@@ -54,7 +54,7 @@ void Dystopia::LifetimeAffector::AffectorSpawn(Emitter& _emitter, float)
 	std::random_device rDev;
 	std::mt19937 gen{ rDev() };
 	std::uniform_real_distribution<float> distr{ *reinterpret_cast<float*>(data + 4), *reinterpret_cast<float*>(data + 8) };
-	_emitter.GetSpawnDefaults().mfInitialLife = distr(gen);
+	_emitter.GetSpawnDefaults().mfLifeDur = distr(gen);
 }
 
 const char * Dystopia::LifetimeAffector::EditorDisplayLabel(void) const

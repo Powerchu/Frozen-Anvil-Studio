@@ -27,6 +27,8 @@ namespace Dystopia
 
 	struct LifetimeAffector : ParticleAffector
 	{
+		using UPDATE = AffectorTag::OnSpawn;
+
 		LifetimeAffector(void);
 		~LifetimeAffector(void);
 

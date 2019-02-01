@@ -88,7 +88,7 @@ namespace
 }
 
 
-int Dystopia::GraphicsSystem::DRAW_MODE = GL_TRIANGLES;
+int Dystopia::GraphicsSystem::DRAW_MODE = GL_POINTS;
 const int& Dystopia::GraphicsSystem::GetDrawMode(void) noexcept
 {
 	return DRAW_MODE;
@@ -202,6 +202,8 @@ void Dystopia::GraphicsSystem::PostInit(void)
 
 	if (CORE::Get<FileSystem>()->CheckFileExist("Shader/ShaderList.txt", eFileDir::eResource))
 		CORE::Get<ShaderSystem>()->LoadShaderList("Shader/ShaderList.txt", eFileDir::eResource);
+
+	glPointSize(10);
 
 #   if defined(_DEBUG) | defined(DEBUG)
 	if (auto err = glGetError())
@@ -406,15 +408,15 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 	{
 		if constexpr (EDITOR)
 			if (r->GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
-		
-		auto s = r->GetShader();
-		s = r->GetTexture() ? s : CORE::Get<ShaderSystem>()->GetShader("No Texture");
-		s->Bind();
-		s->UploadUniform("ProjectMat", _Proj);
-		s->UploadUniform("ViewMat", _View);
-		s->UploadUniform("vColor", r->GetTint());
+
 		if (r->GetOwner()->GetFlags() & ActiveFlags)
 		{
+			auto s = r->GetShader();
+			s = r->GetTexture() ? s : CORE::Get<ShaderSystem>()->GetShader("No Texture");
+			s->Bind();
+			s->UploadUniform("ProjectMat", _Proj);
+			s->UploadUniform("ViewMat", _View);
+			s->UploadUniform("vColor", r->GetTint());
 			DrawRenderer(r, s, mfGamma);
 		}
 	}
@@ -588,9 +590,8 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 		if constexpr (EDITOR)
 			if (Cam.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 
-		if (Cam.GetOwner() == nullptr) continue;
 		// If the camera is inactive, skip
-		if (Cam.GetOwner() && Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE)
+		if (Cam.GetOwner() && (Cam.GetFlags() & eObjFlag::FLAG_ACTIVE))
 		{
 			Cam.SetCamera();
 			Math::Matrix4 View = Cam.GetViewMatrix();
@@ -604,7 +605,9 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 
 			// Temporary code
 			surface->Bind();
+			//Cam.GetSurface().SetBlendMode();
 			//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+
 
 			DrawScene(Cam, View, Proj);
 
@@ -619,12 +622,12 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 		if (auto err = glGetError())
 			__debugbreak();
 #   endif 
-
-	EndFrame();
 }
 
 void Dystopia::GraphicsSystem::PostUpdate(void)
 {
+	EndFrame();
+
 	for (auto& render : ComponentDonor<Renderer>::mComponents)
 	{
 		if (eObjFlag::FLAG_REMOVE & render.GetFlags())
