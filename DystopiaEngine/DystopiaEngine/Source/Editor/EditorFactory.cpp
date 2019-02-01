@@ -594,14 +594,15 @@ void Editor::EditorFactory::SaveSegment(Dystopia::GameObject& _obj, Dystopia::Te
 	_out.InsertEndBlock("GO_PREFAB");
 }
 
-void Editor::EditorFactory::SaveSegment(Dystopia::GameObject& _obj, const AutoArray<Dystopia::Component*>& _arrComponents, Dystopia::TextSerialiser& _out)
+void Editor::EditorFactory::SaveSegment(Dystopia::GameObject& , const AutoArray<Dystopia::Component*>& _arrComponents, Dystopia::TextSerialiser& _out)
 {
 	Dystopia::ComponentList cList;
+
 	for (const auto& c : _arrComponents)
 	{
 		_out.InsertStartBlock("Component");
 		_out << c->GetRealComponentType();
-		cList.IsolateSerialise(c->GetRealComponentType(), &_obj, _out);
+		cList.IsolateSerialise(c->GetRealComponentType(), c, _out);
 		_out.InsertEndBlock("Component");
 	}
 }
