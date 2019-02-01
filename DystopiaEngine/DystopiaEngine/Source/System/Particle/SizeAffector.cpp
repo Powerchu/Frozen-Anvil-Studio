@@ -72,7 +72,7 @@ const char * Dystopia::InitialSizeAffector::EditorDisplayLabel(void) const
 void Dystopia::InitialSizeAffector::EditorUI(void)
 {
 #if EDITOR
-	EGUI::PushLeftAlign(80.f);
+	EGUI::PushLeftAlign(100.f);
 	EGUI::PushID(53);
 	
 	float out = *reinterpret_cast<float*>(data + 4);
@@ -149,7 +149,7 @@ const char * Dystopia::SizeOverLifeAffector::EditorDisplayLabel(void) const
 void Dystopia::SizeOverLifeAffector::EditorUI(void)
 {
 #if EDITOR
-	EGUI::PushLeftAlign(80.f);
+	EGUI::PushLeftAlign(100.f);
 
 	EGUI::PopLeftAlign();
 #endif 

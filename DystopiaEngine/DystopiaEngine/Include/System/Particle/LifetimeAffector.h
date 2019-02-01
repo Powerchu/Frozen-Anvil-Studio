@@ -17,7 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	/*
-		location affector bytes and bits:
+		bytes and bits:
 
 		data[0,1,2,3] for delta counting
 		data[4,5,6,7] for min lifetime 

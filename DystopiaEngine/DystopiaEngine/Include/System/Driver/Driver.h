@@ -78,7 +78,7 @@ namespace Dystopia
 		T* const GetSubSystem(void) const noexcept;
 
 		template <class T>
-		static inline T* const Get(void);
+		static inline T* const Get(void) noexcept;
 
 		void BroadcastMessage(const eSysMessage&, size_t _nParam);
 

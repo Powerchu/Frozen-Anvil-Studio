@@ -5,7 +5,7 @@
 \par    email: t.shannon\@digipen.edu
 \brief
 
-		location affector bytes and bits:
+		bytes and bits:
 
 		data[0,1,2,3] for delta
 		data[4,5] for x min
@@ -94,7 +94,7 @@ const char * Dystopia::InitialVelocityAffector::EditorDisplayLabel(void) const
 void Dystopia::InitialVelocityAffector::EditorUI(void)
 {
 #if EDITOR
-	EGUI::PushLeftAlign(80.f);
+	EGUI::PushLeftAlign(100.f);
 	EGUI::PushID(54);
 
 	Math::Vec2 min{ *reinterpret_cast<float*>(data) , *reinterpret_cast<float*>(data + 4) };
@@ -163,11 +163,11 @@ const char * Dystopia::VelocityOverLifeAffector::EditorDisplayLabel(void) const
 void Dystopia::VelocityOverLifeAffector::EditorUI(void)
 {
 #if EDITOR
+	EGUI::PushLeftAlign(100.f);
 
 
 
-
-
+	EGUI::PopLeftAlign();
 #endif 
 }
 

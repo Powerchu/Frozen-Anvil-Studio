@@ -5,7 +5,7 @@
 \par    email: t.shannon\@digipen.edu
 \brief
 
-		location affector bytes and bits:
+		bytes and bits:
 
 		data[0,1,2,3] used for float dt
 		data[4,5] used for dimensions (radius) - circle
@@ -251,7 +251,7 @@ const char * Dystopia::LocationAffector::EditorDisplayLabel(void) const
 void Dystopia::LocationAffector::EditorUI(void)
 {
 #if EDITOR
-	EGUI::PushLeftAlign(80.f);
+	EGUI::PushLeftAlign(100.f);
 	EGUI::PushID(52);
 
 	bool surfaceOnly = reserved[0] & (1 << 0);
