@@ -60,7 +60,9 @@ namespace Dystopia
 
 		void Bind(void) const noexcept;
 		void Unbind(void) const noexcept;
-		void UploadBuffers(void) const noexcept;
+//		void UploadBuffers(void) const noexcept;
+		void UploadColourBuffer(void) const noexcept;
+		void UploadPositionBuffer(void) const noexcept;
 		void Render(void) const noexcept;
 
 		void KillParticle(unsigned _nIdx) noexcept;
@@ -70,6 +72,7 @@ namespace Dystopia
 		auto AddAffector(Ty&&) noexcept -> Ut::EnableIf_t<std::is_base_of_v<ParticleAffector, Ty>>;
 
 		Shader& GetShader(void) noexcept;
+		size_t GetSpawnCount(void) const noexcept;
 		GfxParticle& GetSpawnDefaults(void) noexcept;
 		AutoArray<float>& GetInitialLifetime(void) noexcept;
 		AutoArray<float>& GetLifetime(void) noexcept;
@@ -99,12 +102,17 @@ namespace Dystopia
 		AutoArray<ParticleAffector> mUpdate;
 		AutoArray<ParticleAffector> mFixedUpdate;
 
-		int mnParticleLimit;
 		GfxParticle mParticle;
 
 		Shader* mpShader; Texture* mpTexture;
+		size_t mSpawnCount;
 		unsigned mVAO, mColourBuffer, mPosBuffer;
-		unsigned mSpawnCount;
+
+#if EDITOR
+		int mnParticleLimit;
+#endif
+
+		bool mbUpdatedPositions;
 
 
 		template <typename Ty>

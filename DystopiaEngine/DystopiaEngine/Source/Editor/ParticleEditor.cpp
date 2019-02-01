@@ -29,7 +29,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace
 {
-	static constexpr Dystopia::ParticleAffector* DUMMY = nullptr;
+	static inline constexpr Dystopia::ParticleAffector* DUMMY = nullptr;
 }
 
 Editor::ParticleEditor::ParticleEditor(void)

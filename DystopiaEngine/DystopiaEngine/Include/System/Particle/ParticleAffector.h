@@ -93,7 +93,7 @@ namespace Dystopia
 		ParticleAffector& operator = (ParticleAffector const&) noexcept;
 
 	protected:
-		using UpdateFunc_t = void(ParticleAffector::*)(Emitter&, float);
+		using UpdateFunc_t = void(ParticleAffector::*)(Emitter&, float) noexcept;
 
 		template <typename C>
 		ParticleAffector(void(C::*_upd)(Emitter&, float)) noexcept
