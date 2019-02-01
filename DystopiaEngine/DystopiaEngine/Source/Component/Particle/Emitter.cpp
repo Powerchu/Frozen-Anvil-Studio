@@ -70,7 +70,7 @@ Dystopia::Emitter::Emitter(Dystopia::Emitter const& _rhs) noexcept
 	glGenVertexArrays(1, &mVAO);
 	glGenBuffers(2, &mColourBuffer);
 
-	glBindVertexArray(mVAO);
+	//glBindVertexArray(mVAO);
 
 	//glEnableVertexAttribArray(0);
 	//glEnableVertexAttribArray(1);
@@ -78,7 +78,7 @@ Dystopia::Emitter::Emitter(Dystopia::Emitter const& _rhs) noexcept
 	//glVertexAttribDivisor(0, 4);
 	//glVertexAttribDivisor(1, 4);
 
-	glBindVertexArray(0);
+	//glBindVertexArray(0);
 }
 
 Dystopia::Emitter::~Emitter(void) noexcept
@@ -130,33 +130,25 @@ void Dystopia::Emitter::Init(void)
 		mpTexture = CORE::Get<TextureSystem>()->GetTexture("EditorStartup.png");
 	}
 
-	mPosition.EmplaceBackUnsafe(-50.f, 50.f, 0.f);
-	mPosition.EmplaceBackUnsafe(-50.f, -50.f, 0.f);
-	mPosition.EmplaceBackUnsafe(50.f, 50.f, 0.f);
-
 	Bind();
+
 	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, mColourBuffer);
-	glBufferData(GL_ARRAY_BUFFER, mParticle.mnLimit * sizeof(decltype(mColour)::Val_t), nullptr, GL_STREAM_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, mPosBuffer);
+	glBufferData(GL_ARRAY_BUFFER, mParticle.mnLimit * sizeof(decltype(mPosition)::Val_t), nullptr, GL_STREAM_DRAW);
 	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribDivisor(0, 1);
 
 	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, mPosBuffer);
-	glBufferData(GL_ARRAY_BUFFER, mParticle.mnLimit * sizeof(decltype(mPosition)::Val_t), &mPosition[0], GL_STREAM_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, mColourBuffer);
+	glBufferData(GL_ARRAY_BUFFER, mParticle.mnLimit * sizeof(decltype(mColour)::Val_t), nullptr, GL_STREAM_DRAW);
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, 0);
-
-	//glVertexAttribDivisor(0, 4);
-	//glVertexAttribDivisor(1, 4);
+	glVertexAttribDivisor(1, 1);
 
 	Unbind();
 }
 
 void Dystopia::Emitter::FixedUpdate(float _fDT)
 {
-#if EDITOR
-	mParticle.mnLimit = static_cast<size_t>(mnParticleLimit); // incase editor commands externally changes it 
-#endif 
-
 	auto pVel   = mVelocity.begin();
 	auto pAccel = mAccel   .begin();
 
@@ -171,8 +163,6 @@ void Dystopia::Emitter::FixedUpdate(float _fDT)
 
 void Dystopia::Emitter::Bind(void) const noexcept
 {
-	glPointSize(100.f);
-	mpShader->Bind();
 	glBindVertexArray(mVAO);
 	mpTexture->Bind();
 }
@@ -181,7 +171,6 @@ void Dystopia::Emitter::Unbind(void) const noexcept
 {
 	mpTexture->Unbind();
 	glBindVertexArray(0);
-	mpShader->Unbind();
 }
 
 void Dystopia::Emitter::UploadBuffers(void) const noexcept
@@ -197,10 +186,7 @@ void Dystopia::Emitter::UploadBuffers(void) const noexcept
 
 void Dystopia::Emitter::Render(void) const noexcept
 {
-	glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(mPosition.size()));
-
-	if (auto err = glGetError())
-		__debugbreak();
+	glDrawArraysInstanced(GL_POINTS, 0, 1, static_cast<GLsizei>(mPosition.size()));
 }
 
 void Dystopia::Emitter::KillParticle(unsigned _nIdx) noexcept
@@ -229,13 +215,11 @@ void Dystopia::Emitter::SpawnParticle(void) noexcept
 		auto pos = transform->GetTransformMatrix() * mParticle.mPos.xyz1;
 		pos.w    = mParticle.mfSize;
 
-		mParticle.mfLifeDur = mParticle.mfInitialLife; // to always start at initial (lifeDur = counter)
-
-		mLifetime.EmplaceBackUnsafe(mParticle.mfLifeDur);
-		mColour  .EmplaceBackUnsafe(mParticle.mColour  );
-		mAccel   .EmplaceBackUnsafe(                   );
-		mVelocity.EmplaceBackUnsafe(mParticle.mVelocity);
-		mPosition.EmplaceBackUnsafe(pos                );
+		mLifetime.EmplaceBackUnsafe(mParticle.mfInitialLife);
+		mColour  .EmplaceBackUnsafe(mParticle.mColour      );
+		mAccel   .EmplaceBackUnsafe(                       );
+		mVelocity.EmplaceBackUnsafe(mParticle.mVelocity    );
+		mPosition.EmplaceBackUnsafe(pos                    );
 		mInitialLife.EmplaceBackUnsafe(mParticle.mfInitialLife);
 	}
 
@@ -298,7 +282,7 @@ AutoArray<Dystopia::ParticleAffector>& Dystopia::Emitter::GetFixedUpdateAffector
 
 Dystopia::Emitter * Dystopia::Emitter::Duplicate(void) const
 {
-	return static_cast<ComponentDonor<Emitter> *>(EngineCore::GetInstance()->GetSystem<Emitter::SYSTEM>())->RequestComponent(*this);
+	return static_cast<ComponentDonor<Emitter>*>(CORE::Get<Emitter::SYSTEM>())->RequestComponent(*this);
 }
 
 

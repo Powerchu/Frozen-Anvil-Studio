@@ -15,6 +15,6 @@
 [START_SHADER]
 "Collider Shader","Shader\Collider.dvert","Shader\Collider.dfrag",
 [START_SHADER]
-"Default Particle","Shader\Particle.dvert","Shader\Particle.dfrag",
+"Default Particle","Shader\Particle.dvert","Shader\Particle.dgeog","Shader\Particle.dfrag",
 [START_SHADER]
 "Error Shader","Shader\DefaultVert.dvert","Shader\Error.dfrag",

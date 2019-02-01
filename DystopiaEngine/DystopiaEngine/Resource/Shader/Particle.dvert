@@ -8,8 +8,8 @@ out gl_PerVertex
 uniform mat4 ModelViewMat;
 uniform mat4 ProjectMat;
 
-layout(location = 0) in vec4 vertexCol;
-layout(location = 1) in vec4 vertexPos;
+layout(location = 0) in vec4 vertexPos;
+layout(location = 1) in vec4 vertexCol;
 
 layout(location = 0) out vec4 vPosition;
 layout(location = 1) out vec4 vColor;

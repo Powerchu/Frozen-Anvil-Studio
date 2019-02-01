@@ -623,11 +623,12 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 			__debugbreak();
 #   endif 
 
-	EndFrame();
 }
 
 void Dystopia::GraphicsSystem::PostUpdate(void)
 {
+	EndFrame();
+
 	for (auto& render : ComponentDonor<Renderer>::mComponents)
 	{
 		if (eObjFlag::FLAG_REMOVE & render.GetFlags())

@@ -103,15 +103,16 @@ void Dystopia::RawMesh::UpdateBuffer(AutoArray<typename T::type> const& _arr, bo
 template <typename T>
 void  Dystopia::RawMesh::UpdateBufferRange(AutoArray<typename T::type> const&, ptrdiff_t _nOffset)
 {
+	using Real_t = typename T::type;
 	if constexpr (T::value == 3)
 	{
 		// GL_ELEMENT_ARRAY_BUFFER
-		UpdateBufferRange(0x8893, (&mVtxBuffer)[T::value], _arr.begin(), _arr.size(), _nOffset);
+		UpdateBufferRange(0x8893, (&mVtxBuffer)[T::value], _arr.begin(), _arr.size() * sizeof(Real_t), _nOffset);
 	}
 	else
 	{
 		// GL_ARRAY_BUFFER
-		UpdateBufferRange(0x8892, (&mVtxBuffer)[T::value], _arr.begin(), _arr.size(), _nOffset);
+		UpdateBufferRange(0x8892, (&mVtxBuffer)[T::value], _arr.begin(), _arr.size() * sizeof(Real_t), _nOffset);
 	}
 }
 
