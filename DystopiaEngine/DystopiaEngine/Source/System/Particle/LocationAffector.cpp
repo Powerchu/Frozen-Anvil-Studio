@@ -270,7 +270,8 @@ void Dystopia::LocationAffector::EditorUI(void)
 	if (EGUI::Display::CheckBox("Rectangle", &rect))
 		ToggleRectangle();
 
-	out = static_cast<int>(*reinterpret_cast<unsigned short*>(data + 8));
+	unsigned short a = *reinterpret_cast<unsigned short*>(data + 8);
+	out = static_cast<int>(a);
 	if (EGUI::Display::DragInt("X", &out, 1.f, 0, 0xffff))
 		SetWidth(static_cast<short>(out));
 

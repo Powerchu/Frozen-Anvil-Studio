@@ -68,6 +68,7 @@ namespace Dystopia
 
 		void KillParticle(unsigned _nIdx) noexcept;
 		void SpawnParticle(void) noexcept;
+		void SetTexture(Texture*);
 
 		template <typename Ty>
 		auto AddAffector(Ty&&) noexcept -> Ut::EnableIf_t<std::is_base_of_v<ParticleAffector, Ty>>;
@@ -90,6 +91,7 @@ namespace Dystopia
 		void Unserialise(TextSerialiser&) override;
 		void EditorUI(void) noexcept override;
 
+
 	private:
 
 		AutoArray<float>      mInitialLife;
@@ -107,6 +109,7 @@ namespace Dystopia
 
 		Shader* mpShader; Texture* mpTexture;
 		size_t mSpawnCount;
+		HashString mTextureName, mShaderName;
 		unsigned mVAO, mColourBuffer, mPosBuffer;
 
 #if EDITOR
