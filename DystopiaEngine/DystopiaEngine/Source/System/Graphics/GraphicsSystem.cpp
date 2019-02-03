@@ -128,6 +128,11 @@ void Dystopia::GraphicsSystem::ToggleVsync(bool _b) noexcept
 	pGfxAPI->ToggleVSync(_b);
 }
 
+_DLL_EXPORT bool Dystopia::GraphicsSystem::GetVsync(void) noexcept
+{
+	return mbVsync;
+}
+
 void Dystopia::GraphicsSystem::ToggleDebugDraw(bool _bDebugDraw) const
 {
 	const auto CamSys = EngineCore::GetInstance()->Get<CameraSystem>();
