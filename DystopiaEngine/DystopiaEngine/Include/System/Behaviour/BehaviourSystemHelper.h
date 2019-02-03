@@ -37,15 +37,16 @@ namespace Dystopia
 			template<>
 			void operator()(Math::Vec3D _v, TextSerialiser& _obj, void*)
 			{
-				_obj << static_cast<float>(_v.x);
-				_obj << static_cast<float>(_v.y);
-				_obj << static_cast<float>(_v.z);
-				_obj << static_cast<float>(_v.w);
+				_obj << ((_v.x == _v.x) ? static_cast<float>(_v.x) : 1.f);
+				_obj << ((_v.y == _v.y) ? static_cast<float>(_v.y) : 1.f);
+				_obj << ((_v.z == _v.z) ? static_cast<float>(_v.z) : 1.f);
+				_obj << ((_v.w == _v.w) ? static_cast<float>(_v.w) : 1.f);
 			}
 			template<>
 			void operator()(float _v, TextSerialiser& _obj, void*)
 			{
-				_obj << static_cast<float>(_v);
+				
+				_obj << ((_v == _v) ? static_cast<float>(_v) : 1.f);
 			}
 			template<>
 			void operator()(int _v, TextSerialiser& _obj, void*)

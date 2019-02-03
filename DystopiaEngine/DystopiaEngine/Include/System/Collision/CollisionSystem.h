@@ -6,7 +6,8 @@
 #include "System/Base/Systems.h"
 #include "System/Base/ComponentDonor.h"
 #include "System/Collision/BoundingColliderNode.h"
-
+#include "System/Collision/CollisionLayers.h"
+#include <map>
 namespace Dystopia
 {
 
@@ -17,7 +18,6 @@ namespace Dystopia
 	class PointCollider;
 	class RayCollider;
 	struct CollisionEvent;
-	class GameObject;
 	class CollisionSystem : public Systems, public ComponentDonor<Convex>,
 											public ComponentDonor<Circle>, 
 											public ComponentDonor<AABB>,
@@ -41,11 +41,13 @@ namespace Dystopia
 
 		virtual void Shutdown(void) override;
 
-		virtual void LoadDefaults(void) override { };
-		virtual void LoadSettings(TextSerialiser&) override { };
+		virtual void LoadDefaults(void) override;
+		virtual void LoadSettings(TextSerialiser&) override;
+		virtual void SaveSettings(DysSerialiser_t&);
 
 #if EDITOR
-
+		void EditorUI(void);
+		void RenderVerticalColName();
 #endif
 
 		bool AABBvsAABB(Collider  * const & _ColA,
@@ -95,11 +97,20 @@ namespace Dystopia
 
 		AutoArray<Collider *> GetAllColliders() const;
 
-		_DLL_EXPORT bool RaycastFirstHit(Math::Vec3D const & _Dir, Math::Point3D const & _mPos, CollisionEvent * _Output, GameObject ** _IgnoreList = nullptr, unsigned _count = 0, float _MaxLength = 0.f) const;
+		_DLL_EXPORT bool RaycastFirstHit(Math::Vec3D const & _Dir, Math::Point3D const & _mPos,CollisionEvent * _Output, float _MaxLength = 0.f) const;
 		_DLL_EXPORT bool RaycastAllHits (Math::Vec3D const & _Dir, Math::Point3D const & _mPos,AutoArray<CollisionEvent> & _Output, float _MaxLength = 0.f) const;
 
-	private:
+		void MapIgnoreLayer(eColLayer _layer, eColLayer _toIgnore);
+		bool ToIgnore      (eColLayer _Layer1, eColLayer _Layer2);
 
+		static std::string const * GetColLayerNames();
+		static unsigned            GetColLayerSize();
+	private:
+		using Map_t = std::map<eColLayer, eColLayer>;
+
+		static Map_t       mIgnoreTable;
+		static bool        mIgnoreBoolTable[32][32];
+		static std::string arrColLayer[33];
 	};
 }
 
