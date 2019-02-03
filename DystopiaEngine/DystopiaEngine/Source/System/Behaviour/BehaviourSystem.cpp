@@ -763,7 +763,7 @@ void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
 						{
 							std::string Var;
 							_obj >> Var;
-							while (Var != "END")
+							while (Var != "END" && Var != "")
 							{
 								_obj.ConsumeStartBlock();
 								/*Call Unserialise*/
@@ -780,7 +780,7 @@ void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
 
 								std::string Var;
 								_obj >> Var;
-								while (Var != "END")
+								while (Var != "END" && Var != "")
 								{
 									if (BehaviourMetaData[Var.c_str()])
 									{
