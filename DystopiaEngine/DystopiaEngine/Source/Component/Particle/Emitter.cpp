@@ -237,10 +237,16 @@ void Dystopia::Emitter::KillParticle(unsigned _nIdx) noexcept
 	--mSpawnCount;
 
 	mLifetime   .FastRemove(_nIdx);
+
+	mColour[_nIdx].w = 0;
 	mColour     .FastRemove(_nIdx);
+
 	mAccel      .FastRemove(_nIdx);
 	mVelocity   .FastRemove(_nIdx);
+
+	mPosition[_nIdx].w = 0;
 	mPosition   .FastRemove(_nIdx);
+
 	mInitialLife.FastRemove(_nIdx);
 }
 
@@ -405,8 +411,8 @@ void Dystopia::Emitter::Unserialise(TextSerialiser& _in)
 	mShaderName = buf.c_str();
 	mpShader = CORE::Get<ShaderSystem>()->GetShader(mShaderName.c_str());
 	_in >> buf;
-	mTextureName = buf.c_str();
-	mpTexture = CORE::Get<TextureSystem>()->GetTexture(mTextureName.c_str());
+	mTextureName = CORE::Get<FileSystem>()->GetFullPath(buf.c_str(), eFileDir::eResource).c_str();
+	mpTexture = CORE::Get<TextureSystem>()->LoadTexture(mTextureName);
 	int n = 0;
 	_in >> n;
 	mnParticleLimit = n;
@@ -468,6 +474,7 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 {
 #if EDITOR
 	static const auto affectorNames = Dystopia::AffectorUI<Dystopia::AffectorList>::GetUIName();
+	static bool bDebug = false;
 
 	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
 
@@ -479,6 +486,18 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 										   CORE::Get<TextureSystem>()->GetTexture(t->mName.c_str())));
 		EGUI::Display::EndPayloadReceiver();
 	}
+
+	OString buffer = "No Shader";
+	if (mpShader)
+		buffer = mpShader->GetName().c_str();
+
+	if (EGUI::Display::EmptyBox("Shader", 150, buffer.c_str(), true))
+		bDebug = !bDebug;
+
+	buffer += "                               ";
+	if (bDebug && EGUI::Display::TextField("Manual", buffer, true, 150))
+		if (auto pShader = CORE::Get<ShaderSystem>()->GetShader(buffer.c_str()))
+			mpShader = pShader;
 
 	switch (EGUI::Display::DragInt("Maximum Particle Count", &mnParticleLimit, 1.f, 0, INT_MAX))
 	{

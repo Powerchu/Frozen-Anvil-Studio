@@ -84,6 +84,7 @@ void Dystopia::ParticleSystem::Update(float _dt)
 	
 	{
 		ScopedTimer<ProfilerAction> timeKeeper{ "Particle System", "Draw" };
+		glDepthMask(GL_FALSE);
 
 		for (auto& e : mComponents)
 		{
@@ -132,6 +133,8 @@ void Dystopia::ParticleSystem::Update(float _dt)
 				__debugbreak();
 #    endif
 		}
+
+		glDepthMask(GL_TRUE);
 	}
 }
 
