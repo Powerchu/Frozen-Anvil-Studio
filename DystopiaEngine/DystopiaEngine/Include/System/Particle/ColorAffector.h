@@ -17,22 +17,50 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	/*
-		location affector bytes and bits:
+		bytes and bits:
+		
+		data[0,1] for red 1
+		data[2,3] for green 1
+		data[4,5] for blue 1
+		data[6,7] for alpha 1
+		data[8,9] for red 2
+		data[10,11] for green 2
+		data[12,13] for blue 2
+		data[14,15] for alpha 2
 
-		data[0,1,2,3] for x min
-		data[4,5,6,7] for y min
-		data[8,9,10,11] for x max
-		data[12,13,14,15] for y max
-
-		reserved[0]
-			- 1 << 1 randome velocity
+		reserved[0] flags:
+			- 1 << 0 random initial color
 
 	*/
 	
 	struct InitialColorAffector : ParticleAffector
 	{
+		using UPDATE = AffectorTag::OnSpawn;
+
 		InitialColorAffector(void);
 		~InitialColorAffector(void);
+
+		/* Colors */
+		void SetR1(unsigned short);
+		void SetG1(unsigned short);
+		void SetB1(unsigned short);
+		void SetA1(unsigned short);
+		void SetR2(unsigned short);
+		void SetG2(unsigned short);
+		void SetB2(unsigned short);
+		void SetA2(unsigned short);
+
+		unsigned int GetR1(void) const;
+		unsigned int GetG1(void) const;
+		unsigned int GetB1(void) const;
+		unsigned int GetA1(void) const;
+		unsigned int GetR2(void) const;
+		unsigned int GetG2(void) const;
+		unsigned int GetB2(void) const;
+		unsigned int GetA2(void) const;
+
+		void EnableRandom(bool);
+
 
 		void AffectorSpawn(Emitter&, float);
 

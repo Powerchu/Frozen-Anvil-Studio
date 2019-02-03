@@ -17,7 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	/*
-		location affector bytes and bits:
+		bytes and bits:
 
 		data[0,1,2,3] for delta
 		data[4,5,6,7] for inital size min 
@@ -29,6 +29,8 @@ namespace Dystopia
 	
 	struct InitialSizeAffector : ParticleAffector
 	{
+		using UPDATE = AffectorTag::OnSpawn;
+
 		InitialSizeAffector(void);
 		~InitialSizeAffector(void);
 
@@ -44,7 +46,7 @@ namespace Dystopia
 	};
 
 	/*
-		location affector bytes and bits:
+		bytes and bits:
 
 		data[0,1,2,3] for delta
 		data[4,5,6,7] for target size

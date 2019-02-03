@@ -17,7 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	/*
-		location affector bytes and bits:
+		bytes and bits:
 
 		data[0,1,2,3] used for float dt
 		data[4,5] used for dimensions (radius) - circle 
@@ -36,6 +36,8 @@ namespace Dystopia
 
 	struct LocationAffector : ParticleAffector
 	{
+		using UPDATE = AffectorTag::OnSpawn;
+
 		LocationAffector(void);
 		~LocationAffector(void);
 

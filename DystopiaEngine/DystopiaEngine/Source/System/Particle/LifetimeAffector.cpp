@@ -4,7 +4,7 @@
 \author Shannon Tan (100%)
 \par    email: t.shannon\@digipen.edu
 \brief
-		location affector bytes and bits:
+		bytes and bits:
 
 		data[0,1,2,3] for delta counting
 		data[4,5,6,7] for min lifetime 
@@ -65,7 +65,7 @@ const char * Dystopia::LifetimeAffector::EditorDisplayLabel(void) const
 void Dystopia::LifetimeAffector::EditorUI(void)
 {
 #if EDITOR
-	EGUI::PushLeftAlign(80.f);
+	EGUI::PushLeftAlign(100.f);
 
 	float out = *reinterpret_cast<float*>(data + 4);
 	if (EGUI::Display::DragFloat("Min", &out, 0.1f, -FLT_MAX, FLT_MAX))

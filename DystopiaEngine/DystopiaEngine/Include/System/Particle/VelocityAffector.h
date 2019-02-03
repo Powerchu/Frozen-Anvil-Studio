@@ -17,7 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	/*
-		location affector bytes and bits:
+		bytes and bits:
 
 		data[0,1,2,3] for x min
 		data[4,5,6,7] for y min
@@ -30,6 +30,8 @@ namespace Dystopia
 
 	struct InitialVelocityAffector : ParticleAffector
 	{
+		using UPDATE = AffectorTag::OnSpawn;
+
 		InitialVelocityAffector(void);
 		~InitialVelocityAffector(void);
 

@@ -209,10 +209,13 @@ void Editor::ParticleEditor::EmitterAffectors(void)
 	auto& existingUpdateAffectors = pEmitter->GetUpdateAffectors();
 	auto& existingFixedUpdateAffectors = pEmitter->GetFixedUpdateAffectors();
 
-	ImGui::BeginGroup();
-	ImGui::Columns(3, "Columns Affectors");
+	//ImGui::BeginGroup();
+	//ImGui::Columns(3, "Columns Affectors");
 	if (EGUI::Display::StartTreeNode("Spawners"))
 	{
+		ImGui::BeginGroup();
+		auto count = static_cast<int>(existingSpawnAffectors.size());
+		ImGui::Columns(count ? count : 1);
 		for (int i = 0; i < existingSpawnAffectors.size(); ++i)
 		{
 			EGUI::PushID(static_cast<int>(i));
@@ -232,12 +235,20 @@ void Editor::ParticleEditor::EmitterAffectors(void)
 			EGUI::PopID();
 			if (toRemove)
 				existingSpawnAffectors.FastRemove(i--);
+			ImGui::NextColumn();
 		}
+		ImGui::NextColumn();
+		ImGui::EndGroup();
 		EGUI::Display::EndTreeNode();
 	}
-	ImGui::NextColumn();
+	ImGui::Columns(1);
+	EGUI::Display::HorizontalSeparator();
+	//ImGui::NextColumn();
 	if (EGUI::Display::StartTreeNode("Updaters"))
 	{
+		ImGui::BeginGroup();
+		auto count = static_cast<int>(existingUpdateAffectors.size());
+		ImGui::Columns(count ? count : 1);
 		for (int i = 0; i < existingUpdateAffectors.size(); ++i)
 		{
 			EGUI::PushID(static_cast<int>(i));
@@ -257,12 +268,20 @@ void Editor::ParticleEditor::EmitterAffectors(void)
 			EGUI::PopID();
 			if (toRemove)
 				existingUpdateAffectors.FastRemove(i--);
+			ImGui::NextColumn();
 		}
+		ImGui::NextColumn();
+		ImGui::EndGroup();
 		EGUI::Display::EndTreeNode();
 	}
-	ImGui::NextColumn();
+	ImGui::Columns(1);
+	EGUI::Display::HorizontalSeparator();
+	//ImGui::NextColumn();
 	if (EGUI::Display::StartTreeNode("Fixers"))
 	{
+		ImGui::BeginGroup();
+		auto count = static_cast<int>(existingFixedUpdateAffectors.size());
+		ImGui::Columns(count ? count : 1);
 		for (int i = 0; i < existingFixedUpdateAffectors.size(); ++i)
 		{
 			EGUI::PushID(static_cast<int>(i));
@@ -282,11 +301,15 @@ void Editor::ParticleEditor::EmitterAffectors(void)
 			EGUI::PopID();
 			if (toRemove)
 				existingFixedUpdateAffectors.FastRemove(i--);
+			ImGui::NextColumn();
 		}
+		ImGui::NextColumn();
+		ImGui::EndGroup();
 		EGUI::Display::EndTreeNode();
 	}
-	ImGui::EndGroup();
 	ImGui::Columns(1);
+	//ImGui::EndGroup();
+	//ImGui::Columns(1);
 }
 
 #endif 

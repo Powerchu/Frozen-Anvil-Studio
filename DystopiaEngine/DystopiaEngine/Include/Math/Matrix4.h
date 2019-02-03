@@ -9,7 +9,7 @@
 
 	Reference: https://software.intel.com/sites/landingpage/IntrinsicsGuide
 
-All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+All Content Copyright ï¿½ 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -99,15 +99,15 @@ namespace Math
 	inline Matrix4 _CALL Translate(const Vector4);
 	inline Matrix4 _CALL Translate(float _fTranslateX, float _fTranslateY, float _fTranslateZ = 0);
 
-	Matrix4 _CALL RotateX(Angle _fAngle);
-	Matrix4 _CALL RotateY(Angle _fAngle);
-	Matrix4 _CALL RotateZ(Angle _fAngle);
-	Matrix4 _CALL RotYTrans(Angle _fAngle, Vector4);
-	Matrix4 _CALL RotYTrans(Angle _fAngle, float _fTranslateX, float _fTranslateY, float _fTranslateZ = 0);
-	Matrix4 _CALL RotXTrans(Angle _fAngle, Vector4);
-	Matrix4 _CALL RotXTrans(Angle _fAngle, float _fTranslateX, float _fTranslateY, float _fTranslateZ = 0);
-	Matrix4 _CALL RotZTrans(Angle _fAngle, Vector4);
-	Matrix4 _CALL RotZTrans(Angle _fAngle, float _fTranslateX, float _fTranslateY, float _fTranslateZ = 0);
+	_DLL_EXPORT Matrix4 _CALL RotateX(Angle _fAngle);
+	_DLL_EXPORT Matrix4 _CALL RotateY(Angle _fAngle);
+	_DLL_EXPORT Matrix4 _CALL RotateZ(Angle _fAngle);
+	_DLL_EXPORT Matrix4 _CALL RotYTrans(Angle _fAngle, Vector4);
+	_DLL_EXPORT Matrix4 _CALL RotYTrans(Angle _fAngle, float _fTranslateX, float _fTranslateY, float _fTranslateZ = 0);
+	_DLL_EXPORT Matrix4 _CALL RotXTrans(Angle _fAngle, Vector4);
+	_DLL_EXPORT Matrix4 _CALL RotXTrans(Angle _fAngle, float _fTranslateX, float _fTranslateY, float _fTranslateZ = 0);
+	_DLL_EXPORT Matrix4 _CALL RotZTrans(Angle _fAngle, Vector4);
+	_DLL_EXPORT Matrix4 _CALL RotZTrans(Angle _fAngle, float _fTranslateX, float _fTranslateY, float _fTranslateZ = 0);
 
 
 	// ======================================== OPERATORS ======================================== // 

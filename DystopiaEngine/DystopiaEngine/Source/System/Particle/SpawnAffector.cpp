@@ -166,7 +166,7 @@ const char * Dystopia::SpawnAffector::EditorDisplayLabel(void) const
 void Dystopia::SpawnAffector::EditorUI(void)
 {
 #if EDITOR
-	EGUI::PushLeftAlign(130.f);
+	EGUI::PushLeftAlign(100.f);
 
 	float mfSpawnDelay = *reinterpret_cast<float*>(data + 10);
 	if (EGUI::Display::DragFloat("Spawn Delay", &mfSpawnDelay, 0.1f, 0.f, FLT_MAX))

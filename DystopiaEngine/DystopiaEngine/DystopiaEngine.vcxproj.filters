@@ -1176,6 +1176,9 @@
     <ClInclude Include="Include\System\Particle\LifetimeAffector.h">
       <Filter>Game Engine\Systems\Particle\Affectors\Lifetime</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Math\PerlinNoise.h">
+      <Filter>Math\Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

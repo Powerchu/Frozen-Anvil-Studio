@@ -40,13 +40,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EGUI.h"
 #include "Editor/EditorMain.h"
 #include "Editor/EditorCommands.h"
+#include "Editor/Payloads.h"
 #endif 
 
 
 Dystopia::Emitter::Emitter(void) noexcept
 	: mColour{}, mPosition{}, mVelocity{}, mAccel{}, mLifetime{}, mSpawnCount{},
 	mSpawn{}, mUpdate{}, mFixedUpdate{}, mpShader{ nullptr }, mpTexture{ nullptr },
-	mInitialLife{}, mbUpdatedPositions{ false }
+	mInitialLife{}, mbUpdatedPositions{ false }, mTextureName{ "EditorStartup.png" }, 
+	mShaderName{ "Default Particle" }, mnParticleLimit{ 1000 }
 {
 	glGenVertexArrays(1, &mVAO);
 	glGenBuffers(2, &mColourBuffer);
@@ -67,7 +69,8 @@ Dystopia::Emitter::Emitter(Dystopia::Emitter const& _rhs) noexcept
 	mLifetime{ _rhs.mLifetime }, mSpawnCount{ _rhs.mSpawnCount },
 	mSpawn{ _rhs.mSpawn }, mUpdate{ _rhs.mUpdate }, mFixedUpdate{ _rhs.mFixedUpdate }, 
 	mpShader{ _rhs.mpShader }, mpTexture{ _rhs.mpTexture },
-	mInitialLife{ _rhs.mInitialLife }
+	mInitialLife{ _rhs.mInitialLife }, mTextureName{ _rhs.mTextureName }, 
+	mShaderName{ _rhs.mTextureName }, mnParticleLimit{ _rhs.mnParticleLimit }
 {
 	glGenVertexArrays(1, &mVAO);
 	glGenBuffers(2, &mColourBuffer);
@@ -100,11 +103,11 @@ void Dystopia::Emitter::Awake(void)
 {
 	if (!mpShader)
 	{
-		mpShader = CORE::Get<ShaderSystem>()->GetShader("Default Particle");
+		mpShader = CORE::Get<ShaderSystem>()->GetShader(mShaderName.c_str());
 	}
 	if (!mpTexture)
 	{
-		mpTexture = CORE::Get<TextureSystem>()->GetTexture("EditorStartup.png");
+		mpTexture = CORE::Get<TextureSystem>()->GetTexture(mTextureName.c_str());
 	}
 }
 
@@ -131,11 +134,11 @@ void Dystopia::Emitter::Init(void)
 
 	if (!mpShader)
 	{
-		mpShader = CORE::Get<ShaderSystem>()->GetShader("Default Particle");
+		mpShader = CORE::Get<ShaderSystem>()->GetShader(mShaderName.c_str());
 	}
 	if (!mpTexture)
 	{
-		mpTexture = CORE::Get<TextureSystem>()->GetTexture("EditorStartup.png");
+		mpTexture = CORE::Get<TextureSystem>()->GetTexture(mTextureName.c_str());
 	}
 
 	Bind();
@@ -263,6 +266,18 @@ void Dystopia::Emitter::SpawnParticle(void) noexcept
 	}
 }
 
+void Dystopia::Emitter::SetTexture(Texture* _texture)
+{
+	mpTexture = _texture;
+	if (mpTexture)
+		mTextureName = mpTexture->GetName();
+	else
+	{
+		mTextureName = "EditorStartup.png";
+		mpTexture = CORE::Get<TextureSystem>()->GetTexture(mTextureName.c_str());
+	}
+}
+
 Dystopia::Shader& Dystopia::Emitter::GetShader(void) noexcept
 {
 	return *mpShader;
@@ -387,9 +402,11 @@ void Dystopia::Emitter::Unserialise(TextSerialiser& _in)
 	buf.reserve(128);
 
 	_in >> buf;
-	mpShader = CORE::Get<ShaderSystem>()->GetShader(buf.c_str());
+	mShaderName = buf.c_str();
+	mpShader = CORE::Get<ShaderSystem>()->GetShader(mShaderName.c_str());
 	_in >> buf;
-	mpTexture = CORE::Get<TextureSystem>()->GetTexture(buf.c_str());
+	mTextureName = buf.c_str();
+	mpTexture = CORE::Get<TextureSystem>()->GetTexture(mTextureName.c_str());
 	int n = 0;
 	_in >> n;
 	mnParticleLimit = n;
@@ -453,6 +470,16 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 	static const auto affectorNames = Dystopia::AffectorUI<Dystopia::AffectorList>::GetUIName();
 
 	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
+
+	EGUI::Display::EmptyBox("Particle Texture", 150, (mpTexture) ? mpTexture->GetName().c_str() : "-empty-", true);
+	if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::ALL_IMG))
+	{
+		cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand(&Emitter::SetTexture, mpTexture),
+										   cmd->MakeFnCommand(&Emitter::SetTexture,
+										   CORE::Get<TextureSystem>()->GetTexture(t->mName.c_str())));
+		EGUI::Display::EndPayloadReceiver();
+	}
+
 	switch (EGUI::Display::DragInt("Maximum Particle Count", &mnParticleLimit, 1.f, 0, INT_MAX))
 	{
 	case EGUI::eDragStatus::eSTART_DRAG:
@@ -474,7 +501,7 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 			EGUI::PushID(static_cast<int>(i));
 			EGUI::Indent(30.f);
 			EGUI::Display::Label((mSpawn[i].*affectorNames[mSpawn[i].GetID()])());
-			EGUI::UnIndent();
+			EGUI::UnIndent(30.f);
 			EGUI::PopID();
 		}
 		EGUI::Display::EndTreeNode();
@@ -487,7 +514,7 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 			EGUI::PushID(static_cast<int>(i));
 			EGUI::Indent(30.f);
 			EGUI::Display::Label((mUpdate[i].*affectorNames[mUpdate[i].GetID()])());
-			EGUI::UnIndent();
+			EGUI::UnIndent(30.f);
 			EGUI::PopID();
 		}
 		EGUI::Display::EndTreeNode();
@@ -500,7 +527,7 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 			EGUI::PushID(static_cast<int>(i));
 			EGUI::Indent(30.f);
 			EGUI::Display::Label((mFixedUpdate[i].*affectorNames[mFixedUpdate[i].GetID()])());
-			EGUI::UnIndent();
+			EGUI::UnIndent(30.f);
 			EGUI::PopID();
 		}
 		EGUI::Display::EndTreeNode();
