@@ -34,13 +34,22 @@ Dystopia::InitialSizeAffector::~InitialSizeAffector(void)
 
 void Dystopia::InitialSizeAffector::SetInitialSizeMin(float _val)
 {
-	_val = Math::Clamp(_val, _val, *reinterpret_cast<float*>(data + 8));
 	*reinterpret_cast<float*>(data + 4) = _val;
 }
 
 void Dystopia::InitialSizeAffector::SetInitialSizeMax(float _val)
 {
 	*reinterpret_cast<float*>(data + 8) = _val;
+}
+
+float Dystopia::InitialSizeAffector::GetInitialSizeMin(void) const
+{
+	return *reinterpret_cast<const float*>(data + 4);
+}
+
+float Dystopia::InitialSizeAffector::GetInitialSizeMax(void) const
+{
+	return *reinterpret_cast<const float*>(data + 8);
 }
 
 void Dystopia::InitialSizeAffector::EnableRandomInitial(bool _enable)
@@ -57,11 +66,11 @@ void Dystopia::InitialSizeAffector::AffectorSpawn(Emitter& _emitter, float)
 	{
 		std::random_device rDev;
 		std::mt19937 gen{ rDev() };
-		std::uniform_real_distribution<float> distr{ *reinterpret_cast<float*>(data + 4),  *reinterpret_cast<float*>(data + 8) };
+		std::uniform_real_distribution<float> distr{ GetInitialSizeMin(), GetInitialSizeMax() };
 		_emitter.GetSpawnDefaults().mfSize = distr(gen);
 	}
 	else
-		_emitter.GetSpawnDefaults().mfSize = *reinterpret_cast<float*>(data + 8);
+		_emitter.GetSpawnDefaults().mfSize = GetInitialSizeMax();
 }
 
 const char * Dystopia::InitialSizeAffector::EditorDisplayLabel(void) const
@@ -75,12 +84,12 @@ void Dystopia::InitialSizeAffector::EditorUI(void)
 	EGUI::PushLeftAlign(100.f);
 	EGUI::PushID(53);
 	
-	float out = *reinterpret_cast<float*>(data + 4);
-	if (EGUI::Display::DragFloat("Size Min", &out, 0.1f, -FLT_MAX, FLT_MAX))
+	float out = GetInitialSizeMin();
+	if (EGUI::Display::DragFloat("Size Min", &out, 0.1f, -FLT_MAX, GetInitialSizeMax()))
 		SetInitialSizeMin(out);
 
-	out = *reinterpret_cast<float*>(data + 8);
-	if (EGUI::Display::DragFloat("Size Max", &out, 0.1f, -FLT_MAX, FLT_MAX))
+	out = GetInitialSizeMax();
+	if (EGUI::Display::DragFloat("Size Max", &out, 0.1f, GetInitialSizeMin(), FLT_MAX))
 		SetInitialSizeMin(out);
 
 	bool rand = reserved[0] & (1 << 1);

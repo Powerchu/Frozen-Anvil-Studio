@@ -40,16 +40,20 @@ namespace Dystopia
 
 		/* Continuous spawn */
 		void SetSpawnRate(unsigned short _particlePerSecond);
+		unsigned short GetSpawnRate(void) const;
 		void EnableContinuous(bool _enabled);
 
 		/* Burst spawn */
 		void SetBurstCount(unsigned short _particlePerBurst);
 		void SetBurstLow(unsigned short _particlePerBurstLow);
+		unsigned short GetBurstCount(void) const;
+		unsigned short GetBurstLow(void) const;
 		void EnableRandomBurst(bool _enabled);
 		void EnableBurst(bool _enabled);
 
 		/* affects both */
 		void SetInitialDelay(float _delay);
+		float GetInitialDelay(void) const;
 
 		/* requirement for affector */
 		void AffectorUpdate(Emitter&, float);

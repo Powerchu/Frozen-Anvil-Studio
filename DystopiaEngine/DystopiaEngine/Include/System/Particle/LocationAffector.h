@@ -47,19 +47,24 @@ namespace Dystopia
 		/* circle */
 		void ToggleCircle(void);
 		void SetRadius(unsigned short);
+		unsigned short GetRadius(void) const;
 
 		/* rectangle */
 		void ToggleRectangle(void);
 		void SetHeight(unsigned short);
 		void SetWidth(unsigned short);
+		unsigned short GetHeight(void) const;
+		unsigned short GetWidth(void) const;
 
 		/* triangle */
 		void ToggleTriangle(void);
 		void SetTriangleEdge(unsigned short);
+		unsigned short GetTEdge(void) const;
 
 		/* star */
 		void ToggleStar(void);
 		void SetStarEdge(unsigned short);
+		unsigned short GetSEdge(void) const;
 
 		/* override */
 		void TogglePoint(void);

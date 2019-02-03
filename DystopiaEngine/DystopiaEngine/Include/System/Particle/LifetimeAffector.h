@@ -35,6 +35,8 @@ namespace Dystopia
 		/* duration */
 		void SetMin(float _val);
 		void SetMax(float _val);
+		float GetMin(void) const;
+		float GetMax(void) const;
 
 		void AffectorSpawn(Emitter&, float);
 

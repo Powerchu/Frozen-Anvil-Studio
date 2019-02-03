@@ -37,6 +37,8 @@ namespace Dystopia
 		/* sizes */
 		void SetInitialSizeMin(float _val);
 		void SetInitialSizeMax(float _val);
+		float GetInitialSizeMin(void) const;
+		float GetInitialSizeMax(void) const;
 		void EnableRandomInitial(bool _enable);
 
 		void AffectorSpawn(Emitter&, float);
