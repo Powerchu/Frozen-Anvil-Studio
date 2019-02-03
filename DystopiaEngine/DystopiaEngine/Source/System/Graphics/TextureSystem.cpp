@@ -82,6 +82,9 @@ void Dystopia::TextureSystem::SaveAtlases(void)
 #if EDITOR
 	for (auto& a : mAtlas)
 	{
+		if (!a.IsChanged())
+			continue;
+
 		auto fp = CORE::Get<FileSystem>()->FindFilePath(a.GetName().c_str(), eFileDir::eCurrent);
 		HashString folder{ fp };
 		folder += '.';

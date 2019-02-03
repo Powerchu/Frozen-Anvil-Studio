@@ -26,12 +26,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::TextureAtlas::TextureAtlas(Texture* _ptr) noexcept
-	: mpTexture{ _ptr }
+	: mpTexture{ _ptr }, mbChanged{ false }
 {
 }
 
 Dystopia::TextureAtlas::TextureAtlas(HashString const& _strName)
-	: mpTexture{ EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->GetTexture(_strName) }
+	: mpTexture{ EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->GetTexture(_strName) }, mbChanged{ false }
 {
 }
 
@@ -65,6 +65,7 @@ unsigned Dystopia::TextureAtlas::AddSection(const Math::Vec2 & _vPos, unsigned _
 
 	mSections.EmplaceBack(uStart, vStart, uEnd, vEnd, float(uStride / _nCols), float(vStride / _nRows));
 
+	mbChanged = true;
 	return static_cast<unsigned>(ret);
 }
 
@@ -83,6 +84,8 @@ void Dystopia::TextureAtlas::UpdateSection(unsigned _nIndex, const Math::Vec2 & 
 	const float vStride = (e.vEnd - e.vStart);
 	e.mCol = Math::Clamp(float(uStride / _nCols), 0, MAX_ROW_COL);
 	e.mRow = Math::Clamp(float(vStride / _nRows), 0, MAX_ROW_COL);
+
+	mbChanged = true;
 }
 
 void Dystopia::TextureAtlas::SetSection(unsigned _nID, unsigned _nCol, unsigned _nRow, Shader const& _Active)
@@ -115,6 +118,16 @@ HashString Dystopia::TextureAtlas::GetName(void) const
 const HashString& Dystopia::TextureAtlas::GetPath(void) const noexcept
 {
 	return mpTexture->GetPath();
+}
+
+bool Dystopia::TextureAtlas::IsChanged(void) const noexcept
+{
+	return mbChanged;
+}
+
+void Dystopia::TextureAtlas::SetChanged(bool b) noexcept
+{
+	mbChanged = b;
 }
 
 void Dystopia::TextureAtlas::SaveAtlas(Dystopia::TextSerialiser& _out) const noexcept
