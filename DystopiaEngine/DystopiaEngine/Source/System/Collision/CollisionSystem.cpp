@@ -325,13 +325,13 @@ namespace Dystopia
 
 	void CollisionSystem::LoadSettings(TextSerialiser & _in)
 	{
-		//for (unsigned u = 0; u < 32; ++u)
-		//	for (unsigned i = 0; i < 32; ++i)
-		//	{
-		//		_in >> mIgnoreBoolTable[u][i];
-		//	}
+		for (unsigned u = 0; u < 32; ++u)
+			for (unsigned i = 0; i < 32; ++i)
+			{
+				_in >> mIgnoreBoolTable[u][i];
+			}
 
-		memset(mIgnoreBoolTable, true, 32 * 32);
+		//memset(mIgnoreBoolTable, true, 32 * 32);
 	}
 
 	void CollisionSystem::SaveSettings(DysSerialiser_t & _out)
