@@ -90,7 +90,7 @@ void Dystopia::InitialSizeAffector::EditorUI(void)
 
 	out = GetInitialSizeMax();
 	if (EGUI::Display::DragFloat("Size Max", &out, 0.1f, GetInitialSizeMin(), FLT_MAX))
-		SetInitialSizeMin(out);
+		SetInitialSizeMax(out);
 
 	bool rand = reserved[0] & (1 << 1);
 	if (EGUI::Display::CheckBox("Random Size", &rand))

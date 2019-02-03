@@ -138,7 +138,7 @@ void Dystopia::Emitter::Init(void)
 	}
 	if (!mpTexture)
 	{
-		mpTexture = CORE::Get<TextureSystem>()->GetTexture(mTextureName.c_str());
+		mpTexture = CORE::Get<TextureSystem>()->LoadTexture(CORE::Get<FileSystem>()->FindFilePath(mTextureName.c_str(),eFileDir::eResource).c_str());
 	}
 
 	Bind();
@@ -258,7 +258,7 @@ void Dystopia::Emitter::SpawnParticle(void) noexcept
 		pos.w    = mParticle.mfSize;
 
 		mLifetime   .EmplaceBackUnsafe(mParticle.mfLifeDur);
-		mColour     .EmplaceBackUnsafe(Math::Vec4(1,1,1,1));
+		mColour     .EmplaceBackUnsafe(mParticle.mColour  );
 		mAccel      .EmplaceBackUnsafe(                   );
 		mVelocity   .EmplaceBackUnsafe(mParticle.mVelocity);
 		mPosition   .EmplaceBackUnsafe(pos                );

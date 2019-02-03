@@ -141,8 +141,8 @@ void Dystopia::InitialVelocityAffector::EditorUI(void)
 		{
 		case EGUI::eDragStatus::eDRAGGING:
 		case EGUI::eDragStatus::eSTART_DRAG:
-			SetMaxX(min.x);
-			SetMaxY(min.y);
+			SetMaxX(max.x);
+			SetMaxY(max.y);
 			break;
 		default:
 			break;
