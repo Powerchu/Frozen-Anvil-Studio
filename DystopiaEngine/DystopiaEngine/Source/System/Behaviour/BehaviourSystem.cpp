@@ -298,12 +298,17 @@ namespace Dystopia
 							//iter.first = iter.second->GetOwner()->GetID();
 							if (auto x = iter.second->GetOwner())
 							{
-								if (auto ai = x->GetComponent<AiController>())
+								if (x->GetFlag() & eObjFlag::FLAG_EDITOR_OBJ)
+									;
+								else
 								{
-									if (ai->GetTreeAsRef()->IsValidTree())
-										ai->ClearTree();
+									if (auto ai = x->GetComponent<AiController>())
+									{
+										if (ai->GetTreeAsRef().GetRaw() != nullptr)
+											ai->ClearTree();
+									}
+									x->RemoveComponent(iter.second);
 								}
-								x->RemoveComponent(iter.second);
 							}
 							//iter.second->GetOwner()->RemoveComponent(iter.second);
 							delete iter.second;
