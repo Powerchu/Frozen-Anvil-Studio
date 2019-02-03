@@ -306,6 +306,13 @@ namespace
 		{
 			s->UploadUniformi(strName.c_str(), value);
 		}
+
+		template <>
+		void operator() < std::pair<Dystopia::Texture*, int>&> (std::pair<Dystopia::Texture*, int>& value)
+		{
+			if (value.first)
+				value.first->Bind(value.second);
+		}
 	};
 
 	template <typename T>
