@@ -187,30 +187,30 @@ void Dystopia::InitialColorAffector::EditorUI(void)
 		int out = static_cast<int>(GetR1());
 		if (EGUI::Display::DragInt("Red", &out, 1.f, 0, 255))
 		{
-			SetR1(static_cast<short>(out));
-			SetR2(Math::Max(GetR2(), GetR1()));
+			SetR1(static_cast<unsigned short>(out));
+			SetR2(static_cast<unsigned short>(Math::Max(GetR2(), GetR1())));
 		}
 
 		out = static_cast<int>(GetG1());
 		if (EGUI::Display::DragInt("Green", &out, 1.f, 0, 255))
 		{
-			SetG1(static_cast<short>(out));
-			SetG2(Math::Max(GetG2(), GetG1()));
+			SetG1(static_cast<unsigned short>(out));
+			SetG2(static_cast<unsigned short>(Math::Max(GetG2(), GetG1())));
 		}
 
 		out = static_cast<int>(GetB1());
 		if (EGUI::Display::DragInt("Blue", &out, 1.f, 0, 255))
 		{
-			SetB1(static_cast<short>(out));
-			SetB2(Math::Max(GetB2(), GetB1()));
+			SetB1(static_cast<unsigned short>(out));
+			SetB2(static_cast<unsigned short>(Math::Max(GetB2(), GetB1())));
 
 		}
 
 		out = static_cast<int>(GetA1());
 		if (EGUI::Display::DragInt("Alpha", &out, 1.f, 0, 255))
 		{
-			SetA1(static_cast<short>(out));
-			SetA2(Math::Max(GetA2(), GetA1()));
+			SetA1(static_cast<unsigned short>(out));
+			SetA2(static_cast<unsigned short>(Math::Max(GetA2(), GetA1())));
 		}
 
 		EGUI::Display::EndTreeNode();
@@ -225,26 +225,26 @@ void Dystopia::InitialColorAffector::EditorUI(void)
 			int out = static_cast<int>(GetR2());
 			if (EGUI::Display::DragInt("Red", &out, 1.f, 0, 255))
 			{
-				SetR2(static_cast<short>(out));
-				SetR1(Math::Min(GetR1(), GetR2()));
+				SetR2(static_cast<unsigned short>(out));
+				SetR1(static_cast<unsigned short>(Math::Min(GetR1(), GetR2())));
 			}
 			out = static_cast<int>(GetG2());
 			if (EGUI::Display::DragInt("Green", &out, 1.f, 0, 255))
 			{
-				SetG2(static_cast<short>(out));
-				SetG1(Math::Min(GetG1(), GetG2()));
+				SetG2(static_cast<unsigned short>(out));
+				SetG1(static_cast<unsigned short>(Math::Min(GetG1(), GetG2())));
 			}
 			out = static_cast<int>(GetB2());
 			if (EGUI::Display::DragInt("Blue", &out, 1.f, 0, 255))
 			{
-				SetB2(static_cast<short>(out));
-				SetB1(Math::Min(GetB1(), GetB2()));
+				SetB2(static_cast<unsigned short>(out));
+				SetB1(static_cast<unsigned short>(Math::Min(GetB1(), GetB2())));
 			}
 			out = static_cast<int>(GetA2());
 			if (EGUI::Display::DragInt("Alpha", &out, 1.f, 0, 255))
 			{
-				SetA2(static_cast<short>(out));
-				SetA1(Math::Min(GetA1(), GetA2()));
+				SetA2(static_cast<unsigned short>(out));
+				SetA1(static_cast<unsigned short>(Math::Min(GetA1(), GetA2())));
 			}
 			EGUI::Display::EndTreeNode();
 		}

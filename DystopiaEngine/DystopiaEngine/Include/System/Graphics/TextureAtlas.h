@@ -57,6 +57,9 @@ namespace Dystopia
 		HashString GetName(void) const;
 		HashString const& GetPath(void) const noexcept;
 
+		bool IsChanged(void) const noexcept;
+		void SetChanged(bool) noexcept;
+
 		void SaveAtlas(TextSerialiser&) const noexcept;
 		void LoadAtlas(TextSerialiser&) noexcept;
 
@@ -64,6 +67,7 @@ namespace Dystopia
 
 	private:
 
+		bool mbChanged;
 		Texture* mpTexture;
 		AutoArray<SubTexture> mSections;
 	};
