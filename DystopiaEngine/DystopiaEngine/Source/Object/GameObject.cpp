@@ -480,12 +480,12 @@ void Dystopia::GameObject::Identify(void)
 }
 
 #if EDITOR
-Dystopia::GameObject& Dystopia::GameObject::operator=(GameObject&& _rhs)
+Dystopia::GameObject& Dystopia::GameObject::operator = (GameObject&& _rhs)
 {
-	mnID    = _rhs.mnID;
-	mnFlags = _rhs.mnFlags;
-	mName   = _rhs.mName;
-	mTags	= _rhs.mTags;
+	mnID      = _rhs.mnID;
+	mnFlags   = _rhs.mnFlags;
+	mName     = _rhs.mName;
+	mTags	  = _rhs.mTags;
 
 	mTransform = _rhs.mTransform;
 	Ut::Swap(mComponents, _rhs.mComponents);

@@ -163,17 +163,29 @@ void Dystopia::Emitter::Init(void)
 
 void Dystopia::Emitter::FixedUpdate(float _fDT)
 {
-	auto pVel   = mVelocity.begin();
-	auto pAccel = mAccel   .begin();
+#if 1
+	long long l = mPosition.size();
+
+#	pragma omp parallel for
+	for(long long n = 0; n < l; ++n)
+	{
+		mVelocity[n] += mAccel   [n]      * _fDT;
+		mPosition[n] += mVelocity[n].xyz0 * _fDT;
+	}
+#else
+
+	auto pAcc = mAccel.begin();
+	auto pVel = mVelocity.begin();
 
 	for (auto& e : mPosition)
 	{
-		*pVel +=  *pAccel     * _fDT;
-		 e    += (*pVel).xyz0 * _fDT;
+		*pVel += *pAcc * _fDT;
+		e     += *pVel * _fDT;
 
-		 ++pVel; ++pAccel;
+		++pVel; ++pAcc;
 	}
 
+#endif
 	mbUpdatedPositions = true;
 }
 
@@ -199,15 +211,13 @@ void Dystopia::Emitter::UploadPositionBuffer(void) const noexcept
 	glBindBuffer(GL_ARRAY_BUFFER, mPosBuffer);
 	auto MapPtr = glMapBufferRange(GL_ARRAY_BUFFER, 0, mPosition.size() * sizeof(Math::Vec4), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT);
 
-#pragma loop( hint_parallel(0) )
-	for (size_t n = 0; n < mPosition.size(); ++n)
-		static_cast<Math::Vec4*>(MapPtr)[n] = *(mPosition.begin() + n);
-	//std::memcpy(MapPtr, mPosition.begin(), mPosition.size() * sizeof(Math::Vec4));
+	//for (size_t n = 0; n < mPosition.size(); ++n)
+	//	static_cast<Math::Vec4*>(MapPtr)[n] = *(mPosition.begin() + n);
+	std::memcpy(MapPtr, mPosition.begin(), mPosition.size() * sizeof(Math::Vec4));
 
 	glUnmapBuffer(GL_ARRAY_BUFFER);
 
 	const_cast<bool&>(mbUpdatedPositions) = false;
-	//glBufferSubData(GL_ARRAY_BUFFER, 0, mPosition.size() * sizeof(Math::Vec4), mPosition.begin());
 }
 
 void Dystopia::Emitter::UploadColourBuffer(void) const noexcept
@@ -216,14 +226,11 @@ void Dystopia::Emitter::UploadColourBuffer(void) const noexcept
 	glBindBuffer(GL_ARRAY_BUFFER, mColourBuffer);
 	auto MapPtr = glMapBufferRange(GL_ARRAY_BUFFER, 0, mColour.size() * sizeof(Math::Vec4), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT);
 
-#pragma loop( hint_parallel(0) )
-	for (size_t n = 0; n < mColour.size(); ++n)
-		static_cast<Math::Vec4*>(MapPtr)[n] = *(mColour.begin() + n);
-	//std::memcpy(MapPtr, mColour.begin(), mColour.size() * sizeof(Math::Vec4));
+	//for (size_t n = 0; n < mColour.size(); ++n)
+	//	static_cast<Math::Vec4*>(MapPtr)[n] = *(mColour.begin() + n);
+	std::memcpy(MapPtr, mColour.begin(), mColour.size() * sizeof(Math::Vec4));
 
 	glUnmapBuffer(GL_ARRAY_BUFFER);
-
-	//glBufferSubData(GL_ARRAY_BUFFER, 0, mColour.size() * sizeof(Math::Vec4), mColour.begin());
 }
 
 void Dystopia::Emitter::Render(void) const noexcept

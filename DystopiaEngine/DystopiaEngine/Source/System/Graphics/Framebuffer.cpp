@@ -26,13 +26,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::Framebuffer::Framebuffer(void) noexcept
-	: mpTexture{ nullptr }, mbAlpha{ false }, mnWidth{ 0 }, mnHeight{ 0 }
+	: mpTexture{ nullptr }, mbAlpha{ false }, mnWidth{ 0 }, mnHeight{ 0 },
+	mBlendSrc{ GL_SRC_ALPHA }, mBlendDst{ GL_ONE_MINUS_SRC_ALPHA }
 {
 }
 
-Dystopia::Framebuffer::Framebuffer(unsigned _nWidth, unsigned _nHeight, bool _bAlpha) noexcept
+Dystopia::Framebuffer::Framebuffer(unsigned _nWidth, unsigned _nHeight, bool _bAlpha, int _blendSrc, int _blendDst) noexcept
 	: mpTexture{ nullptr }, mbAlpha{ _bAlpha }, 
-	mnWidth{ _nWidth }, mnHeight{ _nHeight }
+	mnWidth{ _nWidth }, mnHeight{ _nHeight }, mBlendSrc{ _blendSrc }, mBlendDst{ _blendDst }
 {
 }
 
@@ -72,11 +73,13 @@ void Dystopia::Framebuffer::Init(void)
 #   endif 
 }
 
-void Dystopia::Framebuffer::Init(unsigned _nWidth, unsigned _nHeight, bool _bAlpha)
+void Dystopia::Framebuffer::Init(unsigned _nWidth, unsigned _nHeight, bool _bAlpha, int _blendSrc, int _blendDst)
 {
-	mbAlpha = _bAlpha;
-	mnWidth = _nWidth;
-	mnHeight = _nHeight;
+	mbAlpha   = _bAlpha;
+	mnWidth   = _nWidth;
+	mnHeight  = _nHeight;
+	mBlendSrc = _blendSrc;
+	mBlendDst = _blendDst;
 
 	Init();
 }
@@ -85,6 +88,8 @@ void Dystopia::Framebuffer::Init(unsigned _nWidth, unsigned _nHeight, bool _bAlp
 void Dystopia::Framebuffer::Bind(void) const noexcept
 {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mnID);
+
+	glBlendFunc(mBlendSrc, mBlendDst);
 }
 
 void Dystopia::Framebuffer::Unbind(void) const noexcept
@@ -92,19 +97,29 @@ void Dystopia::Framebuffer::Unbind(void) const noexcept
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 }
 
-bool Dystopia::Framebuffer::HasAlpha(void) const
+bool Dystopia::Framebuffer::HasAlpha(void) const noexcept
 {
 	return mbAlpha;
 }
 
-unsigned Dystopia::Framebuffer::GetWidth(void) const
+unsigned Dystopia::Framebuffer::GetWidth(void) const noexcept
 {
 	return mnWidth;
 }
 
-unsigned Dystopia::Framebuffer::GetHeight(void) const
+unsigned Dystopia::Framebuffer::GetHeight(void) const noexcept
 {
 	return mnHeight;
+}
+
+int Dystopia::Framebuffer::GetBlendSrc(void) const noexcept
+{
+	return mBlendSrc;
+}
+
+int Dystopia::Framebuffer::GetBlendDst(void) const noexcept
+{
+	return mBlendDst;
 }
 
 
