@@ -144,6 +144,8 @@ void Dystopia::Scene::Unserialise(TextSerialiser & _TextUnserialiser)
 	{
 		auto pGameObj = InsertGameObject();
 		pGameObj->Unserialise(_TextUnserialiser);
+		if (!pGameObj->GetName().c_str())
+			__debugbreak();
 	}
 }
 
