@@ -71,6 +71,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "System/Particle/ParticleAffector.h"
 #include "System/Particle/SpawnAffector.h"
+#include "System/Particle/LocationAffector.h"
+#include "System/Particle/LifetimeAffector.h"
+#include "System/Particle/ColorAffector.h"
+#include "System/Particle/VelocityAffector.h"
+#include "System/Particle/SizeAffector.h"
 
 namespace Dystopia
 {
@@ -312,7 +317,7 @@ namespace Dystopia
 	template<typename C>
 	struct RequestAffector
 	{
-		static ParticleAffector Get(void)
+		static C Get(void)
 		{
 			return C{};
 		}
@@ -324,22 +329,41 @@ namespace Dystopia
 
 		template<typename A>
 		struct Collection;
-		template<size_t ... Ns>
-		struct Collection<std::index_sequence<Ns ...>>
+		template<unsigned ... Ns, typename ... Affts>
+		struct Collection<Ut::Collection<Ut::Indexer<Ns, Affts>...>>
 		{
-			static ParticleAffector Get(unsigned _n)
+			static void Get(unsigned _n, Emitter& e)
 			{
-				static auto mData = Ctor::MakeArray<ParticleAffector(*)(void)>(RequestAffector<typename Ut::MetaExtract<Ns, AffectorList>::result::type>::Get...);
-				return mData[_n]();
+				static void(*mData[])(Emitter&) = {
+					[](Emitter& _e) -> void { _e.AddAffector(Affts{}); }...
+				};
+
+				mData[_n](e);
 			}
 		};
 
-		ParticleAffector Get(unsigned _i)
+		void Get(unsigned _i, Emitter& e)
 		{
-			return mCollection.Get(_i);
+			return mCollection.Get(_i, e);
 		}
 
-		Collection<std::make_index_sequence<size>> mCollection;
+		Collection<AffectorList> mCollection;
+	};
+
+	template <typename>
+	struct AffectorUI;
+
+	template <typename ... Ts, unsigned ... N>
+	struct AffectorUI<Ut::Collection<Ut::Indexer<N, Ts>...>>
+	{
+		inline static auto GetPtrsToUIFunction(void) noexcept
+		{
+			return Ctor::MakeArray<void(ParticleAffector::*)(void)>(reinterpret_cast<void(ParticleAffector::*)(void)>(&Ts::EditorUI) ...);
+		}
+		inline static auto GetUIName(void) noexcept
+		{
+			return Ctor::MakeArray<const char*(ParticleAffector::*)(void)>(reinterpret_cast<const char*(ParticleAffector::*)(void)>(&Ts::EditorDisplayLabel) ...);
+		}
 	};
 
 

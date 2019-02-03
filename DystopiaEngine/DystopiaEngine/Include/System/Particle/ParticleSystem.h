@@ -33,6 +33,7 @@ namespace Dystopia
 		bool Init(void) override;
 		void Update(float) override;
 		void FixedUpdate(float) override;
+		void PostUpdate(void) override;
 		void Shutdown(void) override;
 
 

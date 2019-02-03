@@ -41,6 +41,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/GameView.h"
 #include "Editor/FlowChart.h"
 #include "Editor/DataSheetEditor.h"
+#include "Editor/ParticleEditor.h"
 
 #include "Allocator/DefaultAlloc.h"
 
@@ -170,8 +171,6 @@ void Editor::EditorMain::Update(void)
 void Editor::EditorMain::EndFrame(void)
 {
 	LogPerformance();
-	for (auto& s : mArrSystems)
-		s->EndFrame();
 
 	if (mCurState != mNextState)
 	{
@@ -203,6 +202,9 @@ void Editor::EditorMain::EndFrame(void)
 		for (auto& p : mArrPanels)
 			p->Message(eEMessage::SCENE_CHANGED);
 	}
+
+	for (auto& s : mArrSystems)
+		s->EndFrame();
 
 	if (mMsgPending.size())
 	{

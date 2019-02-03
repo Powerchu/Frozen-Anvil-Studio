@@ -23,7 +23,7 @@ namespace Dystopia
 {
 	struct GfxParticle
 	{
-		Math::Vec4 mColour;
+		Math::Vec4 mColour = Math::Vec4{ 1,1,1,1 };
 
 		Math::Vec3 mPos;
 		float mfSize= 100.f;

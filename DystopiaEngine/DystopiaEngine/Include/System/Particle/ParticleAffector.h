@@ -14,6 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _PARTICLEAFFECTOR_H_
 #define _PARTICLEAFFECTOR_H_
 
+#include "Utility/Utility.h"
 #include "Utility/MetaAlgorithms.h"
 #include "IO/TextSerialiser.h"
 
@@ -27,8 +28,20 @@ namespace Dystopia
 		struct OnFixedUpdate {};
 	}
 
+	//	HOT_FIX : 
+	//		need manually specify affector tag in ParticleEditor.cpp 
+	//	TODO :
+	//		automatically deduce affector tag somehow 
 	using AffectorList = Ut::MetaAutoIndexer_t<
-		struct SpawnAffector
+		struct SpawnAffector,
+		struct LocationAffector,
+		struct LifetimeAffector,
+		struct InitialColorAffector,
+		struct ColorOverLifeAffector,
+		struct InitialVelocityAffector,
+		struct VelocityOverLifeAffector,
+		struct InitialSizeAffector,
+		struct SizeOverLifeAffector
 	>;
 
 	class Emitter;
@@ -40,7 +53,7 @@ namespace Dystopia
 		inline void Update(Emitter& e, float _dt) noexcept
 		{
 			(this->*Updator)(e, _dt);
-		};
+		}
 
 		inline int GetID(void) const noexcept
 		{
@@ -74,8 +87,13 @@ namespace Dystopia
 			_in.ConsumeEndBlock();
 		}
 
+		inline ParticleAffector(ParticleAffector&&) noexcept;
+		inline ParticleAffector(ParticleAffector const&) noexcept;
+		inline ParticleAffector& operator = (ParticleAffector&&) noexcept;
+		ParticleAffector& operator = (ParticleAffector const&) noexcept;
+
 	protected:
-		using UpdateFunc_t = void(ParticleAffector::*)(Emitter&, float);
+		using UpdateFunc_t = void(ParticleAffector::*)(Emitter&, float) noexcept;
 
 		template <typename C>
 		ParticleAffector(void(C::*_upd)(Emitter&, float)) noexcept
@@ -93,6 +111,22 @@ namespace Dystopia
 	protected:
 		char reserved[4];
 	};
+}
+
+inline Dystopia::ParticleAffector::ParticleAffector(Dystopia::ParticleAffector&& _obj) noexcept
+	: ParticleAffector{ _obj }
+{
+}
+
+inline Dystopia::ParticleAffector::ParticleAffector(Dystopia::ParticleAffector const& _obj) noexcept
+	: mID{ _obj.mID }
+{
+	*this = _obj;
+}
+
+inline Dystopia::ParticleAffector& Dystopia::ParticleAffector::operator = (Dystopia::ParticleAffector&& _rhs) noexcept
+{
+	return *this = _rhs;
 }
 
 
