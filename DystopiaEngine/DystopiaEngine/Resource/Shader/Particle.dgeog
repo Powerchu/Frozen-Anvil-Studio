@@ -20,8 +20,8 @@ uniform mat4 ProjectMat;
 
 void main()
 {
-  vec3 right = normalize(ModelViewMat[0].xyz) * vPosition[0].w;
-  vec3 up    = normalize(ModelViewMat[1].xyz) * vPosition[0].w;
+  vec3 right = ModelViewMat[0].xyz * vPosition[0].w;
+  vec3 up    = ModelViewMat[1].xyz * vPosition[0].w;
   vec3 pos   = vPosition[0].xyz;
   
   

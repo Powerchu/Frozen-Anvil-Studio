@@ -40,6 +40,10 @@ namespace Dystopia
 		void SetMinY(float _val);
 		void SetMaxX(float _val);
 		void SetMaxY(float _val);
+		float GetMinX(void) const;
+		float GetMinY(void) const;
+		float GetMaxX(void) const;
+		float GetMaxY(void) const;
 		void EnableRandomVel(bool _enabled);
 		
 		void AffectorSpawn(Emitter&, float);

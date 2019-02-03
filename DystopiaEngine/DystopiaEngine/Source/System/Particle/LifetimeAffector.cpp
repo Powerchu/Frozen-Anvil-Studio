@@ -49,6 +49,16 @@ void Dystopia::LifetimeAffector::SetMax(float _val)
 	*reinterpret_cast<float*>(data + 8) = _val;
 }
 
+float Dystopia::LifetimeAffector::GetMin(void) const
+{
+	return *reinterpret_cast<const float*>(data + 4);
+}
+
+float Dystopia::LifetimeAffector::GetMax(void) const
+{
+	return *reinterpret_cast<const float*>(data + 8);
+}
+
 void Dystopia::LifetimeAffector::AffectorSpawn(Emitter& _emitter, float)
 {
 	std::random_device rDev;
@@ -67,12 +77,12 @@ void Dystopia::LifetimeAffector::EditorUI(void)
 #if EDITOR
 	EGUI::PushLeftAlign(100.f);
 
-	float out = *reinterpret_cast<float*>(data + 4);
-	if (EGUI::Display::DragFloat("Min", &out, 0.1f, -FLT_MAX, FLT_MAX))
+	float out = GetMin();
+	if (EGUI::Display::DragFloat("Min", &out, 0.1f, -FLT_MAX, GetMax()))
 		SetMin(out);
 
-	out = *reinterpret_cast<float*>(data + 8);
-	if (EGUI::Display::DragFloat("Max", &out, 0.1f, -FLT_MAX, FLT_MAX))
+	out = GetMax();
+	if (EGUI::Display::DragFloat("Max", &out, 0.1f, GetMin(), FLT_MAX))
 		SetMax(out);
 
 	EGUI::PopLeftAlign();

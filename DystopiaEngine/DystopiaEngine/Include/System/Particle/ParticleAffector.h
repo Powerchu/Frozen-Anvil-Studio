@@ -63,27 +63,46 @@ namespace Dystopia
 		inline void Serialise(TextSerialiser& _out) const
 		{
 			_out.InsertStartBlock("Affector");
-			for (unsigned i = 0; i < 16; ++i)
-				_out << data[i];
-			for (unsigned i = 0; i < 4; ++i)
-				_out << reserved[i];
+
+			const unsigned long long* p1 = reinterpret_cast<const unsigned long long *>(data);
+			const unsigned long long* p2 = reinterpret_cast<const unsigned long long *>(data + 8);
+			const unsigned int* p3 = reinterpret_cast<const unsigned int *>(reserved);
+
+			_out << *p1;
+			_out << *p2;
+			_out << *p3;
+
+			// for (unsigned i = 0; i < 16; ++i)
+			// 	_out << data[i];
+			// for (unsigned i = 0; i < 4; ++i)
+			// 	_out << reserved[i];
 			_out.InsertEndBlock("Affector");
 		}
 
 		inline void UnSerialise(TextSerialiser& _in)
 		{
 			_in.ConsumeStartBlock();
-			char c = '\0';
-			for (unsigned i = 0; i < 16; ++i)
-			{
-				_in >> c;
-				data[i] = c;
-			}
-			for (unsigned i = 0; i < 4; ++i)
-			{
-				_in >> c;
-				reserved[i] = c;
-			}
+
+			unsigned long long ull = 0;
+			unsigned int ui = 0;
+			_in >> ull;
+			*reinterpret_cast<unsigned long long *>(data) = ull;
+			_in >> ull;
+			*reinterpret_cast<unsigned long long *>(data + 8) = ull;
+			_in >> ui;
+			*reinterpret_cast<unsigned int *>(reserved) = ui;
+
+			// char c = '\0';
+			// for (unsigned i = 0; i < 16; ++i)
+			// {
+			// 	_in >> c;
+			// 	data[i] = c;
+			// }
+			// for (unsigned i = 0; i < 4; ++i)
+			// {
+			// 	_in >> c;
+			// 	reserved[i] = c;
+			// }
 			_in.ConsumeEndBlock();
 		}
 

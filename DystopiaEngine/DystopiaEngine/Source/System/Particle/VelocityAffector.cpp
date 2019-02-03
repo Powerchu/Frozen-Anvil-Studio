@@ -64,6 +64,26 @@ void Dystopia::InitialVelocityAffector::SetMaxY(float _val)
 	*reinterpret_cast<float*>(data + 12) = _val;
 }
 
+float Dystopia::InitialVelocityAffector::GetMinX(void) const
+{
+	return *reinterpret_cast<const float*>(data);
+}
+
+float Dystopia::InitialVelocityAffector::GetMinY(void) const
+{
+	return *reinterpret_cast<const float*>(data + 4);
+}
+
+float Dystopia::InitialVelocityAffector::GetMaxX(void) const
+{
+	return *reinterpret_cast<const float*>(data + 8);
+}
+
+float Dystopia::InitialVelocityAffector::GetMaxY(void) const
+{
+	return *reinterpret_cast<const float*>(data + 12);
+}
+
 void Dystopia::InitialVelocityAffector::EnableRandomVel(bool _enabled)
 {
 	if (_enabled)
@@ -76,11 +96,11 @@ void Dystopia::InitialVelocityAffector::AffectorSpawn(Emitter& _emitter, float)
 {
 	std::random_device rDev;
 	std::mt19937 gen{ rDev() };
-	std::uniform_real_distribution<float> distrX{ *reinterpret_cast<float*>(data), *reinterpret_cast<float*>(data + 8) };
-	std::uniform_real_distribution<float> distrY{ *reinterpret_cast<float*>(data + 4), *reinterpret_cast<float*>(data + 12) };
+	std::uniform_real_distribution<float> distrX{ GetMinX(), GetMaxX() };
+	std::uniform_real_distribution<float> distrY{ GetMinY(), GetMaxY() };
 
-	float x = reserved[0] & (1 << 1) ? distrX(gen) : *reinterpret_cast<float*>(data + 8) ;
-	float y = reserved[0] & (1 << 1) ? distrY(gen) : *reinterpret_cast<float*>(data + 12) ;
+	float x = reserved[0] & (1 << 1) ? distrX(gen) : GetMaxX() ;
+	float y = reserved[0] & (1 << 1) ? distrY(gen) : GetMinX() ;
 
 	_emitter.GetSpawnDefaults().mVelocity.x = x;
 	_emitter.GetSpawnDefaults().mVelocity.y = y;
@@ -97,7 +117,7 @@ void Dystopia::InitialVelocityAffector::EditorUI(void)
 	EGUI::PushLeftAlign(100.f);
 	EGUI::PushID(54);
 
-	Math::Vec2 min{ *reinterpret_cast<float*>(data) , *reinterpret_cast<float*>(data + 4) };
+	Math::Vec2 min{ GetMinX(), GetMinY() };
 	auto arrResult = EGUI::Display::VectorFields("Min Vel", &min, 0.1f, -FLT_MAX, FLT_MAX);
 	for (auto &e : arrResult)
 	{
@@ -113,7 +133,7 @@ void Dystopia::InitialVelocityAffector::EditorUI(void)
 		}
 	}
 
-	Math::Vec2 max{ *reinterpret_cast<float*>(data + 8) , *reinterpret_cast<float*>(data + 12) };
+	Math::Vec2 max{ GetMaxX(), GetMaxY() };
 	auto arrResult2 = EGUI::Display::VectorFields("Max Vel", &max, 0.1f, -FLT_MAX, FLT_MAX);
 	for (auto &e : arrResult2)
 	{
@@ -121,8 +141,8 @@ void Dystopia::InitialVelocityAffector::EditorUI(void)
 		{
 		case EGUI::eDragStatus::eDRAGGING:
 		case EGUI::eDragStatus::eSTART_DRAG:
-			SetMaxX(min.x);
-			SetMaxY(min.y);
+			SetMaxX(max.x);
+			SetMaxY(max.y);
 			break;
 		default:
 			break;
