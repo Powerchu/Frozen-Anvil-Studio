@@ -654,6 +654,7 @@ namespace Dystopia
 					{
 					case EGUI::eDragStatus::eNO_CHANGE:
 					case EGUI::eDragStatus::eDRAGGING:
+						mpMesh->UpdateBuffer<VertexBuffer>(mDebugVertices);
 						break;
 					case EGUI::eDragStatus::eSTART_DRAG:
 						Collider::mDebugVertices[i].x = mVertices[i].mPosition.x;
