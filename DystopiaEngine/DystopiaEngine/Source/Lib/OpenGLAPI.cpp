@@ -242,21 +242,11 @@ AutoArray<std::pair<HashString, Gfx::eUniform_t>> Gfx::OpenGL_API::QueryVariable
 	auto nProg = StrongToGLType<GLuint>(_nProgram);
 	GLint count = 0;
 
-#   if defined(_DEBUG) | defined(DEBUG)
-	if (auto err = glGetError())
-		__debugbreak();
-#   endif 
-
 	glGetProgramiv(nProg, GL_ACTIVE_UNIFORMS, &count);
 
 	GLint typeBuffer[100];
 	GLuint indices[100];
 	char nameBuffer[256];
-
-#   if defined(_DEBUG) | defined(DEBUG)
-	if (auto err = glGetError())
-		__debugbreak();
-#   endif 
 
 	count = Ut::Min(count, Ut::Constant<GLint, sizeof(indices)/sizeof(GLuint)>::value);
 	for (GLint n = 0; n < count; ++n)
@@ -264,17 +254,17 @@ AutoArray<std::pair<HashString, Gfx::eUniform_t>> Gfx::OpenGL_API::QueryVariable
 
 	glGetActiveUniformsiv(nProg, count, indices, GL_UNIFORM_TYPE, typeBuffer);
 
-#   if defined(_DEBUG) | defined(DEBUG)
-	if (auto err = glGetError())
-		__debugbreak();
-#   endif 
-
 	AutoArray<std::pair<HashString, eUniform_t>> ty( count );
 
-	for (GLint n = 0; n < count; ++n)
+	for (GLint n = 0, texCount = 0; n < count; ++n)
 	{
+		glGetActiveUniformName(nProg, n, 256, nullptr, nameBuffer);
+
 		switch (typeBuffer[n])
 		{
+		case GL_SAMPLER_2D:
+			glProgramUniform1i(nProg, glGetUniformLocation(nProg, nameBuffer), texCount++);
+
 		case GL_INT:
 		case GL_BOOL:
 		case GL_FLOAT:
@@ -284,11 +274,10 @@ AutoArray<std::pair<HashString, Gfx::eUniform_t>> Gfx::OpenGL_API::QueryVariable
 		//case GL_FLOAT_MAT2:
 		//case GL_FLOAT_MAT3:
 		//case GL_FLOAT_MAT4:
-		//case GL_SAMPLER_2D:
 		case GL_UNSIGNED_INT:
-			glGetActiveUniformName(nProg, n, 256, nullptr, nameBuffer);
 			ty.EmplaceBack(static_cast<char*>(nameBuffer), ResolveUniformType(typeBuffer[n]));
 			break;
+
 		default:
 			break;
 		}

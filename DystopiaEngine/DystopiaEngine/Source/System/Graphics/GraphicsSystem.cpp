@@ -306,6 +306,13 @@ namespace
 		{
 			s->UploadUniformi(strName.c_str(), value);
 		}
+
+		template <>
+		void operator() < std::pair<Dystopia::Texture*, int>&> (std::pair<Dystopia::Texture*, int>& value)
+		{
+			if (value.first)
+				value.first->Bind(value.second);
+		}
 	};
 
 	template <typename T>
@@ -682,6 +689,7 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 	fb.Unbind();
 	glViewport(0, 0, win.GetWidth(), win.GetHeight());
 	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #endif
 
 	GetGameView().AsTexture()->Bind(0);
@@ -715,7 +723,7 @@ void Dystopia::GraphicsSystem::Shutdown(void)
 void Dystopia::GraphicsSystem::LoadDefaults(void)
 {
 	mViews.Emplace(2048u, 2048u, true);
-	mViews.Emplace(2048u, 2048u, true);
+	mViews.Emplace(2048u, 2048u, true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	mViews.Emplace(
 		static_cast<unsigned>(mvResolution.x),
 		static_cast<unsigned>(mvResolution.y),
@@ -755,6 +763,7 @@ void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
 	int n;
 	bool alpha;
 	unsigned w, h;
+	int src, dst;
 
 	_in >> n;
 	for (int j = 0; j < n; ++j)
@@ -762,8 +771,10 @@ void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
 		_in >> w;
 		_in >> h;
 		_in >> alpha;
+		_in >> src;
+		_in >> dst;
 
-		mViews.Emplace(w, h, alpha);
+		mViews.Emplace(w, h, alpha, src, dst);
 	}
 	_in >> mbDebugDrawCheckBox;
 	_in >> mfDebugLineThreshold;
@@ -785,6 +796,8 @@ void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
 		_out << e.GetWidth();
 		_out << e.GetHeight();
 		_out << e.HasAlpha();
+		_out << e.GetBlendSrc();
+		_out << e.GetBlendDst();
 	}
 
 	_out << mbDebugDrawCheckBox;

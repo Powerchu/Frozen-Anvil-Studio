@@ -25,7 +25,7 @@ namespace Dystopia
 		// ====================================== CONSTRUCTORS ======================================= // 
 
 		Framebuffer(void) noexcept;
-		explicit Framebuffer(unsigned _nWidth, unsigned _nHeight, bool _bAlpha) noexcept;
+		explicit Framebuffer(unsigned _nWidth, unsigned _nHeight, bool _bAlpha, int = 0x302, int = 0x303) noexcept;
 
 		~Framebuffer(void) noexcept;
 
@@ -33,14 +33,16 @@ namespace Dystopia
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 
 		void Init(void);
-		void Init(unsigned _nWidth, unsigned _nHeight, bool _bAlpha = true);
+		void Init(unsigned _nWidth, unsigned _nHeight, bool _bAlpha = true, int = 0x302, int = 0x303);
 
 		void Bind(void) const noexcept;
 		void Unbind(void) const noexcept;
 
-		bool HasAlpha(void) const;
-		unsigned GetWidth(void) const;
-		unsigned GetHeight(void) const;
+		bool HasAlpha(void) const noexcept;
+		unsigned GetWidth (void) const noexcept;
+		unsigned GetHeight(void) const noexcept;
+		int GetBlendSrc(void) const noexcept;
+		int GetBlendDst(void) const noexcept;
 
 		Texture* AsTexture(void) const noexcept;
 
@@ -51,6 +53,7 @@ namespace Dystopia
 
 		bool mbAlpha;
 		unsigned mnWidth, mnHeight;
+		int mBlendSrc, mBlendDst;
 	};
 }
 

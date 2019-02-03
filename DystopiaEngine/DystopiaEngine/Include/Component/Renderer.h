@@ -40,7 +40,7 @@ namespace Dystopia
 	class _DLL_EXPORT Renderer : public Component
 	{
 	protected:
-		using ShaderVariant_t = Variant<int, bool, float, Math::Vec2, Math::Vec4>;
+		using ShaderVariant_t = Variant<int, bool, float, Math::Vec2, Math::Vec4, std::pair<Texture*, int>>;
 
 	public:
 
@@ -98,13 +98,14 @@ namespace Dystopia
 
 		std::pair<OString, ::Gfx::eUniform_t> const* FindUniformInShader(const char*);
 
-		using ShaderVariant_t = Variant<int, bool, float, Math::Vec2, Math::Vec4>;
 		using ShaderTypeList = Ut::Collection<
-			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::INT  ), int>,
-			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::BOOL ), bool>,
-			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::FLOAT), float>,
-			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::VEC2 ), Math::Vec2>,
-			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::VEC4 ), Math::Vec4>>;
+			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::INT       ), int>,
+			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::BOOL      ), bool>,
+			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::FLOAT     ), float>,
+			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::VEC2      ), Math::Vec2>,
+			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::VEC4      ), Math::Vec4>,
+			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::TEXTURE_2D), std::pair<Texture*, int>>
+		>;
 
 		struct UIVisitor
 		{
@@ -118,6 +119,7 @@ namespace Dystopia
 			template<> void operator()(bool&);
 			template<> void operator()(Math::Vec2&);
 			template<> void operator()(Math::Vec4&);
+			template<> void operator()(std::pair<Texture*, int>&);
 		};
 
 		unsigned mnUnique;
