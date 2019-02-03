@@ -501,7 +501,7 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 			EGUI::PushID(static_cast<int>(i));
 			EGUI::Indent(30.f);
 			EGUI::Display::Label((mSpawn[i].*affectorNames[mSpawn[i].GetID()])());
-			EGUI::UnIndent();
+			EGUI::UnIndent(30.f);
 			EGUI::PopID();
 		}
 		EGUI::Display::EndTreeNode();
@@ -514,7 +514,7 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 			EGUI::PushID(static_cast<int>(i));
 			EGUI::Indent(30.f);
 			EGUI::Display::Label((mUpdate[i].*affectorNames[mUpdate[i].GetID()])());
-			EGUI::UnIndent();
+			EGUI::UnIndent(30.f);
 			EGUI::PopID();
 		}
 		EGUI::Display::EndTreeNode();
@@ -527,7 +527,7 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 			EGUI::PushID(static_cast<int>(i));
 			EGUI::Indent(30.f);
 			EGUI::Display::Label((mFixedUpdate[i].*affectorNames[mFixedUpdate[i].GetID()])());
-			EGUI::UnIndent();
+			EGUI::UnIndent(30.f);
 			EGUI::PopID();
 		}
 		EGUI::Display::EndTreeNode();
