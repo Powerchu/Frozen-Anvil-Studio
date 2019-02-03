@@ -29,6 +29,7 @@ namespace Dystopia
 		float mfSize= 100.f;
 
 		Math::Vec3 mVelocity;
+		Math::Vec3 mAccel;
 		float mfLifeDur;
 
 		size_t mnLimit = 10000;
