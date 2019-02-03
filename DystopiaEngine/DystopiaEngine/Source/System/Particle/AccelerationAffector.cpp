@@ -1,6 +1,6 @@
 /* HEADER ********************************************************************************* /
 /*!
-\file	VelocityAffector.cpp
+\file	AccelerationAffector.cpp
 \author Shannon Tan (100%)
 \par    email: t.shannon\@digipen.edu
 \brief
@@ -21,7 +21,7 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "System/Particle/VelocityAffector.h"
+#include "System/Particle/AccelerationAffector.h"
 
 #include "Component/Emitter.h"
 
@@ -33,58 +33,58 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EGUI.h"
 #endif 
 
-Dystopia::InitialVelocityAffector::InitialVelocityAffector(void)
-	: ParticleAffector{ &InitialVelocityAffector::AffectorSpawn }
+Dystopia::InitialAccelerationAffector::InitialAccelerationAffector(void)
+	: ParticleAffector{ &InitialAccelerationAffector::AffectorSpawn }
 {
 	memset(data, 0, 16);
 	memset(reserved, 0, 4);
 }
 
-Dystopia::InitialVelocityAffector::~InitialVelocityAffector(void)
+Dystopia::InitialAccelerationAffector::~InitialAccelerationAffector(void)
 {
 }
 
-void Dystopia::InitialVelocityAffector::SetMinX(float _val)
+void Dystopia::InitialAccelerationAffector::SetMinX(float _val)
 {
 	*reinterpret_cast<float*>(data) = _val;
 }
 
-void Dystopia::InitialVelocityAffector::SetMinY(float _val)
+void Dystopia::InitialAccelerationAffector::SetMinY(float _val)
 {
 	*reinterpret_cast<float*>(data + 4) = _val;
 }
 
-void Dystopia::InitialVelocityAffector::SetMaxX(float _val)
+void Dystopia::InitialAccelerationAffector::SetMaxX(float _val)
 {
 	*reinterpret_cast<float*>(data + 8) = _val;
 }
 
-void Dystopia::InitialVelocityAffector::SetMaxY(float _val)
+void Dystopia::InitialAccelerationAffector::SetMaxY(float _val)
 {
 	*reinterpret_cast<float*>(data + 12) = _val;
 }
 
-float Dystopia::InitialVelocityAffector::GetMinX(void) const
+float Dystopia::InitialAccelerationAffector::GetMinX(void) const
 {
 	return *reinterpret_cast<const float*>(data);
 }
 
-float Dystopia::InitialVelocityAffector::GetMinY(void) const
+float Dystopia::InitialAccelerationAffector::GetMinY(void) const
 {
 	return *reinterpret_cast<const float*>(data + 4);
 }
 
-float Dystopia::InitialVelocityAffector::GetMaxX(void) const
+float Dystopia::InitialAccelerationAffector::GetMaxX(void) const
 {
 	return *reinterpret_cast<const float*>(data + 8);
 }
 
-float Dystopia::InitialVelocityAffector::GetMaxY(void) const
+float Dystopia::InitialAccelerationAffector::GetMaxY(void) const
 {
 	return *reinterpret_cast<const float*>(data + 12);
 }
 
-void Dystopia::InitialVelocityAffector::EnableRandomVel(bool _enabled)
+void Dystopia::InitialAccelerationAffector::EnableRandom(bool _enabled)
 {
 	if (_enabled)
 		reserved[0] |= (1 << 1);
@@ -92,7 +92,7 @@ void Dystopia::InitialVelocityAffector::EnableRandomVel(bool _enabled)
 		reserved[0] &= ~(1 << 1);
 }
 
-void Dystopia::InitialVelocityAffector::AffectorSpawn(Emitter& _emitter, float)
+void Dystopia::InitialAccelerationAffector::AffectorSpawn(Emitter& _emitter, float)
 {
 	std::random_device rDev;
 	std::mt19937 gen{ rDev() };
@@ -108,24 +108,24 @@ void Dystopia::InitialVelocityAffector::AffectorSpawn(Emitter& _emitter, float)
 		y = distrY(gen);
 	}
 
-	_emitter.GetSpawnDefaults().mVelocity.x = x;
-	_emitter.GetSpawnDefaults().mVelocity.y = y;
+	_emitter.GetSpawnDefaults().mAccel.x = x;
+	_emitter.GetSpawnDefaults().mAccel.y = y;
 }
 
-const char * Dystopia::InitialVelocityAffector::EditorDisplayLabel(void) const
+const char * Dystopia::InitialAccelerationAffector::EditorDisplayLabel(void) const
 {
-	return "Initially Velocity";
+	return "Initially Acceleration";
 }
 
-void Dystopia::InitialVelocityAffector::EditorUI(void)
+void Dystopia::InitialAccelerationAffector::EditorUI(void)
 {
 #if EDITOR
 	EGUI::PushLeftAlign(100.f);
-	EGUI::PushID(54);
+	EGUI::PushID(59);
 
 	bool rand = reserved[0] & (1 << 1);
 	if (EGUI::Display::CheckBox("Random Vel", &rand))
-		EnableRandomVel(rand);
+		EnableRandom(rand);
 
 	Math::Vec2 min{ GetMinX(), GetMinY() };
 	auto arrResult = EGUI::Display::VectorFields("Min Vel", &min, 0.1f, -FLT_MAX, FLT_MAX);
@@ -170,40 +170,6 @@ void Dystopia::InitialVelocityAffector::EditorUI(void)
 	EGUI::PopLeftAlign();
 #endif 
 }
-
-/********************************************************************************************************************/
-
-Dystopia::VelocityOverLifeAffector::VelocityOverLifeAffector(void)
-	: ParticleAffector{ &VelocityOverLifeAffector::AffectorUpdate }
-{
-	memset(data, 0, 16);
-	memset(reserved, 0, 4);
-}
-
-Dystopia::VelocityOverLifeAffector::~VelocityOverLifeAffector(void)
-{
-}
-
-void Dystopia::VelocityOverLifeAffector::AffectorUpdate(Emitter&, float)
-{
-}
-
-const char * Dystopia::VelocityOverLifeAffector::EditorDisplayLabel(void) const
-{
-	return "Velocity Over Life";
-}
-
-void Dystopia::VelocityOverLifeAffector::EditorUI(void)
-{
-#if EDITOR
-	EGUI::PushLeftAlign(100.f);
-
-
-
-	EGUI::PopLeftAlign();
-#endif 
-}
-
 
 
 
