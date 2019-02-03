@@ -430,6 +430,9 @@
     <ClCompile Include="Source\System\Particle\LifetimeAffector.cpp">
       <Filter>Game Engine\Systems\Particle\Affectors\Lifetime</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Particle\AccelerationAffector.cpp">
+      <Filter>Game Engine\Systems\Particle\Affectors\Acceleration</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -1179,6 +1182,12 @@
     <ClInclude Include="Include\Math\PerlinNoise.h">
       <Filter>Math\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Include\System\Particle\AccelerationAffector.h">
+      <Filter>Game Engine\Systems\Particle\Affectors\Acceleration</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Collision\CollisionLayers.h">
+      <Filter>Game Engine\Systems\Collision</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1693,6 +1702,9 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Particle\Affectors\Color">
       <UniqueIdentifier>{77c047d2-7180-4cc4-ba80-2593a96fdeed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Particle\Affectors\Acceleration">
+      <UniqueIdentifier>{ca83b01c-c483-46c9-a9ae-a4306b9ba01e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

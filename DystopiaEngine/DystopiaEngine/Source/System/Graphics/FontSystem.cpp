@@ -166,6 +166,7 @@ Dystopia::Font* Dystopia::FontSystem::LoadFromFont(const HashString& _strPath, F
 	}
 
 	FT_Done_Face(pFontFace);
+	ImageParser::WriteBMP((_strPath + ".bmp").c_str(), &charMap);
 
 	auto pTexSys = EngineCore::GetInstance()->Get<TextureSystem>();
 	_out->mpAtlas = pTexSys->GenAtlas();
@@ -244,8 +245,6 @@ Dystopia::CharSpace Dystopia::FontSystem::PackFont(AutoArray<CharSpace>& _spaces
 
 void Dystopia::FontSystem::OutputFontmap(Image* _pData, Font const* _pFont, HashString const& _strPath)
 {
-	ImageParser::WriteBMP((_strPath + ".bmp").c_str(), _pData);
-
 	auto out = Serialiser::OpenFile<TextSerialiser>((_strPath + "." + Gbl::FONTMAP_EXT).c_str(), Serialiser::MODE_WRITE);
 
 	auto& ch = _pFont->mSpaces;

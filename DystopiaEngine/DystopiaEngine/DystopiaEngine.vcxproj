@@ -29,6 +29,7 @@
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
     <ClCompile Include="Include\IO\XMLParser.cpp" />
+    <ClCompile Include="Source\System\Particle\AccelerationAffector.cpp" />
     <ClCompile Include="Source\System\Particle\ColorAffector.cpp" />
     <ClCompile Include="Source\System\Particle\LifetimeAffector.cpp" />
     <ClCompile Include="Source\System\Particle\LocationAffector.cpp" />
@@ -228,6 +229,7 @@
     <ClInclude Include="Include\System\AI\NeuralTree.h" />
     <ClInclude Include="Include\System\AI\TreeBuilder.h" />
     <ClInclude Include="Include\System\Behaviour\BehaviourList.h" />
+    <ClInclude Include="Include\System\Collision\CollisionLayers.h" />
     <ClInclude Include="Include\System\Database\DatabaseSystem.h" />
     <ClInclude Include="Include\System\Database\DataSheet.h" />
     <ClInclude Include="Include\System\Database\DataSheetElement.h" />
@@ -283,6 +285,7 @@
     <ClInclude Include="Include\System\Graphics\TextureAtlas.h" />
     <ClInclude Include="Include\System\Logger\FileLogger.h" />
     <ClInclude Include="Include\Component\Emitter.h" />
+    <ClInclude Include="Include\System\Particle\AccelerationAffector.h" />
     <ClInclude Include="Include\System\Particle\ColorAffector.h" />
     <ClInclude Include="Include\System\Particle\LifetimeAffector.h" />
     <ClInclude Include="Include\System\Particle\LocationAffector.h" />
@@ -424,7 +427,7 @@
     <ProjectGuid>{3CD686C5-C483-406D-8822-F32F4CCC161A}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>DystopiaEngine</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

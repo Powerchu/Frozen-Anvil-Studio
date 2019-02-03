@@ -75,6 +75,11 @@ void Dystopia::LocationAffector::SetRadius(unsigned short _val)
 	*reinterpret_cast<unsigned short*>(data + 4) = _val;
 }
 
+unsigned short Dystopia::LocationAffector::GetRadius(void) const
+{
+	return *reinterpret_cast<const unsigned short*>(data + 4);
+}
+
 /* rectangle */
 void Dystopia::LocationAffector::ToggleRectangle(void)
 {
@@ -94,6 +99,16 @@ void Dystopia::LocationAffector::SetWidth(unsigned short _val)
 	*reinterpret_cast<unsigned short*>(data + 8) = _val;
 }
 
+unsigned short Dystopia::LocationAffector::GetHeight(void) const
+{
+	return *reinterpret_cast<const unsigned short*>(data + 6);
+}
+
+unsigned short Dystopia::LocationAffector::GetWidth(void) const
+{
+	return *reinterpret_cast<const unsigned short*>(data + 8);
+}
+
 /* triangle */
 void Dystopia::LocationAffector::ToggleTriangle(void)
 {
@@ -108,6 +123,11 @@ void Dystopia::LocationAffector::SetTriangleEdge(unsigned short _val)
 	*reinterpret_cast<unsigned short*>(data + 10) = _val;
 }
 
+unsigned short Dystopia::LocationAffector::GetTEdge(void) const
+{
+	return *reinterpret_cast<const unsigned short*>(data + 10);
+}
+
 /* star */
 void Dystopia::LocationAffector::ToggleStar(void)
 {
@@ -120,6 +140,11 @@ void Dystopia::LocationAffector::ToggleStar(void)
 void Dystopia::LocationAffector::SetStarEdge(unsigned short _val)
 {
 	*reinterpret_cast<unsigned short*>(data + 12) = _val;
+}
+
+unsigned short Dystopia::LocationAffector::GetSEdge(void) const
+{
+	return *reinterpret_cast<const unsigned short*>(data + 12);
 }
 
 void Dystopia::LocationAffector::TogglePoint(void)
@@ -167,12 +192,12 @@ void Dystopia::LocationAffector::Circle(Emitter& _emitter)
 	float rads = Math::Degrees{ static_cast<float>(randomAngle) }.Radians();
 	if (reserved[0] & (1 << 0)) // if surface only
 	{
-		particle.mPos.x = sin(rads) * static_cast<float>(*reinterpret_cast<unsigned short*>(data + 4));
-		particle.mPos.y = cos(rads) * static_cast<float>(*reinterpret_cast<unsigned short*>(data + 4));
+		particle.mPos.x = sin(rads) * static_cast<float>(GetRadius());
+		particle.mPos.y = cos(rads) * static_cast<float>(GetRadius());
 	}
 	else
 	{
-		std::uniform_int_distribution<unsigned short> distr2{ 0, *reinterpret_cast<unsigned short*>(data + 4) };
+		std::uniform_int_distribution<unsigned short> distr2{ 0, GetRadius() };
 		particle.mPos.x = sin(rads) * static_cast<float>(distr2(gen));
 		particle.mPos.y = cos(rads) * static_cast<float>(distr2(gen));
 	}
@@ -184,38 +209,44 @@ void Dystopia::LocationAffector::Rectangle(Emitter& _emitter)
 	std::random_device rDev;
 	std::mt19937 gen{ rDev() };
 
+	std::uniform_int_distribution<unsigned short> disX{ 0, GetWidth() };
+	std::uniform_int_distribution<unsigned short> disY{ 0, GetHeight() };
+
 	if (reserved[0] & (1 << 0)) // if surface only
 	{
-		int len = (*reinterpret_cast<unsigned short*>(data + 8) * 2) + (*reinterpret_cast<unsigned short*>(data + 6) * 2);
-		std::uniform_real_distribution<float> disL{ 0.f,  static_cast<float>(len) };
-		float lineP = disL(gen);
-		if (lineP <= static_cast<float>(*reinterpret_cast<unsigned short*>(data + 6)))
+		std::uniform_int_distribution<unsigned short> distEdge{ 0, 3 };
+		unsigned short edge = distEdge(gen);
+		float x = 0.f, y = 0.f;
+		switch (edge)
 		{
-			particle.mPos.x = 0 - (static_cast<float>(*reinterpret_cast<unsigned short*>(data + 8)) * 0.5f);
-			particle.mPos.y = static_cast<float>(lineP) - (static_cast<float>(*reinterpret_cast<unsigned short*>(data + 6)) * 0.5f);
+		case 0:
+			// use x=0, y=?
+			x = 0-(static_cast<float>(GetWidth()) * 0.5f);
+			y = static_cast<float>(disY(gen)) - (static_cast<float>(GetHeight()) * 0.5f);
+			break;
+		case 1:
+			// use x=1, y=?
+			x = static_cast<float>(GetWidth()) * 0.5f;
+			y = static_cast<float>(disY(gen)) - (static_cast<float>(GetHeight()) * 0.5f);
+			break;
+		case 2:
+			// use x=?, y=0
+			x = static_cast<float>(disX(gen)) - (static_cast<float>(GetWidth()) * 0.5f);
+			y = 0-(static_cast<float>(GetHeight()) * 0.5f);
+			break;
+		case 3:
+			// use x=?, y=1
+			x = static_cast<float>(disX(gen)) - (static_cast<float>(GetWidth()) * 0.5f);
+			y = static_cast<float>(GetHeight()) * 0.5f;
+			break;
 		}
-		else if (lineP <= static_cast<float>(*reinterpret_cast<unsigned short*>(data + 6) + *reinterpret_cast<unsigned short*>(data + 8)))
-		{
-			particle.mPos.x = static_cast<float>(lineP) - (static_cast<float>(*reinterpret_cast<unsigned short*>(data + 8)) * 0.5f);
-			particle.mPos.y = 0 - (static_cast<float>(*reinterpret_cast<unsigned short*>(data + 6)) * 0.5f);
-		}
-		else if (lineP <= static_cast<float>((*reinterpret_cast<unsigned short*>(data + 6) * 2) + *reinterpret_cast<unsigned short*>(data + 8)))
-		{
-			particle.mPos.x = static_cast<float>(*reinterpret_cast<unsigned short*>(data + 8)) * 0.5f;
-			particle.mPos.y = static_cast<float>(lineP) - (static_cast<float>(*reinterpret_cast<unsigned short*>(data + 6)) * 0.5f);
-		}
-		else if (lineP <= len)
-		{
-			particle.mPos.x = static_cast<float>(lineP) - (static_cast<float>(*reinterpret_cast<unsigned short*>(data + 8)) * 0.5f);
-			particle.mPos.y = static_cast<float>(*reinterpret_cast<unsigned short*>(data + 6)) * 0.5f;
-		}
+		particle.mPos.x = x;
+		particle.mPos.y = y;
 	}
 	else
 	{
-		std::uniform_int_distribution<unsigned short> disX{ 0, *reinterpret_cast<unsigned short*>(data + 8) };
-		std::uniform_int_distribution<unsigned short> disY{ 0, *reinterpret_cast<unsigned short*>(data + 6) };
-		particle.mPos.x = static_cast<float>(disX(gen)) - (static_cast<float>(*reinterpret_cast<unsigned short*>(data + 8)) * 0.5f);
-		particle.mPos.y = static_cast<float>(disY(gen)) - (static_cast<float>(*reinterpret_cast<unsigned short*>(data + 6)) * 0.5f);
+		particle.mPos.x = static_cast<float>(disX(gen)) - (static_cast<float>(GetWidth()) * 0.5f);
+		particle.mPos.y = static_cast<float>(disY(gen)) - (static_cast<float>(GetHeight()) * 0.5f);
 	}
 }
 
@@ -262,7 +293,7 @@ void Dystopia::LocationAffector::EditorUI(void)
 	if (EGUI::Display::CheckBox("Circle", &circ))
 		ToggleCircle();
 
-	int out = static_cast<int>(*reinterpret_cast<unsigned short*>(data + 4));
+	int out = static_cast<int>(GetRadius());
 	if (EGUI::Display::DragInt("Radius", &out, 1.f, 0, 0xffff))
 		SetRadius(static_cast<short>(out));
 
@@ -270,20 +301,20 @@ void Dystopia::LocationAffector::EditorUI(void)
 	if (EGUI::Display::CheckBox("Rectangle", &rect))
 		ToggleRectangle();
 
-	unsigned short a = *reinterpret_cast<unsigned short*>(data + 8);
+	unsigned short a = GetWidth();
 	out = static_cast<int>(a);
-	if (EGUI::Display::DragInt("X", &out, 1.f, 0, 0xffff))
+	if (EGUI::Display::DragInt("Width", &out, 1.f, 0, 0xffff))
 		SetWidth(static_cast<short>(out));
 
-	out = static_cast<int>(*reinterpret_cast<unsigned short*>(data + 6));
-	if (EGUI::Display::DragInt("Y", &out, 1.f, 0, 0xffff))
+	out = static_cast<int>(GetHeight());
+	if (EGUI::Display::DragInt("Height", &out, 1.f, 0, 0xffff))
 		SetHeight(static_cast<short>(out));
 
 	bool tri = reserved[0] & (1 << 3);
 	if (EGUI::Display::CheckBox("Triangle", &tri))
 		ToggleTriangle();
 
-	out = static_cast<int>(*reinterpret_cast<unsigned short*>(data + 10));
+	out = static_cast<int>(GetTEdge());
 	if (EGUI::Display::DragInt("T Edge", &out, 1.f, 0, 0xffff))
 		SetTriangleEdge(static_cast<short>(out));
 
@@ -291,7 +322,7 @@ void Dystopia::LocationAffector::EditorUI(void)
 	if (EGUI::Display::CheckBox("Star", &star))
 		ToggleStar();
 
-	out = static_cast<int>(*reinterpret_cast<unsigned short*>(data + 12));
+	out = static_cast<int>(GetSEdge());
 	if (EGUI::Display::DragInt("S Edge", &out, 1.f, 0, 0xffff))
 		SetStarEdge(static_cast<short>(out));
 

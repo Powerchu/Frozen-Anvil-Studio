@@ -51,6 +51,11 @@ void Dystopia::SpawnAffector::SetSpawnRate(unsigned short _particlePerSecond)
 	*reinterpret_cast<unsigned short*>(data + 4) = _particlePerSecond;
 }
 
+unsigned short Dystopia::SpawnAffector::GetSpawnRate(void) const
+{
+	return *reinterpret_cast<const unsigned short*>(data + 4);
+}
+
 void Dystopia::SpawnAffector::EnableContinuous(bool _enabled)
 {
 	if (_enabled)
@@ -68,6 +73,16 @@ void Dystopia::SpawnAffector::SetBurstCount(unsigned short _particlePerBurst)
 void Dystopia::SpawnAffector::SetBurstLow(unsigned short _particlePerBurstLow)
 {
 	*reinterpret_cast<unsigned short*>(data + 8) = _particlePerBurstLow;
+}
+
+unsigned short Dystopia::SpawnAffector::GetBurstCount(void) const
+{
+	return *reinterpret_cast<const unsigned short*>(data + 6);
+}
+
+unsigned short Dystopia::SpawnAffector::GetBurstLow(void) const
+{
+	return *reinterpret_cast<const unsigned short*>(data + 8);
 }
 
 void Dystopia::SpawnAffector::EnableBurst(bool _enabled)
@@ -91,6 +106,11 @@ void Dystopia::SpawnAffector::SetInitialDelay(float _delay)
 	*reinterpret_cast<float*>(data + 10) = _delay;
 }
 
+float Dystopia::SpawnAffector::GetInitialDelay(void) const
+{
+	return *reinterpret_cast<const float*>(data + 10);
+}
+
 void Dystopia::SpawnAffector::AffectorUpdate(Dystopia::Emitter& _emitter, float _dt)
 {
 	float& dtCounter = *reinterpret_cast<float*>(data);
@@ -106,7 +126,7 @@ void Dystopia::SpawnAffector::AffectorUpdate(Dystopia::Emitter& _emitter, float 
 	// do continuous spawn
 	if (reserved[0] & (1 << 0))
 	{
-		unsigned short spawnPerSecond = *reinterpret_cast<unsigned short*>(data + 4);
+		unsigned short spawnPerSecond = GetSpawnRate();
 		if (spawnPerSecond)
 		{
 			float intervals = (1.f / static_cast<float>(spawnPerSecond));
@@ -128,8 +148,8 @@ void Dystopia::SpawnAffector::AffectorUpdate(Dystopia::Emitter& _emitter, float 
 		// do random burst
 		if (reserved[0] & (1 << 2))
 		{
-			unsigned short min = *reinterpret_cast<unsigned short*>(data + 8);
-			unsigned short max = *reinterpret_cast<unsigned short*>(data + 6);
+			unsigned short min = GetBurstLow();
+			unsigned short max = GetBurstCount();
 
 			std::random_device rd; 
 			std::mt19937 gen{ rd() };
@@ -176,8 +196,7 @@ void Dystopia::SpawnAffector::EditorUI(void)
 	if (EGUI::Display::CheckBox("Continuous", &mbContinuous))
 		EnableContinuous(mbContinuous);
 
-	unsigned short count = *reinterpret_cast<unsigned short*>(data + 4);
-	int out = static_cast<int>(count);
+	int out = static_cast<int>(GetSpawnRate());
 	if (EGUI::Display::DragInt("Spawn Rate", &out, 1.f, 0, 10000))
 		SetSpawnRate(static_cast<unsigned short>(out));
 
@@ -189,15 +208,12 @@ void Dystopia::SpawnAffector::EditorUI(void)
 	if (EGUI::Display::CheckBox("Burst Random", &mbBurstRandom))
 		EnableRandomBurst(mbBurstRandom);
 
-	unsigned short high = *reinterpret_cast<unsigned short*>(data + 6);
-	out = static_cast<int>(high);
-	if (EGUI::Display::DragInt("Burst High", &out, 1.f, 0, 10000))
+	out = static_cast<int>(GetBurstCount());
+	if (EGUI::Display::DragInt("Burst High", &out, 1.f, GetBurstLow(), 10000))
 		SetBurstCount(static_cast<unsigned short>(out));
-	high = *reinterpret_cast<unsigned short*>(data + 6);
 
-	unsigned short low = *reinterpret_cast<unsigned short*>(data + 8);
-	out = static_cast<int>(low);
-	if (EGUI::Display::DragInt("Burst Low", &out, 1.f, 0, static_cast<int>(high)))
+	out = static_cast<int>(GetBurstLow());
+	if (EGUI::Display::DragInt("Burst Low", &out, 1.f, 0, static_cast<int>(GetBurstCount())))
 		SetBurstLow(static_cast<unsigned short>(out));
 
 	EGUI::PopLeftAlign();

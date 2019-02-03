@@ -76,6 +76,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Particle/ColorAffector.h"
 #include "System/Particle/VelocityAffector.h"
 #include "System/Particle/SizeAffector.h"
+#include "System/Particle/AccelerationAffector.h"
 
 namespace Dystopia
 {
@@ -142,6 +143,15 @@ namespace Dystopia
 			return true;
 		}
 
+		static bool IsolateCompSerialise(Component* _pComp, TextSerialiser& _out)
+		{
+			C* pComponent = dynamic_cast<C*>(_pComp);
+			if (!pComponent)
+				return false;
+			pComponent->Serialise(_out);
+			return true;
+		}
+
 		static bool IsolateUnserialise(Component* _pCom, TextSerialiser& _in)
 		{
 			static_cast<C*>(_pCom)->Unserialise(_in);
@@ -189,6 +199,13 @@ namespace Dystopia
 				return false;
 			}
 
+			bool IsolateSerialise(unsigned int _i, Component * _comp, TextSerialiser& _out)
+			{
+				static auto mData = Ctor::MakeArray<bool(*)(Component *, TextSerialiser&)>(RequestComponent<typename Ut::MetaExtract<Ns, UsableComponents>::result::type>::IsolateCompSerialise...);
+				if (_i < size || _i >= 0)
+					return mData[_i](_comp, _out);
+				return false;
+			}
 			bool IsolateUnserialise(unsigned int _i, Component* _pCom, TextSerialiser& _in)
 			{
 				static auto mData = Ctor::MakeArray<bool(*)(Component*, TextSerialiser&)>(RequestComponent<typename Ut::MetaExtract<Ns, UsableComponents>::result::type>::IsolateUnserialise...);
@@ -216,6 +233,12 @@ namespace Dystopia
 		{
 			return mCollection.IsolateSerialise(_i, _owner, _out);
 		}
+
+		bool IsolateSerialise(unsigned int _i, Component *_owner, TextSerialiser& _out)
+		{
+			return mCollection.IsolateSerialise(_i, _owner, _out);
+		}
+
 
 		bool IsolateUnserialise(Component *_pCom, TextSerialiser& _in)
 		{

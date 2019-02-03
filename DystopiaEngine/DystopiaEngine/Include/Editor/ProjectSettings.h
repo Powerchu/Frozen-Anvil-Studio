@@ -22,6 +22,7 @@ namespace Dystopia
 	class PhysicsSystem;
 	class InputManager;
 	class TagSystem;
+	class CollisionSystem;
 }
 
 namespace Editor
@@ -50,7 +51,7 @@ namespace Editor
 		Dystopia::PhysicsSystem	  *mpPhySys;
 		Dystopia::InputManager    *mpInputSys;
 		Dystopia::TagSystem       *mpTagSystem;
-
+		Dystopia::CollisionSystem *mpColSystem;
 
 	};
 

@@ -26,6 +26,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/PointCollider.h"
 #include "Math/Quaternion.h"
 #include "Editor/EditorCommands.h"
+#include "System/Graphics/Mesh.h"
+#include "System/Graphics/MeshSystem.h"
 
 #if EDITOR
 #include "Editor/EGUI.h"
@@ -47,16 +49,16 @@ namespace Dystopia
 
 	void Convex::Awake(void)
 	{
-		mVertices.clear();
+		if (mVertices.IsEmpty())
+			mVertices = {
+				Vertice{ Math::MakePoint3D(.5f,.5f,0) },
+				Vertice{ Math::MakePoint3D(-.5f,.5f,0) },
+				Vertice{ Math::MakePoint3D(-.5f,-.5f,0) },
+				Vertice{ Math::MakePoint3D(.5f,-.5f,0) }
+			};
 
-		mVertices = {
-			Vertice{ Math::MakePoint3D(.5f,.5f,0) },
-			Vertice{ Math::MakePoint3D(-.5f,.5f,0) },
-			Vertice{ Math::MakePoint3D(-.5f,-.5f,0) },
-			Vertice{ Math::MakePoint3D(.5f,-.5f,0) }
-		};
-
-		mNumPoints = 4;
+		if (mNumPoints < 4)
+			mNumPoints = 4;
 
 		mDebugVertices.clear();
 
@@ -66,6 +68,8 @@ namespace Dystopia
 		}
 
 		Collider::Awake();
+		if (mpMesh)
+			mpMesh->UpdateBuffer<VertexBuffer>(mDebugVertices);
 	}
 
 	void Convex::Load()
@@ -160,6 +164,7 @@ namespace Dystopia
 		_in.ConsumeEndBlock();
 
 		mColLayer = static_cast<eColLayer>(collayer_temp);
+		Awake();
 	}
 
 	Convex * Convex::Duplicate() const
@@ -616,6 +621,16 @@ namespace Dystopia
 			switch (EGUI::Display::DragInt("	Size		", &mNumPoints, 1, 4, 32, false, 128))
 			{
 			case EGUI::eDragStatus::eDRAGGING:
+				{
+					while (mVertices.size() < unsigned int(mNumPoints))
+					{
+						mVertices.push_back(Math::MakePoint3D(0.0f, 0.0f, 0.0f));
+					}
+					while (mVertices.size() > unsigned int(mNumPoints))
+					{
+						mVertices.pop_back();
+					}
+				}
 				break;
 			case EGUI::eDragStatus::eSTART_DRAG:
 				//EGUI::GetCommandHND()->StartRecording<Convex>(mnOwner, &Convex::mNumPoints);
@@ -630,15 +645,7 @@ namespace Dystopia
 				break;
 			}
 
-			while (mVertices.size() < unsigned int(mNumPoints))
-			{
-				mVertices.push_back(Math::MakePoint3D(0.0f, 0.0f, 0.0f));
-			}
-			while (mVertices.size() > unsigned int(mNumPoints))
-			{
-				mVertices.pop_back();
-			}
-
+			
 			for (unsigned int i = 0; i < mVertices.size(); ++i)
 			{
 				EGUI::PushID(i);
@@ -651,17 +658,24 @@ namespace Dystopia
 					switch (e)
 					{
 					case EGUI::eDragStatus::eNO_CHANGE:
-					case EGUI::eDragStatus::eDRAGGING:
 						break;
+					case EGUI::eDragStatus::eDRAGGING:
 					case EGUI::eDragStatus::eSTART_DRAG:
-						//EGUI::GetCommandHND()->StartRecording<Convex>(mnOwner, &Convex::mVertices[i].mPosition);
+						Collider::mDebugVertices[i].x = mVertices[i].mPosition.x;
+						Collider::mDebugVertices[i].y = mVertices[i].mPosition.y;
+						Collider::mDebugVertices[i].z = mVertices[i].mPosition.z;
+						mpMesh->UpdateBuffer<VertexBuffer>(mDebugVertices);
 						break;
 					case EGUI::eDragStatus::eDEACTIVATED:
 					case EGUI::eDragStatus::eEND_DRAG:
 					case EGUI::eDragStatus::eENTER:
 					case EGUI::eDragStatus::eTABBED:
 						//EGUI::GetCommandHND()->EndRecording();
-						Awake();
+						//Awake();
+						Collider::mDebugVertices[i].x = mVertices[i].mPosition.x;
+						Collider::mDebugVertices[i].y = mVertices[i].mPosition.y;
+						Collider::mDebugVertices[i].z = mVertices[i].mPosition.z;
+						//Collider::Awake();
 						break;
 					default:
 						break;
@@ -670,6 +684,13 @@ namespace Dystopia
 				EGUI::PopID();
 			}
 			eUseTransformScaleButton(); // Update Vertices
+
+			//mDebugVertices.clear();
+
+			//for (auto & elem : mVertices)
+			//{
+				//Collider::mDebugVertices.EmplaceBack(elem.mPosition.x, elem.mPosition.y, elem.mPosition.z);
+			//}
 		}
 	}
 
@@ -733,7 +754,11 @@ namespace Dystopia
 
 	void Convex::eUseTransformScaleButton()
 	{
-
+		if(EGUI::Display::Button("Restore Default", {90,24}))
+		{
+			mVertices.clear();
+			Awake();
+		}
 	}
 
 #endif

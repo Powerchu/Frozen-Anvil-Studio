@@ -1,6 +1,6 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	VelocityAffector.h
+\file	AccelerationAffector.h
 \author Shannon Tan (100%)
 \par    email: t.shannon\@digipen.edu
 \brief
@@ -10,8 +10,8 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _VELOCITY_AFFECTOR_H_
-#define _VELOCITY_AFFECTOR_H_
+#ifndef _ACCELERATION_AFFECTOR_H_
+#define _ACCELERATION_AFFECTOR_H_
 #include "ParticleAffector.h"
 
 namespace Dystopia
@@ -25,15 +25,15 @@ namespace Dystopia
 		data[12,13,14,15] for y max
 
 		reserved[0]
-			- 1 << 1 randome velocity
+			- 1 << 1 randome acceleration
 	*/
 
-	struct InitialVelocityAffector : ParticleAffector
+	struct InitialAccelerationAffector : ParticleAffector
 	{
 		using UPDATE = AffectorTag::OnSpawn;
 
-		InitialVelocityAffector(void);
-		~InitialVelocityAffector(void);
+		InitialAccelerationAffector(void);
+		~InitialAccelerationAffector(void);
 
 		/* velocities */
 		void SetMinX(float _val);
@@ -44,21 +44,10 @@ namespace Dystopia
 		float GetMinY(void) const;
 		float GetMaxX(void) const;
 		float GetMaxY(void) const;
-		void EnableRandomVel(bool _enabled);
-		
+		void EnableRandom(bool _enabled);
+
 		void AffectorSpawn(Emitter&, float);
 
-		const char * EditorDisplayLabel(void) const;
-		void EditorUI(void);
-	};
-	
-	struct VelocityOverLifeAffector : ParticleAffector
-	{
-		VelocityOverLifeAffector(void);
-		~VelocityOverLifeAffector(void);
-
-		void AffectorUpdate(Emitter&, float);
-	
 		const char * EditorDisplayLabel(void) const;
 		void EditorUI(void);
 	};

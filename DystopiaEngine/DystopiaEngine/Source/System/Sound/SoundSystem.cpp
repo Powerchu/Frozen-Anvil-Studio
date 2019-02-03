@@ -264,6 +264,21 @@ void Dystopia::SoundSystem::SetFX(float _f)
 	mbUpdateVol = true;
 }
 
+_DLL_EXPORT float Dystopia::SoundSystem::GetMaster() const
+{
+	return mMasterVol;
+}
+
+_DLL_EXPORT float Dystopia::SoundSystem::GetBGM() const
+{
+	return mBGMVol;
+}
+
+_DLL_EXPORT float Dystopia::SoundSystem::GetFX() const
+{
+	return mFXVol;
+}
+
 
 
 

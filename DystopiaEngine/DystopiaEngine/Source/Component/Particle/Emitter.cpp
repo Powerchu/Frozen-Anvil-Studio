@@ -138,7 +138,7 @@ void Dystopia::Emitter::Init(void)
 	}
 	if (!mpTexture)
 	{
-		mpTexture = CORE::Get<TextureSystem>()->GetTexture(mTextureName.c_str());
+		mpTexture = CORE::Get<TextureSystem>()->LoadTexture(CORE::Get<FileSystem>()->FindFilePath(mTextureName.c_str(),eFileDir::eResource).c_str());
 	}
 
 	Bind();
@@ -225,9 +225,11 @@ void Dystopia::Emitter::UploadColourBuffer(void) const noexcept
 	ScopedTimer<ProfilerAction> timeKeeper{ "Emitter", "Colour Upload" };
 	glBindBuffer(GL_ARRAY_BUFFER, mColourBuffer);
 	auto MapPtr = glMapBufferRange(GL_ARRAY_BUFFER, 0, mColour.size() * sizeof(Math::Vec4), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT);
+	long long const lim = mColour.size();
 
-	//for (size_t n = 0; n < mColour.size(); ++n)
-	//	static_cast<Math::Vec4*>(MapPtr)[n] = *(mColour.begin() + n);
+//#	pragma omp parallel for
+//	for (long long n = 0; n < lim; ++n)
+//		static_cast<Math::Vec4*>(MapPtr)[n] = *(mColour.begin() + n);
 	std::memcpy(MapPtr, mColour.begin(), mColour.size() * sizeof(Math::Vec4));
 
 	glUnmapBuffer(GL_ARRAY_BUFFER);
@@ -272,10 +274,12 @@ void Dystopia::Emitter::SpawnParticle(void) noexcept
 
 		mLifetime   .EmplaceBackUnsafe(mParticle.mfLifeDur);
 		mColour     .EmplaceBackUnsafe(mParticle.mColour  );
-		mAccel      .EmplaceBackUnsafe(                   );
+		mAccel      .EmplaceBackUnsafe(mParticle.mAccel   );
 		mVelocity   .EmplaceBackUnsafe(mParticle.mVelocity);
 		mPosition   .EmplaceBackUnsafe(pos                );
 		mInitialLife.EmplaceBackUnsafe(mParticle.mfLifeDur);
+
+		mbUpdatedPositions = true;
 	}
 }
 

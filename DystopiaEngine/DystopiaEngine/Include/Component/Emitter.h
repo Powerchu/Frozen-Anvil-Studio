@@ -34,7 +34,7 @@ namespace Dystopia
 	class ParticleSystem;
 	struct ParticleAffector;
 
-	class Emitter : public Component
+	class _DLL_EXPORT Emitter : public Component
 	{
 	public:
 		using SYSTEM = ParticleSystem;
