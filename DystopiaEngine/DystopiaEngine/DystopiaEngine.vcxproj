@@ -228,6 +228,7 @@
     <ClInclude Include="Include\System\AI\NeuralTree.h" />
     <ClInclude Include="Include\System\AI\TreeBuilder.h" />
     <ClInclude Include="Include\System\Behaviour\BehaviourList.h" />
+    <ClInclude Include="Include\System\Collision\CollisionLayers.h" />
     <ClInclude Include="Include\System\Database\DatabaseSystem.h" />
     <ClInclude Include="Include\System\Database\DataSheet.h" />
     <ClInclude Include="Include\System\Database\DataSheetElement.h" />
