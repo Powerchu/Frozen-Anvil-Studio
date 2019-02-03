@@ -412,7 +412,7 @@ namespace Dystopia
 
 	void CollisionSystem::RenderVerticalColName()
 	{
-		static unsigned Max = 0;
+		static size_t Max = 0;
 		static bool     hasChange = false;
 		for(auto & elem : arrColLayer)
 		{
@@ -681,7 +681,6 @@ namespace Dystopia
 	bool CollisionSystem::ToIgnore(eColLayer _Layer1, eColLayer _Layer2)
 	{
 		unsigned flags = static_cast<unsigned>(_Layer1);
-		unsigned count = 0;
 		for (unsigned count = 0; count < 32; ++count)
 		{
 			if (auto isolate = flags & (0x00000001u << count))
