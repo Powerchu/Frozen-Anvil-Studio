@@ -20,13 +20,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Input/InputSystem.h"
 #include "System/Tag/TagSystem.h"
 #include "System/Time/TimeSystem.h"
+#include "System/Collision/CollisionSystem.h"
 
 
 Editor::ProjectSettings::ProjectSettings(void)
 	:
 	mLabel{ "Project Settings" },
 	mpGfxSys{ nullptr },
-	mpPhySys{ nullptr }
+	mpPhySys{ nullptr },
+	mpColSystem{nullptr}
 {
 }
 
@@ -43,6 +45,7 @@ bool Editor::ProjectSettings::Init(void)
 	mpPhySys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::PhysicsSystem>();
 	mpInputSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::InputManager>();
 	mpTagSystem = Dystopia::EngineCore::GetInstance()->Get<Dystopia::TagSystem>();
+	mpColSystem = Dystopia::EngineCore::GetInstance()->Get<Dystopia::CollisionSystem>();
 	return true;
 }
 
@@ -76,7 +79,11 @@ void Editor::ProjectSettings::EditorUI(void)
 		//mpTagSystem->EditorUI();
 		EGUI::Display::EndTreeNode();
 	}
-
+	if (EGUI::Display::StartTreeNode("Collision Settings", nullptr, false, false, true, true))
+	{
+		mpColSystem->EditorUI();
+		EGUI::Display::EndTreeNode();
+	}
 	auto mpTimeSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::TimeSystem>();
 	
 	EGUI::Display::HorizontalSeparator();
