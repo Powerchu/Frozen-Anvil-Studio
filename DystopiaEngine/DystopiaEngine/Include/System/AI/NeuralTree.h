@@ -245,7 +245,9 @@ namespace Dystopia
 
 			bool IsValidTree(void) const 
 			{
-				return (mpRoot.GetRaw() != nullptr);
+				if (nullptr != this)
+					return (mpRoot.GetRaw() != nullptr);
+				return false;
 			}
 
 			HashString GetEditorName(void) const override { return mnName; }
