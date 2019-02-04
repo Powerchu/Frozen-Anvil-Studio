@@ -329,6 +329,8 @@ namespace Dystopia
 			for (unsigned i = 0; i < 32; ++i)
 			{
 				_in >> mIgnoreBoolTable[u][i];
+				if (!mIgnoreBoolTable[u][i])
+					mIgnoreTable[static_cast<eColLayer>(0x00000001u << u)] = static_cast<eColLayer>(mIgnoreTable[static_cast<eColLayer>(0x00000001u << u)] | static_cast<eColLayer>(0x00000001u << i));
 			}
 
 		//memset(mIgnoreBoolTable, true, 32 * 32);
@@ -378,25 +380,28 @@ namespace Dystopia
 		EGUI::PopLeftAlign();
 		ImGui::Separator();
 
-
+		int unique = 0;
 		for (unsigned i = 1; i <= 32; ++i)
 		{
-			EGUI::PushID(i);
+			//EGUI::PushID(i);
 			for (unsigned u = 1; u <= 33 - i; ++u)
 			{
+				EGUI::PushID(unique++);
 				ImGui::PushItemWidth(10.f);
 				if (EGUI::Display::CheckBox(std::to_string(u * i).c_str(), &mIgnoreBoolTable[i-1][u-1], false))
 				{
-					eColLayer curr = mIgnoreTable[static_cast<eColLayer>(0x01u << (i - 1))];
+					eColLayer curr  = mIgnoreTable[static_cast<eColLayer>(0x01u << (i - 1))];
+					eColLayer curr2 = mIgnoreTable[static_cast<eColLayer>(0x01u << (u - 1))];
 					bool isClick   = mIgnoreBoolTable[i - 1][u - 1];
-					mIgnoreTable[static_cast<eColLayer>(0x01u << (i - 1))] = static_cast<eColLayer>(!isClick ? curr | ((0x00000001u) << (u-1)) : curr & (~(0x00000001u << (u - 1))));
-					mIgnoreTable[static_cast<eColLayer>(0x01u << (u - 1))] = static_cast<eColLayer>(!isClick ? curr | ((0x00000001u) << (i-1)) : curr & (~(0x00000001u << (i - 1))));
+					mIgnoreTable[static_cast<eColLayer>(0x01u << (i - 1))] = static_cast<eColLayer>(!isClick ? curr | ((0x00000001u) << (u-1))  : curr & (~(0x00000001u << (u - 1))));
+					mIgnoreTable[static_cast<eColLayer>(0x01u << (u - 1))] = static_cast<eColLayer>(!isClick ? curr2 | ((0x00000001u) << (i-1)) : curr2 & (~(0x00000001u << (i - 1))));
 				}
 				ImGui::PopItemWidth();
+				EGUI::PopID();
 				
 				EGUI::SameLine();
 			}
-			EGUI::PopID();
+			
 			EGUI::PushLeftAlign(1500.f);
 			ImGui::PushItemWidth(30.f);
 			EGUI::Display::LabelWrapped(arrColLayer[i-1].c_str());
