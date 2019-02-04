@@ -180,7 +180,11 @@ void Dystopia::Emitter::FixedUpdate(float _fDT)
 	for (auto& e : mPosition)
 	{
 		*pVel += *pAcc * _fDT;
-		e     += *pVel * _fDT;
+		//e     += (*pVel * _fDT);
+		Math::Vector3 delta = *pVel * _fDT;
+		e.x = e.x + delta.x;
+		e.y = e.y + delta.y;
+		e.z = e.z + delta.z;
 
 		++pVel; ++pAcc;
 	}
@@ -490,6 +494,8 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 	static const auto affectorNames = Dystopia::AffectorUI<Dystopia::AffectorList>::GetUIName();
 	static bool bDebug = false;
 
+	EGUI::PushLeftAlign(100.f);
+
 	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
 
 	EGUI::Display::EmptyBox("Particle Texture", 150, (mpTexture) ? mpTexture->GetName().c_str() : "-empty-", true);
@@ -525,7 +531,13 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 		break;
 	}
 
+	bool alive = mbIsAlive;
+	if (EGUI::Display::CheckBox("Is Alive", &mbIsAlive));
+		//cmd->ChangeValue(GetOwnerID(), &Emitter::mbIsAlive, !alive, alive);
+
 	EGUI::Display::Label("Particle Count: %u", mSpawnCount);
+	EGUI::PopLeftAlign();
+
 	EGUI::Display::HorizontalSeparator();
 	if (EGUI::Display::StartTreeNode("Spawn Affectors"))
 	{
