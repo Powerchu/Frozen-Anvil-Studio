@@ -205,6 +205,7 @@ void Dystopia::ShaderSystem::SaveCustomShaders(void) noexcept
 	{
 		if (e.IsCustomProgram())
 		{
+			std::memset(buffer, 0, 128);
 			Ut::Copy(e.GetName(), &buffer[0]);
 			file << static_cast<char*>(buffer);
 		}
