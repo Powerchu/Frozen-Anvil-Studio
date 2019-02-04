@@ -48,7 +48,7 @@ Dystopia::Emitter::Emitter(void) noexcept
 	: mColour{}, mPosition{}, mVelocity{}, mAccel{}, mLifetime{}, mSpawnCount{},
 	mSpawn{}, mUpdate{}, mFixedUpdate{}, mpShader{ nullptr }, mpTexture{ nullptr },
 	mInitialLife{}, mbUpdatedPositions{ false }, mTextureName{ "EditorStartup.png" }, 
-	mShaderName{ "Default Particle" }, mnParticleLimit{ 1000 }
+	mShaderName{ "Default Particle" }, mnParticleLimit{ 1000 }, mbIsAlive{ true }
 {
 	glGenVertexArrays(1, &mVAO);
 	glGenBuffers(2, &mColourBuffer);
@@ -70,7 +70,7 @@ Dystopia::Emitter::Emitter(Dystopia::Emitter const& _rhs) noexcept
 	mSpawn{ _rhs.mSpawn }, mUpdate{ _rhs.mUpdate }, mFixedUpdate{ _rhs.mFixedUpdate }, 
 	mpShader{ _rhs.mpShader }, mpTexture{ _rhs.mpTexture },
 	mInitialLife{ _rhs.mInitialLife }, mTextureName{ _rhs.mTextureName }, 
-	mShaderName{ _rhs.mTextureName }, mnParticleLimit{ _rhs.mnParticleLimit }
+	mShaderName{ _rhs.mTextureName }, mnParticleLimit{ _rhs.mnParticleLimit }, mbIsAlive{ _rhs.mbIsAlive }
 {
 	glGenVertexArrays(1, &mVAO);
 	glGenBuffers(2, &mColourBuffer);
@@ -374,6 +374,7 @@ void Dystopia::Emitter::Serialise(TextSerialiser& _out) const
 	else
 		_out << "EditorStartup.png";
 	_out << mnParticleLimit;
+	_out << mbIsAlive;
 	_out.InsertEndBlock("Emitter");
 
 
@@ -428,6 +429,7 @@ void Dystopia::Emitter::Unserialise(TextSerialiser& _in)
 	_in >> n;
 	mnParticleLimit = n;
 	mParticle.mnLimit = static_cast<size_t>(mnParticleLimit);
+	_in >> mbIsAlive;
 	_in.ConsumeEndBlock();
 
 	static AffectorGet affectorsList;
@@ -563,6 +565,21 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 		EGUI::Display::EndTreeNode();
 	}
 #endif 
+}
+
+void Dystopia::Emitter::StopEmission(void) noexcept
+{
+	mbIsAlive = false;
+}
+
+void Dystopia::Emitter::StartEmission(void) noexcept
+{
+	mbIsAlive = true;
+}
+
+bool Dystopia::Emitter::IsAlive(void) const noexcept
+{
+	return mbIsAlive;
 }
 
 
