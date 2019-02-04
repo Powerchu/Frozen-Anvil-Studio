@@ -46,7 +46,7 @@ namespace Dystopia
 {
 	CollisionSystem::Map_t CollisionSystem::mIgnoreTable
 	{
-		_COL_LAYER_(32)
+		_COL_LAYER_(32), std::make_pair(LAYER_NONE, static_cast < eColLayer>(0xFFFFFFFFu))
 	};
 	bool  CollisionSystem::mIgnoreBoolTable[32][32]
 	{
@@ -65,7 +65,8 @@ namespace Dystopia
 	};
 	void CollisionSystem::PreInit(void)
 	{
-		// empty
+		// 
+
 	}
 	bool CollisionSystem::Init()
 	{
@@ -225,7 +226,7 @@ namespace Dystopia
 			if (static_cast<Collider *>(bodyA) != static_cast<Collider *>(bodyB))
 			{
 				/*Check if there is a common collision layer*/
-				if (!(bodyA->GetColLayer() & bodyB->GetColLayer()) || this->ToIgnore(bodyA->GetColLayer(), bodyB->GetColLayer()))
+				if (this->ToIgnore(bodyA->GetColLayer(), bodyB->GetColLayer()))
 					continue;
 				if (rigidA && rigidB)
 				{
@@ -329,6 +330,8 @@ namespace Dystopia
 			for (unsigned i = 0; i < 32; ++i)
 			{
 				_in >> mIgnoreBoolTable[u][i];
+				if (!mIgnoreBoolTable[u][i])
+					mIgnoreTable[static_cast<eColLayer>(0x00000001u << u)] = static_cast<eColLayer>(mIgnoreTable[static_cast<eColLayer>(0x00000001u << u)] | static_cast<eColLayer>(0x00000001u << i));
 			}
 
 		//memset(mIgnoreBoolTable, true, 32 * 32);
@@ -346,9 +349,8 @@ namespace Dystopia
 	void CollisionSystem::EditorUI(void)
 	{
 		static char buffer[256];
-		EGUI::StartChild("make unique", ImVec2{ 1500.f, 700.f });
+		EGUI::StartChild("make unique", ImVec2{ 980.f, 940.f }, false, true);
 		EGUI::PushLeftAlign(150.f);
-		EGUI::Display::Label("Collision Table");
 
 		EGUI::PushLeftAlign(300.f);
 
@@ -378,25 +380,29 @@ namespace Dystopia
 		EGUI::PopLeftAlign();
 		ImGui::Separator();
 
-
+		int unique = 0;
 		for (unsigned i = 1; i <= 32; ++i)
 		{
-			EGUI::PushID(i);
+			//EGUI::PushID(i);
 			for (unsigned u = 1; u <= 33 - i; ++u)
 			{
+				EGUI::PushID(unique++);
 				ImGui::PushItemWidth(10.f);
 				if (EGUI::Display::CheckBox(std::to_string(u * i).c_str(), &mIgnoreBoolTable[i-1][u-1], false))
 				{
-					eColLayer curr = mIgnoreTable[static_cast<eColLayer>(0x01u << (i - 1))];
+					eColLayer curr  = mIgnoreTable[static_cast<eColLayer>(0x01u << (i - 1))];
+					eColLayer curr2 = mIgnoreTable[static_cast<eColLayer>(0x01u << (u - 1))];
+					mIgnoreBoolTable[u - 1][i - 1] = mIgnoreBoolTable[i - 1][u - 1];
 					bool isClick   = mIgnoreBoolTable[i - 1][u - 1];
-					mIgnoreTable[static_cast<eColLayer>(0x01u << (i - 1))] = static_cast<eColLayer>(!isClick ? curr | ((0x00000001u) << (u-1)) : curr & (~(0x00000001u << (u - 1))));
-					mIgnoreTable[static_cast<eColLayer>(0x01u << (u - 1))] = static_cast<eColLayer>(!isClick ? curr | ((0x00000001u) << (i-1)) : curr & (~(0x00000001u << (i - 1))));
+					mIgnoreTable[static_cast<eColLayer>(0x01u << (i - 1))] = static_cast<eColLayer>(!isClick ? curr | ((0x00000001u) << (u-1))  : curr & (~(0x00000001u << (u - 1))));
+					mIgnoreTable[static_cast<eColLayer>(0x01u << (u - 1))] = static_cast<eColLayer>(!isClick ? curr2 | ((0x00000001u) << (i-1)) : curr2 & (~(0x00000001u << (i - 1))));
 				}
 				ImGui::PopItemWidth();
+				EGUI::PopID();
 				
 				EGUI::SameLine();
 			}
-			EGUI::PopID();
+			
 			EGUI::PushLeftAlign(1500.f);
 			ImGui::PushItemWidth(30.f);
 			EGUI::Display::LabelWrapped(arrColLayer[i-1].c_str());
@@ -680,6 +686,10 @@ namespace Dystopia
 
 	bool CollisionSystem::ToIgnore(eColLayer _Layer1, eColLayer _Layer2)
 	{
+		if ((!_Layer1 || !_Layer2)) return true;
+
+		if ((_Layer1 == 0xFFFFFFFFu || _Layer2 == 0xFFFFFFFFu)) return false;
+
 		unsigned flags = static_cast<unsigned>(_Layer1);
 		for (unsigned count = 0; count < 32; ++count)
 		{
@@ -691,6 +701,45 @@ namespace Dystopia
 		}
 
 		return false;
+	}
+
+	void CollisionSystem::SetIgnore(unsigned _Layer1, unsigned _Layer2, bool _toignore)
+	{
+		mIgnoreTable[static_cast<eColLayer>(_Layer1)] = _toignore ? static_cast<eColLayer>(mIgnoreTable[static_cast<eColLayer>(_Layer1)] | _Layer2) : static_cast<eColLayer>(~mIgnoreTable[static_cast<eColLayer>(_Layer1)] & ~_Layer2);
+		mIgnoreTable[static_cast<eColLayer>(_Layer2)] = _toignore ? static_cast<eColLayer>(mIgnoreTable[static_cast<eColLayer>(_Layer2)] | _Layer1) : static_cast<eColLayer>(~mIgnoreTable[static_cast<eColLayer>(_Layer2)] & ~_Layer1);
+
+		unsigned count = 0;
+		unsigned count2 = 0;
+
+		while (_Layer1)
+		{
+			_Layer1 >>= 1;
+			count++;
+		}
+
+		while(_Layer2)
+		{
+			_Layer2 >>= 1;
+			count2++;
+		}
+
+		if (count && count2)
+		{
+			mIgnoreBoolTable[(count - 1)][(count2 - 1)] = !_toignore;
+			mIgnoreBoolTable[(count2 - 1)][(count - 1)] = !_toignore;
+		}
+
+		/*auto i = _Layer1;
+		auto u = _Layer2;
+
+		eColLayer curr  = mIgnoreTable[static_cast<eColLayer>(0x01u << (i - 1))];
+		eColLayer curr2 = mIgnoreTable[static_cast<eColLayer>(0x01u << (u - 1))];
+
+		mIgnoreBoolTable[i - 1][u - 1] = _toignore;
+		mIgnoreBoolTable[u - 1][i - 1]  = _toignore;
+		mIgnoreTable[static_cast<eColLayer>(0x01u << (i - 1))] = static_cast<eColLayer>(_toignore ? curr  | ((0x00000001u) << (u - 1)) : curr  & (~(0x00000001u << (u - 1))));
+		mIgnoreTable[static_cast<eColLayer>(0x01u << (u - 1))] = static_cast<eColLayer>(_toignore ? curr2 | ((0x00000001u) << (i - 1)) : curr2 & (~(0x00000001u << (i - 1))));*/
+
 	}
 
 	std::string const* CollisionSystem::GetColLayerNames()

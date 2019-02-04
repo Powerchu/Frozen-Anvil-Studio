@@ -62,6 +62,7 @@ namespace Dystopia
 		_DLL_EXPORT float GetGamma(void) noexcept;
 
 		_DLL_EXPORT void ToggleVsync(bool) noexcept;
+		_DLL_EXPORT bool GetVsync(void) noexcept;
 
 		bool GetDebugDraw(void) const;
 		void ToggleDebugDraw(bool) const;

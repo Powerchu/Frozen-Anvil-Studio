@@ -105,6 +105,11 @@ void Dystopia::TimeSystem::SetTimeScale(float _fTimeScale) noexcept
 	mfTimeScale = _fTimeScale;
 }
 
+float Dystopia::TimeSystem::GetTimeScale() const noexcept
+{
+	return mfTimeScale;
+}
+
 
 void Dystopia::TimeSystem::FlushQueue(void)
 {

@@ -183,7 +183,7 @@ namespace Dystopia
 		mHotloader->SetTempFolder(FileSys->GetFullPath("Temp", eFileDir::eAppData));
 		mHotloader->SetFileDirectoryPath<0>(FileSys->GetFullPath("BehavioursScripts", eFileDir::eResource));
 
-		mHotloader->SetCompilerFlags(L"cl /EHsc /nologo /LD /DLL /DEDITOR /D_ITERATOR_DEBUG_LEVEL /std:c++17 /Zi " + IncludeFolderPath);
+		mHotloader->SetCompilerFlags(L"cl /EHsc /nologo /LD /DLL /DEDITOR /D_ITERATOR_DEBUG_LEVEL /std:c++17 " + IncludeFolderPath);
 
 		mHotloader->Init();
 		auto const & ArrayDlls = mHotloader->GetDlls();
@@ -298,17 +298,13 @@ namespace Dystopia
 							//iter.first = iter.second->GetOwner()->GetID();
 							if (auto x = iter.second->GetOwner())
 							{
-								if (x->GetFlag() & eObjFlag::FLAG_EDITOR_OBJ)
-									;
-								else
+								/*if (auto ai = x->GetComponent<AiController>())
 								{
-									if (auto ai = x->GetComponent<AiController>())
-									{
-										if (ai->GetTreeAsRef().GetRaw() != nullptr)
+									if (ai->GetTreeAsPtr().GetRaw() != nullptr)
+										if (ai->GetTreeAsRef()->IsValidTree())
 											ai->ClearTree();
-									}
-									x->RemoveComponent(iter.second);
-								}
+								}*/
+								x->RemoveComponent(iter.second);
 							}
 							//iter.second->GetOwner()->RemoveComponent(iter.second);
 							delete iter.second;

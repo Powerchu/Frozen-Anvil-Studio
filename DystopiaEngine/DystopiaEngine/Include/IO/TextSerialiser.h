@@ -83,6 +83,12 @@ inline void Dystopia::TextSerialiser::ApplyWrite(const std::string& _rhs)
 }
 
 template <>
+inline void Dystopia::TextSerialiser::ApplyWrite(const float & _rhs)
+{
+	mFile << (_rhs == _rhs? _rhs : 1.f) << ",";
+}
+
+template <>
 inline void Dystopia::TextSerialiser::ApplyWrite(const HashString& _rhs)
 {
 	mFile << "\"" << _rhs << "\",";

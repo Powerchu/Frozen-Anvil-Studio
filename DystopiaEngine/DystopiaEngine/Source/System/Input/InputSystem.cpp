@@ -201,7 +201,7 @@ Dystopia::InputManager::KeyboardState::operator const unsigned long*() const
 }
 
 Dystopia::InputManager::InputManager(void)
-	:mGamePad{ 0 }
+	:mGamePad{ 0 }, mbCanVibrate{ true }
 {
 
 }
@@ -275,7 +275,8 @@ void Dystopia::InputManager::Update(const float _dt)
 	if (mGamePad.mfTimer >= 0.0f)
 		mGamePad.mfTimer -= mfDecay * _dt;
 
-	mGamePad.VibrateHelper();
+	if (mbCanVibrate)
+		mGamePad.VibrateHelper();
 
 	/*Commenting this out makes the input smoother*/
 	//SetKeyboardState(Reset);
@@ -644,6 +645,16 @@ Math::Vector2 Dystopia::InputManager::GetMouseDelta(void) const noexcept
 float Dystopia::InputManager::GetMouseWheel(void) const noexcept
 {
 	return mMouseInput.mnWheel * MOUSEWHEEL_SCALE;
+}
+
+_DLL_EXPORT bool Dystopia::InputManager::IsVibrateOn() const
+{
+	return mbCanVibrate;
+}
+
+_DLL_EXPORT void Dystopia::InputManager::ToggleVibrate(bool _b)
+{
+	mbCanVibrate = _b;
 }
 
 #if EDITOR

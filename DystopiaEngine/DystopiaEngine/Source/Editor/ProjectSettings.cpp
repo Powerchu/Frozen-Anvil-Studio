@@ -54,21 +54,33 @@ void Editor::ProjectSettings::Update(float)
 
 void Editor::ProjectSettings::EditorUI(void)
 {
-	if (EGUI::Display::StartTreeNode("Graphics Settings",nullptr,false,false,true,true))
+	static bool test = true;
+	ImGui::BeginGroup();
+	EGUI::Display::GoxTab("Test1", &test);
+	ImGui::EndGroup();
+
+	EGUI::SameLine();
+
+	ImGui::BeginGroup();
+	ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetColorU32(ImGuiCol_HeaderActive));
+	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImGui::GetColorU32(ImGuiCol_HeaderActive));
+	ImGui::CollapsingHeader("Project Settings", ImGuiTreeNodeFlags_Leaf);
+	ImGui::PopStyleColor(2);
+	if (EGUI::Display::StartTreeNode("Graphics Settings", nullptr, false, false, true, true))
 	{
 		mpGfxSys->EditorUI();
 		EGUI::Display::EndTreeNode();
 	}
-	
+
 	EGUI::Display::HorizontalSeparator();
-	
+
 	if (EGUI::Display::StartTreeNode("Physics Settings", nullptr, false, false, true, true))
 	{
 		mpPhySys->EditorUI();
 		EGUI::Display::EndTreeNode();
 	}
 
-	if (EGUI::Display::StartTreeNode("Input Manager", nullptr, false, false, true, true))
+	if (EGUI::Display::StartTreeNode("Input Manager", nullptr, false, false, false, true))
 	{
 		mpInputSys->EditorUI();
 		EGUI::Display::EndTreeNode();
@@ -79,20 +91,23 @@ void Editor::ProjectSettings::EditorUI(void)
 		//mpTagSystem->EditorUI();
 		EGUI::Display::EndTreeNode();
 	}
-	if (EGUI::Display::StartTreeNode("Collision Settings", nullptr, false, false, true, true))
+	if (EGUI::Display::StartTreeNode("Collision Table", nullptr, false, false, false, true))
 	{
 		mpColSystem->EditorUI();
 		EGUI::Display::EndTreeNode();
 	}
 	auto mpTimeSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::TimeSystem>();
-	
+
 	EGUI::Display::HorizontalSeparator();
-	
+
 	if (EGUI::Display::StartTreeNode("Time Settings", nullptr, false, false, true, true))
 	{
 		mpTimeSys->EditorUI();
 		EGUI::Display::EndTreeNode();
 	}
+	ImGui::EndGroup();
+
+	
 
 }
 
