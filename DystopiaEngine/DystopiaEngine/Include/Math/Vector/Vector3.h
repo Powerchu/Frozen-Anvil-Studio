@@ -166,13 +166,13 @@ namespace Math
 		Swizzle<0, 0, 1, 0> xxyx; Swizzle<1, 0, 1, 0> yxyx; Swizzle<2, 0, 1, 0> zxyx;
 		Swizzle<0, 0, 1, 1> xxyy; Swizzle<1, 0, 1, 1> yxyy; Swizzle<2, 0, 1, 1> zxyy;
 		Swizzle<0, 0, 1, 2> xxyz; Swizzle<1, 0, 1, 2> yxyz; Swizzle<2, 0, 1, 2> zxyz;
-		Swizzle<0, 0, 0, 3> xxy0; Swizzle<1, 0, 0, 3> yxy0; Swizzle<2, 0, 0, 3> zxy0;
-		Swizzle<0, 0, 0, 4> xxy1; Swizzle<1, 0, 0, 4> yxy1; Swizzle<2, 0, 0, 4> zxy1;
+		Swizzle<0, 0, 1, 3> xxy0; Swizzle<1, 0, 1, 3> yxy0; Swizzle<2, 0, 1, 3> zxy0;
+		Swizzle<0, 0, 1, 4> xxy1; Swizzle<1, 0, 1, 4> yxy1; Swizzle<2, 0, 1, 4> zxy1;
 		Swizzle<0, 0, 2, 0> xxzx; Swizzle<1, 0, 2, 0> yxzx; Swizzle<2, 0, 2, 0> zxzx;
 		Swizzle<0, 0, 2, 1> xxzy; Swizzle<1, 0, 2, 1> yxzy; Swizzle<2, 0, 2, 1> zxzy;
 		Swizzle<0, 0, 2, 2> xxzz; Swizzle<1, 0, 2, 2> yxzz; Swizzle<2, 0, 2, 2> zxzz;
-		Swizzle<0, 0, 0, 3> xxz0; Swizzle<1, 0, 0, 3> yxz0; Swizzle<2, 0, 0, 3> zxz0;
-		Swizzle<0, 0, 0, 4> xxz1; Swizzle<1, 0, 0, 4> yxz1; Swizzle<2, 0, 0, 4> zxz1;
+		Swizzle<0, 0, 2, 3> xxz0; Swizzle<1, 0, 2, 3> yxz0; Swizzle<2, 0, 2, 3> zxz0;
+		Swizzle<0, 0, 2, 4> xxz1; Swizzle<1, 0, 2, 4> yxz1; Swizzle<2, 0, 2, 4> zxz1;
 		Swizzle<0, 1, 0, 0> xyxx; Swizzle<1, 1, 0, 0> yyxx; Swizzle<2, 1, 0, 0> zyxx;
 		Swizzle<0, 1, 0, 1> xyxy; Swizzle<1, 1, 0, 1> yyxy; Swizzle<2, 1, 0, 1> zyxy;
 		Swizzle<0, 1, 0, 2> xyxz; Swizzle<1, 1, 0, 2> yyxz; Swizzle<2, 1, 0, 2> zyxz;
@@ -181,13 +181,13 @@ namespace Math
 		Swizzle<0, 1, 1, 0> xyyx; Swizzle<1, 1, 1, 0> yyyx; Swizzle<2, 1, 1, 0> zyyx;
 		Swizzle<0, 1, 1, 1> xyyy; Swizzle<1, 1, 1, 1> yyyy; Swizzle<2, 1, 1, 1> zyyy;
 		Swizzle<0, 1, 1, 2> xyyz; Swizzle<1, 1, 1, 2> yyyz; Swizzle<2, 1, 1, 2> zyyz;
-		Swizzle<0, 1, 0, 3> xyy0; Swizzle<1, 1, 0, 3> yyy0; Swizzle<2, 1, 0, 3> zyy0;
-		Swizzle<0, 1, 0, 4> xyy1; Swizzle<1, 1, 0, 4> yyy1; Swizzle<2, 1, 0, 4> zyy1;
+		Swizzle<0, 1, 1, 3> xyy0; Swizzle<1, 1, 1, 3> yyy0; Swizzle<2, 1, 1, 3> zyy0;
+		Swizzle<0, 1, 1, 4> xyy1; Swizzle<1, 1, 1, 4> yyy1; Swizzle<2, 1, 1, 4> zyy1;
 		Swizzle<0, 1, 2, 0> xyzx; Swizzle<1, 1, 2, 0> yyzx; Swizzle<2, 1, 2, 0> zyzx;
 		Swizzle<0, 1, 2, 1> xyzy; Swizzle<1, 1, 2, 1> yyzy; Swizzle<2, 1, 2, 1> zyzy;
 		Swizzle<0, 1, 2, 2> xyzz; Swizzle<1, 1, 2, 2> yyzz; Swizzle<2, 1, 2, 2> zyzz;
-		Swizzle<0, 1, 0, 3> xyz0; Swizzle<1, 1, 0, 3> yyz0; Swizzle<2, 1, 0, 3> zyz0;
-		Swizzle<0, 1, 0, 4> xyz1; Swizzle<1, 1, 0, 4> yyz1; Swizzle<2, 1, 0, 4> zyz1;
+		Swizzle<0, 1, 2, 3> xyz0; Swizzle<1, 1, 2, 3> yyz0; Swizzle<2, 1, 2, 3> zyz0;
+		Swizzle<0, 1, 2, 4> xyz1; Swizzle<1, 1, 2, 4> yyz1; Swizzle<2, 1, 2, 4> zyz1;
 		Swizzle<0, 2, 0, 0> xzxx; Swizzle<1, 2, 0, 0> yzxx; Swizzle<2, 2, 0, 0> zzxx;
 		Swizzle<0, 2, 0, 1> xzxy; Swizzle<1, 2, 0, 1> yzxy; Swizzle<2, 2, 0, 1> zzxy;
 		Swizzle<0, 2, 0, 2> xzxz; Swizzle<1, 2, 0, 2> yzxz; Swizzle<2, 2, 0, 2> zzxz;
@@ -196,13 +196,13 @@ namespace Math
 		Swizzle<0, 2, 1, 0> xzyx; Swizzle<1, 2, 1, 0> yzyx; Swizzle<2, 2, 1, 0> zzyx;
 		Swizzle<0, 2, 1, 1> xzyy; Swizzle<1, 2, 1, 1> yzyy; Swizzle<2, 2, 1, 1> zzyy;
 		Swizzle<0, 2, 1, 2> xzyz; Swizzle<1, 2, 1, 2> yzyz; Swizzle<2, 2, 1, 2> zzyz;
-		Swizzle<0, 2, 0, 3> xzy0; Swizzle<1, 2, 0, 3> yzy0; Swizzle<2, 2, 0, 3> zzy0;
-		Swizzle<0, 2, 0, 4> xzy1; Swizzle<1, 2, 0, 4> yzy1; Swizzle<2, 2, 0, 4> zzy1;
+		Swizzle<0, 2, 1, 3> xzy0; Swizzle<1, 2, 1, 3> yzy0; Swizzle<2, 2, 1, 3> zzy0;
+		Swizzle<0, 2, 1, 4> xzy1; Swizzle<1, 2, 1, 4> yzy1; Swizzle<2, 2, 1, 4> zzy1;
 		Swizzle<0, 2, 2, 0> xzzx; Swizzle<1, 2, 2, 0> yzzx; Swizzle<2, 2, 2, 0> zzzx;
 		Swizzle<0, 2, 2, 1> xzzy; Swizzle<1, 2, 2, 1> yzzy; Swizzle<2, 2, 2, 1> zzzy;
 		Swizzle<0, 2, 2, 2> xzzz; Swizzle<1, 2, 2, 2> yzzz; Swizzle<2, 2, 2, 2> zzzz;
-		Swizzle<0, 2, 0, 3> xzz0; Swizzle<1, 2, 0, 3> yzz0; Swizzle<2, 2, 0, 3> zzz0;
-		Swizzle<0, 2, 0, 4> xzz1; Swizzle<1, 2, 0, 4> yzz1; Swizzle<2, 2, 0, 4> zzz1;
+		Swizzle<0, 2, 2, 3> xzz0; Swizzle<1, 2, 2, 3> yzz0; Swizzle<2, 2, 2, 3> zzz0;
+		Swizzle<0, 2, 2, 4> xzz1; Swizzle<1, 2, 2, 4> yzz1; Swizzle<2, 2, 2, 4> zzz1;
 	};
 
 	// Converts a vector into unit length

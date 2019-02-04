@@ -163,7 +163,7 @@ void Dystopia::Emitter::Init(void)
 
 void Dystopia::Emitter::FixedUpdate(float _fDT)
 {
-#if 1
+#if defined(_OPENMP)
 	long long l = mPosition.size();
 
 #	pragma omp parallel for
@@ -269,6 +269,7 @@ void Dystopia::Emitter::SpawnParticle(void) noexcept
 			e.Update(*this, 0);
 
 		auto transform = GetOwner()->GetComponent<Transform>();
+		Math::Vec4 vpos = mParticle.mPos.xyz1;
 		auto pos = transform->GetTransformMatrix() * mParticle.mPos.xyz1;
 		pos.w    = mParticle.mfSize;
 
