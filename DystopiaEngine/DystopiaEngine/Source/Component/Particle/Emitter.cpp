@@ -169,20 +169,28 @@ void Dystopia::Emitter::FixedUpdate(float _fDT)
 #	pragma omp parallel for
 	for(long long n = 0; n < l; ++n)
 	{
-		mVelocity[n] += mAccel   [n]      * _fDT;
+		mVelocity[n] += mAccel[n] * _fDT;
+	}
+
+#	pragma omp parallel for
+	for (long long n = 0; n < l; ++n)
+	{
 		mPosition[n] += mVelocity[n].xyz0 * _fDT;
 	}
 #else
-
 	auto pAcc = mAccel.begin();
 	auto pVel = mVelocity.begin();
 
+	for (auto& e : mVelocity)
+	{
+		e += *pAcc * _fDT;
+		++pAcc;
+	}
+
 	for (auto& e : mPosition)
 	{
-		*pVel += *pAcc * _fDT;
-		e     += *pVel * _fDT;
-
-		++pVel; ++pAcc;
+		e += (*pVel).xyz0 * _fDT;
+		++pVel;
 	}
 
 #endif
