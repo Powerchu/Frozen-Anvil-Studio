@@ -50,13 +50,9 @@ namespace Dystopia
 	/*
 		bytes and bits:
 
-		data[0,1,2,3] for delta
-		data[4,5,6,7] for target size
-		data[8,9,10,11] for duration to hit (0 - 1)
-		data[12,13,14,15] for target 2
+		data[0,1,2,3] linear size change per second
 
-		reserved[0] 
-			- 1 << 1 for bounce to target 2
+
 	*/
 
 	struct SizeOverLifeAffector : ParticleAffector
@@ -65,10 +61,8 @@ namespace Dystopia
 		~SizeOverLifeAffector(void);
 
 		/* sizes */
-		void SetTargetSize(float _val);
-		void SetTargetDuration(float _val);
-		void SetTargetSizeAfter(float _val);
-		void EnableBounceback(bool);
+		void SetSizeChangePerSecond(float);
+		float GetSizeChangePerSecond(void) const;
 
 		void AffectorUpdate(Emitter&, float);
 

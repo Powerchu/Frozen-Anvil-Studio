@@ -180,11 +180,7 @@ void Dystopia::Emitter::FixedUpdate(float _fDT)
 	for (auto& e : mPosition)
 	{
 		*pVel += *pAcc * _fDT;
-		//e     += (*pVel * _fDT);
-		Math::Vector3 delta = *pVel * _fDT;
-		e.x = e.x + delta.x;
-		e.y = e.y + delta.y;
-		e.z = e.z + delta.z;
+		e     += (*pVel).xyz0 * _fDT;
 
 		++pVel; ++pAcc;
 	}
@@ -261,6 +257,7 @@ void Dystopia::Emitter::KillParticle(unsigned _nIdx) noexcept
 	mPosition   .FastRemove(_nIdx);
 
 	mInitialLife.FastRemove(_nIdx);
+	mbUpdatedPositions = true;
 }
 
 void Dystopia::Emitter::SpawnParticle(void) noexcept
