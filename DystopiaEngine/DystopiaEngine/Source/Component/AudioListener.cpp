@@ -68,18 +68,26 @@ namespace Dystopia
 		return static_cast<ComponentDonor<AudioListener>*>(EngineCore::GetInstance()->Get<SoundSystem>())->RequestComponent(*this);
 	}
 
-	void Dystopia::AudioListener::Serialise(TextSerialiser & _out) const
+	void Dystopia::AudioListener::Serialise(TextSerialiser & _in) const
 	{
-		_out.InsertStartBlock("Audio Listener");
-		Component::Serialise(_out);
-		_out.InsertEndBlock("Audio Listener");
+		_in.InsertStartBlock("Audio Listener");
+		Component::Serialise(_in);
+		_in << mMaxRange;
+		_in << mPos->x;
+		_in << mPos->y;
+		_in << mPos->z;
+		_in.InsertEndBlock("Audio Listener");
 	}
 
-	void Dystopia::AudioListener::Unserialise(TextSerialiser & _in)
+	void Dystopia::AudioListener::Unserialise(TextSerialiser & _out)
 	{
-		_in.ConsumeStartBlock();
-		Component::Unserialise(_in);
-		_in.ConsumeEndBlock();
+		_out.ConsumeStartBlock();
+		Component::Unserialise(_out);
+		_out >> mMaxRange;
+		_out >> mPos->x;
+		_out >> mPos->y;
+		_out >> mPos->z;
+		_out.ConsumeEndBlock();
 	}
 
 #if EDITOR
