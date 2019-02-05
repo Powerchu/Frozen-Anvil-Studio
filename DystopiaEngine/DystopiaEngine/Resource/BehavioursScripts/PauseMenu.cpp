@@ -105,6 +105,7 @@ namespace Dystopia
 		mMenuObjects[P_QuitButton]      = FIND_GAME_OBJECT("QuitButton");
 		mMenuObjects[P_PauseMenu]       = FIND_GAME_OBJECT("Menu");
 		pSelector                       = FIND_GAME_OBJECT("Selector");
+		index = P_Play;
 		pSelector && MoveSelector();
 		pInputSys = EngineCore::GetInstance()->GetSystem<InputManager>();
 	}
@@ -124,7 +125,7 @@ namespace Dystopia
 		mMenuObjects[P_QuitButton]      = FIND_GAME_OBJECT("QuitButton");
 		mMenuObjects[P_PauseMenu]       = FIND_GAME_OBJECT("Menu");
 		pSelector                       = FIND_GAME_OBJECT("Selector");
-
+		index = P_Play;
 		pSelector && MoveSelector();
 		pInputSys = EngineCore::GetInstance()->GetSystem<InputManager>();
 	}
@@ -255,6 +256,8 @@ namespace Dystopia
 
 	bool PauseMenu::Terminate()
 	{
+		index = P_Play;
+		pSelector && MoveSelector();
 		fpState = nullptr;
 		return true;
 	}
@@ -430,6 +433,8 @@ namespace Dystopia
 	}
 	bool P_QuitState::MoveSelector()
 	{
+		if (!mQuitButtons[index])
+			return false;
 		auto && tempVec = GET_POSITION(mQuitButtons[index]);
 		pSelector->GetComponent<Transform>()->SetGlobalPosition(tempVec.x,tempVec.y,tempVec.z);
 		return true; 

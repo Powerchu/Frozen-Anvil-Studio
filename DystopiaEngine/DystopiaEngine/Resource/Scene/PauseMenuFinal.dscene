@@ -327,7 +327,7 @@
 0,
 [END_ComponentDonor End]
 [START_ComponentDonor]
-32,
+23,
 [END_ComponentDonor End]
 [START_Component]
 [START_Renderer]
@@ -419,87 +419,7 @@
 [END_Sprite Renderer]
 
 [END_Component End]
-[START_Component]
-[START_Renderer]
-0,0,18446744073709551615,
-[END_Renderer]
-[START_Sprite Renderer]
-0,0,0,0,0,0,0,0,
-[END_Sprite Renderer]
 
-[END_Component End]
-[START_Component]
-[START_Renderer]
-0,0,18446744073709551615,
-[END_Renderer]
-[START_Sprite Renderer]
-0,0,0,0,0,0,0,0,
-[END_Sprite Renderer]
-
-[END_Component End]
-[START_Component]
-[START_Renderer]
-0,0,18446744073709551615,
-[END_Renderer]
-[START_Sprite Renderer]
-0,0,0,0,0,0,0,0,
-[END_Sprite Renderer]
-
-[END_Component End]
-[START_Component]
-[START_Renderer]
-0,0,18446744073709551615,
-[END_Renderer]
-[START_Sprite Renderer]
-0,0,0,0,0,0,0,0,
-[END_Sprite Renderer]
-
-[END_Component End]
-[START_Component]
-[START_Renderer]
-0,0,18446744073709551615,
-[END_Renderer]
-[START_Sprite Renderer]
-0,0,0,0,0,0,0,0,
-[END_Sprite Renderer]
-
-[END_Component End]
-[START_Component]
-[START_Renderer]
-0,0,18446744073709551615,
-[END_Renderer]
-[START_Sprite Renderer]
-0,0,0,0,0,0,0,0,
-[END_Sprite Renderer]
-
-[END_Component End]
-[START_Component]
-[START_Renderer]
-0,0,18446744073709551615,
-[END_Renderer]
-[START_Sprite Renderer]
-0,0,0,0,0,0,0,0,
-[END_Sprite Renderer]
-
-[END_Component End]
-[START_Component]
-[START_Renderer]
-0,0,18446744073709551615,
-[END_Renderer]
-[START_Sprite Renderer]
-0,0,0,0,0,0,0,0,
-[END_Sprite Renderer]
-
-[END_Component End]
-[START_Component]
-[START_Renderer]
-0,0,18446744073709551615,
-[END_Renderer]
-[START_Sprite Renderer]
-0,0,0,0,0,0,0,0,
-[END_Sprite Renderer]
-
-[END_Component End]
 [START_Component]
 [START_Renderer]
 18446744073611566592,0,913997824,"settings.png",
