@@ -177,7 +177,7 @@ void Dystopia::Renderer::Serialise(TextSerialiser& _out) const
 	_out.InsertStartBlock("Renderer");
 	Component::Serialise(_out);
 	//_out << EngineCore::GetInstance()->Get<FileSystem>()->ConvertToRelative(mTexturePath);
-	std::string rp = CORE::Get<FileSystem>()->ConvertToRelative(std::string{ mTexturePath.c_str() });
+	std::string rp = CORE::Get<FileSystem>()->ConvertToRelative(std::string{ mTexturePath.length() ? mTexturePath.c_str() : "" });
 	auto pos = rp.find_last_of("/\\");
 	if (pos != std::string::npos)
 		_out << rp.substr(pos + 1);
@@ -397,7 +397,7 @@ template<>
 inline void Dystopia::Renderer::UIVisitor::operator()(Math::Vec4& _variant)
 {
 	EGUI::Display::LabelWrapped(strName.c_str());
-	EGUI::Display::VectorFields("", &_variant, 0.1f, -FLT_MAX, FLT_MAX);
+	EGUI::Display::VectorFields("", &_variant, 0.1f, -FLT_MAX, FLT_MAX, 50.f, true);
 }
 template<>
 inline void Dystopia::Renderer::UIVisitor::operator()(std::pair<Texture*, int>& _variant)
@@ -426,6 +426,6 @@ inline void Dystopia::Renderer::UIVisitor::operator()(std::pair<Texture*, int>& 
 		_variant.first = CORE::Get<GraphicsSystem>()->LoadTexture(t->mPath.c_str());
 	}
 
-	EGUI::Display::DragInt(strName.c_str(), &_variant.second, 1, -INT_MAX, INT_MAX, true);
+	EGUI::Display::DragInt(strName.c_str(), &_variant.second, 1, 0, INT_MAX, true);
 }
 #endif

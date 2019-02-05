@@ -426,7 +426,13 @@ void Dystopia::Emitter::Unserialise(TextSerialiser& _in)
 	mpShader = CORE::Get<ShaderSystem>()->GetShader(mShaderName.c_str());
 	_in >> buf;
 	mTextureName = CORE::Get<FileSystem>()->GetFullPath(buf.c_str(), eFileDir::eResource).c_str();
-	mpTexture = CORE::Get<TextureSystem>()->LoadTexture(mTextureName);
+	if (!mTextureName.length())
+	{
+		mTextureName = "EditorStartup.png";
+		mpTexture = CORE::Get<TextureSystem>()->GetTexture(mTextureName);
+	}
+	else
+		mpTexture = CORE::Get<TextureSystem>()->LoadTexture(mTextureName);
 	int n = 0;
 	_in >> n;
 	mnParticleLimit = n;

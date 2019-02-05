@@ -43,7 +43,7 @@ namespace Dystopia
 		struct InitialSizeAffector,
 		struct SizeOverLifeAffector,
 		struct InitialAccelerationAffector,
-		struct AttractionAffector
+		struct PointAffector
 	>;
 
 	class Emitter;
