@@ -48,7 +48,10 @@ Dystopia::Emitter::Emitter(void) noexcept
 	: mColour{}, mPosition{}, mVelocity{}, mAccel{}, mLifetime{}, mSpawnCount{},
 	mSpawn{}, mUpdate{}, mFixedUpdate{}, mpShader{ nullptr }, mpTexture{ nullptr },
 	mInitialLife{}, mbUpdatedPositions{ false }, mTextureName{ "EditorStartup.png" }, 
-	mShaderName{ "Default Particle" }, mnParticleLimit{ 1000 }
+	mShaderName{ "Default Particle" }
+#if EDITOR
+	,mnParticleLimit{ 1000 }
+#endif
 {
 	glGenVertexArrays(1, &mVAO);
 	glGenBuffers(2, &mColourBuffer);
@@ -70,7 +73,10 @@ Dystopia::Emitter::Emitter(Dystopia::Emitter const& _rhs) noexcept
 	mSpawn{ _rhs.mSpawn }, mUpdate{ _rhs.mUpdate }, mFixedUpdate{ _rhs.mFixedUpdate }, 
 	mpShader{ _rhs.mpShader }, mpTexture{ _rhs.mpTexture },
 	mInitialLife{ _rhs.mInitialLife }, mTextureName{ _rhs.mTextureName }, 
-	mShaderName{ _rhs.mTextureName }, mnParticleLimit{ _rhs.mnParticleLimit }
+	mShaderName{ _rhs.mTextureName }
+#if EDITOR
+	, mnParticleLimit{ _rhs.mnParticleLimit }
+#endif
 {
 	glGenVertexArrays(1, &mVAO);
 	glGenBuffers(2, &mColourBuffer);
@@ -373,10 +379,14 @@ void Dystopia::Emitter::Serialise(TextSerialiser& _out) const
 		_out << mpTexture->GetName();
 	else
 		_out << "EditorStartup.png";
+#if EDITOR
 	_out << mnParticleLimit;
+
+#else
+	/*Dummy insert so that reading of file wont get fuck*/
+	_out << 1;
+#endif
 	_out.InsertEndBlock("Emitter");
-
-
 
 
 	_out.InsertStartBlock("Spawn affectors");
@@ -426,8 +436,10 @@ void Dystopia::Emitter::Unserialise(TextSerialiser& _in)
 	mpTexture = CORE::Get<TextureSystem>()->LoadTexture(mTextureName);
 	int n = 0;
 	_in >> n;
+#if EDITOR
 	mnParticleLimit = n;
 	mParticle.mnLimit = static_cast<size_t>(mnParticleLimit);
+#endif
 	_in.ConsumeEndBlock();
 
 	static AffectorGet affectorsList;

@@ -345,7 +345,7 @@ namespace Dystopia
 				_out << mIgnoreBoolTable[u][i];
 			}
 	}
-
+#if EDITOR
 	void CollisionSystem::EditorUI(void)
 	{
 		static char buffer[256];
@@ -430,7 +430,7 @@ namespace Dystopia
 		}
 
 	}
-
+#endif
 	bool CollisionSystem::AABBvsAABB(Collider * const & _ColA, Collider * const & _ColB) const
 	{
 		const auto col_a = dynamic_cast<AABB * const>(_ColA);

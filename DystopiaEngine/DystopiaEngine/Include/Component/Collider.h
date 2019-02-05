@@ -270,9 +270,10 @@ namespace Dystopia
 		AutoArray<short>  mIndexBuffer;
 		BroadPhaseCircle  mBoundingCircle;
 		void Triangulate();
+#if EDITOR
 		virtual void EditorUI(void) noexcept;
 		virtual void AddLayerUI(void) noexcept;
-
+#endif
 		
 		/*Matrix*/
 		Math::Matrix3D		mOwnerTransformation;

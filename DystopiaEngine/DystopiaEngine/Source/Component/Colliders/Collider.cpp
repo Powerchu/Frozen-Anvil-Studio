@@ -23,6 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
+#if EDITOR
 	std::string Collider::arrColLayer[33] = 
 	{
 				"Default","Player", "Enemy", "Flying",
@@ -34,7 +35,7 @@ namespace Dystopia
 				"Layer 25","Layer 26", "Layer 27", "Layer 28",
 				"Layer 29","Layer 30", "Layer 31", "Layer 32","Layer_Global"
 	};
-
+#endif
 
 	Collider::Collider()
 		: mv3Offset{0, 0, 0, 0}, mpMesh{nullptr}, mbColliding{false}, mPosition{Math::MakePoint3D(0.f, 0.f, 0.f)},
@@ -468,6 +469,7 @@ namespace Dystopia
 
 
 	}
+#if EDITOR
 	void Collider::EditorUI(void) noexcept
 	{
 		const int totalLayers = 32;
@@ -506,7 +508,7 @@ namespace Dystopia
 							{
 								RemoveColLayer(static_cast<eColLayer>((0x01u << i)));
 							}
-							EGUI::SameLine();
+#							EGUI::SameLine();
 							EGUI::Display::Label(arrColLayer[i].c_str());
 						}
 					}
@@ -527,6 +529,7 @@ namespace Dystopia
 			//}
 		}
 	}
+
 
 	void Collider::AddLayerUI(void) noexcept
 	{
@@ -552,5 +555,5 @@ namespace Dystopia
 			EGUI::Display::EndPopup();
 		}
 	}
-
+#endif
 }
