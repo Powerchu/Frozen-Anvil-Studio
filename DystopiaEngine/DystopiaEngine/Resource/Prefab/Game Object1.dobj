@@ -1,0 +1,30 @@
+[START_GO_PREFAB]
+2,[START_START_GO_DATA]
+535313408,65,"Game Object1",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,0,0,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+5,[START_Circle_Collider2D]
+1992305152,1,535313408,5,0,0,0,0,0,1,0,0,
+[END_Circle_Collider2D]
+
+[END_Component]
+[START_Component]
+5,[START_Circle_Collider2D]
+784346112,1,535313408,10,0,0,0,0,0,1,0,0,
+[END_Circle_Collider2D]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_Recursion Counter]
+0,
+[END_Recursion Counter]

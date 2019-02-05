@@ -29,6 +29,9 @@
   <ItemGroup>
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
     <ClCompile Include="Include\IO\XMLParser.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\MainMenu.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\PauseMenu.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\SplashManager.cpp" />
     <ClCompile Include="Source\System\Particle\AccelerationAffector.cpp" />
     <ClCompile Include="Source\System\Particle\ColorAffector.cpp" />
     <ClCompile Include="Source\System\Particle\LifetimeAffector.cpp" />
@@ -410,6 +413,9 @@
     <ClInclude Include="Include\System\Input\XGamePad.h" />
     <ClInclude Include="Include\IO\XMLParser.h" />
     <ClInclude Include="Include\Editor\RuntimeMeta.h" />
+    <ClInclude Include="Resource\BehavioursScripts\MainMenu.h" />
+    <ClInclude Include="Resource\BehavioursScripts\PauseMenu.h" />
+    <ClInclude Include="Resource\BehavioursScripts\SplashManager.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DystopiaEngine1.rc" />

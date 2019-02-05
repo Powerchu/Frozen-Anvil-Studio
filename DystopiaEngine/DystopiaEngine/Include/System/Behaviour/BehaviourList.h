@@ -22,8 +22,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 
 #else
-
-
+#include "../Resource/BehavioursScripts/MainMenu.h"
+#include "../Resource/BehavioursScripts/PauseMenu.h"
+#include "../Resource/BehavioursScripts/SplashManager.h"
 #endif
 
 #if EDITOR
@@ -34,6 +35,9 @@ namespace Dystopia
 {
 	using BehaviourList = typename Ut::MetaAutoIndexer<
 		/*Add Behaviours Here*/
+		class MainMenu,
+		class PauseMenu,
+		class SplashManager
 	>::result;
 }
 

@@ -433,6 +433,9 @@
     <ClCompile Include="Source\System\Particle\AccelerationAffector.cpp">
       <Filter>Game Engine\Systems\Particle\Affectors\Acceleration</Filter>
     </ClCompile>
+    <ClCompile Include="Resource\BehavioursScripts\MainMenu.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\PauseMenu.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\SplashManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -1188,6 +1191,9 @@
     <ClInclude Include="Include\System\Collision\CollisionLayers.h">
       <Filter>Game Engine\Systems\Collision</Filter>
     </ClInclude>
+    <ClInclude Include="Resource\BehavioursScripts\MainMenu.h" />
+    <ClInclude Include="Resource\BehavioursScripts\PauseMenu.h" />
+    <ClInclude Include="Resource\BehavioursScripts\SplashManager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
