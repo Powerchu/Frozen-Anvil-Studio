@@ -1,3 +1,24 @@
 [START_PROGRAMS]
-
+"Shader\VineShear.dvert","Shader\ShakeQuad.dvert","Shader\EnvironmentShear.dvert","Shader\HealthBar.dfrag","Shader\Burn.dvert","Shader\Burn.dfrag","Shader\Loading.dvert","Shader\Loading.dfrag","Shader\Ping.dvert","Shader\Ping.dfrag",
 [END_PROGRAMS]
+[START_SHADER]
+"Vine Shear","Shader\VineShear.dvert","Shader\DefaultFrag.dfrag",
+[END_SHADER]
+[START_SHADER]
+"Shake Quad","Shader\ShakeQuad.dvert","Shader\DefaultFrag.dfrag",
+[END_SHADER]
+[START_SHADER]
+"Environment Shear","Shader\EnvironmentShear.dvert","Shader\DefaultFrag.dfrag",
+[END_SHADER]
+[START_SHADER]
+"Health Bar","Shader\DefaultVert.dvert","Shader\HealthBar.dfrag",
+[END_SHADER]
+[START_SHADER]
+"Burn","Shader\Burn.dvert","Shader\Burn.dfrag",
+[END_SHADER]
+[START_SHADER]
+"Loading","Shader\Loading.dvert","Shader\Loading.dfrag",
+[END_SHADER]
+[START_SHADER]
+"Ping","Shader\Ping.dvert","Shader\Ping.dfrag",
+[END_SHADER]

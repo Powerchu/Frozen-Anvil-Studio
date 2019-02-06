@@ -94,9 +94,18 @@ namespace Dystopia
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
+		void InitShader(void);
 		float Time = 0.f;
+		float SplashTime;
+		float mfCounter;
+		float mfPauseDur;
+		bool  Toggle = false;
+		bool mbBounce = false;
 
 	private:
+		bool hasRunOnce;
+		GameObject * DigipenLogo;
+		GameObject * SplashIcon;
 		// Don't touch
 		friend MetaData<SplashManager>;
 	};

@@ -1,0 +1,291 @@
+[START_GO_PREFAB]
+2,[START_START_GO_DATA]
+18446744072996518400,65,"CheckPoint",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+230.372,422.975,0.999985,7382.08,815.844,0.169935,0,0,0,1,18446744072530640896,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+4,[START_Convex_Collider]
+18446744072996519424,1,18446744072996518400,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1.05,1.15,1,0,0,0,1,1,1,
+[END_Convex_Collider]
+
+[END_Component]
+[START_Component]
+7,[START_Renderer]
+18446744072995995648,1,18446744072996518400,"CheckpointnRocks_SpriteSheet.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,4,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"CheckPoint",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+1,
+[END_Behaviour  Meta Count]
+[START_mfRadialDuration]
+"mfRadialDuration",
+[END_mfRadialDuration]
+[START_Member Variable]
+0.8,
+[END_Member Variable]
+[START_Recursion Counter]
+6,
+[END_Recursion Counter]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+18446744072998093824,65,"CheckPoint_Ring",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+300.166,314.426,0.999964,7382.07,995.392,0.129936,0,0,0,1,18446744072996518400,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+18446744072998094848,1,18446744072998093824,"CheckpointnRocks_SpriteSheet.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,3,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+18446744072998095360,65,"Glow",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+241.814,226.093,0.999964,7382.07,966.416,0.159935,0,0,0,1,18446744072996518400,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+18446744072998096384,1,18446744072998095360,"CheckpointnRocks_SpriteSheet.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,2,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+18446744072998096896,65,"Glow_BG",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+241.814,226.093,0.999964,7382.07,966.416,0.149935,0,0,0,1,18446744072996518400,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+18446744072998097920,1,18446744072998096896,"CheckpointnRocks_SpriteSheet.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,2,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+2,[START_START_GO_DATA]
+18446744072998098432,65,"BaseEmitterBack",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,7382.08,579.014,0.159936,0,0,0,1,18446744072996518400,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+18446744072998099968,1,18446744072998098432,
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Component]
+12,[START_Emitter]
+18446744072998099456,0,18446744072998098432,"Default Particle","particle01.dds",1000,0,
+[END_Emitter]
+[START_Spawn affectors]
+5,3,1,5,7,2,
+[END_Spawn affectors]
+[START_Affector]
+71777214294589440,71777214294589695,0,
+[END_Affector]
+[START_Affector]
+281474976710656,220,4,
+[END_Affector]
+[START_Affector]
+4787326403894837248,4795207703242735616,2,
+[END_Affector]
+[START_Affector]
+4764808405757984768,1113325568,2,
+[END_Affector]
+[START_Affector]
+4638707616191610880,1083179008,0,
+[END_Affector]
+[START_Update affectors]
+3,0,8,4,
+[END_Update affectors]
+[START_Affector]
+8444506999357440,69818988363776,1,
+[END_Affector]
+[START_Affector]
+1101004800,0,0,
+[END_Affector]
+[START_Affector]
+1408470116925440,0,0,
+[END_Affector]
+[START_Fixed Update affectors]
+1,10,
+[END_Fixed Update affectors]
+[START_Affector]
+22937640,1137180672,1,
+[END_Affector]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+18446744072998100480,65,"BaseEmitterFront",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,7382.08,569.69,0.179936,0,0,0,1,18446744072996518400,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+12,[START_Emitter]
+18446744072998101504,0,18446744072998100480,"Default Particle","particle01.dds",1000,0,
+[END_Emitter]
+[START_Spawn affectors]
+5,3,1,5,7,2,
+[END_Spawn affectors]
+[START_Affector]
+71777214294589440,71777214294589695,0,
+[END_Affector]
+[START_Affector]
+281474976710656,200,4,
+[END_Affector]
+[START_Affector]
+4674736416464306176,4795207704348983296,2,
+[END_Affector]
+[START_Affector]
+4715268809856909312,1101004800,2,
+[END_Affector]
+[START_Affector]
+4629700416936869888,1082130432,0,
+[END_Affector]
+[START_Update affectors]
+3,0,8,4,
+[END_Update affectors]
+[START_Affector]
+5629628383232000,69818988363776,1,
+[END_Affector]
+[START_Affector]
+1109393408,0,0,
+[END_Affector]
+[START_Affector]
+1408470116925440,0,0,
+[END_Affector]
+[START_Fixed Update affectors]
+1,10,
+[END_Fixed Update affectors]
+[START_Affector]
+19660860,1138819072,1,
+[END_Affector]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+18446744072998102016,65,"RadialEmitter",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,7382.08,963.894,0.119936,0,0,0,1,18446744072996518400,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+12,[START_Emitter]
+18446744072998103040,0,18446744072998102016,"Default Particle","particle01.dds",1000,0,
+[END_Emitter]
+[START_Spawn affectors]
+4,1,2,7,3,
+[END_Spawn affectors]
+[START_Affector]
+42949672960,0,3,
+[END_Affector]
+[START_Affector]
+4575657221408423936,1069547520,0,
+[END_Affector]
+[START_Affector]
+4674736413210574848,1092616192,2,
+[END_Affector]
+[START_Affector]
+71777214294589440,71777214294589695,0,
+[END_Affector]
+[START_Update affectors]
+2,0,4,
+[END_Update affectors]
+[START_Affector]
+56295424838860800,67949818609664,3,
+[END_Affector]
+[START_Affector]
+43629716623523840,0,0,
+[END_Affector]
+[START_Fixed Update affectors]
+1,10,
+[END_Fixed Update affectors]
+[START_Affector]
+7864410,0,4,
+[END_Affector]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]

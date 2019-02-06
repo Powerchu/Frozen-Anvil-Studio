@@ -325,8 +325,19 @@ namespace Dystopia
 				if (auto shader = CORE::Get<ShaderSystem>()->GetShader("Health Bar"))
 				{
 					sr->SetShader(shader);
-					sr->SetManualShaderOverride("fHealth", Math::ApproxEq(mfCurStamina, 1.f) ? 1.1f : mfCurStamina);
-					sr->SetManualShaderOverride("fRedZone", Math::ApproxEq(mfCurStamina, 1.f) ? 1.1f : mfCurStamina);
+
+					if (Math::ApproxEq(mfCurStamina, 1.f))
+					{
+						sr->SetManualShaderOverride("fHealth", 1.1f);
+						sr->SetManualShaderOverride("fRedZone", 1.1f);
+					}
+					else
+					{
+						sr->SetManualShaderOverride("fHealth", mfCurStamina);
+						sr->SetManualShaderOverride("fRedZone", mfCurStamina);
+					}
+
+
 					sr->SetManualShaderOverride("fWave", mfAccuDt);
 					sr->SetManualShaderOverride("vColor", Math::Vec4{1,1,1,1});
 					sr->SetManualShaderOverride("vDmgCol", Math::Vec4{1,1,1,1});

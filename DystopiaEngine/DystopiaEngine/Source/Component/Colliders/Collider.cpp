@@ -508,7 +508,7 @@ namespace Dystopia
 							{
 								RemoveColLayer(static_cast<eColLayer>((0x01u << i)));
 							}
-#							EGUI::SameLine();
+							EGUI::SameLine();
 							EGUI::Display::Label(arrColLayer[i].c_str());
 						}
 					}

@@ -52,10 +52,12 @@ void Dystopia::Texture2D::GenerateMipmap(void) const
 
 void Dystopia::Texture2D::Load(void)
 {
+#if EDITOR
 	auto id = CORE::Get<FileSystem>()->TrackFile(GetPath());
 	CORE::Get<FileSystem>()->BindFileTrackEvent(id, &Texture2D::ReloadImageTrigger, this);
-
+#endif
 	ResolveLoad();
+
 }
 
 void Dystopia::Texture2D::ResolveLoad(void)

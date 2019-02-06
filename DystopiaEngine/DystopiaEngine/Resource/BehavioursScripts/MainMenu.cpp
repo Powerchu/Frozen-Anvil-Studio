@@ -183,7 +183,7 @@ namespace Dystopia
 				(pSelector && mMenuTabs[static_cast<MenuStates>(static_cast<int>(index) + static_cast<int>(MenuStates::Total) + 1)]) &&  MoveSelector();
 			}
 			/*Check Key Up*/
-			else if(pInputSys->GetButtonDown("Vertical", false) || Axis < -0.8f)
+			else if(pInputSys->GetButtonDown("Vertical", false) || Axis > 0.8f)
 			{
 				index = (static_cast<int>(index) - 1) < 0 ? static_cast<MenuStates>(static_cast<int>(MenuStates::Total)-1) : static_cast<MenuStates>( static_cast<int>(index) - 1);
 				(pSelector && mMenuTabs[static_cast<MenuStates>(static_cast<int>(index) + static_cast<int>(MenuStates::Total) + 1)]) && MoveSelector();
@@ -313,7 +313,7 @@ namespace Dystopia
 	{
 		fpState = &PlayState::Quit;
 		/*Insert Code to Change Scene here*/
-		//EngineCore::Get<SceneSystem>()->LoadScene("Forest.dscene");
+
 		return true;
 	}
 	bool PlayState::Quit(float)
@@ -321,6 +321,7 @@ namespace Dystopia
 		/*Reset base to init*/
 		fpState = &PlayState::Init;
 		Terminate();
+		EngineCore::Get<SceneSystem>()->LoadScene("IntroCutScene.dscene");
 		return true;
 	}
     bool PlayState::Invoke(float _dt) 
@@ -402,7 +403,7 @@ namespace Dystopia
 	{
 		/*This will execute once, you should do the set up for Settings here*/
 		/*Fade In*/
-		alpha += _dt + alpha * _dt;
+		alpha += _dt + 6.f * _dt;
 		/*When whatever animation is done, set the pointer to point to the Howtoplay function*/
 		DEBUG_PRINT(eLog::MESSAGE, "Settings Transition \n");
 		
@@ -412,6 +413,12 @@ namespace Dystopia
 			if(auto && p = pObject->GetComponent<SpriteRenderer>())
 			{
 				p->SetAlpha(alpha);
+				for (auto && child : pObject->GetComponent<Transform>()->GetAllChild())
+				{
+					if (child && child->GetOwner())
+						if (auto && child_render = child->GetOwner()->GetComponent<SpriteRenderer>())
+							child_render->SetAlpha(alpha);
+				}
 			}  
 		}
 		if(alpha >= 1.f)
@@ -424,19 +431,24 @@ namespace Dystopia
 	bool SettingsState::Update(float _dt)
 	{
 		static float Axis = 0.f;
+		static bool hasPress = false;
 		Axis = pInputSys->GetAxis("L Stick Vertical");
 
-		if( pInputSys->GetButtonDown("Vertical", true) || Axis < -0.8f)
+		if (Axis < 0.8f  && Axis > -0.8f) hasPress = false;
+
+		if( pInputSys->GetButtonDown("Vertical", true) || Axis <= -1.f && !hasPress)
 		{
 			s_index = static_cast<SettingsButtons>((static_cast<int>(s_index) + 1) % static_cast<int>(SettingsButtons::eTotal));
 			(pSelector && mSettingsObjects[s_index]) &&  MoveSelector();
 			fpButton = mSettingsFunc[s_index];
+			hasPress = true;
 		}
-		else if(pInputSys->GetButtonDown("Vertical", false)|| Axis > 0.8f)
+		else if(pInputSys->GetButtonDown("Vertical", false)|| Axis >= 1.f && !hasPress)
 		{
 			s_index = (static_cast<int>(s_index) - 1) < 0 ? static_cast<SettingsButtons>(static_cast<int>(SettingsButtons::eTotal)-1) : static_cast<SettingsButtons>( static_cast<int>(s_index) - 1);
 			(pSelector && mSettingsObjects[s_index]) && MoveSelector();
 			fpButton = mSettingsFunc[s_index];
+			hasPress = true;
 		}
 		else if(pInputSys->GetButtonDown("Back"))
 		{
@@ -456,7 +468,13 @@ namespace Dystopia
 		{
 			if(auto && p = pObject->GetComponent<SpriteRenderer>())
 			{
-				p->SetAlpha(alpha);  
+				p->SetAlpha(alpha);
+				for (auto && child : pObject->GetComponent<Transform>()->GetAllChild())
+				{
+					if (child && child->GetOwner())
+						if (auto && child_render = child->GetOwner()->GetComponent<SpriteRenderer>())
+							child_render->SetAlpha(alpha);
+				}
 			}
 		}
 		if(alpha < 0.1f)
@@ -464,6 +482,12 @@ namespace Dystopia
 			if(auto && p = pObject->GetComponent<SpriteRenderer>())
 			{
 				p->SetAlpha(0.f);
+				for (auto && child : pObject->GetComponent<Transform>()->GetAllChild())
+				{
+					if (child && child->GetOwner())
+						if (auto && child_render = child->GetOwner()->GetComponent<SpriteRenderer>())
+							child_render->SetAlpha(0.f);
+				}
 			} 
 
 			/*Terminate Howtoplay Menu*/
@@ -574,7 +598,7 @@ namespace Dystopia
 	{
 		/*This will execute once, you should do the set up for Settings here*/
 		/*Fade In*/
-		alpha += _dt + alpha * _dt;
+		alpha += _dt + 6.f * _dt;
 		/*When whatever animation is done, set the pointer to point to the Howtoplay function*/
 		DEBUG_PRINT(eLog::MESSAGE, "Howtoplay Transition \n");
 		if(pObject)
@@ -730,7 +754,7 @@ namespace Dystopia
 	{
 		/*This will execute once, you should do the set up for Settings here*/
 		/*Fade In*/
-		alpha += _dt + alpha * _dt;
+		alpha += _dt + 6.f * _dt;
 		if(pObject)
 		{
 			pObject->SetActive(true);

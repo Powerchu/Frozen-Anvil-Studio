@@ -845,6 +845,36 @@ namespace Dystopia
 		return HashString{};
 	}
 
+	AutoArray<HashString> FileSystem::GetAllFiles(const HashString & Full_Path)
+	{
+		AutoArray<HashString> toRet;
+		std::filesystem::path DirPath{ Full_Path.c_str() };
+		std::error_code error;
+		std::filesystem::recursive_directory_iterator DirIter{ DirPath, std::filesystem::directory_options::skip_permission_denied, error };
+
+		for (auto const & elem : DirIter)
+		{
+			toRet.push_back(elem.path().filename().string().c_str());
+		}
+
+		return toRet;
+	}
+
+	AutoArray<HashString> FileSystem::GetAllFiles_Full(const HashString & Full_Path)
+	{
+		AutoArray<HashString> toRet;
+		std::filesystem::path DirPath{ Full_Path.c_str() };
+		std::error_code error;
+		std::filesystem::recursive_directory_iterator DirIter{ DirPath, std::filesystem::directory_options::skip_permission_denied, error };
+
+		for (auto const & elem : DirIter)
+		{
+			toRet.push_back(elem.path().string().c_str());
+		}
+
+		return toRet;
+	}
+
 	HashString FileSystem::GetFromResource(const char *_str)
 	{
 		std::filesystem::path DirPath{ GetProjectFolders<std::string>(eFileDir::eResource) };

@@ -1,0 +1,93 @@
+[START_GO_PREFAB]
+0,[START_START_GO_DATA]
+1830426624,65,"Form_Spike_Relay",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,-483.074,281.74,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"SkillRelay",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+2,
+[END_Behaviour  Meta Count]
+[START_mfLifespan]
+"mfLifespan",
+[END_mfLifespan]
+[START_Member Variable]
+1.5,
+[END_Member Variable]
+[START_mfCountdown]
+"mfCountdown",
+[END_mfCountdown]
+[START_Member Variable]
+1.5,
+[END_Member Variable]
+[START_Recursion Counter]
+1,
+[END_Recursion Counter]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+1830428160,65,"Form_Spike",32,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+400,50,1,-285.304,122.959,2.98023e-08,0,0,0,1,1830426624,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+4,[START_Convex_Collider]
+1830429184,1,1830428160,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,1,4294967295,
+[END_Convex_Collider]
+
+[END_Component]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"FormSpike",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+5,
+[END_Behaviour  Meta Count]
+[START_mbActivate]
+"mbActivate",
+[END_mbActivate]
+[START_Member Variable]
+1,
+[END_Member Variable]
+[START_mfDelayStart]
+"mfDelayStart",
+[END_mfDelayStart]
+[START_Member Variable]
+0.03,
+[END_Member Variable]
+[START_mfSpacing]
+"mfSpacing",
+[END_mfSpacing]
+[START_Member Variable]
+1,
+[END_Member Variable]
+[START_mfIntervals]
+"mfIntervals",
+[END_mfIntervals]
+[START_Member Variable]
+0.15,
+[END_Member Variable]
+[START_mfTimeCounter]
+"mfTimeCounter",
+[END_mfTimeCounter]
+[START_Member Variable]
+0.15,
+[END_Member Variable]

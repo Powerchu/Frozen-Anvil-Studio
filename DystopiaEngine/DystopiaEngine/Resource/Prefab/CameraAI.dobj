@@ -1,0 +1,174 @@
+[START_GO_PREFAB]
+0,[START_START_GO_DATA]
+434089984,65,"CameraAI",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,0,0,1.10003,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"CamAi",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+12,
+[END_Behaviour  Meta Count]
+[START_X_Offset]
+"X_Offset",
+[END_X_Offset]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_Y_Offset]
+"Y_Offset",
+[END_Y_Offset]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_FocusAreaWidth]
+"FocusAreaWidth",
+[END_FocusAreaWidth]
+[START_Member Variable]
+300,
+[END_Member Variable]
+[START_FocusAreaXOffset]
+"FocusAreaXOffset",
+[END_FocusAreaXOffset]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_PanicZoneHeight]
+"PanicZoneHeight",
+[END_PanicZoneHeight]
+[START_Member Variable]
+500,
+[END_Member Variable]
+[START_PanicZoneY_Offset]
+"PanicZoneY_Offset",
+[END_PanicZoneY_Offset]
+[START_Member Variable]
+150,
+[END_Member Variable]
+[START_FocusArea_xPos]
+"FocusArea_xPos",
+[END_FocusArea_xPos]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_MaxCameraSpeed]
+"MaxCameraSpeed",
+[END_MaxCameraSpeed]
+[START_Member Variable]
+600,
+[END_Member Variable]
+[START_MaxCameraPanDist]
+"MaxCameraPanDist",
+[END_MaxCameraPanDist]
+[START_Member Variable]
+250,
+[END_Member Variable]
+[START_CamSmoothFactor]
+"CamSmoothFactor",
+[END_CamSmoothFactor]
+[START_Member Variable]
+2.25,
+[END_Member Variable]
+[START_mfMaxTimerCount]
+"mfMaxTimerCount",
+[END_mfMaxTimerCount]
+[START_Member Variable]
+3,
+[END_Member Variable]
+[START_mfTimer]
+"mfTimer",
+[END_mfTimer]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_Recursion Counter]
+4,
+[END_Recursion Counter]
+[START_GO_PREFAB]
+0,[START_START_GO_DATA]
+434090496,65,"HeroFollow",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,-1246.52,452.453,-98.8999,0,0,0,1,434089984,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+434091008,65,"FocusArea",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+300,1500,1,-150,0.000854492,2.10006,0,0,0,1,434089984,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+4,[START_Convex_Collider]
+18446744072251764736,1,434091008,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,1,0,
+[END_Convex_Collider]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+434091520,65,"CenterY",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+2500,1,1,-0.000244141,0.000854492,3.10006,0,0,0,1,434089984,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+4,[START_Convex_Collider]
+18446744072251766272,1,434091520,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,1,0,
+[END_Convex_Collider]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+434092032,65,"PanicZone",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+2500,500,1,-0.000244141,0.000854492,1.10006,0,0,0,1,434089984,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+4,[START_Convex_Collider]
+18446744072251767808,1,434092032,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,1,0,
+[END_Convex_Collider]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]

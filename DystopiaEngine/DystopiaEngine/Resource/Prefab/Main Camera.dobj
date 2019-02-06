@@ -1,0 +1,90 @@
+[START_GO_PREFAB]
+3,[START_START_GO_DATA]
+18446744073170559488,65,"Main Camera",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1.46,1.46,1,-1543.31,515.276,350,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+0,[START_Camera]
+580263936,1,18446744073170559488,0,0,1,1000,1,1,1,0,0,1,91,
+[END_Camera]
+
+[END_Component]
+[START_Component]
+6,[START_Audio]
+580264448,1,18446744073170559488,0,1,1,"menu_bgm.wav",0.2,1,1,10000,10000,
+[END_Audio]
+
+[END_Component]
+[START_Component]
+13,[START_Audio Listener]
+18446744073323403264,1,18446744073170559488,0,0,0,0,
+[END_Audio Listener]
+
+[END_Component]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"CamShake",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+8,
+[END_Behaviour  Meta Count]
+[START_IsStationary]
+"IsStationary",
+[END_IsStationary]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_camShakeActive]
+"camShakeActive",
+[END_camShakeActive]
+[START_Member Variable]
+1,
+[END_Member Variable]
+[START_trauma]
+"trauma",
+[END_trauma]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_traumaMult]
+"traumaMult",
+[END_traumaMult]
+[START_Member Variable]
+16,
+[END_Member Variable]
+[START_traumaMag]
+"traumaMag",
+[END_traumaMag]
+[START_Member Variable]
+0.8,
+[END_Member Variable]
+[START_traumaRotMag]
+"traumaRotMag",
+[END_traumaRotMag]
+[START_Member Variable]
+0.02,
+[END_Member Variable]
+[START_traumaDepthMag]
+"traumaDepthMag",
+[END_traumaDepthMag]
+[START_Member Variable]
+0.02,
+[END_Member Variable]
+[START_traumaDecay]
+"traumaDecay",
+[END_traumaDecay]
+[START_Member Variable]
+1.3,
+[END_Member Variable]
+[START_Recursion Counter]
+0,
+[END_Recursion Counter]

@@ -286,29 +286,29 @@ namespace Dystopia
         if (mpInput)
          ReMapButtons();
     }
-    void CharacterController::Init()
-    {
-        mpInput = EngineCore::GetInstance()->GetSystem<InputManager>();
-        mpBody = GetOwner()->GetComponent<RigidBody>(); 
-        mpAnim = GetOwner()->GetComponent<SpriteRenderer>();
-        mpCollider = GetOwner()->GetComponent<Convex>();
-        mpAudioSrc = GetOwner()->GetComponent<AudioSource>();
+	void CharacterController::Init()
+	{
+		mpInput = EngineCore::GetInstance()->GetSystem<InputManager>();
+		mpBody = GetOwner()->GetComponent<RigidBody>();
+		mpAnim = GetOwner()->GetComponent<SpriteRenderer>();
+		mpCollider = GetOwner()->GetComponent<Convex>();
+		mpAudioSrc = GetOwner()->GetComponent<AudioSource>();
 		mpMyHitBox = EngineCore::Get<SceneSystem>()->FindGameObject("CharacterHitBox");
-        mpCamShaker = EngineCore::Get<SceneSystem>()->FindGameObject("Camera Shake");
-        mpHealthBar = EngineCore::Get<SceneSystem>()->FindGameObject("PlayerUI");
-        mpUICam = EngineCore::Get<SceneSystem>()->FindGameObject("UI Camera");
-        mpPlayerUI = EngineCore::Get<SceneSystem>()->FindGameObject("PlayerUI");
-        orgOffset = GetOwner()->GetComponent<Collider>()->GetOffSet();
-        orgScale = GetOwner()->GetComponent<Collider>()->GetScale();
-        mnHitCounter = 0;
+		mpCamShaker = EngineCore::Get<SceneSystem>()->FindGameObject("Camera Shake");
+		mpHealthBar = EngineCore::Get<SceneSystem>()->FindGameObject("PlayerUI");
+		mpUICam = EngineCore::Get<SceneSystem>()->FindGameObject("UI Camera");
+		mpPlayerUI = EngineCore::Get<SceneSystem>()->FindGameObject("PlayerUI");
+		orgOffset = GetOwner()->GetComponent<Collider>()->GetOffSet();
+		orgScale = GetOwner()->GetComponent<Collider>()->GetScale();
+		mnHitCounter = 0;
 
-        mpHitAudioSrc = mpMyHitBox ? mpMyHitBox->GetComponent<AudioSource>() : nullptr;
-        auto& allchild = GetOwner()->GetComponent<Transform>()->GetAllChild();
-        for (auto& c : allchild)
-        {
-            if (c->GetOwner()->GetName() == HashString{"CastPivot"})
-                mpCastPivot = c->GetOwner();
-        } 
+		mpHitAudioSrc = mpMyHitBox ? mpMyHitBox->GetComponent<AudioSource>() : nullptr;
+		auto& allchild = GetOwner()->GetComponent<Transform>()->GetAllChild();
+		for (auto& c : allchild)
+		{
+			if (c->GetOwner()->GetName() == HashString{ "CastPivot" })
+				mpCastPivot = c->GetOwner();
+		}
 
 		mChainSkillName[0] = "Force_Flame_Relay.dobj";
 		mChainSkillName[1] = "Form_Spike_Relay.dobj";
@@ -316,19 +316,21 @@ namespace Dystopia
 		mManualSkillName[0][1] = "";
 		mManualSkillName[1][0] = "Form_Slam_Relay.dobj";
 		mManualSkillName[1][1] = "";
-		
-        if (mpInput)
-            MapButtonsDefault();
- 
-        mbFaceRight = mbIsInForce = true;
-        mnPriorityDir = mnCurrentAttackChain = mnManualSkill = 0;
-        mfCurrentSpeed = mfMaxSpeed;
-        mbSpammedAttack = mbSpammedCast = mbChainedInto = false;
-		mfAnalogSens = Math::Clamp(mfAnalogSens, 0.2f, 1.f);
-        if (mpInput)
-            ReMapButtons();
 
-    }
+		if (mpInput)
+			MapButtonsDefault();
+
+		mbFaceRight = mbIsInForce = true;
+		mnPriorityDir = mnCurrentAttackChain = mnManualSkill = 0;
+		mfCurrentSpeed = mfMaxSpeed;
+		mbSpammedAttack = mbSpammedCast = mbChainedInto = false;
+		mfAnalogSens = Math::Clamp(mfAnalogSens, 0.2f, 1.f);
+		if (mpInput)
+			ReMapButtons();
+
+		mfCurrMana = mfMaxMana;
+		mfCurrHealth = mfMaxHealth;
+	}
 
     void CharacterController::FixedUpdate(const float)
     {
@@ -374,6 +376,7 @@ namespace Dystopia
         if (mfCurrMana < mfMaxMana && mfManaDelay <= 0.0f)
         {
             mfCurrMana += mfManaRegen * _fDeltaTime;
+			mfCurrMana = Math::Clamp(mfCurrMana, 0, mfMaxMana);
             if (mpHealthBar)
                 CharacterController_MSG::SendExternalMessage(mpHealthBar, "SetStaminaPercentage", mfCurrMana/mfMaxMana);
         }
@@ -382,6 +385,7 @@ namespace Dystopia
         if (mfCurrHealth < mfMaxHealth && mfHealthDelay <= 0.0f)
         {
             mfCurrHealth += mfHealthRegen * _fDeltaTime;
+			mfCurrHealth = Math::Clamp(mfCurrHealth, 0, mfMaxHealth);
         }
 
 		mnStateDebug = static_cast<int>(mCurrentState);

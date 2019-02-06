@@ -839,6 +839,20 @@ Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(const char * _strName)
 	return CORE::Get<TextureSystem>()->LoadTexture(_strName);
 }
 
+_DLL_EXPORT void Dystopia::GraphicsSystem::LoadAllTexture()
+{
+	auto && allTex = CORE::Get<FileSystem>()->GetAllFiles_Full((CORE::Get<FileSystem>()->GetProjectFolders<std::string>(eFileDir::eResource) + "/Asset/").c_str());
+	for (auto && tex : allTex)
+	{
+		if (tex.find(".dmap") != HashString::nPos || tex.find(".dmeta") != HashString::nPos)
+			continue;
+
+		if (tex.rfind(".png") != HashString::nPos || tex.rfind(".dds") != HashString::nPos)
+			LoadTexture(tex.c_str());
+	}
+
+}
+
 Dystopia::Texture* Dystopia::GraphicsSystem::LoadFont(const std::string &)
 {
 	return nullptr;

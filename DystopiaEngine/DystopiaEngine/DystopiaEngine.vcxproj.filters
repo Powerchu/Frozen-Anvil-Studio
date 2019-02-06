@@ -456,6 +456,15 @@
     <ClCompile Include="Resource\BehavioursScripts\FormSpikeChild.cpp" />
     <ClCompile Include="Resource\BehavioursScripts\GoblinAI.cpp" />
     <ClCompile Include="Resource\BehavioursScripts\PlayerUIController.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\PrimativeEnemy.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\RuneAnim.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\RuneSwitch.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\RuneWall.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\SkillRelay.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\SortChildOrder.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\VinesPlatform.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\WiloShadow.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\IntroductionScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -1234,6 +1243,15 @@
     <ClInclude Include="Resource\BehavioursScripts\FormSpikeChild.h" />
     <ClInclude Include="Resource\BehavioursScripts\GoblinAI.h" />
     <ClInclude Include="Resource\BehavioursScripts\PlayerUIController.h" />
+    <ClInclude Include="Resource\BehavioursScripts\PrimativeEnemy.h" />
+    <ClInclude Include="Resource\BehavioursScripts\RuneAnim.h" />
+    <ClInclude Include="Resource\BehavioursScripts\RuneSwitch.h" />
+    <ClInclude Include="Resource\BehavioursScripts\RuneWall.h" />
+    <ClInclude Include="Resource\BehavioursScripts\SkillRelay.h" />
+    <ClInclude Include="Resource\BehavioursScripts\SortChildOrder.h" />
+    <ClInclude Include="Resource\BehavioursScripts\VinesPlatform.h" />
+    <ClInclude Include="Resource\BehavioursScripts\WiloShadow.h" />
+    <ClInclude Include="Resource\BehavioursScripts\IntroductionScene.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

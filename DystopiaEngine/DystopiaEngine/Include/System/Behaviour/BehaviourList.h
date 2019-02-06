@@ -41,7 +41,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Resource/BehavioursScripts/FormSpike.h"
 #include "../Resource/BehavioursScripts/FormSpikeChild.h"
 #include "../Resource/BehavioursScripts/GoblinAI.h"
-//#include "../Resource/BehavioursScripts/PlayerUIController.h"
+#include "../Resource/BehavioursScripts/PlayerUIController.h"
+#include "../Resource/BehavioursScripts/PrimativeEnemy.h"
+#include "../Resource/BehavioursScripts/RuneAnim.h"
+#include "../Resource/BehavioursScripts/RuneSwitch.h"
+#include "../Resource/BehavioursScripts/RuneWall.h"
+#include "../Resource/BehavioursScripts/SkillRelay.h"
+#include "../Resource/BehavioursScripts/SortChildOrder.h"
+#include "../Resource/BehavioursScripts/VinesPlatform.h"
+#include "../Resource/BehavioursScripts/WiloShadow.h"
+#include "../Resource/BehavioursScripts/IntroductionScene.h"
 #endif
 
 #if EDITOR
@@ -70,8 +79,17 @@ namespace Dystopia
 		class FormSlamChild,
 		class FormSpike,
 		class FormSpikeChild,
-		class GoblinAI
-		//class PlayerUIController
+		class GoblinAI,
+		class PlayerUIController,
+		class PrimativeEnemy,
+		class RuneAnim,
+		class RuneSwitch,
+		class RuneWall,
+		class SkillRelay,
+		class SortChildOrder,
+		class VinesPlatform,
+		class WiloShadow,
+		class IntroductionScene
 		
 	>::result;
 }

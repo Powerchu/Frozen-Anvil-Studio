@@ -1,0 +1,60 @@
+[START_GO_PREFAB]
+2,[START_START_GO_DATA]
+1551630336,65,"PrimitiveE",16,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+100,100,1,-77.4889,61.7585,0.1,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+2,[START_RigidBody]
+18446744071670442496,1,1551630336,0,0.5,0.1,0.5,0.5,0.01,0,4,100,1,0,1,1,0,
+[END_RigidBody]
+
+[END_Component]
+[START_Component]
+4,[START_Convex_Collider]
+18446744071670443008,1,1551630336,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,0,
+[END_Convex_Collider]
+
+[END_Component]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"PrimativeEnemy",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+4,
+[END_Behaviour  Meta Count]
+[START_mbIsDead]
+"mbIsDead",
+[END_mbIsDead]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_mfMaximumHealth]
+"mfMaximumHealth",
+[END_mfMaximumHealth]
+[START_Member Variable]
+100,
+[END_Member Variable]
+[START_mfCurentHealth]
+"mfCurentHealth",
+[END_mfCurentHealth]
+[START_Member Variable]
+100,
+[END_Member Variable]
+[START_mfForceTakenAmp]
+"mfForceTakenAmp",
+[END_mfForceTakenAmp]
+[START_Member Variable]
+1000,
+[END_Member Variable]
+[START_Recursion Counter]
+0,
+[END_Recursion Counter]

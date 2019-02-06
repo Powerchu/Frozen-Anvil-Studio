@@ -1,0 +1,72 @@
+[START_GO_PREFAB]
+0,[START_START_GO_DATA]
+18446744072487766016,65,"Form_Slam_Relay",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,391.383,-219.702,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"SkillRelay",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+2,
+[END_Behaviour  Meta Count]
+[START_mfLifespan]
+"mfLifespan",
+[END_mfLifespan]
+[START_Member Variable]
+2,
+[END_Member Variable]
+[START_mfCountdown]
+"mfCountdown",
+[END_mfCountdown]
+[START_Member Variable]
+2,
+[END_Member Variable]
+[START_Recursion Counter]
+1,
+[END_Recursion Counter]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+18446744072487767552,65,"Form_Slam",32,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+738.989,821.098,1,332.464,-232.534,0,0,0,0,1,18446744072487766016,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+18446744072487768576,1,18446744072487767552,"FormT2_Anim.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,1,"Rename this",4,3,0,0,11,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"FormSlam",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+1,
+[END_Behaviour  Meta Count]
+[START_mbActivate]
+"mbActivate",
+[END_mbActivate]
+[START_Member Variable]
+0,
+[END_Member Variable]
