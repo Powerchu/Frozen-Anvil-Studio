@@ -433,6 +433,9 @@
     <ClCompile Include="Source\System\Particle\AccelerationAffector.cpp">
       <Filter>Game Engine\Systems\Particle\Affectors\Acceleration</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Particle\AttractionAffector.cpp">
+      <Filter>Game Engine\Systems\Particle\Affectors\Attractor</Filter>
+    </ClCompile>
     <ClCompile Include="Resource\BehavioursScripts\MainMenu.cpp" />
     <ClCompile Include="Resource\BehavioursScripts\PauseMenu.cpp" />
     <ClCompile Include="Resource\BehavioursScripts\SplashManager.cpp" />
@@ -1208,6 +1211,9 @@
     <ClInclude Include="Include\System\Collision\CollisionLayers.h">
       <Filter>Game Engine\Systems\Collision</Filter>
     </ClInclude>
+    <ClInclude Include="Include\System\Particle\AttractionAffector.h">
+      <Filter>Game Engine\Systems\Particle\Affectors\Attractor</Filter>
+    </ClInclude>
     <ClInclude Include="Resource\BehavioursScripts\MainMenu.h" />
     <ClInclude Include="Resource\BehavioursScripts\PauseMenu.h" />
     <ClInclude Include="Resource\BehavioursScripts\SplashManager.h" />
@@ -1745,6 +1751,9 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Particle\Affectors\Acceleration">
       <UniqueIdentifier>{ca83b01c-c483-46c9-a9ae-a4306b9ba01e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Particle\Affectors\Attractor">
+      <UniqueIdentifier>{1d3e63c3-fef7-4d0c-ba29-3057e8cfe5a9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
