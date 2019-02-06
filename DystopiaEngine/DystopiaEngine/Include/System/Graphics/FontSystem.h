@@ -55,7 +55,7 @@ namespace Dystopia
 		Font* LoadExisting(const HashString&, Font* _out);
 
 		CharSpace PackFont(AutoArray<CharSpace>&, uchar* dest, uchar* src, unsigned _nWidth, unsigned _nHeight);
-		void OutputFontmap(Image*, Font const*, HashString const&);
+		void OutputFontmap(Font const*, HashString const&);
 
 		void Blit(const uchar* _src, unsigned _nWidth, unsigned _nHeight, uchar* _dest);
 	};

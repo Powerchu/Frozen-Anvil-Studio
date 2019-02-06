@@ -450,7 +450,7 @@ namespace EGUI
 			return eNO_CHANGE;
 		}
 
-		Array<eDragStatus, 3> VectorFields(const char * _label, Math::Vector4 *_outputVec, float _dragSpeed, float _min, float _max, float _width)
+		Array<eDragStatus, 3> VectorFields(const char * _label, Math::Vector4 *_outputVec, float _dragSpeed, float _min, float _max, float _width, bool _wParamEnable)
 		{
 			std::string field1 = "##VecX", field2 = "##VecY", field3 = "##VecZ";
 			float x, y, z;
@@ -478,6 +478,15 @@ namespace EGUI
 			eDragStatus statZ = EGUI::Display::DragFloat(field3.c_str(), &z, _dragSpeed, _min, _max, true, _width);
 			if (statZ != eDragStatus::eNO_CHANGE) _outputVec->z = z;
 
+			if (_wParamEnable)
+			{
+				float w = _outputVec->w;
+				std::string field4 = "##VecW";
+				field4 += _label;
+				SameLine(); Label("W:"); SameLine();
+				eDragStatus statW = EGUI::Display::DragFloat(field4.c_str(), &w, _dragSpeed, _min, _max, true, _width);
+				if (statW != eDragStatus::eNO_CHANGE) _outputVec->w = w;
+			}
 
 			return Array<eDragStatus, 3>{statX, statY, statZ};
 		}

@@ -48,7 +48,7 @@ Dystopia::Emitter::Emitter(void) noexcept
 	: mColour{}, mPosition{}, mVelocity{}, mAccel{}, mLifetime{}, mSpawnCount{},
 	mSpawn{}, mUpdate{}, mFixedUpdate{}, mpShader{ nullptr }, mpTexture{ nullptr },
 	mInitialLife{}, mbUpdatedPositions{ false }, mTextureName{ "EditorStartup.png" }, 
-	mShaderName{ "Default Particle" }, mnParticleLimit{ 1000 }
+	mShaderName{ "Default Particle" }, mnParticleLimit{ 1000 }, mbIsAlive{ true }
 {
 	glGenVertexArrays(1, &mVAO);
 	glGenBuffers(2, &mColourBuffer);
@@ -70,7 +70,7 @@ Dystopia::Emitter::Emitter(Dystopia::Emitter const& _rhs) noexcept
 	mSpawn{ _rhs.mSpawn }, mUpdate{ _rhs.mUpdate }, mFixedUpdate{ _rhs.mFixedUpdate }, 
 	mpShader{ _rhs.mpShader }, mpTexture{ _rhs.mpTexture },
 	mInitialLife{ _rhs.mInitialLife }, mTextureName{ _rhs.mTextureName }, 
-	mShaderName{ _rhs.mTextureName }, mnParticleLimit{ _rhs.mnParticleLimit }
+	mShaderName{ _rhs.mTextureName }, mnParticleLimit{ _rhs.mnParticleLimit }, mbIsAlive{ _rhs.mbIsAlive }
 {
 	glGenVertexArrays(1, &mVAO);
 	glGenBuffers(2, &mColourBuffer);
@@ -163,7 +163,7 @@ void Dystopia::Emitter::Init(void)
 
 void Dystopia::Emitter::FixedUpdate(float _fDT)
 {
-#if 1
+#if defined(_OPENMP)
 	long long l = mPosition.size();
 
 #	pragma omp parallel for
@@ -180,7 +180,7 @@ void Dystopia::Emitter::FixedUpdate(float _fDT)
 	for (auto& e : mPosition)
 	{
 		*pVel += *pAcc * _fDT;
-		e     += *pVel * _fDT;
+		e     += (*pVel).xyz0 * _fDT;
 
 		++pVel; ++pAcc;
 	}
@@ -257,6 +257,7 @@ void Dystopia::Emitter::KillParticle(unsigned _nIdx) noexcept
 	mPosition   .FastRemove(_nIdx);
 
 	mInitialLife.FastRemove(_nIdx);
+	mbUpdatedPositions = true;
 }
 
 void Dystopia::Emitter::SpawnParticle(void) noexcept
@@ -269,6 +270,7 @@ void Dystopia::Emitter::SpawnParticle(void) noexcept
 			e.Update(*this, 0);
 
 		auto transform = GetOwner()->GetComponent<Transform>();
+		Math::Vec4 vpos = mParticle.mPos.xyz1;
 		auto pos = transform->GetTransformMatrix() * mParticle.mPos.xyz1;
 		pos.w    = mParticle.mfSize;
 
@@ -374,6 +376,7 @@ void Dystopia::Emitter::Serialise(TextSerialiser& _out) const
 	else
 		_out << "EditorStartup.png";
 	_out << mnParticleLimit;
+	_out << mbIsAlive;
 	_out.InsertEndBlock("Emitter");
 
 
@@ -423,11 +426,18 @@ void Dystopia::Emitter::Unserialise(TextSerialiser& _in)
 	mpShader = CORE::Get<ShaderSystem>()->GetShader(mShaderName.c_str());
 	_in >> buf;
 	mTextureName = CORE::Get<FileSystem>()->GetFullPath(buf.c_str(), eFileDir::eResource).c_str();
-	mpTexture = CORE::Get<TextureSystem>()->LoadTexture(mTextureName);
+	if (!mTextureName.length())
+	{
+		mTextureName = "EditorStartup.png";
+		mpTexture = CORE::Get<TextureSystem>()->GetTexture(mTextureName);
+	}
+	else
+		mpTexture = CORE::Get<TextureSystem>()->LoadTexture(mTextureName);
 	int n = 0;
 	_in >> n;
 	mnParticleLimit = n;
 	mParticle.mnLimit = static_cast<size_t>(mnParticleLimit);
+	_in >> mbIsAlive;
 	_in.ConsumeEndBlock();
 
 	static AffectorGet affectorsList;
@@ -487,6 +497,8 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 	static const auto affectorNames = Dystopia::AffectorUI<Dystopia::AffectorList>::GetUIName();
 	static bool bDebug = false;
 
+	EGUI::PushLeftAlign(100.f);
+
 	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
 
 	EGUI::Display::EmptyBox("Particle Texture", 150, (mpTexture) ? mpTexture->GetName().c_str() : "-empty-", true);
@@ -522,7 +534,13 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 		break;
 	}
 
+	bool alive = mbIsAlive;
+	if (EGUI::Display::CheckBox("Is Alive", &mbIsAlive));
+		//cmd->ChangeValue(GetOwnerID(), &Emitter::mbIsAlive, !alive, alive);
+
 	EGUI::Display::Label("Particle Count: %u", mSpawnCount);
+	EGUI::PopLeftAlign();
+
 	EGUI::Display::HorizontalSeparator();
 	if (EGUI::Display::StartTreeNode("Spawn Affectors"))
 	{
@@ -563,6 +581,21 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 		EGUI::Display::EndTreeNode();
 	}
 #endif 
+}
+
+void Dystopia::Emitter::StopEmission(void) noexcept
+{
+	mbIsAlive = false;
+}
+
+void Dystopia::Emitter::StartEmission(void) noexcept
+{
+	mbIsAlive = true;
+}
+
+bool Dystopia::Emitter::IsAlive(void) const noexcept
+{
+	return mbIsAlive;
 }
 
 

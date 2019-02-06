@@ -30,6 +30,7 @@
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
     <ClCompile Include="Include\IO\XMLParser.cpp" />
     <ClCompile Include="Source\System\Particle\AccelerationAffector.cpp" />
+    <ClCompile Include="Source\System\Particle\AttractionAffector.cpp" />
     <ClCompile Include="Source\System\Particle\ColorAffector.cpp" />
     <ClCompile Include="Source\System\Particle\LifetimeAffector.cpp" />
     <ClCompile Include="Source\System\Particle\LocationAffector.cpp" />
@@ -286,6 +287,7 @@
     <ClInclude Include="Include\System\Logger\FileLogger.h" />
     <ClInclude Include="Include\Component\Emitter.h" />
     <ClInclude Include="Include\System\Particle\AccelerationAffector.h" />
+    <ClInclude Include="Include\System\Particle\AttractionAffector.h" />
     <ClInclude Include="Include\System\Particle\ColorAffector.h" />
     <ClInclude Include="Include\System\Particle\LifetimeAffector.h" />
     <ClInclude Include="Include\System\Particle\LocationAffector.h" />
@@ -560,7 +562,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExceptionHandling>Sync</ExceptionHandling>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <OpenMPSupport>true</OpenMPSupport>
+      <OpenMPSupport>false</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

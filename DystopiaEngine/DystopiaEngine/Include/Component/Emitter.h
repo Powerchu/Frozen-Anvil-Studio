@@ -91,6 +91,9 @@ namespace Dystopia
 		void Unserialise(TextSerialiser&) override;
 		void EditorUI(void) noexcept override;
 
+		void StopEmission(void) noexcept;
+		void StartEmission(void) noexcept;
+		bool IsAlive(void) const noexcept;
 
 	private:
 
@@ -117,7 +120,7 @@ namespace Dystopia
 #endif
 
 		bool mbUpdatedPositions;
-
+		bool mbIsAlive;
 
 		template <typename Ty>
 		void AddAffector(Ty&&, AffectorTag::OnSpawn) noexcept;
