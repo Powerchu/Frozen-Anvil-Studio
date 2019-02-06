@@ -159,6 +159,8 @@ namespace Dystopia
             void Update(float);
             bool OnEnterState(float);
             bool OnExitState(float);
+            private:
+            GameObject* jumpDust = nullptr;
         };
         //Attacking
         struct Attacking : IFiniteState
@@ -267,6 +269,7 @@ namespace Dystopia
 		float			mfLandDelay;
 		float 			mfTimer;
         float           mfInvulTimer;
+        float           mfComboTimer;
 		
 		bool 			mbDying;
         StateStatus     mStatus;
@@ -292,6 +295,7 @@ namespace Dystopia
 		float			mfAttackKnockback;
 		float			mfAttackPushfoward;
 		float			mfRollForce;
+        float           mfDeathCounter = 4.0f;
 
 
         /* Stats */
@@ -323,8 +327,10 @@ namespace Dystopia
 		bool mbAppliedAtk;
 		float mfInternalForceMultiplier;
 		bool mbChainedInto;
+        bool mbCanDoubleJump;
 		int mnManualSkill;
-        int mnRunningCheck = 0;
+        int mnRunningCheck;
+        unsigned mnHitCounter;
 
         Math::Vector3D orgOffset;
         Math::Vector3D orgScale; 
@@ -333,6 +339,9 @@ namespace Dystopia
         GameObject * mpCastPivot;
         GameObject * mpMyShadow = nullptr;
         GameObject * mpCamShaker = nullptr;
+        GameObject * mpHealthBar = nullptr;
+        GameObject * mpUICam = nullptr;
+        GameObject * mpPlayerUI = nullptr;
         Math::Vec3D myShadowOrg;
 		
 		HashString mChainSkillName[2];
@@ -341,8 +350,13 @@ namespace Dystopia
 		void TakeForce(float _force, Math::Vec2 _dir);
         void TakeDamage(float _dmg, float vibrateStrength = 0.0f);
         bool CheckLanded();
+        void ManaAudio();
+        void ChangeSkillAudio(void);
+        void FormT2Audio(const char* _audioName);
+        void IncreaseCombo(void);
+        void SetComboTimer(float _time);
 		
-		PP_MEMBERFUNC(Dystopia::CharacterController, TakeForce, CheckLanded, TakeDamage)
+		PP_MEMBERFUNC(Dystopia::CharacterController, TakeForce, CheckLanded, TakeDamage, FormT2Audio,IncreaseCombo, SetComboTimer)
         
     private:
         // Don't touch
@@ -366,7 +380,7 @@ namespace Dystopia
   Uncomment the line PP_REFLECT and add in the names of the variable you want to show
   Comment out PP_REFLECT_EMPTY.
 */
-PP_REFLECT_STUFF(Dystopia::CharacterController, mbDisableControls,  mnPriorityDir, mbFaceRight, mfTimer, mfMaxSpeed, mfJumpStrength, mfAirMovementScalerForward, mfAirMovementScalerBackward, mnStateDebug, mfAttackDelay, mfCastingDelay, mfRollDelay, mfFlinchDelay, mfLandDelay, mfAnimSpdIdle, mfAnimSpdRunning, mfAnimSpdJumping, mfAnimSpdFalling, mbSpammedAttack, mbIsInForce, mbSpammedCast, mfAttackPower, mfAttackKnockback, mfAttackPushfoward, mfAnalogSens, mfRollForce, mfInvulTimer, mfMaxHealth, mfCurrHealth, mfMaxMana, mfCurrMana, mfRollCost, mnRunningCheck, mfInternalForceMultiplier);
+PP_REFLECT_STUFF(Dystopia::CharacterController, mbDisableControls,  mnPriorityDir, mbFaceRight, mfTimer, mfMaxSpeed, mfJumpStrength, mfAirMovementScalerForward, mfAirMovementScalerBackward, mnStateDebug, mfAttackDelay, mfCastingDelay, mfRollDelay, mfFlinchDelay, mfLandDelay, mfAnimSpdIdle, mfAnimSpdRunning, mfAnimSpdJumping, mfAnimSpdFalling, mbSpammedAttack, mbIsInForce, mbSpammedCast, mfAttackPower, mfAttackKnockback, mfAttackPushfoward, mfAnalogSens, mfRollForce, mfInvulTimer, mfMaxHealth, mfCurrHealth, mfMaxMana, mfCurrMana, mfRollCost, mnRunningCheck, mfInternalForceMultiplier, mbCanDoubleJump, mfManaRegen, mfHealthRegen, mfDeathCounter, mfComboTimer);
 
 #endif //_CharacterController_H_
 
