@@ -16,7 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _QUARTERNION_H_
 #define _QUARTERNION_H_
 
-#include "Math/Vector4.h"	// Vector4
+#include "Math/Vectors.h"	// Vector4
 #include "Math/Matrix4.h"	// Matrix4
 #include "Math/MathUtility.h"
 
@@ -32,7 +32,7 @@ namespace Math
 	\brief
 		Representing rotations
 	*/
-	union __declspec(align (16)) _DLL_EXPORT Quaternion
+	struct alignas(16) _DLL_EXPORT Quaternion
 	{
 	public:
 		// ====================================== CONSTRUCTORS ======================================= // 

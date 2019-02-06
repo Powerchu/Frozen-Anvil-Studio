@@ -102,7 +102,7 @@ void Editor::ColorScheme::SaveSettings(Dystopia::TextSerialiser& _out) const
 {
 	_out.InsertStartBlock("Color");
 	_out << mArrColors.size();
-	for (auto& e : mArrColors)
+	for (const auto& e : mArrColors)
 	{
 		for (unsigned int i = 0; i < dimensions; ++i)
 		{

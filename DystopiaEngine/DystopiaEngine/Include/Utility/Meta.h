@@ -131,8 +131,51 @@ namespace Ut
 		using type = T&;
 	};
 
+	template<typename T>
+	struct RemoveLowConst<T const &&>
+	{
+		using type = T&&;
+	};
+
 	template <typename T>
 	using RemoveLowConst_t = typename RemoveLowConst<T>::type;
+
+
+	// AddLowConst
+	// ================ ====================================================
+
+	template <typename T>
+	struct AddLowConst
+	{
+		using type = T;
+	};
+
+	template<typename T>
+	struct AddLowConst<const T>
+	{
+		using type = const typename AddLowConst<T>::type;
+	};
+
+	template<typename T>
+	struct AddLowConst<T*>
+	{
+		using type = T const*;
+	};
+
+	template<typename T>
+	struct AddLowConst<T&>
+	{
+		using type = T const&;
+	};
+
+	template<typename T>
+	struct AddLowConst<T&&>
+	{
+		using type = T const &&;
+	};
+
+	template <typename T>
+	using AddLowConst_t = typename AddLowConst<T>::type;
 
 
 	// Decay
@@ -146,6 +189,12 @@ namespace Ut
 
 	template <typename T>
 	struct Decay<T&>
+	{
+		using type = typename Decay<RemoveRef_t<T>>::type;
+	};
+
+	template <typename T>
+	struct Decay<T&&>
 	{
 		using type = typename Decay<RemoveRef_t<T>>::type;
 	};
@@ -224,6 +273,14 @@ namespace Ut
 
 	template <typename T>
 	struct IsSame<T, T> : Constant <bool, true> {};
+
+	template <auto V, auto ... Vs>
+	struct IsAnySameV : Constant<bool, false> {};
+
+	template <auto L, auto R, auto ... Vs>
+	struct IsAnySameV<L, R, Vs...> : 
+		Constant <bool, L == R || IsAnySameV<L, Vs...>::value> 
+	{};
 
 
 	// Is l-value ref
@@ -409,31 +466,58 @@ namespace Ut
 	// TryCast	   
 	// ============== ======================================================
 
-	template <typename Result_t>
-	struct TryCaster
-	{
-		constexpr auto operator() (...)      { return Constant<bool, false>{}; };
-		constexpr auto operator() (Result_t) { return Constant<bool, true>{};  };
-	};
+	template <typename From, typename To, typename = To>
+	struct TryCaster : public Ut::Constant<bool, false>
+	{};
 
-#pragma warning(push)
-#pragma warning(disable : 4244)
+	template <typename From, typename To>
+	struct TryCaster<From, To, Type_t<decltype(static_cast<To>(declval<From>()))>> : public Constant<bool, true>
+	{};
+
 	template <typename Ty, typename U>
-	constexpr bool TryCast(U&&) { return decltype(TryCaster<Ty>{}(Ut::declval<U>()))::value; }
-#pragma warning(pop)
+	inline constexpr bool TryCast(U&&) { return Ut::TryCaster<U, Ty, Ty>::value; }
+	template <typename Ty>
+	inline constexpr bool TryCast(Ty&&) { return true; }
+
+
+	// HasVTable	   
+	// ============== ======================================================
+
+	template <typename T>
+	struct HasVTable
+	{
+	private:
+		struct Base : Ut::RemoveRef_t<T> { virtual void dummy() {}; };
+
+	public:
+		static constexpr bool value = sizeof(Base) == sizeof(Ut::RemoveRef_t<T>);
+	};
 
 
 	// IsEmptyClass	   
 	// ============== ======================================================
 
+	// TODO: Multiple and virtual inheritance
 	template <typename T>
 	struct IsEmptyClass
 	{
 	private:
-		struct Base : T { char dummy[1]; };
+		struct Base : T { char dummy; };
+
+		constexpr static bool eval(void)
+		{
+			if constexpr (HasVTable<T>::value)
+			{
+				return sizeof(T) == sizeof(void*);
+			}
+			else
+			{
+				return sizeof(Base) == sizeof(T);
+			}
+		}
 
 	public:
-		constexpr static bool value = sizeof(Base) == sizeof(T);
+		constexpr static bool value = eval();
 	};
 }
 

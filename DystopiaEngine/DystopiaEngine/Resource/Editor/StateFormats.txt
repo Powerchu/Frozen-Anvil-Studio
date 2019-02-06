@@ -1,0 +1,28 @@
+<FS_HEADER>
+//_FS_NAME_
+struct _FS_NAME_ : IFiniteState;
+{
+    _FS_NAME_(void);
+    ~_FS_NAME_(void);
+    void Update(float);
+    void OnEnterState(void);
+    void OnExitState(void);
+}
+</FS_HEADER>
+
+<FS_BODY>
+//_FS_NAME_
+_FS_NAME_::_FS_NAME_(void) 
+{}
+_FS_NAME_::~_FS_NAME_(void) 
+{}
+void _FS_NAME_::Update(float)
+{
+}
+void _FS_NAME_::OnEnterState(void)
+{
+}
+void _FS_NAME_::OnExitState(void)
+{ 
+}
+</FS_BODY>

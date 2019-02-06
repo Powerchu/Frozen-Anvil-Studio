@@ -38,10 +38,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Profiler/Profiler.h"
 #include "System/Behaviour/BehaviourSystem.h"
 #include "System/AI/AISystem.h"
+#include "System/Editor/EditorIntermediary.h"
+#include "System/Database/DatabaseSystem.h"
+#include "System/Particle/ParticleSystem.h"
 
 // SubSystems
 #include "System/Graphics/MeshSystem.h"
 #include "System/Graphics/FontSystem.h"
+#include "System/Graphics/ShaderSystem.h"
 #include "System/Graphics/TextureSystem.h"
 #include "System/File/FileSystem.h"
 #include "System/Logger/LoggerSystem.h"
@@ -269,9 +273,9 @@ void Dystopia::EngineCore::ExecuteGame()
 void Dystopia::EngineCore::Shutdown(void)
 {
 #if EDITOR
-	//GetSubSystem<FileSystem>()->CreateFiles(SETTINGS_FILE, SETTINGS_DIR);
+	//Get<FileSystem>()->CreateFiles(SETTINGS_FILE, SETTINGS_DIR);
 	auto s = Serialiser::OpenFile<DysSerialiser_t>(
-		(Get<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR)  +
+		(Get<FileSystem>()->GetProjectFolders<std::string>(SETTINGS_DIR)  + '/' + 
 		SETTINGS_FILE).c_str(),
 		DysSerialiser_t::MODE_WRITE
 	);
@@ -301,7 +305,11 @@ void Dystopia::EngineCore::Shutdown(void)
 
 void Dystopia::EngineCore::BroadcastMessage(const eSysMessage& _Message, size_t _nParam)
 {
+#if EDITOR
+	Get<EditorIntermediary>()->ReceiveMessage(_Message, _nParam);
+#else
 	mMessageQueue.EmplaceBack(_Message, _nParam);
+#endif
 }
 
 void Dystopia::EngineCore::SendMessage(void)

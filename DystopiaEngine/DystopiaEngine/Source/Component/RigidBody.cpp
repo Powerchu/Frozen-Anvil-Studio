@@ -6,7 +6,7 @@
 \brief
 Component to store the information about the object's transformations in space.
 
-All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+All Content Copyright ï¿½ 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -114,6 +114,8 @@ namespace Dystopia
 			mOrientation = Math::RotateZ(Math::Degrees{ P_TX->GetGlobalRotation().ToEuler().z });
 			mInverseOrientation = Math::AffineInverse(mOrientation);
 			mfZAngleDeg = P_TX->GetGlobalRotation().ToEuler().z;
+			mfXAngleDeg = P_TX->GetGlobalRotation().ToEuler().x;
+			mfYAngleDeg = P_TX->GetGlobalRotation().ToEuler().y;
 		}
 	}
 
@@ -145,6 +147,8 @@ namespace Dystopia
 			mOrientation = Math::RotateZ(Math::Degrees{ P_TX->GetGlobalRotation().ToEuler().z });
 			mInverseOrientation = Math::AffineInverse(mOrientation);
 			mfZAngleDeg = P_TX->GetGlobalRotation().ToEuler().z;
+			mfXAngleDeg = P_TX->GetGlobalRotation().ToEuler().x;
+			mfYAngleDeg = P_TX->GetGlobalRotation().ToEuler().y;
 		}
 
 		if (mfMass > 0.0F)
@@ -225,7 +229,7 @@ namespace Dystopia
 		 ********************************************************************/
 		 //Store previous Position
 		mPrevPosition = mPosition = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
-		mfZAngleDeg   = GetOwner()->GetComponent<Transform>()->GetGlobalRotation().ToEuler().z;
+		//mfZAngleDeg   = GetOwner()->GetComponent<Transform>()->GetGlobalRotation().ToEuler().z;
 
 		if (Get_IsKinematic()) return;
 
@@ -388,17 +392,27 @@ namespace Dystopia
 		mPosition += mLinearVelocity * _dt;
 
 		if (!mbFixedRot)
-			mfZAngleDeg += Math::Radians{ mAngularVelocity.Magnitude() }.Degrees() * _dt;
+		{
+			mfZAngleDeg += Math::Radians{ mAngularVelocity.z }.Degrees() * _dt;
+			mfXAngleDeg += Math::Radians{ mAngularVelocity.x }.Degrees() * _dt;
+			mfYAngleDeg += Math::Radians{ mAngularVelocity.y }.Degrees() * _dt;
+		}
 
-		if (mfZAngleDeg <= -180.0F) mfZAngleDeg = 179.999F;
-		if (mfZAngleDeg >= 180.0F) mfZAngleDeg = -179.999F;
+		if (mfZAngleDeg < -180.0F) mfZAngleDeg = 179.999F;
+		if (mfZAngleDeg > 180.0F) mfZAngleDeg = -179.999F;
+
+		if (mfXAngleDeg < -180.0F) mfXAngleDeg = 179.999F;
+		if (mfXAngleDeg > 180.0F) mfXAngleDeg = -179.999F;
+
+		if (mfYAngleDeg < -180.0F) mfYAngleDeg = 179.999F;
+		if (mfYAngleDeg > 180.0F) mfYAngleDeg = -179.999F;
 	}
 
 	void RigidBody::UpdateResult(float) const
 	{
 		// Update Position
 		GetOwner()->GetComponent<Transform>()->SetGlobalPosition(mPosition);
-		GetOwner()->GetComponent<Transform>()->SetRotation(Math::Radians{ 0 }, Math::Radians{ 0 }, Math::Degrees{ mfZAngleDeg });
+		GetOwner()->GetComponent<Transform>()->SetRotation(Math::Degrees{ mfXAngleDeg }, Math::Degrees{ mfYAngleDeg }, Math::Degrees{ mfZAngleDeg });
 	}
 
 	/*void RigidBody::Update(float _dt)
@@ -449,6 +463,7 @@ namespace Dystopia
 		_out << mbIsAwake;				// Awake State
 		_out << mbCanSleep;				// Can Sleep Boolean
 		_out << static_cast<int>(mPhysicsType);
+		_out << mbFixedRot;
 		_out.InsertEndBlock("RigidBody");
 	}
 
@@ -472,6 +487,7 @@ namespace Dystopia
 		_in >> mbIsAwake;				// Awake State
 		_in >> mbCanSleep;				// Can Sleep Boolean
 		_in >> type;
+		_in >> mbFixedRot;
 		_in.ConsumeEndBlock();
 
 		mPhysicsType = static_cast<PhysicsType>(type);
@@ -728,6 +744,12 @@ namespace Dystopia
 	void RigidBody::SetFixedRotation(bool flag)
 	{
 		mbFixedRot = flag;
+	}
+
+	void RigidBody::SetRotation(float zDeg)
+	{
+		mfZAngleDeg = zDeg;
+	
 	}
 
 	void RigidBody::Set_IsStatic(bool _state)

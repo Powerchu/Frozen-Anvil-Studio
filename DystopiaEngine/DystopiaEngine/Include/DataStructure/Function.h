@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Globals.h"
 #include "Utility/Meta.h"
 #include "Utility/Utility.h"
+#include "Utility/MetaAlgorithms.h"
 
 #include "Allocator/DefaultAlloc.h"
 
@@ -96,25 +97,6 @@ private:
 	struct CopyHelper
 	{
 		char DUMMY[N];
-	};
-
-	template <typename T, typename, typename, typename ... R>
-	struct MemberFinderReal : public MemberFinderReal <T, Ut::MetaExtract_t<0, R...>, R...>
-	{};
-
-	template <typename T, typename _1, typename _2>
-	struct MemberFinderReal<T, _1, _2>;
-
-	template <typename T, typename Ty, typename ... R>
-	struct MemberFinderReal<T, Ut::Type_t<decltype(static_cast<Ty>(&T::operator()))>, Ty, R...>
-	{
-		using type = Ty;
-	};
-
-	template <typename T, typename F, typename ... R>
-	struct MemberFinder : public MemberFinderReal<T, F, F, R...>
-	{
-
 	};
 
 	using SmallType = Ret_t(*)(Param_t...);
@@ -272,7 +254,7 @@ inline void Function<Ret_t(Param_t...)>::Assign(T&& _func)
 	{
 		using MemPtr_t  = Ret_t(T::*)(Param_t...);
 		using MemPtrC_t = Ret_t(T::*)(Param_t...) const;
-		using Result_t = typename MemberFinder<Ut::Decay_t<T>, MemPtr_t, MemPtrC_t>::type;
+		using Result_t = typename Ut::MemberFinder<Ut::Decay_t<T>, MemPtr_t, MemPtrC_t>::type;
 
 		// Sadly, we cannot forward the params into the lambda
 		reinterpret_cast<SmallType&>(buffer) = static_cast<SmallType>([](Param_t ..._args) -> Ret_t {

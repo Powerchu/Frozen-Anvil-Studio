@@ -43,11 +43,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Circle.h"
 #include "Component/Convex.h"
 #include "Component/Collider.h"
+#include "Component/PointCollider.h"
+#include "Component/RayCollider.h"
 #include "Component/Renderer.h"
 #include "Component/RigidBody.h"
 #include "Component/SpriteRenderer.h"
 #include "Component/Transform.h"
 #include "Component/TextRenderer.h"
+#include "Component/Emitter.h"
+#include "Component/AudioListener.h"
 
 #include "IO/TextSerialiser.h"
 
@@ -63,6 +67,17 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/GraphicsSystem.h"
 #include "System/Behaviour/BehaviourSystem.h"
 #include "System/Collision/CollisionSystem.h"
+#include "System/Particle/ParticleSystem.h"
+
+#include "System/Particle/ParticleAffector.h"
+#include "System/Particle/SpawnAffector.h"
+#include "System/Particle/LocationAffector.h"
+#include "System/Particle/LifetimeAffector.h"
+#include "System/Particle/ColorAffector.h"
+#include "System/Particle/VelocityAffector.h"
+#include "System/Particle/SizeAffector.h"
+#include "System/Particle/AccelerationAffector.h"
+#include "System/Particle/AttractionAffector.h"
 
 namespace Dystopia
 {
@@ -129,6 +144,15 @@ namespace Dystopia
 			return true;
 		}
 
+		static bool IsolateCompSerialise(Component* _pComp, TextSerialiser& _out)
+		{
+			C* pComponent = dynamic_cast<C*>(_pComp);
+			if (!pComponent)
+				return false;
+			pComponent->Serialise(_out);
+			return true;
+		}
+
 		static bool IsolateUnserialise(Component* _pCom, TextSerialiser& _in)
 		{
 			static_cast<C*>(_pCom)->Unserialise(_in);
@@ -176,6 +200,13 @@ namespace Dystopia
 				return false;
 			}
 
+			bool IsolateSerialise(unsigned int _i, Component * _comp, TextSerialiser& _out)
+			{
+				static auto mData = Ctor::MakeArray<bool(*)(Component *, TextSerialiser&)>(RequestComponent<typename Ut::MetaExtract<Ns, UsableComponents>::result::type>::IsolateCompSerialise...);
+				if (_i < size || _i >= 0)
+					return mData[_i](_comp, _out);
+				return false;
+			}
 			bool IsolateUnserialise(unsigned int _i, Component* _pCom, TextSerialiser& _in)
 			{
 				static auto mData = Ctor::MakeArray<bool(*)(Component*, TextSerialiser&)>(RequestComponent<typename Ut::MetaExtract<Ns, UsableComponents>::result::type>::IsolateUnserialise...);
@@ -203,6 +234,12 @@ namespace Dystopia
 		{
 			return mCollection.IsolateSerialise(_i, _owner, _out);
 		}
+
+		bool IsolateSerialise(unsigned int _i, Component *_owner, TextSerialiser& _out)
+		{
+			return mCollection.IsolateSerialise(_i, _owner, _out);
+		}
+
 
 		bool IsolateUnserialise(Component *_pCom, TextSerialiser& _in)
 		{
@@ -276,6 +313,58 @@ namespace Dystopia
 
 			for (size_t i = 0; i < sizeof...(Ns); ++i)
 				SystemArray[i](_in);
+		}
+	};
+
+	template<typename C>
+	struct RequestAffector
+	{
+		static C Get(void)
+		{
+			return C{};
+		}
+	};
+
+	struct AffectorGet
+	{
+		static constexpr size_t size = Ut::SizeofList<AffectorList>::value;
+
+		template<typename A>
+		struct Collection;
+		template<unsigned ... Ns, typename ... Affts>
+		struct Collection<Ut::Collection<Ut::Indexer<Ns, Affts>...>>
+		{
+			static void Get(unsigned _n, Emitter& e)
+			{
+				static void(*mData[])(Emitter&) = {
+					[](Emitter& _e) -> void { _e.AddAffector(Affts{}); }...
+				};
+
+				mData[_n](e);
+			}
+		};
+
+		void Get(unsigned _i, Emitter& e)
+		{
+			return mCollection.Get(_i, e);
+		}
+
+		Collection<AffectorList> mCollection;
+	};
+
+	template <typename>
+	struct AffectorUI;
+
+	template <typename ... Ts, unsigned ... N>
+	struct AffectorUI<Ut::Collection<Ut::Indexer<N, Ts>...>>
+	{
+		inline static auto GetPtrsToUIFunction(void) noexcept
+		{
+			return Ctor::MakeArray<void(ParticleAffector::*)(void)>(reinterpret_cast<void(ParticleAffector::*)(void)>(&Ts::EditorUI) ...);
+		}
+		inline static auto GetUIName(void) noexcept
+		{
+			return Ctor::MakeArray<const char*(ParticleAffector::*)(void)>(reinterpret_cast<const char*(ParticleAffector::*)(void)>(&Ts::EditorDisplayLabel) ...);
 		}
 	};
 

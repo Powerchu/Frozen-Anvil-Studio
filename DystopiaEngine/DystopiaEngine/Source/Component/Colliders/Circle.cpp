@@ -20,11 +20,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/MeshSystem.h"
 #include "Object/GameObject.h"
 #include "Object/ObjectFlags.h"
-#include "Math/Vector4.h"
+#include "Math/Vectors.h"
 #include "Component/RigidBody.h"
 #include "Component/Circle.h"
 #include "IO/TextSerialiser.h"
 #include "Component/Convex.h"
+#include "Component/PointCollider.h"
 
 #if EDITOR
 #include "Editor/EGUI.h"
@@ -155,11 +156,12 @@ namespace Dystopia
 		/*THIS IS THE REAL VERSION*/
 		_out << float(m_radius);
 		_out << mbIsTrigger;
-
+		_out << static_cast<unsigned>(mColLayer);
 		_out.InsertEndBlock("Circle_Collider2D");
 	}
 	void Circle::Unserialise(TextSerialiser& _in)
 	{
+		unsigned collayer_temp = 0;
 		_in.ConsumeStartBlock();
 		Component::Unserialise(_in);
 		_in >> mv3Offset[0];
@@ -171,12 +173,13 @@ namespace Dystopia
 		_in >> (mPosition[2]);
 		_in >> m_radius;
 		_in >> mbIsTrigger;
+		_in >> collayer_temp;
 		_in.ConsumeEndBlock();
 
 		mDebugVertices.clear();
 		mScale[0] = m_radius;
 		mScale[1] = m_radius;
-
+		mColLayer = static_cast<eColLayer>(collayer_temp);
 	}
 
 	/*Collision Check Functions*/
@@ -357,6 +360,36 @@ namespace Dystopia
 		return this->isColliding(*other_col);
 	}
 
+	bool Circle::isColliding(PointCollider & other_col)
+	{
+		/*Distance Squared from Point to Circle*/
+		float dist = (GetGlobalPosition() - other_col.GetGlobalPosition()).MagnitudeSqr();
+		/*Radius squared of Circle*/
+		float r2 = GetRadius() * GetRadius();
+		/*If the distance squared is less than the radius squared, there is collision*/
+		if (dist < r2)
+		{
+			/*New Collision Event*/
+			CollisionEvent ColEvent{ GetOwner(), other_col.GetOwner() };
+			/*
+			  The collision event is other - me because physics will negate the normal on its side
+			  which will become me - other (which is the correct version)
+			 */
+			ColEvent.mEdgeNormal = other_col.GetGlobalPosition() - GetGlobalPosition();
+			ColEvent.mfPeneDepth = sqrtf(r2 - dist);
+			/*Add the collision Event*/
+			marr_ContactSets.push_back(Ut::Move(ColEvent));
+			mbColliding = true;
+			return true;
+		}
+		return false;
+	}
+
+	bool Circle::isColliding(PointCollider * const & other_col)
+	{
+		return isColliding(*other_col);
+	}
+
 	
 #if EDITOR
 	void Circle::ePositionOffsetVectorFields()
@@ -460,6 +493,7 @@ namespace Dystopia
 		ePositionOffsetVectorFields();
 		eScaleField();
 		eNumberOfContactsLabel();
+		Collider::EditorUI();
 	}
 #endif
 }

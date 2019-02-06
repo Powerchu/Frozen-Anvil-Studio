@@ -20,25 +20,27 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::Texture::Texture(void) noexcept :
-	mnWidth{ 0 }, mnHeight{ 0 }, mnType{ 0 }, mnID{ 0 }
+	mnType{ 0 }, mnID{ 0 }, mData{}
 {
 	glGenTextures(1, &mnID);
 }
 
-Dystopia::Texture::Texture(unsigned _nType, const std::string& _strPath) noexcept :
-	mnWidth{ 0 }, mnHeight{ 0 }, mnType{ _nType }, mnID{ 0 }, mstrPath{std::move(_strPath)}
+Dystopia::Texture::Texture(unsigned _nType, HashString const& _strPath, Image& _Image) noexcept :
+	mnType{ _nType }, mnID{ 0 }, mstrPath{ _strPath }, mData{ Ut::Move(_Image) }
 {
 	glGenTextures(1, &mnID);
 }
 
 Dystopia::Texture::Texture(unsigned _nWidth, unsigned _nHeight, unsigned _nType) noexcept :
-	mnWidth{ _nWidth }, mnHeight{ _nHeight }, mnType{ _nType }, mnID{ 0 }
+	mnType{ _nType }, mnID{ 0 }, mData{}
 {
 	glGenTextures(1, &mnID);
+	mData.mnWidth  = _nWidth;
+	mData.mnHeight = _nHeight;
 }
 
 Dystopia::Texture::Texture(Texture&& _other) noexcept :
-	mnWidth{ _other.mnWidth }, mnHeight{ _other.mnHeight }, mnType{ _other.mnType }, mnID{ _other.mnID }
+	mnType{ _other.mnType }, mnID{ _other.mnID }, mData{ Ut::Move(_other.mData) }
 {
 	_other.mnID = 0;
 }
@@ -65,23 +67,25 @@ void Dystopia::Texture::Unbind(void) const noexcept
 
 unsigned Dystopia::Texture::GetWidth(void) const noexcept
 {
-	return mnWidth;
+	return mData.mnWidth;
 }
 
 unsigned Dystopia::Texture::GetHeight(void) const noexcept
 {
-	return mnHeight;
+	return mData.mnHeight;
 }
 
 
 void Dystopia::Texture::SetWidth(unsigned _nWidth) noexcept
 {
-	mnWidth = _nWidth;
+	mData.mnWidth = _nWidth;
+	mData.mbChanged = true;
 }
 
 void Dystopia::Texture::SetHeight(unsigned _nHeight) noexcept
 {
-	mnHeight = _nHeight;
+	mData.mnHeight = _nHeight;
+	mData.mbChanged = true;
 }
 
 void Dystopia::Texture::SetType(unsigned _nType) noexcept
@@ -95,12 +99,22 @@ unsigned Dystopia::Texture::GetID(void) const noexcept
 	return mnID;
 }
 
-std::string Dystopia::Texture::GetName(void) const
+bool Dystopia::Texture::Changed(void) const noexcept
+{
+	return mData.mbChanged && mstrPath.size();
+}
+
+Dystopia::Image const& Dystopia::Texture::GetSettings(void) const
+{
+	return mData;
+}
+
+HashString Dystopia::Texture::GetName(void) const
 {
 	return mstrPath.substr(mstrPath.find_last_of("/\\") + 1);
 }
 
-std::string const& Dystopia::Texture::GetPath(void) const noexcept
+HashString const& Dystopia::Texture::GetPath(void) const noexcept
 {
 	return mstrPath;
 }
@@ -109,10 +123,14 @@ Dystopia::Texture& Dystopia::Texture::operator=(Texture&& _rhs) noexcept
 {
 	Ut::Swap(mnID, _rhs.mnID);
 	Ut::Swap(mnType, _rhs.mnType);
-	Ut::Swap(mnWidth, _rhs.mnWidth);
-	Ut::Swap(mnHeight, _rhs.mnHeight);
+	Ut::Swap(mData, _rhs.mData);
 
 	return *this;
+}
+
+void Dystopia::Texture::OnEditorUI(void) noexcept
+{
+	mData.OnEditorUI();
 }
 
 

@@ -16,9 +16,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Component/Component.h"
 #include "Component/ComponentList.h"
-#include "Math/Vector4.h"
+#include "Math/Vectors.h"
 #include "Math/Matrix4.h"
-#include "Math/Vector2.h"
 #include "DataStructure/AutoArray.h"
 
 //#include "Math/Quaternion.h"
@@ -160,6 +159,7 @@ namespace Dystopia
 		void SetRestitution(const float);
 		void SetSleeping(const bool);
 		void SetFixedRotation(bool flag);
+		void SetRotation(float zDeg);
 
 		// Gettors
 		Vec3D GetPosition() const;
@@ -214,6 +214,8 @@ namespace Dystopia
 		Vec3D					mLocalCentroid;
 
 		float					mfZAngleDeg;				/* Anticlockwise Direction: Angles in Degrees*/
+		float					mfXAngleDeg;
+		float					mfYAngleDeg;
 
 		Math::Vector2			mLinearDamping;				/* Linear Damping in the X and Y axis */
 		float					mfAngularDrag;				/* Coefficient of angular drag. */

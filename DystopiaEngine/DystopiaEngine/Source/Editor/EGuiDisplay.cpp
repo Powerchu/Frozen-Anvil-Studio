@@ -11,6 +11,7 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
+#include "System/Input/InputSystem.h"
 #if EDITOR
 #include <Windows.h>
 #include <consoleapi2.h>
@@ -305,7 +306,7 @@ namespace EGUI
 			return clicked;
 		}
 
-		bool CheckBox(const char * _label, bool* _outputBool, bool _showLabel)
+		bool CheckBox(const char * _label, bool* _outputBool, bool _showLabel, const char* _tooltip)
 		{
 			if (_showLabel)
 			{
@@ -313,6 +314,17 @@ namespace EGUI
 				Label(_label);
 				SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			}
+
+			if (nullptr != _tooltip)
+			{
+				if (ImGui::IsItemHovered())
+				{
+					ImGui::BeginTooltip();
+					ImGui::Text(_tooltip);
+					ImGui::Separator();
+					ImGui::EndTooltip();
+				}
 			}
 		    //HashString invi{ "##checkBox" };
 			//invi += _label;
@@ -438,7 +450,7 @@ namespace EGUI
 			return eNO_CHANGE;
 		}
 
-		Array<eDragStatus, 3> VectorFields(const char * _label, Math::Vector4 *_outputVec, float _dragSpeed, float _min, float _max, float _width)
+		Array<eDragStatus, 3> VectorFields(const char * _label, Math::Vector4 *_outputVec, float _dragSpeed, float _min, float _max, float _width, bool _wParamEnable)
 		{
 			std::string field1 = "##VecX", field2 = "##VecY", field3 = "##VecZ";
 			float x, y, z;
@@ -466,6 +478,15 @@ namespace EGUI
 			eDragStatus statZ = EGUI::Display::DragFloat(field3.c_str(), &z, _dragSpeed, _min, _max, true, _width);
 			if (statZ != eDragStatus::eNO_CHANGE) _outputVec->z = z;
 
+			if (_wParamEnable)
+			{
+				float w = _outputVec->w;
+				std::string field4 = "##VecW";
+				field4 += _label;
+				SameLine(); Label("W:"); SameLine();
+				eDragStatus statW = EGUI::Display::DragFloat(field4.c_str(), &w, _dragSpeed, _min, _max, true, _width);
+				if (statW != eDragStatus::eNO_CHANGE) _outputVec->w = w;
+			}
 
 			return Array<eDragStatus, 3>{statX, statY, statZ};
 		}
@@ -845,6 +866,20 @@ namespace EGUI
 			return ret;
 		}
 
+		bool DropDownSelection(const char* _label, int& _currentIndex, AutoArray<const char *>& _arrOfItems, float _width)
+		{
+			ImGui::PushItemWidth(_width);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+			Label(_label);
+			SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			std::string invi{ "##DDSel" };
+			invi += _label;
+			bool ret = ImGui::Combo(invi.c_str(), &_currentIndex, _arrOfItems.begin(), static_cast<int>(_arrOfItems.size()));
+			ImGui::PopItemWidth();
+			return ret;
+		}
+
 		bool Button(const char* _label, const Math::Vec2& _size)
 		{
 			return ImGui::Button(_label, ImVec2{ _size.x, _size.y });
@@ -1057,6 +1092,189 @@ namespace EGUI
 				(_outlineBG) ? ImGui::GetStyleColorVec4(ImGuiCol_BorderShadow) : ImVec4{ 0,0,0,0 },
 				ImVec4{ 1,1,1,1 });
 			ImGui::PopStyleColor();
+			return ret;
+		}
+
+		bool ComboFilter_DrawPopup(ComboFilterState& state, int START, const char** ENTRIES, const int ENTRY_COUNT)
+		{
+			UNUSED_PARAMETER(START);
+			using namespace ImGui;
+			bool clicked = false;
+
+			// Grab the position for the popup
+			ImVec2 pos = GetItemRectMin(); pos.y += GetItemRectSize().y;
+			const ImVec2 size = ImVec2(GetItemRectSize().x - 280, GetItemsLineHeightWithSpacing() * 4);
+
+			PushStyleVar(ImGuiStyleVar_WindowRounding, 0);
+
+			const ImGuiWindowFlags flags =
+				ImGuiWindowFlags_NoTitleBar |
+				ImGuiWindowFlags_NoResize |
+				ImGuiWindowFlags_NoMove |
+				ImGuiWindowFlags_AlwaysVerticalScrollbar |
+				ImGuiWindowFlags_NoSavedSettings |
+				0; //ImGuiWindowFlags_ShowBorders;
+
+			SetNextWindowFocus();
+
+			SetNextWindowPos(pos);
+			SetNextWindowSize(size);
+			Begin("##combo_filter", nullptr, flags);
+
+			PushAllowKeyboardFocus(true);
+
+			for (int i = 0; i < ENTRY_COUNT; i++) 
+			{
+				// Track if we're drawing the active index so we
+				// can scroll to it if it has changed
+				const bool isIndexActive = state.activeIdx == i;
+
+				if (isIndexActive) {
+					// Draw the currently 'active' item differently
+					// ( used appropriate colors for your own style )
+					PushStyleColor(ImGuiCol_Border, ImVec4(1, 1, 0, 1));
+				}
+
+				PushID(i);
+				if (Selectable(ENTRIES[i], isIndexActive, ImGuiSelectableFlags_PressedOnClick, ImVec2(0, GetItemsLineHeightWithSpacing() * 0.5f))) {
+					// And item was clicked, notify the input
+					// callback so that it can modify the input buffer
+					state.activeIdx = i;
+					clicked = true;
+				}
+
+				//if (IsKeyPressed(GetIO().KeyMap[ImGuiKey_Enter])) {
+				//	// Allow ENTER key to select current highlighted item (w/ keyboard navigation)
+				//	state.activeIdx = i;
+				//	clicked = true;
+				//}
+
+				if (isIndexActive) {
+					if (state.selectionChanged) {
+						// Make sure we bring the currently 'active' item into view.
+						SetScrollHere();
+						state.selectionChanged = false;
+					}
+
+					PopStyleColor(1);
+				}
+
+				PopID();
+
+			}
+
+			PopAllowKeyboardFocus();
+			End();
+			PopStyleVar(1);
+
+			return clicked;
+		}
+
+
+		bool ComboFilter(const char *id, char *buffer, const int bufferlen, const char **hints, const int num_hints, ComboFilterState &s) {
+			struct fuzzy {
+				static int score(const char *str1, const char *str2)
+				{
+					int score = 0, consecutive = 0, maxerrors = 0;
+					while (*str1 && *str2) {
+						const int is_leading = (*str1 & 64) && !(str1[1] & 64);
+						if ((*str1 & ~32) == (*str2 & ~32)) {
+							const int had_separator = (str1[-1] <= 32);
+							const int x = had_separator || is_leading ? 10 : consecutive * 5;
+							consecutive = 1;
+							score += x;
+							++str2;
+						}
+						else {
+							const int x = -1;
+							const int y = is_leading * -3;
+							consecutive = 0;
+							score += x;
+							maxerrors += y;
+						}
+						++str1;
+					}
+					return score + (maxerrors < -9 ? -9 : maxerrors);
+				}
+
+				static int search(const char *str, int num, const char *words[]) {
+					int scoremax = 0;
+					int best = -1;
+					for (int i = 0; i < num; ++i) {
+						const int score = fuzzy::score(words[i], str);
+						const int record = (score >= scoremax);
+						const int draw = (score == scoremax);
+						if (record) {
+							scoremax = score;
+							if (!draw) best = i;
+							else best = best >= 0 && strlen(words[best]) < strlen(words[i]) ? best : i;
+						}
+					}
+					return best;
+				}
+			};
+
+			using namespace ImGui;
+			ImGui::PushItemWidth(220.f);
+			bool done = InputText(id, buffer, bufferlen, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue);
+			ImGui::PopItemWidth();
+			const bool hot = s.activeIdx >= 0 && strcmp(buffer, hints[s.activeIdx]);
+			if (hot) {
+				int new_idx = fuzzy::search(buffer, num_hints, hints);
+				const int idx = new_idx >= 0 ? new_idx : s.activeIdx;
+				s.selectionChanged = s.activeIdx != idx;
+				s.activeIdx = idx;
+				if (done || ComboFilter_DrawPopup(s, idx, hints, num_hints)) {
+					const int i = s.activeIdx;
+					if (i >= 0) {
+						strcpy_s(buffer, bufferlen+1, hints[i]);
+						done = true;
+					}
+				}
+			}
+			return done;
+		}
+
+		bool GoxTab(const char *text, bool *v)
+		{
+			ImFont *font = GImGui->Font;
+			char c;
+			bool ret;
+			ImGuiContext& g = *GImGui;
+			const ImGuiStyle& style = g.Style;
+			float pad = style.FramePadding.x;
+			ImVec4 color;
+			ImVec2 text_size = ImGui::CalcTextSize(text);
+			ImGuiWindow* window = ImGui::GetCurrentWindow();
+			ImVec2 pos = window->DC.CursorPos + ImVec2(pad, text_size.x + pad);
+
+			const  ImU32 text_color = ImGui::ColorConvertFloat4ToU32(style.Colors[ImGuiCol_Text]);
+			color = style.Colors[ImGuiCol_Button];
+			if (*v) color = style.Colors[ImGuiCol_ButtonActive];
+			ImGui::PushStyleColor(ImGuiCol_Button, color);
+			ImGui::PushID(text);
+			ret = ImGui::Button("", ImVec2(text_size.y + pad * 2,
+				text_size.x + pad * 2));
+			ImGui::PopStyleColor();
+			while ((c = *text++)) {
+				const ImFont::Glyph *glyph = font->FindGlyph(c);
+				if (!glyph) continue;
+
+				window->DrawList->PrimReserve(6, 4);
+				window->DrawList->PrimQuadUV(
+					pos + ImVec2(glyph->Y0, -glyph->X0),
+					pos + ImVec2(glyph->Y0, -glyph->X1),
+					pos + ImVec2(glyph->Y1, -glyph->X1),
+					pos + ImVec2(glyph->Y1, -glyph->X0),
+
+					ImVec2(glyph->U0, glyph->V0),
+					ImVec2(glyph->U1, glyph->V0),
+					ImVec2(glyph->U1, glyph->V1),
+					ImVec2(glyph->U0, glyph->V1),
+					text_color);
+				pos.y -= glyph->AdvanceX;
+			}
+			ImGui::PopID();
 			return ret;
 		}
 	}

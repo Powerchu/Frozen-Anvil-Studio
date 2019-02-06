@@ -23,7 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/HashString.h"
 #include "Utility/MetaAlgorithms.h"	   // MetaFind
 
-#include "Math/Vector2.h"
+#include "Math/Vectors.h"
 #include <string>
 
 
@@ -92,6 +92,7 @@ namespace Dystopia
 		void Play(void);
 		void Stop(void);
 		void SetSpeed(float);
+		unsigned GetFrameSize(unsigned) const;
 
 		Math::Vec2 Resized(float _xMult = 1.f, float _yMult = 1.f) const;
 		void ResizeToFit(float _xMult = 1.f, float _yMult = 1.f) const;
@@ -125,7 +126,6 @@ namespace Dystopia
 
 		void TintColorPicker();
 		Math::Vec4 mvTintCol;
-		float mfTintPerc = 1.f;
 	};
 }
 

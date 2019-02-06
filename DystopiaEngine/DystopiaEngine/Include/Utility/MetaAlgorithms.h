@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/MetaHelper.h"
 #include "Utility/MetaDataStructures.h"
 
+
 namespace Ut
 {
 	// =========================================== COMPILE TIME FIND =========================================== //
@@ -180,6 +181,70 @@ namespace Ut
 	struct MetaMax<T, _val>
 	{
 		static constexpr T value = _val;
+	};
+
+
+	// ============================================= MEMBER FINDER ============================================ //
+
+
+	namespace Helper
+	{
+		template <typename T, typename, typename, typename ... R>
+		struct MemberFinderReal : public MemberFinderReal <T, Ut::MetaExtract_t<0, R...>, R...>
+		{};
+
+		template <typename T, typename _1, typename _2>
+		struct MemberFinderReal<T, _1, _2>;
+
+		template <typename T, typename Ty, typename ... R>
+		struct MemberFinderReal<T, Ut::Type_t<decltype(static_cast<Ty>(&T::operator()))>, Ty, R...>
+		{
+			using type   = Ty;
+			using result = Ty;
+		};
+	}
+
+	template <typename T, typename F, typename ... R>
+	struct MemberFinder : public Helper::MemberFinderReal<T, F, F, R...>
+	{
+
+	};
+
+
+	// ================================================= UNIQUE =============================================== //
+
+
+	template <typename ... Ty>
+	struct MetaUnique
+	{
+		using type   = MetaUnique<Ty...>;
+		using result = type;
+	};
+
+	template <typename T, typename ... Ty>
+	struct MetaUnique<T, Ty...>
+	{
+		using result = typename IfElse<
+			MetaFind<T, Ty...>::value,
+			typename MetaConcat<T, typename MetaUnique<Ty...>::result>::result,
+			typename MetaUnique<Ty...>::result>::result;
+
+		using type = result;
+	};
+
+	template <typename ... Ty>
+	using MetaUnique_t = typename MetaUnique<Ty ...>::type;
+
+	template <auto ... Vs>
+	struct IsUniqueV
+	{
+		static constexpr bool value = true;
+	};
+
+	template <auto V, auto ... Vs>
+	struct IsUniqueV<V, Vs...>
+	{
+		static constexpr bool value = !IsAnySameV<V, Vs...>::value && IsUniqueV<Vs...>::value;
 	};
 }
 

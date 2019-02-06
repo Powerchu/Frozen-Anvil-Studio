@@ -15,7 +15,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #ifndef _TEXTURE_H_
 #define _TEXTURE_H_
-#include <string>
+
+#include "IO/Image.h"
+#include "DataStructure/HashString.h"
+
+#include "Globals.h"
+
 
 namespace Dystopia
 {
@@ -26,34 +31,39 @@ namespace Dystopia
 	public:
 
 		Texture(void) noexcept;
-		explicit Texture(unsigned _nType, const std::string& _strPath) noexcept;
+		explicit Texture(unsigned _nType, HashString const& _strPath, Image&) noexcept;
 		explicit Texture(unsigned _nWidth, unsigned _nHeight, unsigned _nType) noexcept;
 
 		Texture(Texture&&) noexcept;
-
-		virtual ~Texture(void);
+		~Texture(void);
 
 		void Bind(int = 0) const noexcept;
 		void Unbind(void) const noexcept;
 
-		unsigned GetWidth(void) const noexcept;
-		unsigned GetHeight(void) const noexcept;
+		_DLL_EXPORT unsigned GetWidth(void) const noexcept;
+		_DLL_EXPORT unsigned GetHeight(void) const noexcept;
 
 		void SetWidth(unsigned) noexcept;
 		void SetHeight(unsigned) noexcept;
 		void SetType(unsigned) noexcept;
 
 		unsigned GetID(void) const noexcept;
+		bool Changed(void) const noexcept;
 
-		std::string GetName(void) const;
-		std::string const& GetPath(void) const noexcept;
+		Image const& GetSettings(void) const;
+		HashString GetName(void) const;
+		HashString const& GetPath(void) const noexcept;
 
 		Texture& operator= (Texture&&) noexcept;
 
+		void OnEditorUI(void) noexcept;
+
 	protected:
 
-		std::string mstrPath;
-		unsigned mnWidth, mnHeight, mnType, mnID;
+		HashString mstrPath;
+		unsigned mnType, mnID;
+
+		Image mData;
 	};
 }
 

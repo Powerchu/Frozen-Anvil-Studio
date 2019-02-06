@@ -66,7 +66,7 @@ namespace Editor
 			FILE_NOTIFY_CHANGE_ATTRIBUTES | FILE_NOTIFY_CHANGE_SIZE |
 			FILE_NOTIFY_CHANGE_LAST_WRITE;
 
-		auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+		auto fs = Dystopia::EngineCore::GetInstance()->Get<Dystopia::FileSystem>();
 		auto resFolder = fs->GetProjectFolders<std::string>(Dystopia::eFileDir::eResource);
 		size_t pos = resFolder.rfind("\\");
 		if (pos == std::string::npos)
@@ -96,7 +96,7 @@ namespace Editor
 	bool ProjectResource::Init(void)
 	{
 		for (auto& f : mArrAllFiles)
-			if (HashString::nPos == f->mPath.find("Temp") && f->mTag == EGUI::ePayloadTags::PREFAB)
+			if (HashString::nPos == f->mpParentFolder->mName.find("Temp") && f->mTag == EGUI::ePayloadTags::PREFAB)
 				EditorMain::GetInstance()->GetSystem<EditorFactory>()->LoadAsPrefab(f->mName);
 		return true;
 	}
@@ -104,8 +104,8 @@ namespace Editor
 	void ProjectResource::Update(float)
 	{
 		const auto input = EditorMain::GetInstance()->GetSystem<EInput>();
-		if (input->GetInputManager()->IsKeyTriggered(eButton::MOUSE_LEFT) ||
-			input->GetInputManager()->IsKeyTriggered(eButton::MOUSE_RIGHT))
+		if (input->GetInputManager()->GetKeyDown(eButton::MOUSE_LEFT) ||
+			input->GetInputManager()->GetKeyDown(eButton::MOUSE_RIGHT))
 		{
 			RemoveFocusOnFile();
 		}
@@ -177,18 +177,15 @@ namespace Editor
 				fopen_s(&pFile, fullPath.c_str(), "a");
 				fclose(pFile);
 
-				bool saved = false;
+				auto serial = Dystopia::TextSerialiser::OpenFile(fullPath.c_str(), Dystopia::TextSerialiser::MODE_WRITE);
+				if (EditorMain::GetInstance()->GetSystem<EditorFactory>()->SaveAsPrefab(*id, serial))
 				{
-					auto serial = Dystopia::TextSerialiser::OpenFile(fullPath.c_str(), Dystopia::TextSerialiser::MODE_WRITE);
-					if (EditorMain::GetInstance()->GetSystem<EditorFactory>()->SaveAsPrefab(*id, serial))
-					{
-
-						mResetToFile = fileName;
-						saved = true;
+					{ 
+						auto tricks = Ut::Move(serial);
 					}
-				}
-				if (saved)
+					mResetToFile = fileName;
 					EditorMain::GetInstance()->GetSystem<EditorFactory>()->LoadAsPrefab(fileName);
+				}
 				EGUI::Display::EndPayloadReceiver();
 			}
 			ImGui::SetCursorPos(origin);

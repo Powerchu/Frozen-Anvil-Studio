@@ -149,6 +149,7 @@ namespace Dystopia
 
 	void Dystopia::BehaviourSystem::PreInit(void)
 	{
+
 	}
 
 	bool Dystopia::BehaviourSystem::Init(void)
@@ -156,9 +157,9 @@ namespace Dystopia
 		/*Init Hotloader*/
 #if EDITOR
 
-		FileSys = EngineCore::GetInstance()->GetSubSystem<FileSystem>();
+		FileSys = EngineCore::GetInstance()->Get<FileSystem>();
 
-		std::wstring IncludeFolderPath = L"/I" + FileSys->GetProjectFolders<std::wstring>(eFileDir::eHeader);
+		std::wstring IncludeFolderPath = L"/I \"" + FileSys->GetProjectFolders<std::wstring>(eFileDir::eHeader) + L"\"";
 
 #if _DEBUG
 		FileSys->CreateFiles("BehaviourDLL",         eFileDir::eAppData);
@@ -183,7 +184,6 @@ namespace Dystopia
 		mHotloader->SetFileDirectoryPath<0>(FileSys->GetFullPath("BehavioursScripts", eFileDir::eResource));
 
 		mHotloader->SetCompilerFlags(L"cl /EHsc /nologo /LD /DLL /DEDITOR /D_ITERATOR_DEBUG_LEVEL /std:c++17 " + IncludeFolderPath);
-
 
 		mHotloader->Init();
 		auto const & ArrayDlls = mHotloader->GetDlls();
@@ -262,7 +262,13 @@ namespace Dystopia
 		if (vTempFileName.size() > 0)
 		{
 			std::string SceneName = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetSceneName();
-			if (FileSys->GetFullPath(SceneName + ".dscene", eFileDir::eResource) != "")
+			if (SceneName.empty() || SceneName == "Untitled")
+			{
+				SceneName = FileSys->GetProjectFolders<std::string>(eFileDir::eResource) + "/Temp/Untitled.dscene";
+				EngineCore::GetInstance()->GetSystem<SceneSystem>()->SaveScene(SceneName, "Untitled");
+				hasSaveFile = true;
+			}
+			else if (FileSys->GetFullPath( SceneName + ".dscene", eFileDir::eResource) != "")
 			{
 				EngineCore::GetInstance()->GetSystem<SceneSystem>()->SaveScene(FileSys->GetFullPath(SceneName + ".dscene", eFileDir::eResource), SceneName);
 				hasSaveFile = true;
@@ -292,11 +298,12 @@ namespace Dystopia
 							//iter.first = iter.second->GetOwner()->GetID();
 							if (auto x = iter.second->GetOwner())
 							{
-								if (auto ai = x->GetComponent<AiController>())
+								/*if (auto ai = x->GetComponent<AiController>())
 								{
-									if (ai->GetTreeAsRef()->IsValidTree())
-										ai->ClearTree();
-								}
+									if (ai->GetTreeAsPtr().GetRaw() != nullptr)
+										if (ai->GetTreeAsRef()->IsValidTree())
+											ai->ClearTree();
+								}*/
 								x->RemoveComponent(iter.second);
 							}
 							//iter.second->GetOwner()->RemoveComponent(iter.second);
@@ -412,7 +419,11 @@ namespace Dystopia
 		mvRecentChanges.clear();
 
 		if (hasSaveFile)
-			EngineCore::GetInstance()->GetSystem<SceneSystem>()->LoadScene(FileSys->GetFullPath(EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetSceneName() + ".dscene", eFileDir::eResource));
+		{
+			std::string && SceneName = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetSceneName();
+			EngineCore::GetInstance()->GetSystem<SceneSystem>()->LoadScene(FileSys->GetFullPath((SceneName) + ".dscene", eFileDir::eResource));
+		}
+			
 	}
 #endif
 	void Dystopia::BehaviourSystem::Update(float _dt)
@@ -517,6 +528,7 @@ void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
 				}
 			}
 		}
+
 #else
 
 		for (auto & i : mvBehaviours)
@@ -752,7 +764,7 @@ void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
 						{
 							std::string Var;
 							_obj >> Var;
-							while (Var != "END")
+							while (Var != "END" && Var != "")
 							{
 								_obj.ConsumeStartBlock();
 								/*Call Unserialise*/
@@ -769,7 +781,7 @@ void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
 
 								std::string Var;
 								_obj >> Var;
-								while (Var != "END")
+								while (Var != "END" && Var != "")
 								{
 									if (BehaviourMetaData[Var.c_str()])
 									{
@@ -792,23 +804,26 @@ void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
 						/*Time to Super Set Functor*/
 						_obj.ConsumeEndBlock();  /*Consume END BEHAVIOUR BLOCK*/
 
-						if(static_cast<eObjFlag>(_Flags) & eObjFlag::FLAG_EDITOR_OBJ)
+						if(ptr && static_cast<eObjFlag>(_Flags) & eObjFlag::FLAG_EDITOR_OBJ)
 						{
 							/*Object is editor object*/
 							DeleteBehaviour(ptr);
 						}
 						else
 						{
-							/*Insert to GameObject*/
-							auto SceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
-							if (auto x = SceneSys->GetActiveScene().FindGameObject(_ID))
+							if (ptr)
 							{
-								ptr->SetOwner(x);
-								x->AddComponent(ptr, BehaviourTag{});
-							}
-							else
-							{
-								DeleteBehaviour(ptr);
+								/*Insert to GameObject*/
+								auto SceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
+								if (auto x = SceneSys->GetActiveScene().FindGameObject(_ID))
+								{
+									ptr->SetOwner(x);
+									x->AddComponent(ptr, BehaviourTag{});
+								}
+								else
+								{
+									DeleteBehaviour(ptr);
+								}
 							}
 						}
 
@@ -1068,7 +1083,7 @@ Behaviour* BehaviourSystem::RequestDuplicate(Behaviour* _PtrToDup, uint64_t _New
 			{
 				if (i.second[u].second != nullptr)
 				{
-					if (i.second[u].second->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ)
+					if ((i.second[u].second->GetFlags() | i.second[u].second->GetOwner()->GetFlags()) & eObjFlag::FLAG_EDITOR_OBJ)
 					{
 					}
 					else

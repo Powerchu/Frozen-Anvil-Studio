@@ -69,7 +69,7 @@ Dystopia::GameObject::GameObject(GameObject&& _obj) noexcept
 	mBehaviours{ Ut::Move(_obj.mBehaviours) },
 	mTransform{ _obj.mTransform }
 	, mbIsStatic(false),
-	mTags(0)
+	mTags(_obj.mTags)
 {
 	_obj.mComponents.clear();
 	_obj.mBehaviours.clear();
@@ -207,6 +207,20 @@ void Dystopia::GameObject::ClearTags()
 	mTags = 0;
 }
 
+bool Dystopia::GameObject::HasTag(const HashString& _tagName)
+{
+	return mTags & static_cast<unsigned>(EngineCore::GetInstance()->Get<TagSystem>()->GetTag(_tagName));
+}
+
+bool Dystopia::GameObject::HasTag(const char * _tagName)
+{
+	return HasTag(HashString{ _tagName });
+}
+
+void Dystopia::GameObject::SetTag(unsigned _tag)
+{
+	mTags = _tag;
+}
 
 void Dystopia::GameObject::Load(void)
 {
@@ -314,6 +328,10 @@ void Dystopia::GameObject::PurgeComponents(void)
 
 void Dystopia::GameObject::AddComponent(Component* _p, ComponentTag)
 {
+	for (auto c : mComponents)
+		if (c == _p)
+			return;
+
 	mComponents.Insert(_p);
 	_p->SetOwner(this);
 	_p->Awake();
@@ -321,6 +339,10 @@ void Dystopia::GameObject::AddComponent(Component* _p, ComponentTag)
 
 void Dystopia::GameObject::AddComponent(Behaviour* _p, BehaviourTag)
 {
+	for (auto b : mBehaviours)
+		if (b == _p)
+			return;
+
 	mBehaviours.Insert(_p);
 	_p->SetOwner(this);
 	_p->Awake();
@@ -387,6 +409,7 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 	p->mName		= mName;
 	p->mName		+= "_clone";
 	p->mTransform	= mTransform;
+	p->mTags		= mTags;
 
 	p->mTransform.SetOwner(p);
 	
@@ -403,10 +426,14 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 	const auto& children = mTransform.GetAllChild();
 	for (const auto& child : children)
 	{
+		auto p_id = child->GetParentID();
+		child->SetParentID(0);
 		auto o = child->GetOwner()->Duplicate();
+		child->SetParentID(p_id);
 		o->mTransform.SetParentID(p->GetID());
 		o->Awake();
 	}
+
 	p->mTransform.SetGlobalPosition(mTransform.GetGlobalPosition());
 	p->mTransform.SetGlobalScale(mTransform.GetGlobalScale());
 	p->Awake();
@@ -416,10 +443,6 @@ Dystopia::GameObject* Dystopia::GameObject::Duplicate(void) const
 void Dystopia::GameObject::SetID(const uint64_t& _id)
 {
 	mnID = _id;
-	for (auto& c : mComponents)
-		c->SetOwner(this);
-	for (auto& b : mBehaviours)
-		b->SetOwner(this);
 }
 
 uint64_t Dystopia::GameObject::GetID(void) const
@@ -457,11 +480,12 @@ void Dystopia::GameObject::Identify(void)
 }
 
 #if EDITOR
-Dystopia::GameObject& Dystopia::GameObject::operator=(GameObject&& _rhs)
+Dystopia::GameObject& Dystopia::GameObject::operator = (GameObject&& _rhs)
 {
-	mnID    = _rhs.mnID;
-	mnFlags = _rhs.mnFlags;
-	mName   = _rhs.mName;
+	mnID      = _rhs.mnID;
+	mnFlags   = _rhs.mnFlags;
+	mName     = _rhs.mName;
+	mTags	  = _rhs.mTags;
 
 	mTransform = _rhs.mTransform;
 	Ut::Swap(mComponents, _rhs.mComponents);
@@ -480,6 +504,7 @@ Dystopia::GameObject& Dystopia::GameObject::operator=(const GameObject& _rhs)
 	if (mComponents.size() != _rhs.mComponents.size())
 		__debugbreak();
 
+	mTags = _rhs.mTags;
 	mnFlags = _rhs.mnFlags;
 	mnFlags &= ~FLAG_EDITOR_OBJ;
 

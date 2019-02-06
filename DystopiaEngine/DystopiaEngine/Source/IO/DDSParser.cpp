@@ -88,6 +88,7 @@ Image* ImageParser::LoadDDS(const std::string& _path, Image* _pImage)
 		return nullptr;
 	}
 
+	headerInfo.mMipMaps += 0 == headerInfo.mMipMaps;
 	if (_pImage)
 	{
 		_pImage->mnWidth   = headerInfo.mWidth;
@@ -172,10 +173,10 @@ Image* ImageParser::LoadDDS(const std::string& _path, Image* _pImage)
 	}
 
 	auto sz = 16 * ((headerInfo.mWidth + 3) >> 2) * ((headerInfo.mHeight + 3) >> 2);
-	sz = sz + (sz << 1);
+	sz = sz + (sz >> 1);
 
 	// Minimum of 64 bit blocks so we should be safe copying 64bits at a time
-	uint64_t *buf = static_cast<uint64_t*>(Dystopia::DefaultAllocator<void>::Alloc(sz));
+	auto buf = static_cast<uint64_t*>(Dystopia::DefaultAllocator<void>::Alloc(sz));
 	_pImage->mpImageData = buf;
 
 	while (!file.EndOfInput())

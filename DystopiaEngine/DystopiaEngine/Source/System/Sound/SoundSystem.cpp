@@ -14,10 +14,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/File/FileSystem.h"
 #include "System/Driver/Driver.h"
 
+#include "Object/GameObject.h"
+
 #include "Component/AudioSource.h"
+#include "Component/AudioListener.h"
+#include "Component/Transform.h"
 #include "Object/ObjectFlags.h"
 #include "fmod.hpp"
-
 #include "Math/MathUtility.h"
 
 #include <Windows.h>
@@ -53,7 +56,7 @@ void Dystopia::SoundSystem::PreInit(void)
 
 bool Dystopia::SoundSystem::Init(void)
 {
-	if (!mpFMOD || mpFMOD->init(512, FMOD_INIT_3D_RIGHTHANDED, 0) != FMOD_OK)
+	if (!mpFMOD || mpFMOD->init(512, FMOD_INIT_NORMAL, 0) != FMOD_OK)
 		return false;
 
 	return true;
@@ -76,38 +79,72 @@ void Dystopia::SoundSystem::Update(float _dt)
 {
 	mpFMOD->update();
 
-	if (mbUpdateVol)
-	{
-		mArrGroups[eSOUND_MASTER]->setVolume(mMasterVol);
-		mArrGroups[eSOUND_BGM]->setVolume(mBGMVol);
-		mArrGroups[eSOUND_FX]->setVolume(mFXVol);
-		mbUpdateVol = false;
-	}
 
-	for (auto& c : mComponents)
-	{
+if (mbUpdateVol)
+{
+	mArrGroups[eSOUND_MASTER]->setVolume(mMasterVol);
+	mArrGroups[eSOUND_BGM]->setVolume(mBGMVol);
+	mArrGroups[eSOUND_FX]->setVolume(mFXVol);
+	mbUpdateVol = false;
+}
+for (auto& c : ComponentDonor<AudioListener>::mComponents)
+{
 #if EDITOR
-		if (c.GetFlags() & FLAG_EDITOR_OBJ)
-			continue;
+	if (c.GetFlags() & FLAG_EDITOR_OBJ)
+		continue;
 #endif
-		if (c.GetFlags() & FLAG_ACTIVE)
+	if (c.GetFlags() & FLAG_ACTIVE)
+	{
+
+		if (GameObject* pOwner = c.GetOwner())
 		{
-			c.Update(_dt);
-			if (c.IsReady() && c.GetSound())
-				PlayAudio(c);
+			if (Transform* pTrans = pOwner->GetComponent<Transform>())
+			{
+				c.UpdateFMODPos(pTrans->GetGlobalPosition());
+				mpFMOD->set3DListenerAttributes(mMapOfListeners[&c], c.GetFMODPos(), NULL, NULL, NULL);
+			}
 		}
 	}
+}
+for (auto& c : ComponentDonor<AudioSource>::mComponents)
+{
+#if EDITOR
+	if (c.GetFlags() & FLAG_EDITOR_OBJ)
+		continue;
+#endif
+	if (c.GetFlags() & FLAG_ACTIVE)
+	{
+		if (GameObject* pOwner = c.GetOwner())
+		{
+			if (Transform* pTrans = pOwner->GetComponent<Transform>())
+			{
+				auto && pos = pTrans->GetGlobalPosition();
+				c.UpdateFMODPos(pos);
+			}
+		}
+		c.Update(_dt);
+		if (c.IsReady() && c.GetSound())
+			PlayAudio(c);
+	}
+}
 }
 
 void Dystopia::SoundSystem::PostUpdate(void)
 {
-	for (auto& c : mComponents)
+	for (auto& c : ComponentDonor<AudioSource>::mComponents)
 	{
 		if (c.GetFlags() & FLAG_REMOVE)
 		{
 			if (c.GetChannel().mpChannel)
 				c.GetChannel().mpChannel->stop();
-			mComponents.Remove(&c);
+			ComponentDonor<AudioSource>::mComponents.Remove(&c);
+		}
+	}
+	for (auto& c : ComponentDonor<AudioListener>::mComponents)
+	{
+		if (c.GetFlags() & FLAG_REMOVE)
+		{
+			ComponentDonor<AudioListener>::mComponents.Remove(&c);
 		}
 	}
 }
@@ -165,11 +202,39 @@ Dystopia::Sound* Dystopia::SoundSystem::LoadSound(const HashString& _file)
 		return mMapOfSounds[soundName];
 
 	FMOD::Sound *pSound;
-	FMOD_RESULT result = mpFMOD->createSound(path.c_str(), FMOD_CREATESAMPLE | FMOD_LOWMEM, nullptr, &pSound);
+	FMOD_RESULT result = mpFMOD->createSound(path.c_str(), FMOD_CREATESAMPLE | FMOD_LOWMEM | FMOD_3D | FMOD_3D_LINEARROLLOFF |  FMOD_3D_INVERSEROLLOFF, nullptr, &pSound);
 	if (result == FMOD_OK)
 		return mMapOfSounds[soundName] = new Sound{ pSound, soundName };
 
 	return nullptr;
+}
+
+char Dystopia::SoundSystem::RegisterNewListener(AudioListener * const & _Listener)
+{
+	//auto && _fn = [_Listener](AudioListener* _l)->bool {return _l == _Listener; };
+	//
+	//auto result = std::find_if(mMapOfListeners.begin(), mMapOfListeners.end(), _fn);
+	//if (result  != mMapOfListeners.end())
+	//{
+	//	return result->first;
+	//}
+	//else
+	//{
+	//	mMapOfListeners[mMapOfListeners.size() + 1] = _Listener;
+	//	return mMapOfListeners.size();
+	//}
+	auto result = mMapOfListeners.find(_Listener);
+	if (result != mMapOfListeners.end())
+	{
+		return result->second;
+	}
+	else
+	{
+		char size = static_cast<char>(mMapOfListeners.size());
+		mpFMOD->set3DNumListeners(size);
+		mMapOfListeners[_Listener] =  size;
+		return size;
+	}
 }
 
 void Dystopia::SoundSystem::SetMaster(float _f)
@@ -197,6 +262,21 @@ void Dystopia::SoundSystem::SetFX(float _f)
 
 	mFXVol = _f;
 	mbUpdateVol = true;
+}
+
+_DLL_EXPORT float Dystopia::SoundSystem::GetMaster() const
+{
+	return mMasterVol;
+}
+
+_DLL_EXPORT float Dystopia::SoundSystem::GetBGM() const
+{
+	return mBGMVol;
+}
+
+_DLL_EXPORT float Dystopia::SoundSystem::GetFX() const
+{
+	return mFXVol;
 }
 
 

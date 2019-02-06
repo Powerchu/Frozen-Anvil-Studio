@@ -20,13 +20,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Input/InputSystem.h"
 #include "System/Tag/TagSystem.h"
 #include "System/Time/TimeSystem.h"
+#include "System/Collision/CollisionSystem.h"
 
 
 Editor::ProjectSettings::ProjectSettings(void)
 	:
 	mLabel{ "Project Settings" },
 	mpGfxSys{ nullptr },
-	mpPhySys{ nullptr }
+	mpPhySys{ nullptr },
+	mpColSystem{nullptr}
 {
 }
 
@@ -43,6 +45,7 @@ bool Editor::ProjectSettings::Init(void)
 	mpPhySys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::PhysicsSystem>();
 	mpInputSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::InputManager>();
 	mpTagSystem = Dystopia::EngineCore::GetInstance()->Get<Dystopia::TagSystem>();
+	mpColSystem = Dystopia::EngineCore::GetInstance()->Get<Dystopia::CollisionSystem>();
 	return true;
 }
 
@@ -51,21 +54,33 @@ void Editor::ProjectSettings::Update(float)
 
 void Editor::ProjectSettings::EditorUI(void)
 {
-	if (EGUI::Display::StartTreeNode("Graphics Settings",nullptr,false,false,true,true))
+	static bool test = true;
+	ImGui::BeginGroup();
+	EGUI::Display::GoxTab("Test1", &test);
+	ImGui::EndGroup();
+
+	EGUI::SameLine();
+
+	ImGui::BeginGroup();
+	ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetColorU32(ImGuiCol_HeaderActive));
+	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImGui::GetColorU32(ImGuiCol_HeaderActive));
+	ImGui::CollapsingHeader("Project Settings", ImGuiTreeNodeFlags_Leaf);
+	ImGui::PopStyleColor(2);
+	if (EGUI::Display::StartTreeNode("Graphics Settings", nullptr, false, false, true, true))
 	{
 		mpGfxSys->EditorUI();
 		EGUI::Display::EndTreeNode();
 	}
-	
+
 	EGUI::Display::HorizontalSeparator();
-	
+
 	if (EGUI::Display::StartTreeNode("Physics Settings", nullptr, false, false, true, true))
 	{
 		mpPhySys->EditorUI();
 		EGUI::Display::EndTreeNode();
 	}
 
-	if (EGUI::Display::StartTreeNode("Input Manager", nullptr, false, false, true, true))
+	if (EGUI::Display::StartTreeNode("Input Manager", nullptr, false, false, false, true))
 	{
 		mpInputSys->EditorUI();
 		EGUI::Display::EndTreeNode();
@@ -76,16 +91,23 @@ void Editor::ProjectSettings::EditorUI(void)
 		//mpTagSystem->EditorUI();
 		EGUI::Display::EndTreeNode();
 	}
-
+	if (EGUI::Display::StartTreeNode("Collision Table", nullptr, false, false, false, true))
+	{
+		mpColSystem->EditorUI();
+		EGUI::Display::EndTreeNode();
+	}
 	auto mpTimeSys = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::TimeSystem>();
-	
+
 	EGUI::Display::HorizontalSeparator();
-	
+
 	if (EGUI::Display::StartTreeNode("Time Settings", nullptr, false, false, true, true))
 	{
 		mpTimeSys->EditorUI();
 		EGUI::Display::EndTreeNode();
 	}
+	ImGui::EndGroup();
+
+	
 
 }
 

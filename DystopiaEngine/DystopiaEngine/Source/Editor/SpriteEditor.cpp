@@ -23,6 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/TextureAtlas.h"
 #include "System/Graphics/TextureSystem.h"
 #include "System/Graphics/GraphicsSystem.h"
+#include "Math/MathLib.h"
 
 #define FIELD_SIZE 140
 
@@ -189,7 +190,12 @@ void Editor::SpriteEditor::FieldTexture(void)
 
 			mnSelectedSection = 0;
 			if (!mpAtlas->GetAllSections().size())
-				mpAtlas->AddSection(Math::Vec2{ 0,0 }, mpTexture->GetWidth(), mpTexture->GetHeight());
+				mpAtlas->AddSection(Math::Vec2{ 0,0 }, mpTexture->GetWidth(), mpTexture->GetHeight(), 1, 1);
+
+			auto& sec = mpAtlas->GetAllSections()[mnSelectedSection];
+			mSectionPos = Math::Vec2{ sec.uStart, sec.vStart };
+			mSectionSize = Math::Vec2{ sec.uEnd - sec.uStart, sec.vEnd - sec.vStart };
+			mSectionDime = Math::Vec2{ sec.mCol, sec.mRow };
 		}
 		EGUI::Display::EndPayloadReceiver();
 	}
@@ -207,12 +213,14 @@ void Editor::SpriteEditor::FieldAtlas(void)
 	static constexpr float itemWidth = 60.f;
 	const auto& allSections = mpAtlas->GetAllSections();
 
-	if (EGUI::Display::DropDownSelection<21>("Sections", mnSelectedSection, static_cast<unsigned>(allSections.size()), FIELD_SIZE))
+	if (EGUI::Display::DropDownSelection<59>("Sections", mnSelectedSection, static_cast<unsigned>(allSections.size()), FIELD_SIZE))
 	{
 		auto& e = mpAtlas->GetAllSections()[mnSelectedSection];
 		mSectionPos  = Math::Vec2{ e.uStart, e.vStart };
 		mSectionSize = Math::Vec2{ e.uEnd - e.uStart, e.vEnd - e.vStart };
 		mSectionDime = Math::Vec2{ roundf(mSectionSize.x / e.mCol), roundf(mSectionSize.y / e.mRow)};
+		mSectionDime.x = Math::Clamp(static_cast<float>(mSectionDime.x), 0, 100);
+		mSectionDime.y = Math::Clamp(static_cast<float>(mSectionDime.y), 0, 100);
 	}
 	else
 	{
@@ -229,7 +237,7 @@ void Editor::SpriteEditor::FieldAtlas(void)
 	EGUI::Display::VectorFields("Start Pos", &mSectionPos, .01f, 0.f, 1, itemWidth);
 
 	EGUI::Display::VectorFields("Size", &mSectionSize, 0.01f, 0.f, 1, itemWidth);
-	EGUI::Display::VectorFieldsInt("Col & Row", &mSectionDime, 1, 1, INT_MAX, itemWidth);
+	EGUI::Display::VectorFieldsInt("Col & Row", &mSectionDime, 1, 1, 100, itemWidth);
 
 	EGUI::SameLine();
 	if (EGUI::Display::Button("Grow Col", Math::Vec2{ 100, 24 }))
@@ -253,6 +261,11 @@ void Editor::SpriteEditor::FieldAtlas(void)
 		//										static_cast<unsigned>(mSectionSize.x * static_cast<float>(mpTexture->GetWidth())),
 		//										static_cast<unsigned>(mSectionSize.y * static_cast<float>(mpTexture->GetHeight())),
 		//										static_cast<unsigned>(mSectionDime.x), static_cast<unsigned>(mSectionDime.y));
+	}
+	if (EGUI::Display::Button("Save Atlas", Math::Vec2{ 150, 24 }))
+	{
+		if (mpTextSys)
+			mpTextSys->SaveAtlases();
 	}
 }
 
@@ -302,6 +315,8 @@ void Editor::SpriteEditor::DrawTempGrid(float _ox, float _oy, float _ix, float _
 
 	unsigned col = static_cast<unsigned>(mSectionDime.x);
 	unsigned row = static_cast<unsigned>(mSectionDime.y);
+	col = Math::Clamp(col, 0, 100);
+	row = Math::Clamp(row, 0, 100);
 	unsigned total = col * row;
 	float xLen = (iEnd.x - iStart.x) / col;
 	float yLen = (iEnd.y - iStart.y) / row;

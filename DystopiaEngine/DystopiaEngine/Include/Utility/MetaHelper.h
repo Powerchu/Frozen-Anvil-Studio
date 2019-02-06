@@ -45,7 +45,6 @@ namespace Ut
 
 
 	// =========================================== COMPILE TIME FIND =========================================== // 
-	// Make result be false instead of compile error?
 
 		template <typename Ty, typename ... Arr>
 		struct MetaFinder
@@ -216,6 +215,18 @@ namespace Ut
 		struct MetaExtractor <0, Set<Ty, R...>>
 		{
 			using result = Ty;
+		};
+
+		template <unsigned N, template <auto ...> typename Set, auto val, auto ... rest>
+		struct MetaExtractor <N, Set<val, rest...>>
+		{
+			using result = typename MetaExtractor <N - 1, Set<rest...>>::result;
+		};
+
+		template <template <auto ...> typename Set, auto val, auto ... rest>
+		struct MetaExtractor <0, Set<val, rest...>>
+		{
+			using result = Set<val>;
 		};
 
 		template <unsigned N, typename T, template <typename, T...> typename Set, T val, T ... rest>

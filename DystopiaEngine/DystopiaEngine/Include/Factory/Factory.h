@@ -19,7 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/HashString.h"
 #include "DataStructure/MagicArray.h"
 
-#include "Math/Vector4.h"
+#include "Math/Vectors.h"
 
 namespace Dystopia
 {

@@ -23,8 +23,11 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "IO/TextSerialiser.h"
 #include "Component/Circle.h"
 #include "Component/Transform.h"
+#include "Component/PointCollider.h"
 #include "Math/Quaternion.h"
 #include "Editor/EditorCommands.h"
+#include "System/Graphics/Mesh.h"
+#include "System/Graphics/MeshSystem.h"
 
 #if EDITOR
 #include "Editor/EGUI.h"
@@ -46,16 +49,16 @@ namespace Dystopia
 
 	void Convex::Awake(void)
 	{
-		mVertices.clear();
+		if (mVertices.IsEmpty())
+			mVertices = {
+				Vertice{ Math::MakePoint3D(.5f,.5f,0) },
+				Vertice{ Math::MakePoint3D(-.5f,.5f,0) },
+				Vertice{ Math::MakePoint3D(-.5f,-.5f,0) },
+				Vertice{ Math::MakePoint3D(.5f,-.5f,0) }
+			};
 
-		mVertices = {
-			Vertice{ Math::MakePoint3D(.5f,.5f,0) },
-			Vertice{ Math::MakePoint3D(-.5f,.5f,0) },
-			Vertice{ Math::MakePoint3D(-.5f,-.5f,0) },
-			Vertice{ Math::MakePoint3D(.5f,-.5f,0) }
-		};
-
-		mNumPoints = 4;
+		if (mNumPoints < 4)
+			mNumPoints = 4;
 
 		mDebugVertices.clear();
 
@@ -65,6 +68,8 @@ namespace Dystopia
 		}
 
 		Collider::Awake();
+		if (mpMesh)
+			mpMesh->UpdateBuffer<VertexBuffer>(mDebugVertices);
 	}
 
 	void Convex::Load()
@@ -114,13 +119,14 @@ namespace Dystopia
 		_out << static_cast<float>(mRotation[2]);
 		_out << static_cast<float>(mRotation[3]);
 		_out << mbIsTrigger;
-
+		_out << static_cast<unsigned>(mColLayer);
 		_out.InsertEndBlock("Convex_Collider");
 	}
 
 	void Convex::Unserialise(TextSerialiser& _in)
 	{
 		int arr_vert_size;
+		unsigned collayer_temp = 0;
 		float tmp_x, tmp_y, tmp_z;
 
 		_in.ConsumeStartBlock();
@@ -154,9 +160,11 @@ namespace Dystopia
 		_in >> mRotation[3];
 
 		_in >> mbIsTrigger;
-
+		_in >> collayer_temp;
 		_in.ConsumeEndBlock();
 
+		mColLayer = static_cast<eColLayer>(collayer_temp);
+		Awake();
 	}
 
 	Convex * Convex::Duplicate() const
@@ -340,6 +348,111 @@ namespace Dystopia
 		return isColliding(*_pColB);
 	}
 
+	bool Convex::isColliding(PointCollider & _ColB)
+	{
+		auto && AllEdge = GetConvexEdges();
+		Edge * ClosestEdge     = nullptr;
+		float  ClosestDistance = 0.f;
+		float dist             = 0.f;
+
+		CollisionEvent ColEvent { GetOwner(), _ColB.GetOwner() };
+		/*Check against all the edges*/
+		for (auto & edge : AllEdge)
+		{
+			
+
+			/*Ceck if the point is within the Edge's Inside Halfspaces*/
+			if (edge.mNorm3.Dot(_ColB.GetGlobalPosition() - edge.mPos) > 0.f)
+			{
+				Vec3D v = edge.mVec3;
+				Vec3D w = _ColB.GetGlobalPosition() - edge.mPos;
+				Vec3D norm;
+				float c1 = v.Dot((w));
+				float c2 = v.Dot(v);
+				float ratio = 0.f;
+				Point3D PointOfImpact;
+				/*
+				Determine which part of the edge does the point lies on
+
+				  Point(.)
+				            --------------
+
+						OR
+						       Point(.)
+				 ------------ 
+				        OR
+
+					Point(.)
+				-----------------
+				*/
+
+				/*Case One*/
+				if (c1 < 0)
+				{
+					ClosestDistance = w.Magnitude();
+					norm = w;
+				}
+				/*Case Two*/
+				else if (c1 > c2)
+				{
+					/*Get the distance from the end point of the line to the Point collider*/
+					ClosestDistance = (_ColB.GetGlobalPosition() - (edge.mPos + edge.mVec3)).Magnitude();
+					/*The normal is from the other position to the line end point. (This is because physics side will negate again)
+					  Originally should be line end point - other position*/
+					norm = (_ColB.GetGlobalPosition() - (v + edge.mPos));
+				}
+				/*Case Three*/
+				else
+				{
+					/*Calculate the barycentric ratio*/
+					ratio = c1 / c2;
+					/*Get the point directly under the point collider*/
+					PointOfImpact = edge.mPos + ratio * edge.mVec3;
+					/*Get the closest distance which is the point directly under to _ColB*/
+					ClosestDistance = (_ColB.GetGlobalPosition() - PointOfImpact).Magnitude();
+					/*The normal is from PointDirectly below to the Collider position (This is negated because physics side negates)
+					  Original(PointOfImpact - _ColB's Position)*/
+					norm = (_ColB.GetGlobalPosition() - PointOfImpact);
+				}
+
+				/*If there is no closest edge, that means it is the first iteration*/
+				if (!ClosestEdge)
+				{
+					/*Store the Collision Event*/
+					ColEvent.mfPeneDepth = (PointOfImpact - _ColB.GetGlobalPosition()).Magnitude();
+					ColEvent.mEdgeNormal = norm;
+					ColEvent.mEdgeVector = Math::Vec3D{ ColEvent.mEdgeNormal.yxzw }.Negate< Math::NegateFlag::X>();
+					ColEvent.mCollisionPoint = PointOfImpact;
+					ClosestEdge = &edge;
+				}
+				else
+				{
+					/*Get the distance from the point to the edge origin*/
+					/*If this edge is closer to the Point, assign it as the collided edge*/
+					if (dist < ClosestDistance)
+					{
+						/*Store the Collision Event*/
+						ColEvent.mfPeneDepth = (PointOfImpact - _ColB.GetGlobalPosition()).Magnitude();
+						ColEvent.mEdgeNormal = norm;
+						ColEvent.mEdgeVector = Math::Vec3D{ ColEvent.mEdgeNormal.yxzw }.Negate< Math::NegateFlag::X>();
+						ColEvent.mCollisionPoint = PointOfImpact;
+						ClosestEdge = &edge;
+					}
+				}
+			}
+			else
+				return false;
+		}
+		/*Add in a new contact/collision event*/
+		marr_ContactSets.push_back(Ut::Move(ColEvent));
+		return true;
+	}
+
+	bool Convex::isColliding(PointCollider * const &)
+	{
+		return false;
+	}
+
 	Vertice Convex::GetFarthestPoint(const Math::Vec3D & _Dir) const
 	{
 		return Convex::GetFarthestPoint(*this, _Dir);
@@ -406,6 +519,7 @@ namespace Dystopia
 			Edge e;
 			e.mVec3         = end - start;
 			e.mNorm3.xyzw   = e.mVec3.yxzw;
+			
 			e.mSimplexIndex = i;
 			e.mOrthogonalDistance = start.Magnitude();
 			e.mPos          = start;
@@ -420,6 +534,7 @@ namespace Dystopia
 			e.mNorm3.z = 0;
 			e.mPos.z   = 0;
 			e.mVec3.z  = 0;
+			e.mNorm3 = Math::Normalise(e.mNorm3);
 			ToRet.push_back(e);
 		}
 		return ToRet;
@@ -454,6 +569,7 @@ namespace Dystopia
 		eSetScale(); 
 		ePointVerticesVectorArray();
 		eNumberOfContactsLabel();
+		Collider::EditorUI();
 	}
 
 	void Convex::eIsTriggerCheckBox()
@@ -505,6 +621,16 @@ namespace Dystopia
 			switch (EGUI::Display::DragInt("	Size		", &mNumPoints, 1, 4, 32, false, 128))
 			{
 			case EGUI::eDragStatus::eDRAGGING:
+				{
+					while (mVertices.size() < unsigned int(mNumPoints))
+					{
+						mVertices.push_back(Math::MakePoint3D(0.0f, 0.0f, 0.0f));
+					}
+					while (mVertices.size() > unsigned int(mNumPoints))
+					{
+						mVertices.pop_back();
+					}
+				}
 				break;
 			case EGUI::eDragStatus::eSTART_DRAG:
 				//EGUI::GetCommandHND()->StartRecording<Convex>(mnOwner, &Convex::mNumPoints);
@@ -519,15 +645,7 @@ namespace Dystopia
 				break;
 			}
 
-			while (mVertices.size() < unsigned int(mNumPoints))
-			{
-				mVertices.push_back(Math::MakePoint3D(0.0f, 0.0f, 0.0f));
-			}
-			while (mVertices.size() > unsigned int(mNumPoints))
-			{
-				mVertices.pop_back();
-			}
-
+			
 			for (unsigned int i = 0; i < mVertices.size(); ++i)
 			{
 				EGUI::PushID(i);
@@ -540,17 +658,24 @@ namespace Dystopia
 					switch (e)
 					{
 					case EGUI::eDragStatus::eNO_CHANGE:
-					case EGUI::eDragStatus::eDRAGGING:
 						break;
+					case EGUI::eDragStatus::eDRAGGING:
 					case EGUI::eDragStatus::eSTART_DRAG:
-						//EGUI::GetCommandHND()->StartRecording<Convex>(mnOwner, &Convex::mVertices[i].mPosition);
+						Collider::mDebugVertices[i].x = mVertices[i].mPosition.x;
+						Collider::mDebugVertices[i].y = mVertices[i].mPosition.y;
+						Collider::mDebugVertices[i].z = mVertices[i].mPosition.z;
+						mpMesh->UpdateBuffer<VertexBuffer>(mDebugVertices);
 						break;
 					case EGUI::eDragStatus::eDEACTIVATED:
 					case EGUI::eDragStatus::eEND_DRAG:
 					case EGUI::eDragStatus::eENTER:
 					case EGUI::eDragStatus::eTABBED:
 						//EGUI::GetCommandHND()->EndRecording();
-						Awake();
+						//Awake();
+						Collider::mDebugVertices[i].x = mVertices[i].mPosition.x;
+						Collider::mDebugVertices[i].y = mVertices[i].mPosition.y;
+						Collider::mDebugVertices[i].z = mVertices[i].mPosition.z;
+						//Collider::Awake();
 						break;
 					default:
 						break;
@@ -559,6 +684,13 @@ namespace Dystopia
 				EGUI::PopID();
 			}
 			eUseTransformScaleButton(); // Update Vertices
+
+			//mDebugVertices.clear();
+
+			//for (auto & elem : mVertices)
+			//{
+				//Collider::mDebugVertices.EmplaceBack(elem.mPosition.x, elem.mPosition.y, elem.mPosition.z);
+			//}
 		}
 	}
 
@@ -622,7 +754,11 @@ namespace Dystopia
 
 	void Convex::eUseTransformScaleButton()
 	{
-
+		if(EGUI::Display::Button("Restore Default", {90,24}))
+		{
+			mVertices.clear();
+			Awake();
+		}
 	}
 
 #endif

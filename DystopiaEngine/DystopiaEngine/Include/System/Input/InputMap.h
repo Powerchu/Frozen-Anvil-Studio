@@ -40,6 +40,8 @@ enum eUserButton : unsigned short
 
 enum eButton : unsigned short
 {
+	NONE = 0,
+
 	MOUSE_LEFT = 0x01,
 	MOUSE_RIGHT,
 	MOUSE_MIDDLE = 0x04,
@@ -141,6 +143,7 @@ enum eButton : unsigned short
 	KEYBOARD_RIGHT,
 	KEYBOARD_DOWN,
 
+	// XButtons
 
     XBUTTON_DPAD_UP = 0x1000,
     XBUTTON_DPAD_DOWN,

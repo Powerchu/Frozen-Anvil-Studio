@@ -14,7 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Transform.h"
 #include "Object/GameObject.h"
 #include "Math/Matrix4.h"
-#include "Math/Vector4.h"
+#include "Math/Vectors.h"
 #include "IO/TextSerialiser.h"
 #include "System/Driver/Driver.h"
 #include "System/Scene/SceneSystem.h"
@@ -93,7 +93,7 @@ void Dystopia::Transform::SetParent(Transform* _pParent)
 
 void Dystopia::Transform::OnParentRemove(Transform* _pParent)
 {
-	// Convert our data to world coordinates
+	// Convert our data to world coordinatesF
 	Math::Mat4 const Trans = _pParent->GetTransformMatrix();
 
 	mScale		= _pParent->GetGlobalScale() * mScale;

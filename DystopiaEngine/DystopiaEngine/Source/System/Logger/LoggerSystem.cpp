@@ -103,7 +103,9 @@ namespace
 	}
 }
 
-#if EDITOR
+#if defined(COMMANDPROMPT)
+#define DEFAULT_PRINT_FUNC [](std::string const& _o) { printf(_o.c_str()); }
+#elif EDITOR
 #define DEFAULT_PRINT_FUNC PrintToConsoleLog
 #else
 #define DEFAULT_PRINT_FUNC nullptr

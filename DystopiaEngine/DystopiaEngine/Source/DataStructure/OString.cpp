@@ -22,7 +22,8 @@ HashID StringHasher(const char* _s)
 /****** Constructors ******/
 OString::OString(void)
 	: mnCurSize{ 0 }, mnBufferSize{ 0 }, mnID{ 0 }, mpLiteral{ nullptr }, mpCharBuffer{ nullptr }, mbRehash{ false }
-{}
+{
+}
 
 OString::OString(OString&& _moveCtor) noexcept
 	: mnCurSize{ Ut::Move(_moveCtor.mnCurSize) }, mnBufferSize{ Ut::Move(_moveCtor.mnBufferSize) }, mnID{ Ut::Move(_moveCtor.mnID) }, mpLiteral{ Ut::Move(_moveCtor.mpLiteral) },
@@ -40,7 +41,7 @@ OString::OString(const OString& _copyCtor)
 	: mnCurSize{ _copyCtor.mnCurSize }, mnBufferSize{ 0 }, mnID{ _copyCtor.mnID }, mpLiteral{ _copyCtor.mpLiteral },
 	mpCharBuffer{ nullptr }, mbRehash{ _copyCtor.mbRehash }
 {
-	if (!mpLiteral)
+	if (!mpLiteral && mnCurSize)
 	{
 		Alloc(mnCurSize);
 		MyStrCopy(_copyCtor.mpCharBuffer, mnCurSize);
@@ -155,14 +156,15 @@ char OString::front(void) const
 
 const char* OString::cbegin(void) const
 {
-	if (!mnCurSize)
-		return nullptr;
-	if (mpLiteral)
-		return mpLiteral;
-	return mpCharBuffer;
+	//if (!mnCurSize)
+	//	return nullptr;
+	//if (mpLiteral)
+	//	return mpLiteral;
+	//return mpCharBuffer;
+	return begin();
 }
 
-const char*	OString::begin(void)
+const char* OString::begin(void) const
 {
 	if (!mnCurSize)
 		return nullptr;
@@ -173,14 +175,15 @@ const char*	OString::begin(void)
 
 const char* OString::cend(void) const
 {
-	if (!mnCurSize)
-		return nullptr;
-	if (mpLiteral)
-		return mpLiteral + mnCurSize;
-	return mpCharBuffer + mnCurSize;
+	//if (!mnCurSize)
+	//	return nullptr;
+	//if (mpLiteral)
+	//	return mpLiteral + mnCurSize;
+	//return mpCharBuffer + mnCurSize;
+	return end();
 }
 
-const char*	OString::end(void)
+const char*	OString::end(void) const
 {
 	if (!mnCurSize)
 		return nullptr;
@@ -362,16 +365,23 @@ size_t OString::find_first_of(const char* _s, size_t _pos) const
 {
 	DEBUG_ASSERT(_pos >= mnCurSize, "Index out of range");
 	const char* it1 = cbegin() + _pos;
+
+	if (!it1)
+		return OString::nPos; // cbegin nullptr, no size determined
+
 	const char* it2 = _s;
 	while (it1 < cend())
 	{
-		it2 = _s;
-		while (*it2 != '\0')
-		{
-			if (*it1 == *it2)
-				return it1 - cbegin();
-			it2++;
-		}
+		//it2 = _s;
+		//while (*it2 != '\0')
+		//{
+		//	if (*it1 == *it2)
+		//		return it1 - cbegin();
+		//	it2++;
+		//}
+		if(!strncmp(it1, it2,strlen(it2)))
+			return it1 - cbegin();
+
 		it1++;
 	}
 	return OString::nPos;
@@ -385,6 +395,10 @@ size_t OString::find_last_of(const OString& _rhs, size_t _pos) const
 size_t OString::find_last_of(const char* _s, size_t _pos) const
 {
 	const char *it1 = (cbegin() + _pos < cend() && _pos != OString::nPos) ? cbegin() + _pos : cend();
+
+	if (!it1)
+		return OString::nPos; // cend nullptr, no size determined
+
 	const char* it2 = _s;
 	while (it1 >= cbegin())
 	{
@@ -418,12 +432,14 @@ size_t OString::bufferSize(void) const
 
 size_t OString::length(void) const
 {
+	if (mpLiteral)
+		return strlen(mpLiteral);
 	return mnCurSize;
 }
 
 size_t OString::size(void) const
 {
-	return mnCurSize;
+	return length();
 }
 
 const char * OString::c_str(void) const
@@ -450,13 +466,16 @@ void OString::Rehash(void)
 
 void OString::MyStrCopy(const char *_toCopyFrom, const size_t& _newCurSize)
 {
-	size_t i = 0;
-	mnCurSize = _newCurSize;
-	for (; i < mnCurSize; ++i)
-		mpCharBuffer[i] = _toCopyFrom[i];
-	for (; i < mnBufferSize; ++i)
-		mpCharBuffer[i] = '\0';
-	mbRehash = true;
+	if (_toCopyFrom)
+	{
+		size_t i = 0;
+		mnCurSize = _newCurSize;
+		for (; i < mnCurSize; ++i)
+			mpCharBuffer[i] = _toCopyFrom[i];
+		for (; i < mnBufferSize; ++i)
+			mpCharBuffer[i] = '\0';
+		mbRehash = true;
+	}
 }
 
 void OString::Realloc(size_t _newBufferSize)
@@ -508,12 +527,12 @@ bool operator==(const OString& _lhs, const OString& _rhs)
 
 bool operator==(const OString& _lhs, const char * _rhs)
 {
-	return _lhs.id() == StringHasher(_rhs);
+	return _lhs.id() == (_rhs ? StringHasher(_rhs) : 0);
 }
 
 bool operator==(const char * _lhs, const OString& _rhs)
 {
-	return _rhs.id() == StringHasher(_lhs);
+	return _rhs.id() == (_lhs ? StringHasher(_lhs) : 0 );
 }
 
 bool operator==(HashID _id, const OString& _rhs)
@@ -558,7 +577,10 @@ bool operator>(const OString& _lhs, const OString& _rhs)
 
 std::ostream& operator<<(std::ostream& _os, const OString& _rhs)
 {
-	_os << _rhs.c_str();
+	if (_rhs.length())
+		_os << _rhs.c_str();
+	else
+		_os << "";
 	return _os;
 }
 

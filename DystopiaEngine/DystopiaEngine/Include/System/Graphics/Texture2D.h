@@ -16,25 +16,27 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "System/Graphics/Texture.h"
 
+
 namespace Dystopia
 {
-	struct Image;
-
 	class Texture2D : public Texture
 	{
 	public:
 
-		explicit Texture2D(const std::string&) noexcept;
-		~Texture2D(void) noexcept;
+		explicit Texture2D(HashString const&, Image&) noexcept;
 
 		void GenerateMipmap(void) const;
 
-		void LoadTexture(Image const *);
 		void ReplaceTexture(unsigned w, unsigned h, void* _pData, bool _bAlpha = true);
 
 	private:
-		void InitTexture(Image const*);
-		void InitCompressedTexture(Image const*);
+		void Load(void);
+		void ResolveLoad(void);
+		void InitTexture(void);
+		void InitCompressedTexture(void);
+
+		void ReloadImage(Image&);
+		void ReloadImageTrigger(void);
 	};
 }
 

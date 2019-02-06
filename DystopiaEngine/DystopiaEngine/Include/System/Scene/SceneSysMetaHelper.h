@@ -38,6 +38,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/SpriteRenderer.h"
 #include "Component/TextRenderer.h"
 #include "Component/AudioSource.h"
+#include "Component/AudioListener.h"
 
 namespace Dystopia
 {

@@ -14,7 +14,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _MATRIX2_H_
 #define _MATRIX2_H_
 
-#include "Math/Vector4.h"
+#include "Math/Vectors.h"
 
 #include <new>				// nothrow_t
 #include <cmath>			// sqrtf
@@ -24,7 +24,7 @@ namespace Math
 {
 	#define _CALL	__vectorcall
 
-	struct __declspec(align(16)) _DLL_EXPORT Matrix2
+	struct alignas(16) _DLL_EXPORT Matrix2
 	{
 		// ====================================== CONSTRUCTORS ======================================= // 
 

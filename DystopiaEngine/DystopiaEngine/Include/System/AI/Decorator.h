@@ -8,7 +8,7 @@ Builder Template Interface for all Neural Trees (Behaviour Tree). Referred to
 https://www.gamasutra.com/blogs/ChrisSimpson/20140717/221339/Behavior_trees_for_AI_How_they_work.php
 for basic understanding.
 
-All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+All Content Copyright ï¿½ 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -108,13 +108,14 @@ namespace Dystopia
 		public:
 			eStatus Update() override
 			{
-				while (true) {
-					const auto status = mpChild->Tick();
+				const auto status = mpChild->Tick();
 
-					if (status == eStatus::SUCCESS) {
-						return eStatus::SUCCESS;
-					}
+				if (status == eStatus::SUCCESS) 
+				{
+					return eStatus::SUCCESS;
 				}
+
+				return eStatus::RUNNING;
 			}
 
 			HashString GetEditorName(void) const override { return "Until Success"; }
@@ -126,13 +127,13 @@ namespace Dystopia
 		public:
 			eStatus Update() override
 			{
-				while (true) {
-					const auto status = mpChild->Tick();
+				const auto status = mpChild->Tick();
 
-					if (status == eStatus::FAIL) {
-						return eStatus::SUCCESS;
-					}
+				if (status == eStatus::FAIL) 
+				{
+					return eStatus::SUCCESS;
 				}
+				return eStatus::RUNNING;
 			}
 
 			HashString GetEditorName(void) const override { return "Until Failure"; }

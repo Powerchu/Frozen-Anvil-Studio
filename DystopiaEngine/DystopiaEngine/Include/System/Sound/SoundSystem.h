@@ -23,6 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <string>
 #include <map>
+#include <unordered_map>
 
 namespace Dystopia
 {
@@ -32,7 +33,8 @@ namespace Dystopia
 		"FX"
 	};
 	class AudioSource;
-	class SoundSystem : public Systems, public ComponentDonor<AudioSource>
+	class AudioListener;
+	class SoundSystem : public Systems, public ComponentDonor<AudioSource>, public ComponentDonor<AudioListener>
 	{
 	public:
 		SoundSystem(void);
@@ -53,21 +55,28 @@ namespace Dystopia
 
 		void ReceiveMessage(const eSysMessage&);
 		Sound* LoadSound(const HashString& _file);
+		char RegisterNewListener(AudioListener * const & _Listener);
 
 		_DLL_EXPORT void SetMaster(float);
 		_DLL_EXPORT void SetBGM(float);
 		_DLL_EXPORT void SetFX(float);
 
+		_DLL_EXPORT float GetMaster() const;
+		_DLL_EXPORT float GetBGM() const;
+		_DLL_EXPORT float GetFX() const;
+
 	private:
 		float mMasterVol;
 		float mBGMVol;
 		float mFXVol;
-		bool mbUpdateVol;
+		bool  mbUpdateVol;
 
-		FMOD::System *mpFMOD;
-		std::string	mDefaultSoundFolder;
-		std::map<std::string, Sound*> mMapOfSounds;
-		Array<FMOD::ChannelGroup*, eSOUND_LAST> mArrGroups;
+		FMOD::System *                           mpFMOD;
+		std::string	                             mDefaultSoundFolder;
+		std::map<std::string, Sound*>            mMapOfSounds;
+		std::unordered_map<AudioListener*, char> mMapOfListeners;
+		Array<FMOD::ChannelGroup*, eSOUND_LAST>  mArrGroups;
+
 
 		void PlayAudio(AudioSource&);
 	};

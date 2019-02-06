@@ -26,7 +26,9 @@ namespace Dystopia
 		class RigidBody,
 		class Collider,
 		class AudioSource,
-		class AiController
+		class AiController,
+		class Emitter,
+		class AudioListener
 	>::result;
 
 	using UsableComponents = Ut::MetaAutoIndexer <
@@ -39,8 +41,11 @@ namespace Dystopia
 		class AudioSource,
 		class SpriteRenderer,
 		class TextRenderer,
-		class AiController
-		//class Particle
+		class AiController,
+		class PointCollider,
+		class RayCollider,
+		class Emitter,
+		class AudioListener
 	>::result;
 
 	// Generic Tag for Components

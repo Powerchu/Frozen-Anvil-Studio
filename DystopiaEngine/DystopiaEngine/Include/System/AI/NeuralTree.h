@@ -61,7 +61,7 @@ namespace Dystopia
 
 			eStatus Tick() 
 			{
-				if (mStatus != eStatus::RUNNING) {
+				if (mStatus != eStatus::RUNNING || mStatus == eStatus::INVALID) {
 					Init();
 				}
 
@@ -245,7 +245,9 @@ namespace Dystopia
 
 			bool IsValidTree(void) const 
 			{
-				return (mpRoot.GetRaw() != nullptr);
+				if (nullptr != this)
+					return (mpRoot.GetRaw() != nullptr);
+				return false;
 			}
 
 			HashString GetEditorName(void) const override { return mnName; }

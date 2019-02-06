@@ -17,7 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/AutoArray.h"
 #include "DataStructure/MagicArray.h"
 #include "Editor/EditorSystem.h"
-#include "Math/Vector4.h"
+#include "Math/Vectors.h"
 
 namespace Dystopia
 {
@@ -78,7 +78,7 @@ namespace Editor
 	private:
 
 		void SaveChild(Dystopia::GameObject&, Dystopia::TextSerialiser&, bool _temp = false);
-		void LoadChild(Dystopia::GameObject&, Dystopia::TextSerialiser&);
+		//void LoadChild(Dystopia::GameObject&, Dystopia::TextSerialiser&);
 		bool SavePrefab(const uint64_t& _objID, Dystopia::TextSerialiser&, bool _temp = false);
 		bool LoadPrefab(Dystopia::GameObject&, Dystopia::TextSerialiser&);
 
@@ -91,6 +91,8 @@ namespace Editor
 		void LoadSegmentB(Dystopia::GameObject&, Dystopia::TextSerialiser&);
 
 		void RecursiveCounter(Dystopia::GameObject&, unsigned&);
+
+		void MakeUnique(Dystopia::GameObject&);
 
 		uint64_t PutToScene(const HashString&, const Math::Pt3D&);
 		uint64_t PutToScene(PrefabData&, const Math::Pt3D&);

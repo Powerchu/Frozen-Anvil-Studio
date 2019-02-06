@@ -27,15 +27,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #endif 
 
 #define MAX_VOLUME 3
-#define MAX_CAP_SCALE 2
+#define MAX_CAP_SCALE 5
 #define FREQUENCY 44100
-
+#define MAX_RANGE 10000.f
 Dystopia::AudioSource::AudioSource(void) 
 	: Component{}, 
 	mpSound{ nullptr }, mSoundName{ "Samsara.mp3" }, mChannel{},
 	mSoundType{ 0 }, mPlayOnStart{ true }, mLoop{ false },
 	mPaused{ false }, mIsPlaying{ false }, mReady{ false }, mVolume{ 1.f },
-	mFrequency{ 1.f }, mPitch{ 1.f }, mChanged{ true }
+	mFrequency{ 1.f }, mPitch{ 1.f }, mChanged{ true }, mRange{0.1f}, mMaxRange{10000.f}, mPos{ new FMOD_VECTOR{0,0,0} }
 {
 }
 
@@ -44,12 +44,14 @@ Dystopia::AudioSource::AudioSource(const AudioSource& _rhs)
 	mpSound{ nullptr }, mSoundName{ _rhs.mSoundName }, mChannel{},
 	mSoundType{ _rhs.mSoundType }, mPlayOnStart{ _rhs.mPlayOnStart }, mLoop{ _rhs.mLoop },
 	mPaused{ false }, mIsPlaying{ false }, mReady{ false }, mVolume{ _rhs.mVolume },
-	mFrequency{ _rhs.mFrequency }, mPitch{ _rhs.mPitch }, mChanged{ true }
+	mFrequency{ _rhs.mFrequency }, mPitch{ _rhs.mPitch }, mChanged{ true }, mRange{_rhs.mRange}, mMaxRange{ _rhs.mMaxRange }, mPos{ new FMOD_VECTOR{ _rhs.mPos->x, _rhs.mPos->y, _rhs.mPos->z } }
 {
 }
 
 Dystopia::AudioSource::~AudioSource(void)
 {
+	delete mPos;
+	mPos = nullptr;
 }
 
 void Dystopia::AudioSource::Awake(void)
@@ -75,6 +77,7 @@ void Dystopia::AudioSource::Update(float)
 	mChannel.mpChannel->setVolume(mVolume);
 	mChannel.mpChannel->setFrequency(FREQUENCY * mFrequency);
 	mChannel.mpChannel->setPitch(mPitch);
+	mpSound->mpSound->set3DMinMaxDistance(mRange, mMaxRange);
 
 	if (!mIsPlaying && mLoop)
 		mReady = true;
@@ -89,7 +92,7 @@ void Dystopia::AudioSource::GameObjectDestroy(void)
 
 Dystopia::AudioSource* Dystopia::AudioSource::Duplicate() const
 {
-	return EngineCore::GetInstance()->Get<SoundSystem>()->RequestComponent(*this);
+	return static_cast<ComponentDonor<AudioSource>*>(EngineCore::GetInstance()->Get<SoundSystem>())->RequestComponent(*this);
 }
 
 void Dystopia::AudioSource::Serialise(TextSerialiser& _out) const
@@ -103,6 +106,8 @@ void Dystopia::AudioSource::Serialise(TextSerialiser& _out) const
 	_out << mVolume;
 	_out << mFrequency;
 	_out << mPitch;
+	_out << mRange;
+	_out << mMaxRange;
 	_out.InsertEndBlock("Audio");
 }
 
@@ -117,6 +122,8 @@ void Dystopia::AudioSource::Unserialise(TextSerialiser& _in)
 	_in >> mVolume;
 	_in >> mFrequency;
 	_in >> mPitch;
+	_in >> mRange;
+	_in >> mMaxRange;
 	_in.ConsumeEndBlock();
 }
 
@@ -198,6 +205,34 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 		cmd->EndRec(&AudioSource::mPitch, this);
 		break;
 	}
+	switch (EGUI::Display::DragFloat("Range", &mRange, 0.1f, 0.f, MAX_RANGE))
+	{
+	case EGUI::eSTART_DRAG:
+		cmd->StartRec(&AudioSource::mPitch, this);
+		break;
+	case EGUI::eDRAGGING:
+		break;
+	case EGUI::eEND_DRAG:
+	case EGUI::eENTER:
+	case EGUI::eDEACTIVATED:
+	case EGUI::eTABBED:
+		cmd->EndRec(&AudioSource::mPitch, this);
+		break;
+	}
+	switch (EGUI::Display::DragFloat("Max Range", &mMaxRange, 0.1f, 0.f, MAX_RANGE))
+	{
+	case EGUI::eSTART_DRAG:
+		cmd->StartRec(&AudioSource::mPitch, this);
+		break;
+	case EGUI::eDRAGGING:
+		break;
+	case EGUI::eEND_DRAG:
+	case EGUI::eENTER:
+	case EGUI::eDEACTIVATED:
+	case EGUI::eTABBED:
+		cmd->EndRec(&AudioSource::mPitch, this);
+		break;
+	}
 	EGUI::PopID();
 	EGUI::PopLeftAlign();
 
@@ -242,12 +277,47 @@ void Dystopia::AudioSource::SetChannel(const Channel & _c)
 	mChannel = _c;
 }
 
+void Dystopia::AudioSource::SetMinMax(float _Min, float _Max)
+{
+	mRange    = _Min;
+	mMaxRange = _Max;
+}
+
+void Dystopia::AudioSource::ResetMinMax()
+{
+}
+
+void Dystopia::AudioSource::SetFrequency(float _freq)
+{
+	mFrequency = _freq;
+}
+
+float Dystopia::AudioSource::GetFrequency() const
+{
+	return mFrequency;
+}
+
+void Dystopia::AudioSource::SetPitch(float _pitch)
+{
+	mPitch = _pitch;
+}
+
+float Dystopia::AudioSource::GetPitch() const
+{
+	return mPitch;
+}
+
 void Dystopia::AudioSource::Play(void)
 {
-	if (!mChannel.mpChannel || !mpSound) return;
+	if (!mpSound) return;
 
 	if (mPaused)
-		mChannel.mpChannel->setPaused(false);
+	{
+		if (mChannel.mpChannel)
+			mChannel.mpChannel->setPaused(false);
+		else
+			return;
+	}
 	else
 		mReady = true;
 }
@@ -293,6 +363,20 @@ void Dystopia::AudioSource::SetReady(bool _b)
 {
 	mReady = mIsPlaying ? false : _b;
 }
+
+FMOD_VECTOR * Dystopia::AudioSource::GetFMODPos() const
+{
+	return mPos;
+}
+
+void Dystopia::AudioSource::UpdateFMODPos(Math::Vec3D const & _vec)
+{
+	mPos->x = _vec.x;
+	mPos->y = _vec.y;
+	mPos->z = 1.f;
+	GetChannel().mpChannel->set3DAttributes(mPos, NULL, NULL);
+}
+
 
 bool Dystopia::AudioSource::IsALoop(void) const
 {

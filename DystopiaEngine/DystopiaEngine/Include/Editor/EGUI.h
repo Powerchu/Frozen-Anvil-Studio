@@ -34,6 +34,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/Gizmo.h"
 
 #include "../../Dependancies/ImGui/imgui.h"
+#include "../../../Dependancies/ImGui/imgui_internal.h"
 #include <string>
 
 /* forward declare just becuz */
@@ -69,9 +70,14 @@ End...
 ======================================================================================================================= */
 namespace EGUI
 {
-	inline const Array<const char*, 21> g_ArrIndexName =
+	inline const Array<const char*, 60> g_ArrIndexName =
 	{
-		"00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13" , "14", "15", "16", "17", "18", "19", "20"
+		"00", "01", "02", "03", "04", "05", "06", "07", "08", "09", 
+		"10", "11", "12", "13" , "14", "15", "16", "17", "18", "19",
+		"20", "21", "22", "23" , "24", "25", "26", "27", "28", "29",
+		"30", "31", "32", "33" , "34", "35", "36", "37", "38", "39",
+		"40", "41", "42", "43" , "44", "45", "46", "47", "48", "49",
+		"50", "51", "52", "53" , "54", "55", "56", "57", "58", "59"
 	};
 
 	static constexpr float TabsImageOffsetY = 27.f;
@@ -233,7 +239,7 @@ namespace EGUI
 		}
 		======================================================================================================================= */
 		Array<eDragStatus, 3> VectorFields(const char * _label, Math::Vector4 *_outputVec, float _dragSpeed = 1.0f,
-			float _min = 0.0f, float _max = 1.0f, float _width = 50.f);
+			float _min = 0.0f, float _max = 1.0f, float _width = 50.f, bool _wParamEnable = false);
 		Array<eDragStatus, 2> VectorFields(const char * _label, Math::Vector2 *_outputVec, float _dragSpeed = 1.0f,
 			float _min = 0.0f, float _max = 1.0f, float _width = 50.f);
 		Array<eDragStatus, 2> VectorFieldsInt(const char *_label, Math::Vector2 *_outputVec, int _dragSpeed = 1,
@@ -248,7 +254,7 @@ namespace EGUI
 		// The checkbox is clicked (toggleMe if its true or false does not matter). Do something here:
 		}
 		======================================================================================================================= */
-		bool CheckBox(const char * _label, bool *_pOutBool, bool _showLabel = true);
+		bool CheckBox(const char * _label, bool *_pOutBool, bool _showLabel = true, const char* _tooltip = nullptr);
 		/* =======================================================================================================================
 		Brief:
 		Creates a radio button for a boolean variable. Returns true when the radiois clicked, toggles the _pOutBool
@@ -482,11 +488,12 @@ namespace EGUI
 		arr.push_back("item2");
 		EGUI::Display::DropDownSelection("TestDropDown", i, arr);
 		======================================================================================================================= */
+		bool DropDownSelection(const char* _label, int& _currentIndex, AutoArray<const char *>& _arrOfItems, float _width = 100);
 		bool DropDownSelection(const char* _label, int& _currentIndex, AutoArray<std::string>& _arrOfItems, float _width = 100);
 		template<unsigned N>
-		bool DropDownSelection(const char* _label, int& _currentIndex, unsigned _under21, float _width = 100)
+		bool DropDownSelection(const char* _label, int& _currentIndex, unsigned _under60, float _width = 100)
 		{
-			static_assert(N >= 21, "Under 21");
+			static_assert(N < 60, "Under 60");
 
 			ImGui::PushItemWidth(_width);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
@@ -495,7 +502,7 @@ namespace EGUI
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			HashString inviLabel{ "##" };
 			inviLabel += _label;
-			const bool ret = ImGui::Combo(inviLabel.c_str(), &_currentIndex, g_ArrIndexName.begin(), Math::Min(_under21, N));
+			const bool ret = ImGui::Combo(inviLabel.c_str(), &_currentIndex, g_ArrIndexName.cbegin(), Math::Min(_under60, N));
 			ImGui::PopItemWidth();
 			return ret;
 		}
@@ -514,6 +521,20 @@ namespace EGUI
 			HashString invi{ "##DropDownList" };
 			invi += _label;
 			bool ret = ImGui::Combo(invi.c_str(), &_currentIndex, arrCharPtr, N);
+			ImGui::PopItemWidth();
+			return ret;
+		}
+		template<unsigned N>
+		bool DropDownSelection(const char* _label, int& _currentIndex, const char * const(&_arrOfItems)[N], float _width = 100)
+		{
+			ImGui::PushItemWidth(_width);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+			Label(_label);
+			SameLine(DefaultAlighnmentSpacing, GetLeftAlignStack().IsEmpty() ? DefaultAlignLeft : GetLeftAlignStack().Peek());
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+			HashString invi{ "##DropDownList" };
+			invi += _label;
+			bool ret = ImGui::Combo(invi.c_str(), &_currentIndex, _arrOfItems, N);
 			ImGui::PopItemWidth();
 			return ret;
 		}
@@ -619,6 +640,7 @@ namespace EGUI
 			ImGui::PlotLines(invi.c_str(), _array.begin(), static_cast<int>(_array.size()), 0,
 				_overlapText, _min, _max, ImVec2{ _size.x, _size.y });
 		}
+
 		/* =======================================================================================================================
 		Brief:
 		Creates aN IMAGE as either a button or not (_interactive)
@@ -630,6 +652,73 @@ namespace EGUI
 		bool Image(const size_t& _imgID, const Math::Vec2& _imgSize = Math::Vec2{ 30, 30 },
 			bool _interactive = false, bool _outlineBG = false);
 
+		
+		struct ComboFilterState
+		{
+			int  activeIdx = 0;         // Index of currently 'active' item by use of up/down keys
+			bool selectionChanged = false;  // Flag to help focus the correct item when selecting active item
+		};
+
+		/* ====================================================================================================================
+		Brief:
+		This is a helper function for ComboFilter to draw the popup. 
+		Usage:
+		*To be written*
+		======================================================================================================================= */
+		bool ComboFilter_DrawPopup(ComboFilterState& state, int START, const char **ENTRIES, const int ENTRY_COUNT);
+
+
+		/* =======================================================================================================================
+		Brief:
+		Creates an ImGUI Combo Field (Like Dropdown but with text)
+		Usage:
+		{
+			// requisite: hints must be alphabetically sorted beforehand
+			const char *hints[] = 
+			{
+				"AnimGraphNode_CopyBone",
+				"ce skipaa",
+				"ce skipscreen",
+				"ce skipsplash",
+				"ce skipsplashscreen",
+				"client_unit.cpp",
+				"letrograd",
+				"level",
+				"leveler",
+				"MacroCallback.cpp",
+				"Miskatonic university",
+				"MockAI.h",
+				"MockGameplayTasks.h",
+				"MovieSceneColorTrack.cpp",
+				"r.maxfps",
+				"r.maxsteadyfps",
+				"reboot",
+				"rescale",
+				"reset",
+				"resource",
+				"restart",
+				"retrocomputer",
+				"retrograd",
+				"return",
+				"slomo 10",
+			};
+
+			static ComboFilterState s = {0};
+			static char buf[128] = "type text here...";
+			
+			if( ComboFilter("my combofilter", buf, IM_ARRAYSIZE(buf), hints, IM_ARRAYSIZE(hints), s) ) 
+			{
+				puts( buf );
+			}
+		}
+		======================================================================================================================= */
+		bool ComboFilter(const char *id, char *buffer, int bufferlen, const char **hints, int num_hints, ComboFilterState &s);
+
+		/* ====================================================================================================================
+		Brief:
+		Vertical Tabs (todo: will update how to use)
+		======================================================================================================================= */
+		bool GoxTab(const char *text, bool *v);
 
 	}
 }

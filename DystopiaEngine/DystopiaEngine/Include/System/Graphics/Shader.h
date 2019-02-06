@@ -14,61 +14,79 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _SHADER_H_
 #define _SHADER_H_
 
-#include <string>
 #include "Globals.h"
+#include "Math/MathFwd.h"
 
-namespace Math
-{
-	union  Vector2;
-	union  Vector4;
-	struct Matrix2;
-	struct Matrix4;
-	union  Quaternion;
-}
+#include "Lib/Gfx/Shaders.h"
+#include "System/Graphics/ShaderProgram.h"
+
+#include "DataStructure/Tuple.h"
+#include "DataStructure/Variant.h"
+#include "DataStructure/OString.h"
+#include "DataStructure/AutoArray.h"
+#include "IO/TextSerialiser.h"
+
 
 namespace Dystopia
 {
-	class _DLL_EXPORT Shader
+	class Texture;
+
+	class Shader
 	{
 	public:
 
-		Shader(void) noexcept;
+		Shader(OString const& = "", bool = true) noexcept;
 		~Shader(void);
 
-		void CreateShader(
-			const std::string& _strVert,
-			const std::string& _strFrag
-		);
+		bool IsValid(void) const noexcept;
 
-		void CreateShader(
-			const std::string& _strVert, 
-			const std::string& _strFrag,
-			const std::string& _strGeo
-		);
+		//void CreateShader(char const* _strVert, char const* _strFrag);
+		//void CreateShader(char const* _strVert, char const* _strFrag, char const* _strGeo);
+		
+		void AttachProgram(ShaderProgram*);
+		void DetachProgram(ShaderProgram*);
+		void DetachProgram(::Gfx::ShaderStage);
+		void ReattachProgram(ShaderProgram*);
 
-		void Bind(void) const;
-		void Unbind(void) const;
+		void Bind(void) const noexcept;
+		void Unbind(void) const noexcept;
 
-		unsigned GetID(void) const;
+		void UploadUniform(char const*, const Math::Vector2&) const noexcept;
+		void UploadUniform(char const*, const Math::Vector4&) const noexcept;
+		void UploadUniform(char const*, const Math::Matrix2&) const noexcept;
+		void UploadUniform(char const*, const Math::Matrix4&) const noexcept;
+		void UploadUniform3(char const*, const Math::Vector4&) const noexcept;
 
-		void UploadUniform(char const*, const Math::Vector2&) const;
-		void UploadUniform(char const*, const Math::Vector4&) const;
-		void UploadUniform(char const*, const Math::Matrix2&) const;
-		void UploadUniform(char const*, const Math::Matrix4&) const;
-		void UploadUniform3(char const*, const Math::Vector4&) const;
+		void UploadUniform(char const*, float) const noexcept;
+		void UploadUniform(char const*, float, float) const noexcept;
+		void UploadUniform(char const*, float, float, float) const noexcept;
+		void UploadUniform(char const*, float, float, float, float) const noexcept;
 
-		void UploadUniform(char const*, float) const;
-		void UploadUniform(char const*, float, float) const;
-		void UploadUniform(char const*, float, float, float) const;
-		void UploadUniform(char const*, float, float, float, float) const;
+		void UploadUniformi(char const*, int) const noexcept;
+		void UploadUniformi(char const*, int, int) const noexcept;
+		void UploadUniformi(char const*, int, int, int) const noexcept;
+		void UploadUniformi(char const*, int, int, int, int) const noexcept;
 
+		OString const& GetName(void) const noexcept;
+		bool IsCustomShader(void) const noexcept;
+
+		void Unserialize(TextSerialiser&);
+
+		void OnEditorUI(void) const;
+
+		AutoArray<std::pair<OString, ::Gfx::eUniform_t>> const& GetVariables(void) noexcept;
 
 	private:
 
-		unsigned mnShaderID;
+		void ImportVariables(void) noexcept;
 
-		int GetUniformLocation(char const*) const;
-		void LoadShader(unsigned, const std::string&);
+		OString mstrName;
+		::Gfx::ShaderPipeline mID;
+		::Gfx::ShaderStage mStages;
+		AutoArray<ShaderProgram*> mPrograms;
+
+		bool mbUpdate, mbIsCustom, mbValid;
+		AutoArray<std::pair<OString, ::Gfx::eUniform_t>> mVars;
 	};
 }
 

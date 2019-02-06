@@ -104,6 +104,7 @@ void Editor::EditorStates::StartFrame(void)
 		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->Update(dt);
 		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::Profiler>()->Update(dt);
 		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::BehaviourSystem>()->PollChanges();
+		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::FileSystem>()->Update(dt);
 		break;
 	default: ;
 	}
@@ -150,13 +151,13 @@ void Editor::EditorStates::Update(float)
 		else if (input->IsHotkeyTriggered(mnClear))
 			EditorMain::GetInstance()->GetSystem<EditorCommands>()->ClearAllCommmands();
 
-		if (EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->IsKeyTriggered(eButton::KEYBOARD_W))
+		if (EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->GetKeyDown(eButton::KEYBOARD_W))
 			EditorMain::GetInstance()->GetPanel<SceneView>()->SetGizmoTranslate();
-		else if (EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->IsKeyTriggered(eButton::KEYBOARD_E))
+		else if (EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->GetKeyDown(eButton::KEYBOARD_E))
 			EditorMain::GetInstance()->GetPanel<SceneView>()->SetGizmoScaler();
-		else if (EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->IsKeyTriggered(eButton::KEYBOARD_HOME))
+		else if (EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->GetKeyDown(eButton::KEYBOARD_HOME))
 			EditorMain::GetInstance()->GetPanel<SceneView>()->ResetSceneCam();
-		else if (EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->IsKeyTriggered(eButton::KEYBOARD_F))
+		else if (EditorMain::GetInstance()->GetSystem<EInput>()->GetInputManager()->GetKeyDown(eButton::KEYBOARD_F))
 			EditorMain::GetInstance()->GetPanel<SceneView>()->FocusGobj();
 	}
 
@@ -238,6 +239,10 @@ void Editor::EditorStates::Message(eEMessage _msg)
 		auto& win = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::WindowManager>()->GetMainWindow();
 		HashString name{ sceneSystem->GetCurrentScene().GetSceneName().c_str() };
 		win.SetTitle(std::wstring{ name.begin(), name.end() });
+	}
+	else if (_msg == eEMessage::WINDOWS_QUIT)
+	{
+		mbQuitAttempt = true;
 	}
 }
 
@@ -332,7 +337,7 @@ void Editor::EditorStates::Save(void)
 		HashString sceneFile{ sceneName };
 		sceneFile += ".";
 		sceneFile += Gbl::SCENE_EXT;
-		auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+		auto fs = Dystopia::EngineCore::GetInstance()->Get<Dystopia::FileSystem>();
 		auto fp = fs->FindFilePath(sceneFile, Dystopia::eFileDir::eResource);
 
 		sceneSystem->SaveScene(fp.c_str(), sceneName.c_str());
@@ -389,7 +394,7 @@ void Editor::EditorStates::SaveAs(void)
 void Editor::EditorStates::New(void)
 {
 	auto sceneSystem = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
-	auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+	auto fs = Dystopia::EngineCore::GetInstance()->Get<Dystopia::FileSystem>();
 	auto fp = fs->GetFullPath("Temp", Dystopia::eFileDir::eResource);
 
 	HashString file{ fp.c_str() };
@@ -434,7 +439,7 @@ void Editor::EditorStates::Stop(void)
 
 void Editor::EditorStates::TempSave(void)
 {
-	auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+	auto fs = Dystopia::EngineCore::GetInstance()->Get<Dystopia::FileSystem>();
 	auto fp = fs->GetFullPath("Temp", Dystopia::eFileDir::eResource);
 	auto sceneSystem = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
 

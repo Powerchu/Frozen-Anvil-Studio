@@ -17,9 +17,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Base/Systems.h"		 // System
 #include "System/Base/ComponentDonor.h"
 #include "System/Graphics/Framebuffer.h"
+#include "System/File/FileSystem.h"      // eFileDir
 #include "Math/MathFwd.h"
-#include "Math/Vector4.h"
-#include "Math/Vector2.h"
+#include "Math/Vectors.h"
 
 #include "Utility/Utility.h"
 
@@ -61,7 +61,8 @@ namespace Dystopia
 		_DLL_EXPORT void SetGamma(float) noexcept;
 		_DLL_EXPORT float GetGamma(void) noexcept;
 
-		_DLL_EXPORT  void ToggleVsync(bool) noexcept;
+		_DLL_EXPORT void ToggleVsync(bool) noexcept;
+		_DLL_EXPORT bool GetVsync(void) noexcept;
 
 		bool GetDebugDraw(void) const;
 		void ToggleDebugDraw(bool) const;
@@ -78,9 +79,8 @@ namespace Dystopia
 
 		void     LevelLoad(TextSerialiser&);
 		void     LoadMesh(const std::string&);
-		Texture* LoadTexture(const std::string&);
+		Texture* LoadTexture(HashString const&);
 		_DLL_EXPORT Texture* LoadTexture(const char *);
-		Shader*	 LoadShader(const std::string&);
 		Texture* LoadFont(const std::string&);
 
 		Framebuffer& GetGameView(void) const noexcept;
@@ -97,10 +97,6 @@ namespace Dystopia
 
 		void SetResolution(unsigned w, unsigned h) noexcept;
 		void UpdateResolution(void) const noexcept;
-
-		// Temporary
-		std::map<std::string, Shader*> shaderlist;
-		_DLL_EXPORT Shader* GetShader(const char *) const;
 
 		void EditorAspectRatio(void);
 		void EditorUI(void);

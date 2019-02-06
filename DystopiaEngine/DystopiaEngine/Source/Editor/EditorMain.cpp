@@ -39,6 +39,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/SpriteEditor.h"
 #include "Editor/BehaviourTreeEditor.h"
 #include "Editor/GameView.h"
+#include "Editor/FlowChart.h"
+#include "Editor/DataSheetEditor.h"
+#include "Editor/ParticleEditor.h"
 
 #include "Allocator/DefaultAlloc.h"
 
@@ -52,6 +55,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Time/ScopedTimer.h"
 #include "System/Profiler/Profiler.h"
 #include "System/Profiler/ProfilerAction.h"
+
+#include "System/Database/DataSheet.h"
 
 #include "../../Dependancies/ImGui/imgui.h"
 #include "../../Dependancies/ImGui/imgui_internal.h"
@@ -143,7 +148,11 @@ void Editor::EditorMain::Update(void)
 		{
 			//Dystopia::ScopedTimer<Dystopia::ProfilerAction> scopeT{ p->GetLabel().c_str(), "Editor UI" };
 			ImGuiWindowFlags f = p->IsScrollEnabled() ? ImGuiWindowFlags_None : ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar;
-			if (EGUI::StartTab(p->GetLabel().c_str(), &p->GetOpenedBool(), f))
+			if (p->IsHorizontalEnabled())
+				f |= ImGuiWindowFlags_HorizontalScrollbar;
+
+			bool open = p->IsOpened();
+			if (EGUI::StartTab(p->GetLabel().c_str(), &open, f))
 			{
 				EGUI::Indent(4);
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 4);
@@ -151,6 +160,7 @@ void Editor::EditorMain::Update(void)
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 4);
 				EGUI::UnIndent(4);
 			}
+			p->SetOpened(open);
 			EGUI::EndTab();
 		}
 		EGUI::PopID();
@@ -161,8 +171,6 @@ void Editor::EditorMain::Update(void)
 void Editor::EditorMain::EndFrame(void)
 {
 	LogPerformance();
-	for (auto& s : mArrSystems)
-		s->EndFrame();
 
 	if (mCurState != mNextState)
 	{
@@ -194,6 +202,9 @@ void Editor::EditorMain::EndFrame(void)
 		for (auto& p : mArrPanels)
 			p->Message(eEMessage::SCENE_CHANGED);
 	}
+
+	for (auto& s : mArrSystems)
+		s->EndFrame();
 
 	if (mMsgPending.size())
 	{
@@ -277,7 +288,7 @@ HashString Editor::EditorMain::GetCurProjFile(void) const
 
 void Editor::EditorMain::ProjectLauncher(void)
 {
-	auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+	auto fs = Dystopia::EngineCore::GetInstance()->Get<Dystopia::FileSystem>();
 	fs->CreateFiles("Dystopia", Dystopia::eFileDir::eAppData);
 
 	HashString fileName = g_ProjectLauncherSave;
@@ -312,7 +323,7 @@ void Editor::EditorMain::ProjectLauncher(void)
 
 void Editor::EditorMain::UpdatePaths(void)
 {
-	auto fs = Dystopia::EngineCore::GetInstance()->GetSubSystem<Dystopia::FileSystem>();
+	auto fs = Dystopia::EngineCore::GetInstance()->Get<Dystopia::FileSystem>();
 
 	HashString subFolder = mProjFile;
 	size_t pos = subFolder.find_last_of(".");

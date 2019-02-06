@@ -22,7 +22,6 @@ namespace Dystopia
 }
 
 
-
 #endif //_Script_Formatter_H_
 #endif //EDITOR
 

@@ -11,20 +11,21 @@
 	prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _MATH_LIB_H__
-#define _MATH_LIB_H__
+#ifndef _MATH_LIB_H_
+#define _MATH_LIB_H_
 
 #include "Math/MathUtility.h"
 
 #include "Math/Angles.h"
-#include "Math/Vector2.h"
+#include "Math/Vectors.h"
 
 #if _WIN64
 
-#include "Math/Vector4.h"
+#include "Math/Vectors.h"
 #include "Math/Quaternion.h"
 #include "Math/Matrix2.h"
 #include "Math/Matrix4.h"
+#include "Math/PerlinNoise.h"
 
 #else		// Fallback for x86 Mode
 

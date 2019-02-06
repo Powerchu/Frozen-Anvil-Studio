@@ -22,7 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/File/FileSystem.h"
 
 #include "Globals.h"
-#include "Math/Vector2.h"
+#include "Math/Vectors.h"
 #include "Utility/Utility.h"
 #include "DataStructure/AutoArray.h"
 #include "DataStructure/MagicArray.h"
@@ -166,6 +166,7 @@ Dystopia::Font* Dystopia::FontSystem::LoadFromFont(const HashString& _strPath, F
 	}
 
 	FT_Done_Face(pFontFace);
+	ImageParser::WriteBMP((_strPath + ".bmp").c_str(), &charMap);
 
 	auto pTexSys = EngineCore::GetInstance()->Get<TextureSystem>();
 	_out->mpAtlas = pTexSys->GenAtlas();
@@ -176,7 +177,8 @@ Dystopia::Font* Dystopia::FontSystem::LoadFromFont(const HashString& _strPath, F
 		_out->mpAtlas->AddSection(Math::Vec2{ float(e.x), float(e.y) }, e.mnWidth, e.mnHeight);
 	}
 
-	OutputFontmap(&charMap, _out, _strPath);
+	_out->mpAtlas->SetChanged(false);
+	OutputFontmap(_out, _strPath);
 	return _out;
 }
 
@@ -242,10 +244,8 @@ Dystopia::CharSpace Dystopia::FontSystem::PackFont(AutoArray<CharSpace>& _spaces
 	return CharSpace{};
 }
 
-void Dystopia::FontSystem::OutputFontmap(Image* _pData, Font const* _pFont, HashString const& _strPath)
+void Dystopia::FontSystem::OutputFontmap(Font const* _pFont, HashString const& _strPath)
 {
-	ImageParser::WriteBMP((_strPath + ".bmp").c_str(), _pData);
-
 	auto out = Serialiser::OpenFile<TextSerialiser>((_strPath + "." + Gbl::FONTMAP_EXT).c_str(), Serialiser::MODE_WRITE);
 
 	auto& ch = _pFont->mSpaces;

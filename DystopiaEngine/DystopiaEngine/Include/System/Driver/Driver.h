@@ -35,29 +35,33 @@ namespace Dystopia
 	{
 	public:
 		using AllSys = Ut::MetaSortT_t <Ut::MetaLessThan, Ut::Collection <
-			Ut::Indexer<eSYSTEMS::BEHAVIOUR_SYSTEM, class BehaviourSystem>,
-			Ut::Indexer<eSYSTEMS::TIME_SYSTEM     , class TimeSystem     >,
-			Ut::Indexer<eSYSTEMS::INPUT_SYSTEM    , class InputManager   >,
-			Ut::Indexer<eSYSTEMS::WINDOW_SYSTEM   , class WindowManager  >,
-			Ut::Indexer<eSYSTEMS::SOUND_SYSTEM    , class SoundSystem    >, 
-			Ut::Indexer<eSYSTEMS::SCENE_SYSTEM    , class SceneSystem    >,
-			Ut::Indexer<eSYSTEMS::CAMERA_SYSTEM   , class CameraSystem   >,
-			Ut::Indexer<eSYSTEMS::GRAPHIC_SYSTEM  , class GraphicsSystem >,
-			Ut::Indexer<eSYSTEMS::EVENT_SYSTEM    , class EventSystem    >,
-			Ut::Indexer<eSYSTEMS::COLLISION_SYSTEM, class CollisionSystem>,
-			Ut::Indexer<eSYSTEMS::PHYSICS_SYSTEM  , class PhysicsSystem  >,
-			Ut::Indexer<eSYSTEMS::PROFILER_SYSTEM , class Profiler       >,
-			Ut::Indexer<eSYSTEMS::AI_SYSTEM		  , class AISystem		 >
+			Ut::Indexer<eSYSTEMS::BEHAVIOUR_SYSTEM   , class BehaviourSystem   >,
+			Ut::Indexer<eSYSTEMS::TIME_SYSTEM        , class TimeSystem        >,
+			Ut::Indexer<eSYSTEMS::INPUT_SYSTEM       , class InputManager      >,
+			Ut::Indexer<eSYSTEMS::WINDOW_SYSTEM      , class WindowManager     >,
+			Ut::Indexer<eSYSTEMS::SOUND_SYSTEM       , class SoundSystem       >, 
+			Ut::Indexer<eSYSTEMS::SCENE_SYSTEM       , class SceneSystem       >,
+			Ut::Indexer<eSYSTEMS::CAMERA_SYSTEM      , class CameraSystem      >,
+			Ut::Indexer<eSYSTEMS::GRAPHIC_SYSTEM     , class GraphicsSystem    >,
+			Ut::Indexer<eSYSTEMS::EVENT_SYSTEM       , class EventSystem       >,
+			Ut::Indexer<eSYSTEMS::COLLISION_SYSTEM   , class CollisionSystem   >,
+			Ut::Indexer<eSYSTEMS::PHYSICS_SYSTEM     , class PhysicsSystem     >,
+			Ut::Indexer<eSYSTEMS::PROFILER_SYSTEM    , class Profiler          >,
+			Ut::Indexer<eSYSTEMS::AI_SYSTEM		     , class AISystem		   >,
+			Ut::Indexer<eSYSTEMS::DATABASE_SYSTEM    , class DatabaseSystem    >,
+			Ut::Indexer<eSYSTEMS::FILE_SYSTEM        , class FileSystem        >,
+			Ut::Indexer<eSYSTEMS::INTERMEDIARY_SYSTEM, class EditorIntermediary>,
+			Ut::Indexer<eSYSTEMS::PARTICLE_SYSTEM    , class ParticleSystem    >
 		>>;
 
 		using SubSys = typename Ut::MetaAutoIndexer <
 			class MeshSystem,
-			class FileSystem,
 			class FontSystem,
 			class LoggerSystem,
 			class TextureSystem,
 			class TagSystem,
-			class Factory
+			class Factory,
+			class ShaderSystem
 		>::result;
 
 		static EngineCore* GetInstance(void) noexcept;
@@ -65,16 +69,16 @@ namespace Dystopia
 		~EngineCore(void) = default;
 
 		template <class T>
-		T* const GetSystem(void) const;
+		T* const GetSystem(void) const noexcept;
 
 		template <unsigned N, class T = typename Ut::MetaExtract_t<N, AllSys>::type>
-		T* const GetSystem(void) const;
+		T* const GetSystem(void) const noexcept;
 
 		template <class T>
-		T* const GetSubSystem(void) const;
+		T* const GetSubSystem(void) const noexcept;
 
 		template <class T>
-		static inline T* const Get(void);
+		static inline T* const Get(void) noexcept;
 
 		void BroadcastMessage(const eSysMessage&, size_t _nParam);
 
@@ -117,6 +121,7 @@ namespace Dystopia
 		void ParseMessage(const eSysMessage&, size_t);
 	};
 
+	using CORE = EngineCore;
 }
 
 
@@ -128,7 +133,7 @@ namespace Dystopia
 
 
 template <class T>
-inline T* const Dystopia::EngineCore::Get(void)
+inline T* const Dystopia::EngineCore::Get(void) noexcept
 {
 	if constexpr (Ut::MetaFind<T, AllSys>::value)
 	{
@@ -141,7 +146,7 @@ inline T* const Dystopia::EngineCore::Get(void)
 }
 
 template <class T>
-inline T* const Dystopia::EngineCore::GetSystem(void) const
+inline T* const Dystopia::EngineCore::GetSystem(void) const noexcept
 {
 	using type = Ut::MetaFind<T, AllSys>;
 	static_assert(type::value, "Error: System not found!");
@@ -150,13 +155,13 @@ inline T* const Dystopia::EngineCore::GetSystem(void) const
 }
 
 template <unsigned _N, class T>
-inline T* const Dystopia::EngineCore::GetSystem(void) const
+inline T* const Dystopia::EngineCore::GetSystem(void) const noexcept
 {
 	return static_cast<T*>(mSystemTable[_N]);
 }
 
 template <class T>
-inline T* const Dystopia::EngineCore::GetSubSystem(void) const
+inline T* const Dystopia::EngineCore::GetSubSystem(void) const noexcept
 {
 	using type = Ut::MetaFind<T, SubSys>;
 	static_assert(type::value, "Error: Sub-System not found!");
