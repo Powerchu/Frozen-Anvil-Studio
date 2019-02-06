@@ -132,6 +132,11 @@ namespace Dystopia
 
 	void PauseMenu::Update(const float _dt)
 	{
+		static bool hasPress = false;
+		static float Axis = 0.f;
+
+		if (Axis > -0.1f && Axis < 0.1f) hasPress = true;
+
 		if(!isPause)
 		{
 			if(pInputSys->GetButtonDown("Pause"))
@@ -140,6 +145,8 @@ namespace Dystopia
 				isPause = true;
 				EngineCore::Get<TimeSystem>()->SetTimeScale(0.f);
 				mMenuObjects[P_PauseMenu]->SetActive(true);
+				if (auto player = CORE::Get<SceneSystem>()->FindGameObject("CharacterController"))
+                	PauseMenu_MSG::SendExternalMessage(player, "DisableControls", true);
 			}
 			return;
 		}
@@ -154,20 +161,22 @@ namespace Dystopia
 		/*Main Menu is in Control*/ 
 		else
 		{
-			static float Axis = 0.f;
 			Axis = pInputSys->GetAxis("L Stick Vertical");
+
 			/*Check Key Down*/
-			if(pInputSys->GetButtonDown("Vertical", true) || Axis < -0.8f)
+			if(pInputSys->GetButtonDown("Vertical", true) || Axis <= -0.8f)
 			{
 				//DEBUG_PRINT(eLog::MESSAGE, "Keypress Down");
 				index = static_cast<MenuStates>((static_cast<int>(index) + 1) % static_cast<int>(MenuStates::P_Total));
 				(pSelector && mMenuObjects[static_cast<MenuStates>(static_cast<int>(index) + static_cast<int>(MenuStates::P_Total) + 1)]) &&  MoveSelector();
+				hasPress = true;
 			}
 			/*Check Key Up*/
-			else if(pInputSys->GetButtonDown("Vertical", false) || Axis < -0.8f)
+			else if(pInputSys->GetButtonDown("Vertical", false) || Axis >= 0.8f)
 			{ 
 				index = (static_cast<int>(index) - 1) < 0 ? static_cast<MenuStates>(static_cast<int>(MenuStates::P_Total)-1) : static_cast<MenuStates>( static_cast<int>(index) - 1);
 				(pSelector && mMenuObjects[static_cast<MenuStates>(static_cast<int>(index) + static_cast<int>(MenuStates::P_Total) + 1)]) && MoveSelector();
+				hasPress = true;
 			}
 			/*Check Key Accept*/
 			else if(pInputSys->GetButtonDown("Select")) 
@@ -177,7 +186,7 @@ namespace Dystopia
 				if(mMenuObjects[index])
 					mMenuObjects[index]->SetActive(true);
 			}
-			else if(pInputSys->GetButtonDown("Back"))
+			else if(pInputSys->GetButtonDown("Back") || pInputSys->GetButtonDown("Pause"))
 			{      
 				fpState = nullptr;
 				TogglePause(false);
@@ -185,7 +194,8 @@ namespace Dystopia
 				auto && children = GetOwner()->GetComponent<Transform>()->GetAllChild();
 				for(auto & child : children)
 					child->GetOwner()->SetActive(false);
-				
+				if (auto player = CORE::Get<SceneSystem>()->FindGameObject("CharacterController"))
+                	PauseMenu_MSG::SendExternalMessage(player, "DisableControls", false);
 			}
 		}  
 	}
@@ -647,21 +657,26 @@ namespace Dystopia
 	}  
 	bool P_SettingsState::Update(float _dt)
 	{
-		DEBUG_PRINT(eLog::MESSAGE, "Settings Update");
+		static bool hasPress = false;
 		static float Axis = 0.f;
+		if (Axis > -0.1f && Axis < 0.1f) hasPress = true;
+		DEBUG_PRINT(eLog::MESSAGE, "Settings Update");
+
 		Axis = pInputSys->GetAxis("L Stick Vertical");
 
-		if( pInputSys->GetButtonDown("Vertical", true) || Axis < -0.8f)
+		if( pInputSys->GetButtonDown("Vertical", true) || Axis <= -1.0f)
 		{
 			s_index = static_cast<SettingsButtons>((static_cast<int>(s_index) + 1) % static_cast<int>(SettingsButtons::eTotal));
 			(pSelector && mSettingsObjects[s_index]) &&  MoveSelector();
 			fpButton = mSettingsFunc[s_index];
+				hasPress = true;
 		}
-		else if(pInputSys->GetButtonDown("Vertical", false)|| Axis > 0.8f)
+		else if(pInputSys->GetButtonDown("Vertical", false) || Axis >= 1.0f)
 		{
 			s_index = (static_cast<int>(s_index) - 1) < 0 ? static_cast<SettingsButtons>(static_cast<int>(SettingsButtons::eTotal)-1) : static_cast<SettingsButtons>( static_cast<int>(s_index) - 1);
 			(pSelector && mSettingsObjects[s_index]) && MoveSelector();
 			fpButton = mSettingsFunc[s_index];
+			hasPress = true;
 		}
 		else if(pInputSys->GetButtonDown("Back"))
 		{

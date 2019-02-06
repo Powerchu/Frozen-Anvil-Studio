@@ -221,7 +221,7 @@ namespace Dystopia
 		/*I am not sure why i need to clear it before assigning. else will have stuff inside*/
 		marr_ContactSets.clear();
 		marr_ContactSets = marr_CurrentContactSets;
-		//marr_CurrentContactSets.clear();
+		marr_CurrentContactSets.clear();
 	}
 	void Collider::InformOtherComponents(const bool _isColliding, CollisionEvent const & _Event)
 	{

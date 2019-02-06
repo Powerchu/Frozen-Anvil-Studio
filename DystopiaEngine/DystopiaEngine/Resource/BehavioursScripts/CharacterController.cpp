@@ -286,29 +286,33 @@ namespace Dystopia
         if (mpInput)
          ReMapButtons();
     }
-	void CharacterController::Init()
-	{
-		mpInput = EngineCore::GetInstance()->GetSystem<InputManager>();
-		mpBody = GetOwner()->GetComponent<RigidBody>();
-		mpAnim = GetOwner()->GetComponent<SpriteRenderer>();
-		mpCollider = GetOwner()->GetComponent<Convex>();
-		mpAudioSrc = GetOwner()->GetComponent<AudioSource>();
+    void CharacterController::Init()
+    {
+        mpInput = EngineCore::GetInstance()->GetSystem<InputManager>();
+        mpBody = GetOwner()->GetComponent<RigidBody>(); 
+        mpAnim = GetOwner()->GetComponent<SpriteRenderer>();
+        mpCollider = GetOwner()->GetComponent<Convex>();
+        mpAudioSrc = GetOwner()->GetComponent<AudioSource>();
 		mpMyHitBox = EngineCore::Get<SceneSystem>()->FindGameObject("CharacterHitBox");
-		mpCamShaker = EngineCore::Get<SceneSystem>()->FindGameObject("Camera Shake");
-		mpHealthBar = EngineCore::Get<SceneSystem>()->FindGameObject("PlayerUI");
-		mpUICam = EngineCore::Get<SceneSystem>()->FindGameObject("UI Camera");
-		mpPlayerUI = EngineCore::Get<SceneSystem>()->FindGameObject("PlayerUI");
-		orgOffset = GetOwner()->GetComponent<Collider>()->GetOffSet();
-		orgScale = GetOwner()->GetComponent<Collider>()->GetScale();
-		mnHitCounter = 0;
+        mpCamShaker = EngineCore::Get<SceneSystem>()->FindGameObject("Main Camera");
+        mpHealthBar = EngineCore::Get<SceneSystem>()->FindGameObject("PlayerUI");
+        mpUICam = EngineCore::Get<SceneSystem>()->FindGameObject("UI Camera");
+        mpPlayerUI = EngineCore::Get<SceneSystem>()->FindGameObject("PlayerUI");
+        orgOffset = GetOwner()->GetComponent<Convex>()->GetOffSet();
+        orgScale = GetOwner()->GetComponent<Convex>()->GetScale();
+        orgOffsetC = GetOwner()->GetComponent<Circle>()->GetOffSet();
+        mnHitCounter = 0;
 
-		mpHitAudioSrc = mpMyHitBox ? mpMyHitBox->GetComponent<AudioSource>() : nullptr;
-		auto& allchild = GetOwner()->GetComponent<Transform>()->GetAllChild();
-		for (auto& c : allchild)
-		{
-			if (c->GetOwner()->GetName() == HashString{ "CastPivot" })
-				mpCastPivot = c->GetOwner();
-		}
+        spawnPos = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
+
+        mpHitAudioSrc = mpMyHitBox ? mpMyHitBox->GetComponent<AudioSource>() : nullptr;
+        auto& allchild = GetOwner()->GetComponent<Transform>()->GetAllChild();
+        for (auto& c : allchild)
+        {
+            if (c->GetOwner()->GetName() == HashString{"CastPivot"})
+                mpCastPivot = c->GetOwner();
+        } 
+
 
 		mChainSkillName[0] = "Force_Flame_Relay.dobj";
 		mChainSkillName[1] = "Form_Spike_Relay.dobj";
@@ -316,21 +320,19 @@ namespace Dystopia
 		mManualSkillName[0][1] = "";
 		mManualSkillName[1][0] = "Form_Slam_Relay.dobj";
 		mManualSkillName[1][1] = "";
-
-		if (mpInput)
-			MapButtonsDefault();
-
-		mbFaceRight = mbIsInForce = true;
-		mnPriorityDir = mnCurrentAttackChain = mnManualSkill = 0;
-		mfCurrentSpeed = mfMaxSpeed;
-		mbSpammedAttack = mbSpammedCast = mbChainedInto = false;
+		
+        if (mpInput)
+            MapButtonsDefault();
+ 
+        mbFaceRight = mbIsInForce = true;
+        mnPriorityDir = mnCurrentAttackChain = mnManualSkill = 0;
+        mfCurrentSpeed = mfMaxSpeed;
+        mbSpammedAttack = mbSpammedCast = mbChainedInto = false;
 		mfAnalogSens = Math::Clamp(mfAnalogSens, 0.2f, 1.f);
-		if (mpInput)
-			ReMapButtons();
+        if (mpInput)
+            ReMapButtons();
 
-		mfCurrMana = mfMaxMana;
-		mfCurrHealth = mfMaxHealth;
-	}
+    }
 
     void CharacterController::FixedUpdate(const float)
     {
@@ -355,7 +357,7 @@ namespace Dystopia
         {
             mfInvulTimer -= _fDeltaTime;
             GetOwner()->GetComponent<SpriteRenderer>()->SetColor({0.5f,0.3f,0.3f});
-            CORE::Get<CollisionSystem>()->SetIgnore(eColLayer::LAYER_2, eColLayer::LAYER_3, true);
+            CORE::Get<CollisionSystem>()->SetIgnore(eColLayer::LAYER_2, eColLayer::LAYER_1, true);
             
         }
         else
@@ -366,7 +368,7 @@ namespace Dystopia
             if (mCurrentState != eRolling)
             {
                 GetOwner()->GetComponent<SpriteRenderer>()->SetColor({1.0f,1.0f,1.0f});
-                CORE::Get<CollisionSystem>()->SetIgnore(eColLayer::LAYER_2, eColLayer::LAYER_3, false);
+                CORE::Get<CollisionSystem>()->SetIgnore(eColLayer::LAYER_2, eColLayer::LAYER_1, false);
             }
         }
 
@@ -376,7 +378,6 @@ namespace Dystopia
         if (mfCurrMana < mfMaxMana && mfManaDelay <= 0.0f)
         {
             mfCurrMana += mfManaRegen * _fDeltaTime;
-			mfCurrMana = Math::Clamp(mfCurrMana, 0, mfMaxMana);
             if (mpHealthBar)
                 CharacterController_MSG::SendExternalMessage(mpHealthBar, "SetStaminaPercentage", mfCurrMana/mfMaxMana);
         }
@@ -385,7 +386,6 @@ namespace Dystopia
         if (mfCurrHealth < mfMaxHealth && mfHealthDelay <= 0.0f)
         {
             mfCurrHealth += mfHealthRegen * _fDeltaTime;
-			mfCurrHealth = Math::Clamp(mfCurrHealth, 0, mfMaxHealth);
         }
 
 		mnStateDebug = static_cast<int>(mCurrentState);
@@ -455,19 +455,12 @@ namespace Dystopia
     }
     void Dystopia::CharacterController::OnCollisionEnter(const CollisionEvent& _colEvent)
     {
-        GetOwner()->GetComponent<Collider>()->RemoveColLayer(LAYER_5);
-
-        if (_colEvent.mCollidedWith->GetComponent<Collider>()->GetColLayer() & LAYER_5 && _colEvent.mCollidedWith->GetComponent<Collider>()->GetColLayer() != LAYER_GLOBAL)
-        {
-            const auto platform = _colEvent.mCollidedWith;
-            if (GetOwner()->GetComponent<Transform>()->GetGlobalPosition().y - platform->GetComponent<Transform>()->GetGlobalPosition().y > 0.f)
-                GetOwner()->GetComponent<Collider>()->SetColLayer(LAYER_5);
-        }
+       
         
         /*
         *   Hit an object with Layer "ENEMY"
         */
-        if (_colEvent.mCollidedWith->GetComponent<Collider>()->GetColLayer() & LAYER_3 && _colEvent.mCollidedWith->GetComponent<Collider>()->GetColLayer() != LAYER_GLOBAL)
+        if (_colEvent.mCollidedWith->HasTag("Enemy"))
         {
             Math::Vector4 reflectVec;
             const auto EnemyPos = _colEvent.mCollidedWith->GetComponent<Transform>()->GetGlobalPosition().x;
@@ -497,16 +490,20 @@ namespace Dystopia
     {
         const auto colBTrigger = _colEvent.mCollidedWith->GetComponent<Collider>()->IsTrigger();
         const float dotNormal = _colEvent.mEdgeNormal.Dot({ 0.0F,-1.0F,0.0F });
-        if (dotNormal > 0.45F && dotNormal < 1.1F && !colBTrigger)
+        if (dotNormal > 0.50F && dotNormal <= 1.02F && !colBTrigger)
             mbLanded = true;
 
         if (_colEvent.mCollidedWith->GetComponent<Collider>()->GetColLayer() & LAYER_5 && _colEvent.mCollidedWith->GetComponent<Collider>()->GetColLayer() != LAYER_GLOBAL)
         {
-            if (mpInput->GetButton("Vertical", 1))
-            {
-                if (mpInput->GetButton("Jump"))
-                    GetOwner()->GetComponent<Collider>()->RemoveColLayer(LAYER_5); 
-            } 
+            const auto platform = _colEvent.mCollidedWith;
+            const auto playerPos = GetOwner()->GetComponent<Transform>()->GetGlobalPosition().y;
+            const auto playerHeight = GetOwner()->GetComponent<Transform>()->GetGlobalScale().y/2;
+            const auto platformPos = platform->GetComponent<Transform>()->GetGlobalPosition().y;
+            const auto platformHeight = platform->GetComponent<Transform>()->GetGlobalScale().y/2;
+            if (playerPos < platformPos-platformHeight)
+                CORE::Get<CollisionSystem>()->SetIgnore(eColLayer::LAYER_2, eColLayer::LAYER_5, true);
+            if (playerPos > platformPos)
+                CORE::Get<CollisionSystem>()->SetIgnore(eColLayer::LAYER_2, eColLayer::LAYER_5, false);
         }
        
     }
@@ -731,7 +728,7 @@ namespace Dystopia
                 mNextState = eFlinching;
                 mpInput->InvokeVibration(vibrateStrength, 30.f, 9.f, 0.8f);
                 if (mpCamShaker)
-                    CharacterController_MSG::SendExternalMessage(mpCamShaker, "InvokeShake", vibrateStrength, 30.0f, 5.0f, 3.0f);
+                    CharacterController_MSG::SendExternalMessage(mpCamShaker, "InvokeShake", vibrateStrength, 30.0f, 10.0f, 3.0f);
                 if (mpPlayerUI)
                     CharacterController_MSG::SendExternalMessage(mpPlayerUI, "TakeImpact");
                 
@@ -799,11 +796,23 @@ namespace Dystopia
             CharacterController_MSG::SendExternalMessage(mpPlayerUI, "SetCounter", mnHitCounter);
     }
 
+    void CharacterController::DisableControls(bool _set)
+    {
+        mbDisableControls = _set;
+    }
+    
+
     void CharacterController::SetComboTimer(float _time)
     {
         mfComboTimer = _time;
     }
 
+    void CharacterController::SetSpawnPoint(Math::Vector3D pos)
+    {
+        spawnPos.x = pos.x;
+        spawnPos.y = pos.y;
+        spawnPos.z = GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
+    }
 
     bool CharacterController::CheckLanded()
     {
@@ -838,16 +847,17 @@ namespace Dystopia
 
                 if (owner->mpInput->GetButton("Vertical",1) || owner->mpInput->GetAxis("L Stick Vertical") < -0.90f)
                 { 
-                   owner->GetOwner()->GetComponent<Collider>()->RemoveColLayer(LAYER_5);
+                    CORE::Get<CollisionSystem>()->SetIgnore(eColLayer::LAYER_2, eColLayer::LAYER_5, true);
                 }
             }
 			// Condition for eAttacking
 			if (owner->mpInput->GetButtonDown("Attack"))
 				owner->mNextState = eAttacking; 
 			// Condition for eCasting
-            if (owner->mpInput->GetButtonDown("Skill Y") ||  owner->mpInput->GetButtonDown("Skill B"))
-			{
-				owner->mnManualSkill = owner->mpInput->GetButton("Skill Y") ? 1 : 2;
+            if (owner->mpInput->GetButtonDown("Skill Y"))
+            {
+                owner->mnManualSkill = 1;
+
                 HashString database{"Force_Skills.ddata"};
                 auto db =  EngineCore::Get<DatabaseSystem>();
                 float blastCost = 0.0f;
@@ -893,6 +903,11 @@ namespace Dystopia
                         }
                     }
                 }
+            }
+
+            if (owner->mpInput->GetButtonDown("Skill B"))
+            {
+                owner->mnManualSkill = 2;
             }
 			// Condition for eRolling
 			if (owner->mpInput->GetButtonDown("Roll"))
@@ -991,7 +1006,7 @@ namespace Dystopia
 			if (owner->mpInput->GetButtonDown("Attack"))
 				owner->mNextState = eAttacking;
 			// Condition for eCasting
-			if (owner->mpInput->GetButtonDown("Skill Y") ||  owner->mpInput->GetButtonDown("Skill B"))
+			if (owner->mpInput->GetButton("Skill Y") ||  owner->mpInput->GetButton("Skill B"))
 			{
 				owner->mnManualSkill = owner->mpInput->GetButton("Skill Y") ? 1 : 2;
                 HashString database{"Force_Skills.ddata"};
@@ -1094,12 +1109,6 @@ namespace Dystopia
     CharacterController::Jumping::~Jumping(){}
     void CharacterController::Jumping::Update(float _dt)
     {
-        if (nullptr != jumpDust) 
-        {
-            if (auto rend = jumpDust->GetComponent<SpriteRenderer>())
-                if(rend->IsPlaying())
-                    jumpDust->Destroy();
-        }
         //<FS_CONDITION>
         // Condition for eFalling
 		if (owner->mpBody)
@@ -1136,7 +1145,6 @@ namespace Dystopia
     {        
         auto myOwnerPos = owner->GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
         auto spawnPt = Math::Point3D{myOwnerPos.x, myOwnerPos.y - owner->GetOwner()->GetComponent<Transform>()->GetScale().y/3.f, myOwnerPos.z-0.5f};
-        jumpDust = EngineCore::Get<SceneSystem>()->Instantiate("Player_Jump_Dust.dobj", spawnPt);
         auto prevVel = owner->mpBody->GetLinearVelocity();
         owner->mpBody->SetLinearVel({prevVel.x, 1, prevVel.z});
         auto jump = owner->mbCanDoubleJump ? owner->mfJumpStrength * owner->mpBody->GetMass() : owner->mfJumpStrength * owner->mpBody->GetMass() * 1.1f;
@@ -1150,10 +1158,10 @@ namespace Dystopia
         
         owner->PlayAnimation(2, owner->mfAnimSpdJumping);
         owner->GetOwner()->GetComponent<Convex>()->SetOffSet(Math::Vec3D(offset.x, 0.060f, offset.z, offset.w));
-        owner->GetOwner()->GetComponent<Convex>()->SetScale(Math::Vec3D(owner->orgScale.x, 0.4f, owner->orgScale.z));
-        owner->GetOwner()->GetComponent<Convex>()->RemoveColLayer(LAYER_5);
-        //owner->GetOwner()->GetComponent<Circle>()->RemoveColLayer(LAYER_5);
+        owner->GetOwner()->GetComponent<Convex>()->SetScale(Math::Vec3D(owner->orgScale.x, 0.37f, owner->orgScale.z));
+        owner->GetOwner()->GetComponent<Circle>()->SetOffSet(Math::Vec3D(offset.x, -0.105f, offset.z, offset.w));
 
+        CORE::Get<CollisionSystem>()->SetIgnore(eColLayer::LAYER_2, eColLayer::LAYER_5, true);
 
         if (owner->mpHitAudioSrc && owner->mpAudioSrc)
         {
@@ -1178,7 +1186,8 @@ namespace Dystopia
     { 
         owner->mbIsJumping = false;
         owner->GetOwner()->GetComponent<Convex>()->SetOffSet(owner->orgOffset);
-        owner->GetOwner()->GetComponent<Convex>()->SetScale(Math::Vec3D(owner->orgScale.x, owner->orgScale.y, owner->orgScale.z));
+        owner->GetOwner()->GetComponent<Convex>()->SetScale(owner->orgScale);
+        owner->GetOwner()->GetComponent<Circle>()->SetOffSet(owner->orgOffsetC);
         return true;
     }  
     //Attacking
@@ -1359,8 +1368,8 @@ namespace Dystopia
 			// Condition for eAttacking
 			if (owner->mfTimer < spamWindow && owner->mpInput->GetButton("Attack"))
 				owner->mbSpammedAttack = true;
-			if (owner->mfTimer < spamWindow && (owner->mpInput->GetButtonDown("Skill Y") || 
-											owner->mpInput->GetButtonDown("Skill B")))
+			if (owner->mfTimer < spamWindow && (owner->mpInput->GetButton("Skill Y") || 
+											owner->mpInput->GetButton("Skill B")))
 			{
 				owner->mbSpammedCast = true;
 				owner->mnManualSkill = owner->mpInput->GetButton("Skill Y") ? 1 : 2;
@@ -1590,7 +1599,7 @@ namespace Dystopia
 		{
             owner->GetOwner()->GetComponent<Convex>()->SetOffSet(Math::Vec3D(owner->orgOffset.x, -0.158f, owner->orgOffset.z));
             owner->GetOwner()->GetComponent<Convex>()->SetScale(Math::Vec3D(owner->orgScale.x, 0.287f, owner->orgScale.z));
-            CORE::Get<CollisionSystem>()->SetIgnore(eColLayer::LAYER_2, eColLayer::LAYER_3, true);
+            CORE::Get<CollisionSystem>()->SetIgnore(eColLayer::LAYER_2, eColLayer::LAYER_1, true);
 		}
         
         owner->GetOwner()->GetComponent<SpriteRenderer>()->SetColor({0.3f,0.3f,0.3f});
@@ -1638,7 +1647,7 @@ namespace Dystopia
 			owner->GetOwner()->GetComponent<Convex>()->SetOffSet(Math::Vec3D(owner->orgOffset.x, owner->orgOffset.y, owner->orgOffset.z));
             owner->GetOwner()->GetComponent<Convex>()->SetScale(Math::Vec3D(owner->orgScale.x, owner->orgScale.y, owner->orgScale.z));
             //owner->mpMyShadow->GetComponent<Transform>()->SetScale(owner->myShadowOrg.x,owner->myShadowOrg.y,owner->myShadowOrg.z);
-            CORE::Get<CollisionSystem>()->SetIgnore(eColLayer::LAYER_2, eColLayer::LAYER_3, false);
+            CORE::Get<CollisionSystem>()->SetIgnore(eColLayer::LAYER_2, eColLayer::LAYER_1, false);
 		}
         return true; 
     }
@@ -1693,8 +1702,8 @@ namespace Dystopia
     CharacterController::Falling::~Falling(){}
     void CharacterController::Falling::Update(float _dt)
     {
-        if (!owner->mpInput->GetButton("Vertical",1) && owner->mpInput->GetAxis("L Stick Vertical") > -0.5f)
-            owner->GetOwner()->GetComponent<Collider>()->SetColLayer(LAYER_5);
+        if (owner->mpInput->GetButton("Vertical",1) || owner->mpInput->GetAxis("L Stick Vertical") < -0.5f)
+            CORE::Get<CollisionSystem>()->SetIgnore(eColLayer::LAYER_2, eColLayer::LAYER_5, true);
         //<FS_CONDITION>
         // Condition for eLanding
         if (!owner->mbIsJumping && owner->mbLanded)
@@ -1727,7 +1736,7 @@ namespace Dystopia
         owner->PlayAnimation(10, owner->mfAnimSpdFalling);
 
         if (!owner->mpInput->GetButton("Vertical",1) && owner->mpInput->GetAxis("L Stick Vertical") > -0.5f)
-            owner->GetOwner()->GetComponent<Collider>()->SetColLayer(LAYER_5);
+            CORE::Get<CollisionSystem>()->SetIgnore(eColLayer::LAYER_2, eColLayer::LAYER_5, false);
 
         return true;
     }
@@ -1756,11 +1765,6 @@ namespace Dystopia
             {
                 if (!owner->mpInput->GetButton("Vertical",1) && owner->mpInput->GetAxis("L Stick Vertical") > -0.20f)
 				    owner->mNextState = eJumping;
-
-                if (owner->mpInput->GetButton("Vertical",1) || owner->mpInput->GetAxis("L Stick Vertical") < -0.9f)
-                {
-                   owner->GetOwner()->GetComponent<Collider>()->RemoveColLayer(LAYER_5);
-                }
             }
 		}
 		
@@ -1836,6 +1840,19 @@ namespace Dystopia
     }
     bool CharacterController::Death::OnEnterState(float)
     {
+        GameObject* uiFader = nullptr;
+        auto& uiChild = owner->mpUICam->GetComponent<Transform>()->GetAllChild();
+        for (auto&c : uiChild)
+        {
+            if (c->GetOwner()->GetName() == HashString{"Fader"})
+                uiFader = c->GetOwner();
+        }
+
+        if (uiFader)
+        {
+            CharacterController_MSG::SendExternalMessage(uiFader, "StartFade");
+        }
+
         owner->mfDeathCounter = 4.0f;
         owner->mbDisableControls = true;
         if (owner->mbFaceRight)
@@ -1852,6 +1869,7 @@ namespace Dystopia
     }
     bool CharacterController::Death::OnExitState(float)
     { 
+        owner->GetOwner()->GetComponent<Transform>()->SetGlobalPosition(owner->spawnPos);
         owner->mbDisableControls = false;
         owner->mbDying = false;
         CORE::Get<TimeSystem>()->SetTimeScale(1.0f);
@@ -1862,6 +1880,19 @@ namespace Dystopia
         owner->mpBody->SetFixedRotation(true);
         if (owner->mpHealthBar)
                     CharacterController_MSG::SendExternalMessage(owner->mpHealthBar, "GoToHealthPercentage", owner->mfCurrHealth/owner->mfMaxHealth);
+
+        GameObject* uiFader = nullptr;
+        auto& uiChild = owner->mpUICam->GetComponent<Transform>()->GetAllChild();
+        for (auto&c : uiChild)
+        {
+            if (c->GetOwner()->GetName() == HashString{"Fader"})
+                uiFader = c->GetOwner();
+        }
+
+        if (uiFader)
+        {
+            CharacterController_MSG::SendExternalMessage(uiFader, "StartFadeReverse");
+        }
         return true;
     }
      //Duck
@@ -1876,7 +1907,7 @@ namespace Dystopia
 		{
             if (owner->mpInput->GetButton("Jump"))
             {
-                owner->GetOwner()->GetComponent<Collider>()->RemoveColLayer(LAYER_5); 
+                CORE::Get<CollisionSystem>()->SetIgnore(eColLayer::LAYER_2, eColLayer::LAYER_5, true);
             }
                     
             if (owner->mpInput->GetButtonUp("Vertical",1))

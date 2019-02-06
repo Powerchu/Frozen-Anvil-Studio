@@ -108,7 +108,14 @@ namespace Dystopia
 		float mfMaxTimerCount = 3.0f;
 		float mfTimer = 0.0f;
 
-		
+		bool isStolen = false;
+
+		Math::Vector3D heroPos;
+		Math::Vector3D charPos;
+
+		void SetNewTarget(Math::Vector3D pos);
+		void ResetTarget();
+		PP_MEMBERFUNC(Dystopia::CamAi, SetNewTarget, ResetTarget)
 
 	private:
 		// Don't touch

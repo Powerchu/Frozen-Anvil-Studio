@@ -90,6 +90,11 @@ namespace Dystopia
 	{
 		if (mbActivated) 
 		{
+			auto player = EngineCore::Get<SceneSystem>()->FindGameObject("CharacterController");
+        	auto CamAi = EngineCore::Get<SceneSystem>()->FindGameObject("CameraAI");
+            RuneWall_MSG::SendExternalMessage(player, "DisableControls", true);
+            RuneWall_MSG::SendExternalMessage(CamAi, "SetNewTarget", Math::Vector3D{15130,1200,0});
+
 			mfCount = mfCount + _fDeltaTime;
 		}
 		
@@ -99,6 +104,13 @@ namespace Dystopia
 			
 			if (t.y >= -500)
 				t.y = t.y - 10;
+			else
+			{
+				auto player = EngineCore::Get<SceneSystem>()->FindGameObject("CharacterController");
+				auto CamAi = EngineCore::Get<SceneSystem>()->FindGameObject("CameraAI");
+            	RuneWall_MSG::SendExternalMessage(player, "DisableControls", false);
+            	RuneWall_MSG::SendExternalMessage(CamAi, "ResetTarget");
+			}
 			
 			GetOwner()->GetComponent<Transform>()->SetGlobalPosition(t);
 		}

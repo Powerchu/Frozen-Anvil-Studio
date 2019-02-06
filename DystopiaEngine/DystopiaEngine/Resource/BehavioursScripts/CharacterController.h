@@ -334,6 +334,8 @@ namespace Dystopia
 
         Math::Vector3D orgOffset;
         Math::Vector3D orgScale; 
+        Math::Vector3D orgOffsetC;
+        Math::Vector3D spawnPos;
         
         GameObject * mpMyHitBox;
         GameObject * mpCastPivot;
@@ -355,8 +357,10 @@ namespace Dystopia
         void FormT2Audio(const char* _audioName);
         void IncreaseCombo(void);
         void SetComboTimer(float _time);
+        void SetSpawnPoint(Math::Vector3D pos);
+        void DisableControls(bool _set);
 		
-		PP_MEMBERFUNC(Dystopia::CharacterController, TakeForce, CheckLanded, TakeDamage, FormT2Audio,IncreaseCombo, SetComboTimer)
+		PP_MEMBERFUNC(Dystopia::CharacterController, TakeForce, CheckLanded, TakeDamage, FormT2Audio,IncreaseCombo, SetComboTimer, SetSpawnPoint, DisableControls)
         
     private:
         // Don't touch

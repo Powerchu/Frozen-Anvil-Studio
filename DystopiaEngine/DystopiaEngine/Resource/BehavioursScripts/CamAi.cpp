@@ -86,6 +86,11 @@ namespace Dystopia
 		CenterYObj   = EngineCore::Get<SceneSystem>()->FindGameObject("CenterY");
 		PanicZoneObj = EngineCore::Get<SceneSystem>()->FindGameObject("PanicZone");
 
+		if (HeroObj)
+			heroPos = HeroObj->GetComponent<Transform>()->GetGlobalPosition();
+		
+		if (CharacterObj)
+			charPos = CharacterObj->GetComponent<Transform>()->GetGlobalPosition();
 		mpInput = EngineCore::GetInstance()->GetSystem<InputManager>();
 	}
 
@@ -99,6 +104,8 @@ namespace Dystopia
 		PanicZoneObj = EngineCore::Get<SceneSystem>()->FindGameObject("PanicZone");
 		
 		mpInput = EngineCore::GetInstance()->GetSystem<InputManager>();
+		heroPos = HeroObj->GetComponent<Transform>()->GetGlobalPosition();
+		charPos = CharacterObj->GetComponent<Transform>()->GetGlobalPosition();
 	}
 
 	void CamAi::Update(const float _fDeltaTime)
@@ -120,9 +127,13 @@ namespace Dystopia
 		// Vars
 		float smooth = 1.0f - std::powf(0.4f, _fDeltaTime * CamSmoothFactor);
 		auto camPos = CamObj->GetComponent<Transform>()->GetGlobalPosition() + Math::Point3D{X_Offset, Y_Offset, 0};
-		auto heroPos = HeroObj->GetComponent<Transform>()->GetGlobalPosition();
-		auto charPos = CharacterObj->GetComponent<Transform>()->GetGlobalPosition();
+		
 		auto focusAreaPos = FocusAreaObj->GetComponent<Transform>()->GetGlobalPosition();
+		if (!isStolen)
+		{
+		heroPos = HeroObj->GetComponent<Transform>()->GetGlobalPosition();
+		charPos = CharacterObj->GetComponent<Transform>()->GetGlobalPosition();
+		}
 		float panicZonePosY = PanicZoneObj->GetComponent<Transform>()->GetGlobalPosition().y;
 		auto heroScaleX = CharacterObj->GetComponent<Transform>()->GetGlobalScale().x;
 		auto heroScaleY = CharacterObj->GetComponent<Transform>()->GetGlobalScale().y;
@@ -181,7 +192,7 @@ namespace Dystopia
 		
 		// Y-Axis Lerp
 		// Only Lerp when going UP out of Panic Zone or when landed (TODO: use character's mbLanded to help precisely tune)
-		if ((heroBody->GetLinearVelocity().y <= 0.1f && heroBody->GetLinearVelocity().y >= -0.1f) ||
+		if ((heroBody->GetLinearVelocity().y <= 5.f && heroBody->GetLinearVelocity().y >= -5.f) ||
 			(charPos.y+heroScaleY/4 > panicZonePosY+PanicZoneHeight/2))
 		{
 			yNewMove = Math::Lerp(static_cast<float>(camPos.y), static_cast<float>(charPos.y)+PanicZoneY_Offset+camPanY, smooth2*0.75f);
@@ -194,7 +205,7 @@ namespace Dystopia
 		// Normal case
 		else
 		{
-			yNewMove = Math::Lerp(static_cast<float>(camPos.y), static_cast<float>(charPos.y)+camPanY, smooth3);
+			yNewMove = Math::Lerp(static_cast<float>(camPos.y), static_cast<float>(charPos.y)+PanicZoneY_Offset+camPanY, smooth3);
 		}
 		
 		CenterYObj->GetComponent<Transform>()->SetGlobalPosition(camPos);
@@ -220,7 +231,20 @@ namespace Dystopia
 
 		
 	}
-	
+
+	void CamAi::SetNewTarget(Math::Vector3D pos)
+	{
+		heroPos = charPos = pos;
+		isStolen = true;
+	}
+	void CamAi::ResetTarget()
+	{
+		isStolen = false;
+
+		heroPos = HeroObj->GetComponent<Transform>()->GetGlobalPosition();
+		charPos = CharacterObj->GetComponent<Transform>()->GetGlobalPosition();
+	}
+
 	void CamAi::PostUpdate(void)
 	{
 	}

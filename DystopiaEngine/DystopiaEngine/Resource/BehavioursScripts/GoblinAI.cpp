@@ -307,7 +307,6 @@ namespace Dystopia
 			}
 
 			//Set Time
-			DEBUG_PRINT(eLog::MESSAGE, "IDLE");
 			mpBlackboard->SetFloat("State Timer", 2.0f);
 		}
 	}
@@ -364,7 +363,6 @@ namespace Dystopia
 				mpRend->Play();
 			}
 
-			DEBUG_PRINT(eLog::MESSAGE, "PATROL");
 			//Set Time
 			mpBlackboard->SetFloat("State Timer", 5.0f);
 			_direction = _direction ? 0 : 1;

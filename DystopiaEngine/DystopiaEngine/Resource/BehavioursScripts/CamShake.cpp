@@ -78,15 +78,19 @@ namespace Dystopia
 
 	void CamShake::Awake()
 	{
+		defaultPos = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
 	}
 
 	void CamShake::Init()
 	{
-		defaultPos = GetOwner()->GetComponent<Transform>()->GetPosition();
+		defaultPos = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
 	}
 
 	void CamShake::Update(const float _fDeltaTime)
 	{
+		if (!IsStationary)
+			defaultPos = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
+
 		if (trauma > 1.0f) trauma = 1.0f;
 		else if (trauma < 0.0f) trauma = 0.0f;
 
@@ -97,15 +101,12 @@ namespace Dystopia
             shakeCounter += _fDeltaTime * std::powf(trauma,0.3f) * traumaMult;
             //Bind the movement to the desired range
             auto newPos = GetVec3D() * traumaMag * trauma; 
-
-			if (newPos.z > 179.9f) newPos.z = -179.9f;
-			if (newPos.z < -179.9f) newPos.z = 179.9f;
-		   
-		    GetOwner()->GetComponent<Transform>()->SetPosition(newPos);
-			const auto newNewPos = newPos * traumaRotMag;
-			Math::Quaternion quat(0, 0, newNewPos.z, 1);
+			auto eulerZ = GetFloat(2) * 90.f * traumaRotMag * trauma;
+		    GetOwner()->GetComponent<Transform>()->SetGlobalPosition(defaultPos+newPos);
+			//const auto newNewPos = newPos * traumaRotMag;
+			//Math::Quaternion quat(0, 0, newNewPos.z, 1);
             //rotation modifier applied here
-			GetOwner()->GetComponent<Transform>()->SetRotation(quat);
+			GetOwner()->GetComponent<Transform>()->SetRotation(Math::Quaternion::FromEuler(0_rad,0_rad,Math::Degrees{eulerZ}));
     
             //decay faster at higher values
             trauma -= _fDeltaTime * traumaDecay * (trauma + 0.3f);
@@ -113,13 +114,15 @@ namespace Dystopia
         else
         {
          	//lerp back towards default position and rotation once shake is done
-         	const auto newPos = Math::Lerp(GetOwner()->GetComponent<Transform>()->GetPosition(), defaultPos, _fDeltaTime);
-         	GetOwner()->GetComponent<Transform>()->SetPosition(newPos);
+         	const auto newPos = Math::Lerp(GetOwner()->GetComponent<Transform>()->GetGlobalPosition(), defaultPos, _fDeltaTime);
+         	GetOwner()->GetComponent<Transform>()->SetGlobalPosition(newPos);
          	const auto newNewPos = newPos * traumaRotMag;
-		 	Math::Quaternion quat(0, 0, newNewPos.z, 1);
+		 	Math::Quaternion quat(0, 0, 0, 1);
          	//rotation modifier applied here
 		 	GetOwner()->GetComponent<Transform>()->SetRotation(quat); 
+			
         }
+
 	}
 
 	void CamShake::FixedUpdate(const float _fDeltaTime)
@@ -136,6 +139,11 @@ namespace Dystopia
 
 	void CamShake::Unload(void)
 	{
+	}
+
+	Math::Vector3D CamShake::GetVec3D()
+	{
+		return Math::Vector3D(GetFloat(1), GetFloat(10), GetFloat(100) * traumaDepthMag);
 	}
 
 	void Dystopia::CamShake::OnCollisionEnter(const CollisionEvent& _colEvent)

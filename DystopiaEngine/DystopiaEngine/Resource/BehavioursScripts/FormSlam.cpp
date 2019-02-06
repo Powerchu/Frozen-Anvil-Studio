@@ -173,6 +173,7 @@ namespace Dystopia
 		auto transform = GetOwner()->GetComponent<Transform>();
 		auto spawnPt = transform->GetGlobalPosition(); 
 		spawnPt.y = spawnPt.y + (transform->GetGlobalScale().y * 0.266f);
+		spawnPt.z = spawnPt.z - 0.5f;
  
 		auto& allFormSlamRocks = CORE::Get<SceneSystem>()->FindGameObjectByTag("Form_Slam_Rock");
 		for (auto& rocks : allFormSlamRocks)

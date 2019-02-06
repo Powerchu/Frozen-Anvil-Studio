@@ -245,6 +245,7 @@ namespace Dystopia
 		}
 		
 		spawnPt.x = mfStartX + space;
+		spawnPt.z = spawnPt.z - 0.5f;
 
 		auto inst = EngineCore::Get<SceneSystem>()->Instantiate(HashString{"Form_Spike_Child.dobj"}, spawnPt);
 		if (inst)

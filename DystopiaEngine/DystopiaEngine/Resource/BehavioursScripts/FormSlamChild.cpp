@@ -104,7 +104,7 @@ namespace Dystopia
 	{
 		mpSprite = nullptr;
 		mbActivate = false;
-        mpCamShaker = EngineCore::Get<SceneSystem>()->FindGameObject("Camera Shake");
+        mpCamShaker = EngineCore::Get<SceneSystem>()->FindGameObject("Main Camera");
 		mpPlayer = EngineCore::Get<SceneSystem>()->FindGameObject("CharacterController");
         mpInput = EngineCore::GetInstance()->GetSystem<InputManager>();
 		mpBody = GetOwner()->GetComponent<RigidBody>();
@@ -147,7 +147,7 @@ namespace Dystopia
 		GameObject * obj = _colEvent.mCollidedWith;
 		if (obj && !(obj->GetFlags() & FLAG_REMOVE))
 		{
-			if(_colEvent.mCollidedWith->GetComponent<Collider>()->GetColLayer() == LAYER_GLOBAL && !mbAppliedAtk)
+			if(!mbAppliedAtk)
 			{
 				if(mpInput)
 					mpInput->InvokeVibration(1.f, 30.f, 4.8f, -0.3f);
@@ -162,11 +162,13 @@ namespace Dystopia
 				}
 			}
 			if (mpBody)
-				if (mpBody->GetLinearVelocity().y < -200.0f)
+				if (mpBody->GetLinearVelocity().y < -180.0f)
 				{
 					FormSlamChild_MSG::SendExternalMessage(obj, "TakeDamage", mfCastDamage);
 					FormSlamChild_MSG::SendExternalMessage(obj, "TakeForce", mfCastKnockback * 3000000.f, mForceDir);
 				}
+				if (mpBody->GetLinearVelocity().y > -50.0f && mpBody->GetLinearVelocity().y < 10.0f)
+					mpBody->Set_IsStatic(true);
 		}
 	}
 

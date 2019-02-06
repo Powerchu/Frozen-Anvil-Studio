@@ -124,6 +124,18 @@ namespace Dystopia
 		}
 	}
 
+	void Fader::StartFade()
+	{
+		StartFadeOut = false;
+		Fader::Init();
+	}
+	void Fader::StartFadeReverse()
+	{
+		DEBUG_PRINT(eLog::MESSAGE, "HI");
+		StartFadeOut = true;
+		Fader::Init();
+	}
+
 	void Fader::GameObjectDestroy(void)
 	{
 		Behaviour::GameObjectDestroy();

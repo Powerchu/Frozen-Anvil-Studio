@@ -99,6 +99,7 @@ namespace Dystopia
 		void InvokeShake(float _trauma = 1.0f, float _mult = 16.0f, float _mag = 2.0f, float _decay = 1.3f);
 
 		bool  camShakeActive = false;
+		bool  IsStationary = false;
 		float trauma = 0.0f;
 		float traumaMult = 16; //power of the shake
 		float traumaMag = 0.8f; // range of movement
@@ -117,13 +118,10 @@ namespace Dystopia
 		float GetFloat(float seed)
 		{
 			Math::PerlinNoise p;
-			return (p.noise(seed, shakeCounter) - 0.5f) * 2.f;
+			return p.noise(seed, shakeCounter) * 2.f;
 		}
 
-		Math::Vector3D GetVec3D()
-		{
-			return Math::Vector3D(GetFloat(1), GetFloat(10), GetFloat(100) * traumaDepthMag);
-		}
+		Math::Vector3D GetVec3D();
 	};
 
 	extern "C"
@@ -141,7 +139,7 @@ namespace Dystopia
   Uncomment the line PP_REFLECT and add in the names of the variable you want to show
   Comment out PP_REFLECT_EMPTY.
 */
-PP_REFLECT_STUFF(Dystopia::CamShake, camShakeActive, trauma, traumaMult, traumaMag, traumaRotMag, traumaDepthMag, traumaDecay)
+PP_REFLECT_STUFF(Dystopia::CamShake, IsStationary, camShakeActive, trauma, traumaMult, traumaMag, traumaRotMag, traumaDepthMag, traumaDecay)
 
 #endif //_CamShake_H_
 

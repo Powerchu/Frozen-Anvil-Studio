@@ -100,6 +100,11 @@ namespace Dystopia
 		bool StartFadeOut;
 		bool Bounce;
 		bool StopFade;
+
+		void StartFade();
+		void StartFadeReverse();
+
+		PP_MEMBERFUNC(Dystopia::Fader, StartFade, StartFadeReverse)
 		
 	private:
 		// Don't touch
