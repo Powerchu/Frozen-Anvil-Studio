@@ -67,6 +67,8 @@ namespace Dystopia
 		bool GetDebugDraw(void) const;
 		void ToggleDebugDraw(bool) const;
 
+		float GetAspectRatio() const;
+
 		void SetAllCameraAspect(float _x, float _y) const;
 
 		// Sets up Window for openGL rendering

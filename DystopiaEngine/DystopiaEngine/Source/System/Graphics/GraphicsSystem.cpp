@@ -142,6 +142,11 @@ void Dystopia::GraphicsSystem::ToggleDebugDraw(bool _bDebugDraw) const
 		e.SetDebugDraw(_bDebugDraw);
 }
 
+float Dystopia::GraphicsSystem::GetAspectRatio() const
+{
+	return (mvResolution.y / mvResolution.x);
+}
+
 void Dystopia::GraphicsSystem::SetAllCameraAspect(const float _x, const float _y) const
 {
 	const auto CamSys = EngineCore::GetInstance()->Get<CameraSystem>();
