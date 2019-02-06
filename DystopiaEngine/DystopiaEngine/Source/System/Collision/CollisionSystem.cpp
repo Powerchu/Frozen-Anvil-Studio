@@ -695,7 +695,8 @@ namespace Dystopia
 		{
 			if (auto isolate = flags & (0x00000001u << count))
 			{
-				if (mIgnoreTable[static_cast<eColLayer>(isolate)] & _Layer2)
+				auto res = mIgnoreTable[static_cast<eColLayer>(isolate)];
+				if (res & _Layer2)
 					return true;
 			}
 		}
