@@ -408,7 +408,9 @@ namespace Dystopia
 				break;
 			case Exiting:
 				if (mStates[mCurrentState]->OnExitState(fixedDT))
+                {
 					mStatus = Entering;
+                }
 				break;
 			case Entering:
 				if (mStates[mNextState]->OnEnterState(fixedDT))
@@ -427,9 +429,9 @@ namespace Dystopia
 		//	mNextState = eFalling;
 		//	DEBUG_PRINT(eLog::MESSAGE, "Player velocity y %f", y);
 		//}
-		CollisionEvent col;
-		GameObject* ptr[1] = {GetOwner()};
-		auto pos = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
+		//CollisionEvent col;
+		///GameObject* ptr[1] = {GetOwner()};
+		//auto pos = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
 		// if(EngineCore::Get<CollisionSystem>()->RaycastFirstHit(Math::Vec3D{0,-1,0}, pos,&col,ptr,1,5.f))
 		// 	{ 
 		// 		DEBUG_PRINT(eLog::ERROR, "CLOG %f %f %f \n", static_cast<float>(pos.x), static_cast<float>(pos.y), static_cast<float>(pos.z));
@@ -809,6 +811,7 @@ namespace Dystopia
 
     void CharacterController::SetSpawnPoint(Math::Vector3D pos)
     {
+        DEBUG_PRINT(eLog::MESSAGE, "X: %f, Y: %f, Z: %f", static_cast<float>(pos.x), static_cast<float>(pos.y), static_cast<float>(pos.z));
         spawnPos.x = pos.x;
         spawnPos.y = pos.y;
         spawnPos.z = GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
@@ -1855,6 +1858,8 @@ namespace Dystopia
 
         owner->mfDeathCounter = 4.0f;
         owner->mbDisableControls = true;
+        CORE::Get<CollisionSystem>()->SetIgnore(eColLayer::LAYER_2, eColLayer::LAYER_1, true);
+
         if (owner->mbFaceRight)
         {
             owner->mpBody->ApplyAngularImpulse({0,0,10.f*owner->mpBody->GetMass()});
@@ -1865,11 +1870,13 @@ namespace Dystopia
         }
             
         owner->mpBody->SetFixedRotation(false);
+         owner->mpBody->SetActive(false);
         return true;
     }
     bool CharacterController::Death::OnExitState(float)
     { 
         owner->GetOwner()->GetComponent<Transform>()->SetGlobalPosition(owner->spawnPos);
+        //CORE::Get<CollisionSystem>()->SetIgnore(eColLayer::LAYER_2, eColLayer::LAYER_1, false);
         owner->mbDisableControls = false;
         owner->mbDying = false;
         CORE::Get<TimeSystem>()->SetTimeScale(1.0f);
@@ -1879,7 +1886,7 @@ namespace Dystopia
         owner->GetOwner()->GetComponent<Transform>()->SetRotation(Math::Radians{0});
         owner->mpBody->SetFixedRotation(true);
         if (owner->mpHealthBar)
-                    CharacterController_MSG::SendExternalMessage(owner->mpHealthBar, "GoToHealthPercentage", owner->mfCurrHealth/owner->mfMaxHealth);
+            CharacterController_MSG::SendExternalMessage(owner->mpHealthBar, "GoToHealthPercentage", owner->mfCurrHealth/owner->mfMaxHealth);
 
         GameObject* uiFader = nullptr;
         auto& uiChild = owner->mpUICam->GetComponent<Transform>()->GetAllChild();
@@ -1893,6 +1900,7 @@ namespace Dystopia
         {
             CharacterController_MSG::SendExternalMessage(uiFader, "StartFadeReverse");
         }
+         owner->mpBody->SetActive(true);
         return true;
     }
      //Duck

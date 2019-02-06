@@ -51,6 +51,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Resource/BehavioursScripts/VinesPlatform.h"
 #include "../Resource/BehavioursScripts/WiloShadow.h"
 #include "../Resource/BehavioursScripts/IntroductionScene.h"
+#include "../Resource/BehavioursScripts/CheckPoint.h"
 #endif
 
 #if EDITOR
@@ -89,7 +90,8 @@ namespace Dystopia
 		class SortChildOrder,
 		class VinesPlatform,
 		class WiloShadow,
-		class IntroductionScene
+		class IntroductionScene,
+		class CheckPoint
 		
 	>::result;
 }

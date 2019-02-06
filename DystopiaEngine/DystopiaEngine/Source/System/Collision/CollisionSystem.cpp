@@ -147,6 +147,8 @@ namespace Dystopia
 		{
 #if EDITOR
 			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+#else
+			if (!(elem.GetFlags() & eObjFlag::FLAG_ACTIVE)) continue;
 #endif 
 			if (elem.GetOwner())
 			{
@@ -164,6 +166,8 @@ namespace Dystopia
 		{
 #if EDITOR
 			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+#else
+			if (!(elem.GetFlags() & eObjFlag::FLAG_ACTIVE)) continue;
 #endif 
 			if (elem.GetOwner())
 			{
@@ -182,6 +186,8 @@ namespace Dystopia
 		{
 #if EDITOR
 			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+#else
+			if (!(elem.GetFlags() & eObjFlag::FLAG_ACTIVE)) continue;
 #endif 
 			if (elem.GetOwner())
 			{
@@ -198,6 +204,8 @@ namespace Dystopia
 		{
 #if EDITOR
 			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+#else
+			if (!(elem.GetFlags() & eObjFlag::FLAG_ACTIVE)) continue;
 #endif 
 			if (elem.GetOwner())
 			{

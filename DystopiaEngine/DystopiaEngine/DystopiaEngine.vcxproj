@@ -35,6 +35,7 @@
     <ClCompile Include="Resource\BehavioursScripts\CamShake.cpp" />
     <ClCompile Include="Resource\BehavioursScripts\CharacterController.cpp" />
     <ClCompile Include="Resource\BehavioursScripts\CharacterHitBox.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\CheckPoint.cpp" />
     <ClCompile Include="Resource\BehavioursScripts\EnvironmentalResponse.cpp" />
     <ClCompile Include="Resource\BehavioursScripts\Fader.cpp" />
     <ClCompile Include="Resource\BehavioursScripts\FallingPillar.cpp" />
@@ -447,6 +448,7 @@
     <ClInclude Include="Resource\BehavioursScripts\CamShake.h" />
     <ClInclude Include="Resource\BehavioursScripts\CharacterController.h" />
     <ClInclude Include="Resource\BehavioursScripts\CharacterHitBox.h" />
+    <ClInclude Include="Resource\BehavioursScripts\CheckPoint.h" />
     <ClInclude Include="Resource\BehavioursScripts\EnvironmentalResponse.h" />
     <ClInclude Include="Resource\BehavioursScripts\Fader.h" />
     <ClInclude Include="Resource\BehavioursScripts\FallingPillar.h" />
@@ -718,7 +720,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\lodepng\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

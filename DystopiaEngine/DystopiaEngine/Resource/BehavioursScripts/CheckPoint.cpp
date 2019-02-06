@@ -30,6 +30,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 //custom includes
 #include "Component/SpriteRenderer.h"
 #include "Component/TextRenderer.h"
+#include "Component/AudioSource.h"
 #include "Component/Emitter.h"
 #include "System/Graphics/GraphicsSystem.h"
 #include "System/Graphics/Shader.h"
@@ -237,6 +238,10 @@ namespace Dystopia
             CheckPoint_MSG::SendExternalMessage(_obj, "SetSpawnPoint", GetOwner()->GetComponent<Transform>()->GetGlobalPosition());
 		    auto Fader = EngineCore::Get<SceneSystem>()->FindGameObject("White_Fader");
             CheckPoint_MSG::SendExternalMessage(Fader, "StartFadeReverse");
+            if (auto audioSrc = GetOwner()->GetComponent<AudioSource>())
+            {
+                audioSrc->Play();
+            }
         }
     }
      

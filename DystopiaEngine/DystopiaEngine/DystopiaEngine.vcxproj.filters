@@ -465,6 +465,7 @@
     <ClCompile Include="Resource\BehavioursScripts\VinesPlatform.cpp" />
     <ClCompile Include="Resource\BehavioursScripts\WiloShadow.cpp" />
     <ClCompile Include="Resource\BehavioursScripts\IntroductionScene.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\CheckPoint.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -1252,6 +1253,7 @@
     <ClInclude Include="Resource\BehavioursScripts\VinesPlatform.h" />
     <ClInclude Include="Resource\BehavioursScripts\WiloShadow.h" />
     <ClInclude Include="Resource\BehavioursScripts\IntroductionScene.h" />
+    <ClInclude Include="Resource\BehavioursScripts\CheckPoint.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
