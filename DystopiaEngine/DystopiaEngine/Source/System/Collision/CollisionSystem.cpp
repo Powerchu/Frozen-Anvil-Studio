@@ -365,7 +365,7 @@ namespace Dystopia
 		//	EGUI::SameLine();
 		//	EGUI::PopID();
 		//}
-		for (unsigned i = 1; i <= 32; ++i)
+		for (unsigned i = 32; i >= 1; --i)
 		{
 			//EGUI::Display::LabelWrapped(std::to_string(i).c_str());
 			if (i == 0)
@@ -384,7 +384,7 @@ namespace Dystopia
 		for (unsigned i = 1; i <= 32; ++i)
 		{
 			//EGUI::PushID(i);
-			for (unsigned u = 1; u <= 33 - i; ++u)
+			for (unsigned u = 32; u >= i; --u)
 			{
 				EGUI::PushID(unique++);
 				ImGui::PushItemWidth(10.f);
