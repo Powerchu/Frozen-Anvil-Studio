@@ -177,6 +177,7 @@ Dystopia::Font* Dystopia::FontSystem::LoadFromFont(const HashString& _strPath, F
 		_out->mpAtlas->AddSection(Math::Vec2{ float(e.x), float(e.y) }, e.mnWidth, e.mnHeight);
 	}
 
+	_out->mpAtlas->SetChanged(false);
 	OutputFontmap(_out, _strPath);
 	return _out;
 }

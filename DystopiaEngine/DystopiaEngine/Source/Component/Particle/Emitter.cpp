@@ -535,7 +535,7 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 	}
 
 	bool alive = mbIsAlive;
-	if (EGUI::Display::CheckBox("Is Alive", &mbIsAlive));
+	EGUI::Display::CheckBox("Is Alive", &mbIsAlive);
 		//cmd->ChangeValue(GetOwnerID(), &Emitter::mbIsAlive, !alive, alive);
 
 	EGUI::Display::Label("Particle Count: %u", mSpawnCount);
