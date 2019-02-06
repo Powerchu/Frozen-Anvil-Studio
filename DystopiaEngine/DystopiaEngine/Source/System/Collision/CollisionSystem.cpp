@@ -695,7 +695,8 @@ namespace Dystopia
 		{
 			if (auto isolate = flags & (0x00000001u << count))
 			{
-				if (mIgnoreTable[static_cast<eColLayer>(isolate)] & _Layer2)
+				auto res = mIgnoreTable[static_cast<eColLayer>(isolate)];
+				if (res & _Layer2)
 					return true;
 			}
 		}
@@ -705,8 +706,8 @@ namespace Dystopia
 
 	void CollisionSystem::SetIgnore(unsigned _Layer1, unsigned _Layer2, bool _toignore)
 	{
-		mIgnoreTable[static_cast<eColLayer>(_Layer1)] = _toignore ? static_cast<eColLayer>(mIgnoreTable[static_cast<eColLayer>(_Layer1)] | _Layer2) : static_cast<eColLayer>(~mIgnoreTable[static_cast<eColLayer>(_Layer1)] & ~_Layer2);
-		mIgnoreTable[static_cast<eColLayer>(_Layer2)] = _toignore ? static_cast<eColLayer>(mIgnoreTable[static_cast<eColLayer>(_Layer2)] | _Layer1) : static_cast<eColLayer>(~mIgnoreTable[static_cast<eColLayer>(_Layer2)] & ~_Layer1);
+		mIgnoreTable[static_cast<eColLayer>(_Layer1)] = _toignore ? static_cast<eColLayer>(mIgnoreTable[static_cast<eColLayer>(_Layer1)] | _Layer2) : static_cast<eColLayer>(mIgnoreTable[static_cast<eColLayer>(_Layer1)] & ~_Layer2);
+		mIgnoreTable[static_cast<eColLayer>(_Layer2)] = _toignore ? static_cast<eColLayer>(mIgnoreTable[static_cast<eColLayer>(_Layer2)] | _Layer1) : static_cast<eColLayer>(mIgnoreTable[static_cast<eColLayer>(_Layer2)] & ~_Layer1);
 
 		unsigned count = 0;
 		unsigned count2 = 0;
