@@ -64,6 +64,7 @@ namespace Dystopia
 		_DLL_EXPORT float GetMaster() const;
 		_DLL_EXPORT float GetBGM() const;
 		_DLL_EXPORT float GetFX() const;
+		_DLL_EXPORT void StopAll(void);
 
 	private:
 		float mMasterVol;

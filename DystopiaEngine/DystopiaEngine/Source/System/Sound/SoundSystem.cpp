@@ -285,6 +285,13 @@ _DLL_EXPORT float Dystopia::SoundSystem::GetFX() const
 	return mFXVol;
 }
 
+_DLL_EXPORT void Dystopia::SoundSystem::StopAll(void)
+{
+	for (auto& c : ComponentDonor<AudioSource>::mComponents)
+		if (c.GetChannel().mpChannel)
+			c.GetChannel().mpChannel->stop();
+}
+
 
 
 
