@@ -116,7 +116,7 @@ namespace Dystopia
 		}
 	}
 
-	void RuneWall::FixedUpdate(const float )
+	void RuneWall::FixedUpdate(const float _fDeltaTime)
 	{
 	}
 	
@@ -132,30 +132,30 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::RuneWall::OnCollisionEnter(const CollisionEvent& )
+	void Dystopia::RuneWall::OnCollisionEnter(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::RuneWall::OnCollisionStay(const CollisionEvent& )
+	void Dystopia::RuneWall::OnCollisionStay(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::RuneWall::OnCollisionExit(const CollisionEvent& )
+	void Dystopia::RuneWall::OnCollisionExit(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::RuneWall::OnTriggerEnter(GameObject * const )
+	void Dystopia::RuneWall::OnTriggerEnter(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::RuneWall::OnTriggerStay(GameObject * const )
+	void Dystopia::RuneWall::OnTriggerStay(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::RuneWall::OnTriggerExit(GameObject * const )
+	void Dystopia::RuneWall::OnTriggerExit(GameObject * const _obj)
 	{
 	}
 
@@ -164,11 +164,11 @@ namespace Dystopia
 		return new RuneWall{*this};
 	}
 
-	void RuneWall::Serialise(TextSerialiser& ) const
+	void RuneWall::Serialise(TextSerialiser& _ser) const
 	{
 	}
 
-	void RuneWall::Unserialise(TextSerialiser& )
+	void RuneWall::Unserialise(TextSerialiser& _ser)
 	{
 	}
 

@@ -111,6 +111,11 @@ namespace Dystopia
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
+
+		void SetPlayerDeath(bool _status);
+
+		PP_MEMBERFUNC(Dystopia::GoblinAI, SetPlayerDeath)
+
 		/*	
 		*	Public Member Variables to Reflect
 		*/
@@ -123,6 +128,8 @@ namespace Dystopia
 		bool  IsFacingRight;
 		bool  HasFlock;
 		bool  IsAlerted = false;
+		bool  PlayerDied = false;
+		Math::Vector3D mOrgScale;
 
 		GameObject* AlertObj = nullptr;
 		GameObject* Player = nullptr;

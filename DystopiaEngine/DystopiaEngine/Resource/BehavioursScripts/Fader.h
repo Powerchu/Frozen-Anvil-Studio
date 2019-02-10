@@ -54,9 +54,9 @@ namespace Dystopia
 		virtual void Init(void) override; 
 
 		// Update occurs every frame
-		virtual void Update(const float ) override; 
+		virtual void Update(const float _fDeltaTime) override; 
 		// FixedUpdate occurs every 0.02ms
-		virtual void FixedUpdate(const float ) override{}
+		virtual void FixedUpdate(const float _fDeltaTime) override{}
 		// PostUpdate occurs after the above two updates
 		virtual void PostUpdate(void) override{}
 
@@ -100,6 +100,8 @@ namespace Dystopia
 		bool StartFadeOut;
 		bool Bounce;
 		bool StopFade;
+		bool DestroyOnceComplete;
+		bool StartAwake = true;
 
 		void StartFade();
 		void StartFadeReverse();
@@ -128,7 +130,7 @@ namespace Dystopia
   Uncomment the line PP_REFLECT and add in the names of the variable you want to show
   Comment out PP_REFLECT_EMPTY.
 */
-PP_REFLECT_STUFF(Dystopia::Fader, FadeFrom, FadeTowards, FadeDuration, StartFadeOut, Bounce, mfCounter);
+PP_REFLECT_STUFF(Dystopia::Fader, FadeFrom, FadeTowards, FadeDuration, StartFadeOut, Bounce, mfCounter, DestroyOnceComplete, StartAwake);
 
 #endif //_Fader_H_
 

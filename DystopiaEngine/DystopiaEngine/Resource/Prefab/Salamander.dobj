@@ -1,0 +1,111 @@
+[START_GO_PREFAB]
+4,[START_START_GO_DATA]
+1748728320,65,"Salamander",16,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1414.32,767.117,1,24155.3,2303.97,4.5,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+2,[START_RigidBody]
+461166592,1,1748728320,0,0.9999,0.5,0.5,0.3,0.01,0,4,1000,1,0,1,1,0,1,
+[END_RigidBody]
+
+[END_Component]
+[START_Component]
+4,[START_Convex_Collider]
+18782208,1,1748728320,0,-0.142,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.193,0.61,1,0,0,0,1,0,1,
+[END_Convex_Collider]
+
+[END_Component]
+[START_Component]
+7,[START_Renderer]
+1671219712,1,1748728320,"Salamander_Walking.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,0,"Walk",5,8,1,0,39,0,1,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Component]
+9,[START_AI Controller]
+319498240,1,1748728320,0,0,1,"Alert Range",1810,0,0,0,0,
+[END_AI Controller]
+
+[END_Component]
+[START_Number of Behaviours]
+2,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"BossAI",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+1,
+[END_Behaviour  Meta Count]
+[START_currHealth]
+"currHealth",
+[END_currHealth]
+[START_Member Variable]
+1300,
+[END_Member Variable]
+[START_Behaviour Names]
+"PrimativeEnemy",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+8,
+[END_Behaviour  Meta Count]
+[START_mbIsDead]
+"mbIsDead",
+[END_mbIsDead]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_mfMaximumHealth]
+"mfMaximumHealth",
+[END_mfMaximumHealth]
+[START_Member Variable]
+1300,
+[END_Member Variable]
+[START_mfCurrentHealth]
+"mfCurrentHealth",
+[END_mfCurrentHealth]
+[START_Member Variable]
+1300,
+[END_Member Variable]
+[START_mfForceTakenAmp]
+"mfForceTakenAmp",
+[END_mfForceTakenAmp]
+[START_Member Variable]
+400,
+[END_Member Variable]
+[START_mfDefense]
+"mfDefense",
+[END_mfDefense]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_mfAttackDamage]
+"mfAttackDamage",
+[END_mfAttackDamage]
+[START_Member Variable]
+30,
+[END_Member Variable]
+[START_mfAttackKnockback]
+"mfAttackKnockback",
+[END_mfAttackKnockback]
+[START_Member Variable]
+10,
+[END_Member Variable]
+[START_mbUsePrimitiveUI]
+"mbUsePrimitiveUI",
+[END_mbUsePrimitiveUI]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_Recursion Counter]
+0,
+[END_Recursion Counter]

@@ -88,11 +88,11 @@ namespace Dystopia
 		mpTargetAnim = EngineCore::Get<SceneSystem>()->FindGameObject("Switch1");
 	}
 
-	void RuneSwitch::Update(const float )
+	void RuneSwitch::Update(const float _fDeltaTime)
 	{
 	}
 
-	void RuneSwitch::FixedUpdate(const float )
+	void RuneSwitch::FixedUpdate(const float _fDeltaTime)
 	{
 	}
 	
@@ -119,7 +119,7 @@ namespace Dystopia
 			if (!mbIsDown)
 			{
 				auto t = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
-				t.y = t.y - 0.05f;
+				t.y = t.y - 0.05;
 				
 				GetOwner()->GetComponent<Transform>()->SetGlobalPosition(t);
 				mbIsDown = true;
@@ -127,25 +127,25 @@ namespace Dystopia
 		}
 	}
 
-	void Dystopia::RuneSwitch::OnCollisionStay(const CollisionEvent& )
+	void Dystopia::RuneSwitch::OnCollisionStay(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::RuneSwitch::OnCollisionExit(const CollisionEvent& )
+	void Dystopia::RuneSwitch::OnCollisionExit(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::RuneSwitch::OnTriggerEnter(GameObject * const )
+	void Dystopia::RuneSwitch::OnTriggerEnter(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::RuneSwitch::OnTriggerStay(GameObject * const )
+	void Dystopia::RuneSwitch::OnTriggerStay(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::RuneSwitch::OnTriggerExit(GameObject * const )
+	void Dystopia::RuneSwitch::OnTriggerExit(GameObject * const _obj)
 	{
 	}
 
@@ -154,11 +154,11 @@ namespace Dystopia
 		return new RuneSwitch{*this};
 	}
 
-	void RuneSwitch::Serialise(TextSerialiser& ) const
+	void RuneSwitch::Serialise(TextSerialiser& _ser) const
 	{
 	}
 
-	void RuneSwitch::Unserialise(TextSerialiser& )
+	void RuneSwitch::Unserialise(TextSerialiser& _ser)
 	{
 	}
 

@@ -56,9 +56,9 @@ namespace Dystopia
 		virtual void Init(void) override; 
 
 		// Update occurs every frame
-		virtual void Update(const float ) override; 
+		virtual void Update(const float _fDeltaTime) override; 
 		// FixedUpdate occurs every 0.02ms
-		virtual void FixedUpdate(const float ) override{} 
+		virtual void FixedUpdate(const float _fDeltaTime) override{} 
 		// PostUpdate occurs after the above two updates
 		virtual void PostUpdate(void) override{}
 

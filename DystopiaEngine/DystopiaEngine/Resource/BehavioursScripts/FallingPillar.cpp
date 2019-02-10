@@ -137,28 +137,32 @@ namespace Dystopia
 					if (auto c = GetOwner()->GetComponent<Convex>())
 						c->SetScale({0.89f, 0.55f,1.f});
 					mbEnded = true;
+					if (auto mpInput = EngineCore::GetInstance()->GetSystem<InputManager>())
+						mpInput->InvokeVibration(1.f, 40.f, 10.f, 0.1f);
+            		if (auto mpCamShaker = EngineCore::Get<SceneSystem>()->FindGameObject("Main Camera"))
+                		FallingPillar_MSG::SendExternalMessage(mpCamShaker, "InvokeShake", .6f, 40.0f, 32.0f, 4.0f);
                 }
 	}
 
-	void Dystopia::FallingPillar::OnCollisionStay(const CollisionEvent& )
+	void Dystopia::FallingPillar::OnCollisionStay(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::FallingPillar::OnCollisionExit(const CollisionEvent& )
+	void Dystopia::FallingPillar::OnCollisionExit(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::FallingPillar::OnTriggerEnter(GameObject * const )
+	void Dystopia::FallingPillar::OnTriggerEnter(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::FallingPillar::OnTriggerStay(GameObject * const )
+	void Dystopia::FallingPillar::OnTriggerStay(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::FallingPillar::OnTriggerExit(GameObject * const )
+	void Dystopia::FallingPillar::OnTriggerExit(GameObject * const _obj)
 	{
 	}
 

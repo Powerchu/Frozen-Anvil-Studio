@@ -1,0 +1,656 @@
+[START_Scene]
+364380160,"Town",18,[START_START_GO_DATA]
+18446744071968344576,65,"___Scene_Camera___",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+3.67417,3.67417,1,3581.38,-2571.63,1,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744071968346112,65,"Main Camera",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1.3,1.3,1,-5294.39,-1130.41,300,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+987726848,65,"TownStaticImg",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+11459,3365,1,-381.873,-174.985,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1999079936,65,"CharacterController",8,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+656,382,1,-5426.92,-1283.02,0.1,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1999608320,65,"CastPivot",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,-5385.31,-1263.99,0.100031,0,0,0,1,1999079936,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1999609344,65,"CharacterHitBox",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+656,382,1,-5331.81,-1229.69,1.10008,0,0,0,1,1999079936,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744071719331328,65,"Bush",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1333,292,1,-5693.57,-1586.56,1,0,0,0,1,18446744073098756608,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1018684416,65,"Bush2",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1333,292,1,-4529.78,-1559.84,1.1,0,0,0,1,18446744073098756608,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+3664384,65,"Bush3",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+-1333,292,1,-3417.5,-1552.81,1,0,0,0,1,18446744073098756608,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+1348464640,65,"Bush4",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+-1333,292,1,-2307.11,-1583.01,1.1,0,0,0.0078539,0.999969,18446744073098756608,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072587572736,65,"Bush5",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1333,292,1,-1198.13,-1589.55,1,0,0,-0.0280961,0.999605,18446744073098756608,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072620604416,65,"Bush6",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1333,292,1,-622.016,-1565.67,1.1,0,0,0.00610861,0.999981,18446744073098756608,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073098756608,65,"FG",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,0,0,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073534982144,65,"Bush7",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+-1333,292,1,2635.71,-1562.26,1,0,0,0.0148348,0.99989,18446744073098756608,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744073061027328,65,"Bush8",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+-1333,292,0.999999,3842.18,-1559.71,1.1,0,0,0.0253046,0.99968,18446744073098756608,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+18446744072776364544,65,"Overlay",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+13129,3998.05,1,-5294.39,-1130.41,2,0,0,0,1,18446744071968346112,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+595179520,65,"Daughter",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+134.58,266.918,1,2918.78,-1231.63,1,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+950801408,65,"Text",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+78,78,1,-5294.39,-1130.41,3,0,0,0,1,18446744071968346112,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+[START_ComponentDonor]
+2,
+[END_ComponentDonor End]
+[START_Component]
+[START_Camera]
+18446744071968344064,1,18446744071968344576,3,1,0,500,-500,1,1,0,0,1,50,
+[END_Camera]
+
+[END_Component End]
+[START_Component]
+[START_Camera]
+18446744071968345600,1,18446744071968346112,0,0,1,500,1,1,1,0,0,1,89,
+[END_Camera]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_RigidBody]
+1999080960,1,1999079936,0,0.9999,0.5,0.5,0.5,0.01,0,4,100,0,0,1,1,0,0,
+[END_RigidBody]
+
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+2,
+[END_ComponentDonor End]
+[START_Component]
+[START_Convex_Collider]
+1999081472,1,1999079936,-0.004,-0.048,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.095,0.421,1,0,0,0,1,0,2,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_Component]
+[START_Convex_Collider]
+1999610368,1,1999609344,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.6,1,1,0,0,0,1,1,16384,
+[END_Convex_Collider]
+
+[END_Component End]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+[START_Circle_Collider2D]
+1999081984,1,1999079936,-0.004,-0.26,0,0,0,0,0.095,0,2,
+[END_Circle_Collider2D]
+
+[END_Component End]
+[START_ComponentDonor]
+3,
+[END_ComponentDonor End]
+[START_Component]
+[START_Audio]
+1999082496,1,1999079936,1,0,0,"wilo_strike03.wav",0.4,1,1,1000,10000,
+[END_Audio]
+
+[END_Component End]
+[START_Component]
+[START_Audio]
+1999610880,1,1999609344,1,0,0,"",1,1,1,1000,10000,
+[END_Audio]
+
+[END_Component End]
+[START_Component]
+[START_Audio]
+1381577216,1,18446744071968346112,0,1,0,"",1,1,1,10000,10000,
+[END_Audio]
+
+[END_Component End]
+[START_ComponentDonor]
+12,
+[END_ComponentDonor End]
+[START_Component]
+[START_Renderer]
+987727872,1,987726848,"TownToPan.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1999083008,1,1999079936,"Final_Wilo_Fixed.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.936,12,1,"Idle",6,10,1,34,57,1,"Running",6,19,1,86,109,1,"Jumping",6,11,0,58,62,1,"Attacking1",6,1,0,0,5,1,"Attacking2",6,2,0,6,9,1,"Attacking3",6,3,0,10,16,1,"Casting1",6,5,0,18,25,1,"Casting2",6,6,0,26,33,1,"Rolling",6,15,0,74,85,1,"Flinching",6,15,0,85,85,1,"Falling",6,12,0,63,67,1,"Landing",6,13,0,68,73,0,0,1,0.99999,0.99999,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744073407015424,1,18446744071719331328,"Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,18,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1018685440,1,1018684416,"Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,18,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+3665408,1,3664384,"Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,18,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1348465664,1,1348464640,"Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,18,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072587573760,1,18446744072587572736,"Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,18,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744072620605440,1,18446744072620604416,"Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,18,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744073534983168,1,18446744073534982144,"Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,18,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744073061028352,1,18446744073061027328,"Set One.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,18,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+1243657728,1,18446744072776364544,"white.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,0,0,0,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_Component]
+[START_Renderer]
+18446744071644494848,1,595179520,"FishermanDaughter_Sheet.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.125,1,1,"Idle",3,3,1,0,8,0,1,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component End]
+[START_ComponentDonor]
+1,
+[END_ComponentDonor End]
+[START_Component]
+36444160,1,950801408,"Times New Roman.ttf","",1,1,1,1,1,1,0,0,1,1,1,1,0.5,0.1,0.1,1,0.7,0.2,0.2,1,0.5,0.5,0.5,1,1,
+[END_Component End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_ComponentDonor]
+0,
+[END_ComponentDonor End]
+[START_BEHAVIOUR_SYSTEM_BLOCK]
+31,[START_str]
+"BossAI",0,[START_str]
+"BossUI",0,[START_str]
+"CamAi",0,[START_str]
+"CamShake",0,[START_str]
+"CharacterController",2,[START_BEHAVIOUR_BLOCK]
+631400448,536870977,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+"mbDisableControls",[START_mbDisableControls]
+0,[START_MEMBER VAR]
+"mnPriorityDir",[START_mnPriorityDir]
+0,[START_MEMBER VAR]
+"mbFaceRight",[START_mbFaceRight]
+1,[START_MEMBER VAR]
+"mfTimer",[START_mfTimer]
+0,[START_MEMBER VAR]
+"mfMaxSpeed",[START_mfMaxSpeed]
+60,[START_MEMBER VAR]
+"mfJumpStrength",[START_mfJumpStrength]
+1000,[START_MEMBER VAR]
+"mfAirMovementScalerForward",[START_mfAirMovementScalerForward]
+1,[START_MEMBER VAR]
+"mfAirMovementScalerBackward",[START_mfAirMovementScalerBackward]
+0.5,[START_MEMBER VAR]
+"mnStateDebug",[START_mnStateDebug]
+-1,[START_MEMBER VAR]
+"mfAttackDelay",[START_mfAttackDelay]
+0.3,[START_MEMBER VAR]
+"mfCastingDelay",[START_mfCastingDelay]
+0.5,[START_MEMBER VAR]
+"mfRollDelay",[START_mfRollDelay]
+0.4,[START_MEMBER VAR]
+"mfFlinchDelay",[START_mfFlinchDelay]
+0.1,[START_MEMBER VAR]
+"mfLandDelay",[START_mfLandDelay]
+0.1,[START_MEMBER VAR]
+"mfAnimSpdIdle",[START_mfAnimSpdIdle]
+0.016,[START_MEMBER VAR]
+"mfAnimSpdRunning",[START_mfAnimSpdRunning]
+0.036,[START_MEMBER VAR]
+"mfAnimSpdJumping",[START_mfAnimSpdJumping]
+0.016,[START_MEMBER VAR]
+"mfAnimSpdFalling",[START_mfAnimSpdFalling]
+0.016,[START_MEMBER VAR]
+"mbSpammedAttack",[START_mbSpammedAttack]
+0,[START_MEMBER VAR]
+"mbIsInForce",[START_mbIsInForce]
+1,[START_MEMBER VAR]
+"mbSpammedCast",[START_mbSpammedCast]
+0,[START_MEMBER VAR]
+"mfAttackPower",[START_mfAttackPower]
+1,[START_MEMBER VAR]
+"mfAttackKnockback",[START_mfAttackKnockback]
+0,[START_MEMBER VAR]
+"mfAttackPushfoward",[START_mfAttackPushfoward]
+50,[START_MEMBER VAR]
+"mfAnalogSens",[START_mfAnalogSens]
+0.2,[START_MEMBER VAR]
+"mfRollForce",[START_mfRollForce]
+0,[START_MEMBER VAR]
+"mfInvulTimer",[START_mfInvulTimer]
+0,[START_MEMBER VAR]
+"mfMaxHealth",[START_mfMaxHealth]
+100,[START_MEMBER VAR]
+"mfCurrHealth",[START_mfCurrHealth]
+100,[START_MEMBER VAR]
+"mfMaxMana",[START_mfMaxMana]
+100,[START_MEMBER VAR]
+"mfCurrMana",[START_mfCurrMana]
+100,[START_MEMBER VAR]
+"mfRollCost",[START_mfRollCost]
+25,[START_MEMBER VAR]
+"mnRunningCheck",[START_mnRunningCheck]
+0,[START_MEMBER VAR]
+"mfInternalForceMultiplier",[START_mfInternalForceMultiplier]
+1000,[START_MEMBER VAR]
+"mbCanDoubleJump",[START_mbCanDoubleJump]
+1,[START_MEMBER VAR]
+"mfManaRegen",[START_mfManaRegen]
+25,[START_MEMBER VAR]
+"mfHealthRegen",[START_mfHealthRegen]
+0,[START_MEMBER VAR]
+"mfDeathCounter",[START_mfDeathCounter]
+4,[START_MEMBER VAR]
+"mfComboTimer",[START_mfComboTimer]
+0,[START_MEMBER VAR]
+"GodMode",[START_GodMode]
+0,[START_MEMBER VAR]
+"GodStam",[START_GodStam]
+0,[START_MEMBER VAR]
+"END",
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+[START_BEHAVIOUR_BLOCK]
+1999079936,65,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+"mbDisableControls",[START_mbDisableControls]
+1,[START_MEMBER VAR]
+"mnPriorityDir",[START_mnPriorityDir]
+0,[START_MEMBER VAR]
+"mbFaceRight",[START_mbFaceRight]
+1,[START_MEMBER VAR]
+"mfTimer",[START_mfTimer]
+0,[START_MEMBER VAR]
+"mfMaxSpeed",[START_mfMaxSpeed]
+65,[START_MEMBER VAR]
+"mfJumpStrength",[START_mfJumpStrength]
+1350,[START_MEMBER VAR]
+"mfAirMovementScalerForward",[START_mfAirMovementScalerForward]
+1,[START_MEMBER VAR]
+"mfAirMovementScalerBackward",[START_mfAirMovementScalerBackward]
+0.5,[START_MEMBER VAR]
+"mnStateDebug",[START_mnStateDebug]
+-1,[START_MEMBER VAR]
+"mfAttackDelay",[START_mfAttackDelay]
+0.3,[START_MEMBER VAR]
+"mfCastingDelay",[START_mfCastingDelay]
+0.5,[START_MEMBER VAR]
+"mfRollDelay",[START_mfRollDelay]
+0.4,[START_MEMBER VAR]
+"mfFlinchDelay",[START_mfFlinchDelay]
+0.1,[START_MEMBER VAR]
+"mfLandDelay",[START_mfLandDelay]
+0.1,[START_MEMBER VAR]
+"mfAnimSpdIdle",[START_mfAnimSpdIdle]
+0.016,[START_MEMBER VAR]
+"mfAnimSpdRunning",[START_mfAnimSpdRunning]
+0.036,[START_MEMBER VAR]
+"mfAnimSpdJumping",[START_mfAnimSpdJumping]
+0.016,[START_MEMBER VAR]
+"mfAnimSpdFalling",[START_mfAnimSpdFalling]
+0.016,[START_MEMBER VAR]
+"mbSpammedAttack",[START_mbSpammedAttack]
+0,[START_MEMBER VAR]
+"mbIsInForce",[START_mbIsInForce]
+1,[START_MEMBER VAR]
+"mbSpammedCast",[START_mbSpammedCast]
+0,[START_MEMBER VAR]
+"mfAttackPower",[START_mfAttackPower]
+15,[START_MEMBER VAR]
+"mfAttackKnockback",[START_mfAttackKnockback]
+100,[START_MEMBER VAR]
+"mfAttackPushfoward",[START_mfAttackPushfoward]
+35,[START_MEMBER VAR]
+"mfAnalogSens",[START_mfAnalogSens]
+0.2,[START_MEMBER VAR]
+"mfRollForce",[START_mfRollForce]
+50,[START_MEMBER VAR]
+"mfInvulTimer",[START_mfInvulTimer]
+1.5069e-09,[START_MEMBER VAR]
+"mfMaxHealth",[START_mfMaxHealth]
+100,[START_MEMBER VAR]
+"mfCurrHealth",[START_mfCurrHealth]
+100,[START_MEMBER VAR]
+"mfMaxMana",[START_mfMaxMana]
+100,[START_MEMBER VAR]
+"mfCurrMana",[START_mfCurrMana]
+100,[START_MEMBER VAR]
+"mfRollCost",[START_mfRollCost]
+25,[START_MEMBER VAR]
+"mnRunningCheck",[START_mnRunningCheck]
+0,[START_MEMBER VAR]
+"mfInternalForceMultiplier",[START_mfInternalForceMultiplier]
+1000,[START_MEMBER VAR]
+"mbCanDoubleJump",[START_mbCanDoubleJump]
+1,[START_MEMBER VAR]
+"mfManaRegen",[START_mfManaRegen]
+35,[START_MEMBER VAR]
+"mfHealthRegen",[START_mfHealthRegen]
+0,[START_MEMBER VAR]
+"mfDeathCounter",[START_mfDeathCounter]
+4,[START_MEMBER VAR]
+"mfComboTimer",[START_mfComboTimer]
+8.21161e-43,[START_MEMBER VAR]
+"GodMode",[START_GodMode]
+0,[START_MEMBER VAR]
+"GodStam",[START_GodStam]
+0,[START_MEMBER VAR]
+"END",
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+[START_str]
+"CharacterHitBox",1,[START_BEHAVIOUR_BLOCK]
+1999609344,65,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+"mnEnemyCount",[START_mnEnemyCount]
+0,[START_MEMBER VAR]
+"mnInteractCount",[START_mnInteractCount]
+0,[START_MEMBER VAR]
+"END",
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+[START_str]
+"CheckPoint",0,[START_str]
+"EnvironmentalResponse",0,[START_str]
+"Fader",0,[START_str]
+"FallingPillar",1,[START_BEHAVIOUR_BLOCK]
+1261664256,536870977,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+"mfFrequency",[START_mfFrequency]
+0,[START_MEMBER VAR]
+"mfFallSpeed",[START_mfFallSpeed]
+1,[START_MEMBER VAR]
+"mfFallDuration",[START_mfFallDuration]
+0,[START_MEMBER VAR]
+"mfShakeDuration",[START_mfShakeDuration]
+0,[START_MEMBER VAR]
+"mfShakeIntensity",[START_mfShakeIntensity]
+0,[START_MEMBER VAR]
+"mbShake",[START_mbShake]
+0,[START_MEMBER VAR]
+"mbFall",[START_mbFall]
+0,[START_MEMBER VAR]
+"mfAccuDt",[START_mfAccuDt]
+0,[START_MEMBER VAR]
+"END",
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+[START_str]
+"ForceBlast",0,[START_str]
+"ForceFlame",0,[START_str]
+"FormSlam",0,[START_str]
+"FormSlamChild",0,[START_str]
+"FormSpike",0,[START_str]
+"FormSpikeChild",0,[START_str]
+"GoblinAI",0,[START_str]
+"IntroductionScene",0,[START_str]
+"MainMenu",0,[START_str]
+"PauseMenu",0,[START_str]
+"PlayerUIController",0,[START_str]
+"PrimativeEnemy",0,[START_str]
+"RuneAnim",0,[START_str]
+"RuneSwitch",0,[START_str]
+"RuneWall",0,[START_str]
+"SkillRelay",0,[START_str]
+"SortChildOrder",0,[START_str]
+"SplashManager",0,[START_str]
+"VinesPlatform",0,[START_str]
+"ChangeLevel",1,[START_BEHAVIOUR_BLOCK]
+423213056,536870977,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+"mnNextLevelID",[START_mnNextLevelID]
+0,[START_MEMBER VAR]
+"END",
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+[START_str]
+"TownPanning",1,[START_BEHAVIOUR_BLOCK]
+18446744071968346112,65,[START_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+"mfFadeStart",[START_mfFadeStart]
+2,[START_MEMBER VAR]
+"mfFadeEndDelay",[START_mfFadeEndDelay]
+2,[START_MEMBER VAR]
+"mfFadeEndDuration",[START_mfFadeEndDuration]
+3,[START_MEMBER VAR]
+"mfHorizontalSpeed",[START_mfHorizontalSpeed]
+550,[START_MEMBER VAR]
+"mfZoomSpeed",[START_mfZoomSpeed]
+0.7,[START_MEMBER VAR]
+"mfDelayZoom",[START_mfDelayZoom]
+1.5,[START_MEMBER VAR]
+"mbPlay",[START_mbPlay]
+1,[START_MEMBER VAR]
+"mfHorizonCap",[START_mfHorizonCap]
+6500,[START_MEMBER VAR]
+"mfZoomOut",[START_mfZoomOut]
+2.5,[START_MEMBER VAR]
+"mfZoomIn",[START_mfZoomIn]
+2.5,[START_MEMBER VAR]
+"mfPeakY",[START_mfPeakY]
+-350,[START_MEMBER VAR]
+"mfEndHorizontal",[START_mfEndHorizontal]
+1800,[START_MEMBER VAR]
+"mfTextGenDelay",[START_mfTextGenDelay]
+0.07,[START_MEMBER VAR]
+"mfDelayRestart",[START_mfDelayRestart]
+1,[START_MEMBER VAR]
+"END",
+[END_BEHAVIOUR_MEMBER_VARIABLE_BLOCK]
+
+[END_BEHAVIOUR_BLOCK]
+
+[END_BEHAVIOUR_SYSTEM_BLOCK]
+
+[END_Scene]

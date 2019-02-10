@@ -94,11 +94,11 @@ namespace Dystopia
 			if (mbTransform_Z) 
 				pos.z = val; 
 			children[i]->SetPosition(pos);
-			DEBUG_PRINT(eLog::MESSAGE, "GE");
+			//DEBUG_PRINT(eLog::MESSAGE, "GE");
 		}
 	}
 
-	void SortChildOrder::Update(const float )
+	void SortChildOrder::Update(const float _fDeltaTime)
 	{
 		
 	}

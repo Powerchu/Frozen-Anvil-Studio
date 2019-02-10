@@ -24,6 +24,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Object/ObjectFlags.h"
 #include "Object/GameObject.h"
 #include "Component/Collider.h"
+#include "Component/Circle.h"
 
 #include "Editor/EGUI.h"
 #include "Utility/DebugAssert.h"
@@ -89,12 +90,18 @@ namespace Dystopia
 	{
 	}
 
+	void GoblinAI::SetPlayerDeath(bool _status)
+	{
+		PlayerDied = _status;
+	}
+
 	void GoblinAI::Awake()
 	{
 		mpController = GetOwner()->GetComponent<AiController>();
 		IsFacingRight = true;
 		if (mpController == nullptr) return;
- 
+		mpController->ClearTree();
+
 		auto mContBlackboard = mpController->GetBlackboard();	
  
 		if (mContBlackboard != nullptr)  
@@ -102,7 +109,7 @@ namespace Dystopia
 			const auto& root = NeuralTree::Builder()     
 				.composite<NeuralTree::Sequence>() // root   
 					.decorator<NeuralTree::UntilFailure>() 
-						.composite<NeuralTree::Sequence>() 
+						.composite<NeuralTree::RandomSequence>() 
 							.task<Idle>(mContBlackboard)
 							.task<Patrol>(mContBlackboard)
 						.end()
@@ -136,10 +143,48 @@ namespace Dystopia
 
 	void GoblinAI::Init()
 	{
-		mpController = GetOwner()->GetComponent<AiController>(); 
+		mpController = GetOwner()->GetComponent<AiController>();
+		IsFacingRight = true;
+		if (mpController == nullptr) return;
+		mpController->ClearTree();
+		
+		auto mContBlackboard = mpController->GetBlackboard();	
+ 
+		if (mContBlackboard != nullptr)  
+		{
+			const auto& root = NeuralTree::Builder()     
+				.composite<NeuralTree::Sequence>() // root   
+					.decorator<NeuralTree::UntilFailure>() 
+						.composite<NeuralTree::RandomSequence>() 
+							.task<Idle>(mContBlackboard)
+							.task<Patrol>(mContBlackboard)
+						.end()
+					.end()
+					.task<Alert>(mContBlackboard)
+					.composite<NeuralTree::Sequence>()
+						.task<Chase>(mContBlackboard)
+						.composite<NeuralTree::Selector>() 
+							.task<Melee_Slash>(mContBlackboard) 
+							.task<Melee_Lunge>(mContBlackboard)
+							.task<Rally>(mContBlackboard) 
+						.end()
+					.end()
+				.end() 
+			.Build(mContBlackboard, "Goblin AI Tree");
 
-		if (nullptr == mpController) return;
-		auto mContBlackboard = mpController->GetBlackboard();  
+			// const auto& root = NeuralTree::Builder()      
+			// 	.composite<NeuralTree::Sequence>() // root   
+			// 		.decorator<NeuralTree::UntilFailure>() 
+			// 			.composite<NeuralTree::RandomSequence>()
+			// 				.task<Idle>(mContBlackboard) 
+			// 				.task<Patrol>(mContBlackboard)
+			// 			.end()
+			// 		.end() 
+			// 	.end() 
+			// .Build(mContBlackboard, "Goblin AI Tree");
+
+			mpController->SetTree(root);  
+		}	 
 
 		/*Set Blackboard/Update Blackboard*/
 		mContBlackboard->SetFloat("State Timer", StateTimer);
@@ -161,6 +206,9 @@ namespace Dystopia
 		Player   = EngineCore::Get<SceneSystem>()->FindGameObject("CharacterController"); 
 		mContBlackboard->SetObject("Player", Player->GetID());
 		mpAudioSrc = GetOwner()->GetComponent<AudioSource>();
+
+		if (AlertObj)
+			mOrgScale = AlertObj->GetComponent<Circle>()->GetScale();
 	}
 
 	
@@ -187,9 +235,22 @@ namespace Dystopia
 			if (AlertObj->GetComponent<Collider>())
 				if(AlertObj->GetComponent<Collider>()->HasCollisionWith(Player))
 					IsAlerted = true;
-		}
-		
 
+			if (IsAlerted)
+			{
+				 AlertObj->GetComponent<Circle>()->SetScale({8,8,1});
+			}
+			else
+			{
+				 AlertObj->GetComponent<Circle>()->SetScale(mOrgScale);
+			}
+
+			if (AlertObj->GetComponent<Collider>())
+				if(AlertObj->GetComponent<Collider>()->HasCollisionWith(Player))
+					IsAlerted = true;
+
+		}
+	
 		/*Set Blackboard/Update Blackboard*/
 		mContBlackboard->SetFloat("State Timer", StateTimer);
 		mContBlackboard->SetFloat("Attack Timer", AttackTimer);
@@ -198,10 +259,11 @@ namespace Dystopia
 		//mContBlackboard->SetBool("Is Facing Right", IsFacingRight);
 		mContBlackboard->SetBool("Has Flock", HasFlock);
 		mContBlackboard->SetBool("Is Alert", IsAlerted);
+		mContBlackboard->SetBool("Has Player Died", PlayerDied);
 		mContBlackboard->SetObject("Self", GetOwner()->GetID());
 	}
 
-	void GoblinAI::FixedUpdate(const float )
+	void GoblinAI::FixedUpdate(const float _fDeltaTime)
 	{
 	}
 	
@@ -217,30 +279,30 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::GoblinAI::OnCollisionEnter(const CollisionEvent& )
+	void Dystopia::GoblinAI::OnCollisionEnter(const CollisionEvent& _colEvent)
 	{
 
 	} 
 
-	void Dystopia::GoblinAI::OnCollisionStay(const CollisionEvent& )
+	void Dystopia::GoblinAI::OnCollisionStay(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::GoblinAI::OnCollisionExit(const CollisionEvent& )
+	void Dystopia::GoblinAI::OnCollisionExit(const CollisionEvent& _colEvent)
 	{
  
 	}
 
-	void Dystopia::GoblinAI::OnTriggerEnter(GameObject * const )
+	void Dystopia::GoblinAI::OnTriggerEnter(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::GoblinAI::OnTriggerStay(GameObject * const )
+	void Dystopia::GoblinAI::OnTriggerStay(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::GoblinAI::OnTriggerExit(GameObject * const )
+	void Dystopia::GoblinAI::OnTriggerExit(GameObject * const _obj)
 	{
 	}
 
@@ -249,11 +311,11 @@ namespace Dystopia
 		return new GoblinAI{*this};
 	}
 
-	void GoblinAI::Serialise(TextSerialiser& ) const
+	void GoblinAI::Serialise(TextSerialiser& _ser) const
 	{
 	}
 
-	void GoblinAI::Unserialise(TextSerialiser& )
+	void GoblinAI::Unserialise(TextSerialiser& _ser)
 	{
 	}
 
@@ -326,7 +388,7 @@ namespace Dystopia
 		return eStatus::RUNNING;
 	}
 
-	void GoblinAI::Idle::Exit(eStatus ) 
+	void GoblinAI::Idle::Exit(eStatus _status) 
 	{
 		if (IsRunning())
 		{
@@ -408,7 +470,7 @@ namespace Dystopia
 		return eStatus::RUNNING;
 	}
 
-	void GoblinAI::Patrol::Exit(eStatus ) 
+	void GoblinAI::Patrol::Exit(eStatus _status) 
 	{
 	
 	}
@@ -438,8 +500,19 @@ namespace Dystopia
 			if (mpRend)
 			{
 				mpRend->Stop();
-				mpRend->SetAnimation("Flinch");
+				mpRend->SetAnimation("Rally");
 				mpRend->Play();
+			}
+
+			auto mpAudio = mpOwner->GetComponent<AudioSource>();
+			if (mpAudio)
+			{
+				mpAudio->Stop();
+				mpAudio->SetVolume(1.f);
+				mpAudio->SetPitch(1.01f);
+				mpAudio->ChangeAudio(A_GOBLIN_RALLY);
+				mpAudio->Play(); 
+				mpAudio->SetPitch(1.1f);
 			}
 		}
 	}
@@ -451,6 +524,8 @@ namespace Dystopia
 		{
 			auto mpRend = mpOwner->GetComponent<SpriteRenderer>();
 			
+			if (mpBlackboard->GetBool("Has Player Died")) return eStatus::FAIL;
+
 			if (mpRend)
 			{
 				if (!mpRend->IsPlaying())
@@ -463,7 +538,7 @@ namespace Dystopia
 		return eStatus::FAIL;
 	}
 
-	void GoblinAI::Alert::Exit(eStatus ) 
+	void GoblinAI::Alert::Exit(eStatus _status) 
 	{
 	
 	}
@@ -497,10 +572,12 @@ namespace Dystopia
 
 	NeuralTree::Node::eStatus GoblinAI::Rally::Update() 
 	{
+		if (mpBlackboard->GetBool("Has Player Died")) return eStatus::FAIL;
+
 		return eStatus::SUCCESS;
 	}
 
-	void GoblinAI::Rally::Exit(eStatus ) 
+	void GoblinAI::Rally::Exit(eStatus _status) 
 	{
 	
 	}
@@ -539,13 +616,15 @@ namespace Dystopia
 		const auto rigidBod = mpOwner->GetComponent<RigidBody>();
 
 		const auto dist = (myTrans->GetGlobalPosition().x-playerTrans->GetGlobalPosition().x);
-		
 		auto mScale = myTrans->GetGlobalScale();
+
+		if (mpBlackboard->GetBool("Has Player Died")) return eStatus::FAIL;
+
 		
 		// right
 		if (dist > 0.f)
 		{
-			rigidBod->AddLinearImpulse({-1*rigidBod->GetMass()*35.0f,0,0});
+			rigidBod->AddLinearImpulse({-1*rigidBod->GetMass()*45.0f,0,0});
 
 			if (mpBlackboard->GetBool("Is Facing Right")) 
 			{
@@ -556,7 +635,7 @@ namespace Dystopia
 		// left
 		else if (dist < -0.f)
 		{
-			rigidBod->AddLinearImpulse({1*rigidBod->GetMass()*35.0f,0,0});
+			rigidBod->AddLinearImpulse({1*rigidBod->GetMass()*45.0f,0,0});
 
 			if (!mpBlackboard->GetBool("Is Facing Right")) 
 			{
@@ -565,7 +644,7 @@ namespace Dystopia
 			}
 		}
 
-		if (!mpBlackboard->GetBool("Is Alert")) return eStatus::FAIL;
+		//if (!mpBlackboard->GetBool("Is Alert")) return eStatus::FAIL;
 
 		if (dist > -160.0f && dist < 160.f)
 		{
@@ -575,13 +654,13 @@ namespace Dystopia
 		return eStatus::RUNNING;
 	}
 
-	void GoblinAI::Chase::Exit(eStatus ) 
+	void GoblinAI::Chase::Exit(eStatus _status) 
 	{
 	
 	}
 
 	/***************************************************************************
-	*  GOBLIN TASK: Rally
+	*  GOBLIN TASK: Melee_Slash
 	***************************************************************************/
 	void GoblinAI::Melee_Slash::Init() 
 	{
@@ -604,6 +683,7 @@ namespace Dystopia
 			mpRend->SetAnimation("Attack");
 			mpRend->Play();
 		}
+
 	}
 
 	NeuralTree::Node::eStatus GoblinAI::Melee_Slash::Update() 
@@ -612,39 +692,50 @@ namespace Dystopia
 		const auto playerTrans = mpPlayer->GetComponent<Transform>();
 		auto mpRend = mpOwner->GetComponent<SpriteRenderer>();
 
-		const auto dist = (myTrans->GetGlobalPosition().x-playerTrans->GetGlobalPosition().x);
+		const auto dist = (myTrans->GetGlobalPosition()-playerTrans->GetGlobalPosition()).Magnitude();
+		const auto xDist = (myTrans->GetGlobalPosition().x-playerTrans->GetGlobalPosition().x);
+		const auto isRight = mpBlackboard->GetBool("Is Facing Right");
 		
-		if (dist < -160.0f || dist > 160.f)
+		if (mpBlackboard->GetBool("Has Player Died")) return eStatus::FAIL;
+		
+		if (dist > 160.f)
 		{
-			if (!mpRend->IsPlaying())
+			if (mpRend)
 			{
-				return eStatus::FAIL;
+				if (!mpRend->IsPlaying())
+				{
+					return eStatus::FAIL;
+				}
 			}
 		}
 
 		// Set Animation To Idle
 		if (mpRend)
 		{
-			if (!mpRend->IsPlaying())
+			if ((isRight && xDist < 0.f) || (!isRight && xDist > 0.f))
 			{
-				return eStatus::SUCCESS;
+				if (!mpRend->IsPlaying())
+				{
+					return eStatus::SUCCESS;
+				}
 			}
 		}
 		return eStatus::RUNNING;
 	}
 
-	void GoblinAI::Melee_Slash::Exit(eStatus )
+	void GoblinAI::Melee_Slash::Exit(eStatus _status)
 	{
 		const auto isRight = mpBlackboard->GetBool("Is Facing Right");
 		if (IsSuccess())
 		{
+			mpBlackboard->SetBool("Has Attacked", true);
 			auto mpAudio = mpOwner->GetComponent<AudioSource>();
 			if (mpAudio)
 			{
 				mpAudio->Stop();
 				mpAudio->SetVolume(1.3f);
 				mpAudio->SetPitch(1.0f);
-				mpAudio->ChangeAudio("goblin_attack.wav");
+				mpAudio->ChangeAudio(A_GOBLIN_ATTACK);
 				mpAudio->Play(); 
 				mpAudio->SetPitch(1.1f);
 			}
@@ -691,7 +782,7 @@ namespace Dystopia
 		return eStatus::SUCCESS;
 	}
 
-	void GoblinAI::Melee_Lunge::Exit(eStatus ) 
+	void GoblinAI::Melee_Lunge::Exit(eStatus _status) 
 	{
 	
 	}
@@ -709,7 +800,7 @@ namespace Dystopia
 		return eStatus::SUCCESS;
 	}
 
-	void GoblinAI::Death::Exit(eStatus ) 
+	void GoblinAI::Death::Exit(eStatus _status) 
 	{
 	
 	}

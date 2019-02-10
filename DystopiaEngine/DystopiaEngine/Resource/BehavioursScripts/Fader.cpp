@@ -29,6 +29,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 // custom includes
 #include "Component/SpriteRenderer.h"
+#include "Component/TextRenderer.h"
 #include "System/Tag/Tags.h"
 #include "System/Graphics/GraphicsSystem.h"
 #include "System/Graphics/Shader.h"
@@ -75,7 +76,8 @@ namespace Dystopia
 		StartFadeOut{false},
 		FadeFrom{1.f},
 		Bounce{true},
-		StopFade{false}
+		StopFade{false},
+		DestroyOnceComplete{false}
 	{
 	}
 
@@ -92,7 +94,11 @@ namespace Dystopia
 		mfCounter = 0.f;
 		if (auto sr = GetOwner()->GetComponent<SpriteRenderer>())
 			sr->SetAlpha(StartFadeOut ? FadeFrom : FadeTowards);
-		StopFade = false;
+			
+		if (auto tr = GetOwner()->GetComponent<TextRenderer>())
+			tr->SetAlpha(StartFadeOut ? FadeFrom : FadeTowards);
+
+		StopFade = !StartAwake;
 	}
 
 	void Fader::Update(const float _fDeltaTime)
@@ -109,11 +115,19 @@ namespace Dystopia
 		{
 			if (auto sr = GetOwner()->GetComponent<SpriteRenderer>())
 				sr->SetAlpha(Math::Lerp(FadeFrom, FadeTowards, timeAlpha));
+
+			if (auto tr = GetOwner()->GetComponent<TextRenderer>())
+				tr->SetAlpha(Math::Lerp(FadeFrom, FadeTowards, timeAlpha));
+
 		}
 		else
 		{ 
 			if (auto sr = GetOwner()->GetComponent<SpriteRenderer>())
 				sr->SetAlpha(Math::Lerp(FadeFrom, FadeTowards, 1 - timeAlpha));
+
+			if (auto tr = GetOwner()->GetComponent<TextRenderer>())
+				tr->SetAlpha(Math::Lerp(FadeFrom, FadeTowards, 1 - timeAlpha));
+
 		}
 		
 		if (mfCounter >= FadeDuration)
@@ -122,17 +136,26 @@ namespace Dystopia
 			StopFade = Bounce ? false : true;
 			StartFadeOut = !StartFadeOut;
 		}
+
+		if (DestroyOnceComplete)
+		{
+			if (auto sr = GetOwner()->GetComponent<SpriteRenderer>())
+				if(sr->GetTint().w <= 0.f)
+					GetOwner()->Destroy();
+		}
 	}
 
 	void Fader::StartFade()
 	{
 		StartFadeOut = false;
+		StartAwake = true;
 		Fader::Init();
 	}
 	void Fader::StartFadeReverse()
 	{
-		DEBUG_PRINT(eLog::MESSAGE, "HI");
+		//DEBUG_PRINT(eLog::MESSAGE, "HI");
 		StartFadeOut = true;
+		StartAwake = true;
 		Fader::Init();
 	}
 

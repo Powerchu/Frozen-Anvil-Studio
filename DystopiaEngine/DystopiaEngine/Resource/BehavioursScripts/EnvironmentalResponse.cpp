@@ -99,9 +99,9 @@ namespace Dystopia
 	{
 		mfAccuDt = 0.f;
 		ForegroundReactions = !AmbienceSmall;
-		//if (ForegroundReactions)
-		//	if (!GetOwner()->GetComponent<Convex>())
-		//		DEBUG_PRINT(eLog::MESSAGE, "Missing convex trigger for script to work properly!");
+		if (ForegroundReactions)
+			if (!GetOwner()->GetComponent<Convex>())
+				DEBUG_PRINT(eLog::MESSAGE, "Missing convex trigger for script to work properly!");
 	}
 
 	void EnvironmentalResponse::Update(const float _fDeltaTime)

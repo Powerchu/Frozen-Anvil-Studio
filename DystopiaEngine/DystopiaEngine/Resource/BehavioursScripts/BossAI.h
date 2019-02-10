@@ -116,7 +116,7 @@ namespace Dystopia
 			mfAttackDelay = mpBlackboard->GetFloat("AttackDelay");
 
 			// change texture
-			auto pTex = EngineCore::Get<GraphicsSystem>()->LoadTexture(EngineCore::Get<FileSystem>()->GetFromResource("Walk_Sheet.dds").c_str());
+			auto pTex = EngineCore::Get<GraphicsSystem>()->LoadTexture(EngineCore::Get<FileSystem>()->GetFromResource("Salamander_Walking.dds").c_str());
 			auto mpRend = mpOwner->GetComponent<SpriteRenderer>();
 
 			
@@ -212,7 +212,8 @@ namespace Dystopia
 			mpBlackboard->SetFloat("AttackDelay", 1.3f);
 
 			const auto own_Scale = mpOwner->GetComponent<Transform>()->GetGlobalScale();
-
+			if (mpTarget == nullptr || mpOwner == nullptr) return;
+			
 			// Player is Left of Self
 			if (mpTarget->GetComponent<Transform>()->GetGlobalPosition().x - mpOwner->GetComponent<Transform>()->GetGlobalPosition().x < 0.f)
 			{
@@ -235,7 +236,7 @@ namespace Dystopia
 			mpBlackboard->SetBool("IsFacingRight", isFacingRight);
 			
 			// change texture
-			auto pTex = EngineCore::Get<GraphicsSystem>()->LoadTexture(EngineCore::Get<FileSystem>()->GetFromResource("Slash_Sheet.dds").c_str());
+			auto pTex = EngineCore::Get<GraphicsSystem>()->LoadTexture(EngineCore::Get<FileSystem>()->GetFromResource("Salamander_Slash.dds").c_str());
 			auto mpRend = mpOwner->GetComponent<SpriteRenderer>();
 			
 			if (mpRend)
@@ -291,6 +292,7 @@ namespace Dystopia
 			const auto gameObjID2 = mpBlackboard->GetObject("Self");
 			mpOwner = EngineCore::Get<SceneSystem>()->FindGameObject(gameObjID2);
 			const auto own_Scale = mpOwner->GetComponent<Transform>()->GetGlobalScale();
+			if (mpTarget == nullptr || mpOwner == nullptr) return;
 			
 			// Player is Left of Self
 			if (mpTarget->GetComponent<Transform>()->GetGlobalPosition().x - mpOwner->GetComponent<Transform>()->GetGlobalPosition().x < 0.f)
@@ -314,7 +316,7 @@ namespace Dystopia
 			mpBlackboard->SetBool("IsFacingRight", isFacingRight);
 
 			// change texture
-			auto pTex = EngineCore::Get<GraphicsSystem>()->LoadTexture(EngineCore::Get<FileSystem>()->GetFromResource("FireBreath_Sheet.dds").c_str());
+			auto pTex = EngineCore::Get<GraphicsSystem>()->LoadTexture(EngineCore::Get<FileSystem>()->GetFromResource("Salamander_FireBreath.dds").c_str());
 			auto mpRend = mpOwner->GetComponent<SpriteRenderer>();
 			
 			// play breathe in
@@ -483,9 +485,19 @@ namespace Dystopia
 		virtual TypeErasure::TypeEraseMetaData       GetMetaData();
 		virtual TypeErasure::TypeEraseMetaData const GetMetaData() const;
 
+		float currHealth = 0.0f;
+		float maxHealth = 0.0f;
+
+		void SetMaxHealth(float _hp);
+		void SetCurrHealth(float _hp);
+
+		PP_MEMBERFUNC(Dystopia::BossAI, SetMaxHealth, SetCurrHealth)
+
 	private:
 		// Don't touch
 		friend MetaData<BossAI>;
+
+		bool HasShownHP = false;
 	};
 
 	extern "C"
@@ -498,12 +510,12 @@ namespace Dystopia
 }
 
 /*Keep this if you do not want to show anything in Editor*/
-PP_REFLECT_EMPTY(Dystopia::BossAI)
+//PP_REFLECT_EMPTY(Dystopia::BossAI)
 /*
 Uncomment the line PP_REFLECT and add in the names of the variable you want to show
 Comment out PP_REFLECT_EMPTY.
 */
-//PP_REFLECT(Dystopia::BossAI)
+PP_REFLECT_STUFF(Dystopia::BossAI, currHealth)
 
 #endif //_BossAI_H_
 

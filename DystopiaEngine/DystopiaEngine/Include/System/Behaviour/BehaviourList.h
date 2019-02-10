@@ -25,7 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Resource/BehavioursScripts/MainMenu.h"
 #include "../Resource/BehavioursScripts/PauseMenu.h"
 #include "../Resource/BehavioursScripts/SplashManager.h"
-#include "../Resource/BehavioursScripts/AiDirector.h"
+//#include "../Resource/BehavioursScripts/AiDirector.h"
 #include "../Resource/BehavioursScripts/BossAI.h"
 #include "../Resource/BehavioursScripts/CamAi.h"
 #include "../Resource/BehavioursScripts/CamShake.h"
@@ -49,9 +49,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Resource/BehavioursScripts/SkillRelay.h"
 #include "../Resource/BehavioursScripts/SortChildOrder.h"
 #include "../Resource/BehavioursScripts/VinesPlatform.h"
-#include "../Resource/BehavioursScripts/WiloShadow.h"
+//#include "../Resource/BehavioursScripts/WiloShadow.h"
 #include "../Resource/BehavioursScripts/IntroductionScene.h"
 #include "../Resource/BehavioursScripts/CheckPoint.h"
+#include "../Resource/BehavioursScripts/TownPanning.h"
+#include "../Resource/BehavioursScripts/ChangeLevel.h"
+#include "../Resource/BehavioursScripts/BossUI.h"
 
 /*Include your header for new behaviour here. Remember to include the
   behaviour in project. Make sure the behaviour file is in Resource/BehaviourScripts
@@ -69,7 +72,7 @@ namespace Dystopia
 		class MainMenu,
 		class PauseMenu,
 		class SplashManager,
-		class AiDirector,
+		//class AiDirector,
 		class BossAI,
 		class CamAi,
 		class CamShake,
@@ -93,9 +96,12 @@ namespace Dystopia
 		class SkillRelay,
 		class SortChildOrder,
 		class VinesPlatform,
-		class WiloShadow,
+		//class WiloShadow,
 		class IntroductionScene,
-		class CheckPoint
+		class CheckPoint,
+		class TownPanning,
+		class ChangeLevel,
+		class BossUI
 		
 	>::result;
 }

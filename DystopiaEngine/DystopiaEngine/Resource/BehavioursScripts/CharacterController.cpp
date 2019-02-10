@@ -351,12 +351,39 @@ namespace Dystopia
             mnHitCounter = 0;
         }
 
-        
+        if (mpInput->GetKeyDown(eButton::KEYBOARD_F1))
+        {
+            GodMode = !GodMode;
+        }
+
+        if (mpInput->GetKeyDown(eButton::KEYBOARD_F2))
+        {
+            GodStam = !GodStam;
+        }
+
+        if (GodMode)
+        {
+            mfCurrHealth = mfMaxHealth;
+            GetOwner()->GetComponent<SpriteRenderer>()->SetColor({0.0f,1.0f,0.0f});
+            CharacterController_MSG::SendExternalMessage(mpHealthBar, "GoToHealthPercentage", mfCurrHealth/mfMaxHealth);
+        }
+        else
+        {
+            GetOwner()->GetComponent<SpriteRenderer>()->SetColor({1.0f,1.0f,1.0f});
+        }
+
+        if (GodStam) 
+        {
+            mfCurrMana = mfMaxMana;
+            CharacterController_MSG::SendExternalMessage(mpHealthBar, "GoToStaminaPercentage", mfCurrMana/mfMaxMana);
+        }
 
         if (mfInvulTimer > 0.0f)
         {
             mfInvulTimer -= _fDeltaTime;
-            GetOwner()->GetComponent<SpriteRenderer>()->SetColor({0.5f,0.3f,0.3f});
+            if (!GodMode)
+                GetOwner()->GetComponent<SpriteRenderer>()->SetColor({0.5f,0.3f,0.3f});
+            CORE::Get<CollisionSystem>()->SetIgnore(eColLayer::LAYER_2, eColLayer::LAYER_3, true);
             CORE::Get<CollisionSystem>()->SetIgnore(eColLayer::LAYER_2, eColLayer::LAYER_1, true);
             
         }
@@ -367,7 +394,9 @@ namespace Dystopia
 
             if (mCurrentState != eRolling)
             {
-                GetOwner()->GetComponent<SpriteRenderer>()->SetColor({1.0f,1.0f,1.0f});
+                if (!GodMode)
+                    GetOwner()->GetComponent<SpriteRenderer>()->SetColor({1.0f,1.0f,1.0f});
+                CORE::Get<CollisionSystem>()->SetIgnore(eColLayer::LAYER_2, eColLayer::LAYER_3, false);
                 CORE::Get<CollisionSystem>()->SetIgnore(eColLayer::LAYER_2, eColLayer::LAYER_1, false);
             }
         }
@@ -408,9 +437,7 @@ namespace Dystopia
 				break;
 			case Exiting:
 				if (mStates[mCurrentState]->OnExitState(fixedDT))
-                {
 					mStatus = Entering;
-                }
 				break;
 			case Entering:
 				if (mStates[mNextState]->OnEnterState(fixedDT))
@@ -429,9 +456,9 @@ namespace Dystopia
 		//	mNextState = eFalling;
 		//	DEBUG_PRINT(eLog::MESSAGE, "Player velocity y %f", y);
 		//}
-		//CollisionEvent col;
-		///GameObject* ptr[1] = {GetOwner()};
-		//auto pos = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
+		// CollisionEvent col;
+		// GameObject* ptr[1] = {GetOwner()};
+		// auto pos = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
 		// if(EngineCore::Get<CollisionSystem>()->RaycastFirstHit(Math::Vec3D{0,-1,0}, pos,&col,ptr,1,5.f))
 		// 	{ 
 		// 		DEBUG_PRINT(eLog::ERROR, "CLOG %f %f %f \n", static_cast<float>(pos.x), static_cast<float>(pos.y), static_cast<float>(pos.z));
@@ -457,12 +484,10 @@ namespace Dystopia
     }
     void Dystopia::CharacterController::OnCollisionEnter(const CollisionEvent& _colEvent)
     {
-       
-        
         /*
         *   Hit an object with Layer "ENEMY"
         */
-        if (_colEvent.mCollidedWith->HasTag("Enemy"))
+        if (_colEvent.mCollidedWith->GetComponent<Collider>()->GetColLayer() & LAYER_1 && _colEvent.mCollidedWith->GetComponent<Collider>()->GetColLayer() != LAYER_GLOBAL)
         {
             Math::Vector4 reflectVec;
             const auto EnemyPos = _colEvent.mCollidedWith->GetComponent<Transform>()->GetGlobalPosition().x;
@@ -509,16 +534,16 @@ namespace Dystopia
         }
        
     }
-    void Dystopia::CharacterController::OnCollisionExit(const CollisionEvent& )
+    void Dystopia::CharacterController::OnCollisionExit(const CollisionEvent& _colEvent)
     {
     }
-    void Dystopia::CharacterController::OnTriggerEnter(GameObject * const )
+    void Dystopia::CharacterController::OnTriggerEnter(GameObject * const _obj)
     {
     }
-    void Dystopia::CharacterController::OnTriggerStay(GameObject * const )
+    void Dystopia::CharacterController::OnTriggerStay(GameObject * const _obj)
     {
     }
-    void Dystopia::CharacterController::OnTriggerExit(GameObject * const )
+    void Dystopia::CharacterController::OnTriggerExit(GameObject * const _obj)
     {
     }
     CharacterController * CharacterController::Duplicate() const
@@ -630,7 +655,7 @@ namespace Dystopia
             return false;
         return true;
     }
-    void CharacterController::HandleTranslate(bool _inair, float )
+    void CharacterController::HandleTranslate(bool _inair, float _dt)
     {
 		//prevFace = mbFaceRight;
         HandleRunning();
@@ -710,7 +735,7 @@ namespace Dystopia
     
 	void CharacterController::TakeForce(float _force, Math::Vec2 _dir)
 	{	
-		if (mpBody)
+		if (mpBody && !mbDying)
 		{
 			float val = _force * mfInternalForceMultiplier;
 			mpBody->AddLinearImpulse({ _dir.x * val , _dir.y * val, 0 });
@@ -738,6 +763,8 @@ namespace Dystopia
             if (!mbGotHit)
             {
                 mbGotHit = true;
+                if (mpPlayerUI)
+                    CharacterController_MSG::SendExternalMessage(mpPlayerUI, "SetCounter", 0);
                 mfCurrHealth -= _dmg;
                 if (mpHealthBar)
                     CharacterController_MSG::SendExternalMessage(mpHealthBar, "GoToHealthPercentage", mfCurrHealth/mfMaxHealth);
@@ -747,7 +774,6 @@ namespace Dystopia
                 mnHitCounter = 0;
             }
         }
-        
     }
 
     void CharacterController::ManaAudio(void)
@@ -811,7 +837,6 @@ namespace Dystopia
 
     void CharacterController::SetSpawnPoint(Math::Vector3D pos)
     {
-        DEBUG_PRINT(eLog::MESSAGE, "X: %f, Y: %f, Z: %f", static_cast<float>(pos.x), static_cast<float>(pos.y), static_cast<float>(pos.z));
         spawnPos.x = pos.x;
         spawnPos.y = pos.y;
         spawnPos.z = GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
@@ -1112,6 +1137,12 @@ namespace Dystopia
     CharacterController::Jumping::~Jumping(){}
     void CharacterController::Jumping::Update(float _dt)
     {
+        if (nullptr != jumpDust) 
+        {
+            if (auto rend = jumpDust->GetComponent<SpriteRenderer>())
+                if(rend->IsPlaying())
+                    jumpDust->Destroy();
+        }
         //<FS_CONDITION>
         // Condition for eFalling
 		if (owner->mpBody)
@@ -1148,6 +1179,7 @@ namespace Dystopia
     {        
         auto myOwnerPos = owner->GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
         auto spawnPt = Math::Point3D{myOwnerPos.x, myOwnerPos.y - owner->GetOwner()->GetComponent<Transform>()->GetScale().y/3.f, myOwnerPos.z-0.5f};
+        jumpDust = EngineCore::Get<SceneSystem>()->Instantiate("Player_Jump_Dust.dobj", spawnPt);
         auto prevVel = owner->mpBody->GetLinearVelocity();
         owner->mpBody->SetLinearVel({prevVel.x, 1, prevVel.z});
         auto jump = owner->mbCanDoubleJump ? owner->mfJumpStrength * owner->mpBody->GetMass() : owner->mfJumpStrength * owner->mpBody->GetMass() * 1.1f;
@@ -1602,7 +1634,9 @@ namespace Dystopia
 		{
             owner->GetOwner()->GetComponent<Convex>()->SetOffSet(Math::Vec3D(owner->orgOffset.x, -0.158f, owner->orgOffset.z));
             owner->GetOwner()->GetComponent<Convex>()->SetScale(Math::Vec3D(owner->orgScale.x, 0.287f, owner->orgScale.z));
+            CORE::Get<CollisionSystem>()->SetIgnore(eColLayer::LAYER_2, eColLayer::LAYER_3, true);
             CORE::Get<CollisionSystem>()->SetIgnore(eColLayer::LAYER_2, eColLayer::LAYER_1, true);
+
 		}
         
         owner->GetOwner()->GetComponent<SpriteRenderer>()->SetColor({0.3f,0.3f,0.3f});
@@ -1650,6 +1684,7 @@ namespace Dystopia
 			owner->GetOwner()->GetComponent<Convex>()->SetOffSet(Math::Vec3D(owner->orgOffset.x, owner->orgOffset.y, owner->orgOffset.z));
             owner->GetOwner()->GetComponent<Convex>()->SetScale(Math::Vec3D(owner->orgScale.x, owner->orgScale.y, owner->orgScale.z));
             //owner->mpMyShadow->GetComponent<Transform>()->SetScale(owner->myShadowOrg.x,owner->myShadowOrg.y,owner->myShadowOrg.z);
+            CORE::Get<CollisionSystem>()->SetIgnore(eColLayer::LAYER_2, eColLayer::LAYER_3, false);
             CORE::Get<CollisionSystem>()->SetIgnore(eColLayer::LAYER_2, eColLayer::LAYER_1, false);
 		}
         return true; 
@@ -1834,6 +1869,12 @@ namespace Dystopia
             owner->mNextState = eIdling;
         }
 
+        if (owner->mfDeathCounter < 2.0f)
+        {
+        	auto CamAi = EngineCore::Get<SceneSystem>()->FindGameObject("CameraAI");
+            CharacterController_MSG::SendExternalMessage(CamAi, "SetNewTarget", owner->spawnPos);
+        }
+
         if (owner->mbLanded)
         {
             owner->mpBody->SetAngularVel({0,0,0});
@@ -1858,8 +1899,6 @@ namespace Dystopia
 
         owner->mfDeathCounter = 4.0f;
         owner->mbDisableControls = true;
-        CORE::Get<CollisionSystem>()->SetIgnore(eColLayer::LAYER_2, eColLayer::LAYER_1, true);
-
         if (owner->mbFaceRight)
         {
             owner->mpBody->ApplyAngularImpulse({0,0,10.f*owner->mpBody->GetMass()});
@@ -1870,13 +1909,15 @@ namespace Dystopia
         }
             
         owner->mpBody->SetFixedRotation(false);
-         owner->mpBody->SetActive(false);
+		owner->mpBody->SetActive(false);
+
+        //CharacterController_MSG::SendAllMessage("SetPlayerDeath", true);
         return true;
     }
     bool CharacterController::Death::OnExitState(float)
     { 
         owner->GetOwner()->GetComponent<Transform>()->SetGlobalPosition(owner->spawnPos);
-        //CORE::Get<CollisionSystem>()->SetIgnore(eColLayer::LAYER_2, eColLayer::LAYER_1, false);
+        owner->mpBody->SetActive(true);        
         owner->mbDisableControls = false;
         owner->mbDying = false;
         CORE::Get<TimeSystem>()->SetTimeScale(1.0f);
@@ -1886,7 +1927,7 @@ namespace Dystopia
         owner->GetOwner()->GetComponent<Transform>()->SetRotation(Math::Radians{0});
         owner->mpBody->SetFixedRotation(true);
         if (owner->mpHealthBar)
-            CharacterController_MSG::SendExternalMessage(owner->mpHealthBar, "GoToHealthPercentage", owner->mfCurrHealth/owner->mfMaxHealth);
+                    CharacterController_MSG::SendExternalMessage(owner->mpHealthBar, "GoToHealthPercentage", owner->mfCurrHealth/owner->mfMaxHealth);
 
         GameObject* uiFader = nullptr;
         auto& uiChild = owner->mpUICam->GetComponent<Transform>()->GetAllChild();
@@ -1900,7 +1941,12 @@ namespace Dystopia
         {
             CharacterController_MSG::SendExternalMessage(uiFader, "StartFadeReverse");
         }
-         owner->mpBody->SetActive(true);
+
+        auto CamAi = EngineCore::Get<SceneSystem>()->FindGameObject("CameraAI");
+        CharacterController_MSG::SendExternalMessage(CamAi, "ResetTarget");
+        //CharacterController_MSG::SendAllMessage("SetPlayerDeath", false);
+
+
         return true;
     }
      //Duck

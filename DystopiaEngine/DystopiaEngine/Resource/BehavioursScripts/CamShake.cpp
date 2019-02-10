@@ -125,7 +125,7 @@ namespace Dystopia
 
 	}
 
-	void CamShake::FixedUpdate(const float )
+	void CamShake::FixedUpdate(const float _fDeltaTime)
 	{
 	}
 	
@@ -146,30 +146,30 @@ namespace Dystopia
 		return Math::Vector3D(GetFloat(1), GetFloat(10), GetFloat(100) * traumaDepthMag);
 	}
 
-	void Dystopia::CamShake::OnCollisionEnter(const CollisionEvent& )
+	void Dystopia::CamShake::OnCollisionEnter(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::CamShake::OnCollisionStay(const CollisionEvent& )
+	void Dystopia::CamShake::OnCollisionStay(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::CamShake::OnCollisionExit(const CollisionEvent& )
+	void Dystopia::CamShake::OnCollisionExit(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::CamShake::OnTriggerEnter(GameObject * const )
+	void Dystopia::CamShake::OnTriggerEnter(GameObject * const _obj)
 	{
 	} 
 
-	void Dystopia::CamShake::OnTriggerStay(GameObject * const )
+	void Dystopia::CamShake::OnTriggerStay(GameObject * const _obj)
 	{
 	}
 
-	void Dystopia::CamShake::OnTriggerExit(GameObject * const )
+	void Dystopia::CamShake::OnTriggerExit(GameObject * const _obj)
 	{
 	}
 
@@ -178,11 +178,11 @@ namespace Dystopia
 		return new CamShake{*this};
 	}
 
-	void CamShake::Serialise(TextSerialiser& ) const
+	void CamShake::Serialise(TextSerialiser& _ser) const
 	{
 	}
 
-	void CamShake::Unserialise(TextSerialiser& )
+	void CamShake::Unserialise(TextSerialiser& _ser)
 	{
 	}
 

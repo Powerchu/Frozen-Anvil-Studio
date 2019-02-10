@@ -97,7 +97,8 @@ namespace Dystopia
         mbImpactShow{false},
         mbImpactFadeOut{false},
         mpImpactUI{nullptr},
-		mpPlayer{nullptr}
+		mpPlayer{nullptr},
+		mpUICam{nullptr}
 	{
 	}
 
@@ -112,6 +113,7 @@ namespace Dystopia
 		mpStamina = nullptr;
         mpImpactUI = nullptr;
 		mpPlayer = nullptr;
+		mpUICam = nullptr;
 		mbInForce = true;
         mbImpactShow = mbImpactFadeOut = false;
 		mnCombatCounter = 0;
@@ -134,6 +136,8 @@ namespace Dystopia
 		mpStamina = nullptr;
         mbImpactShow = mbImpactFadeOut = false;
 		mpPlayer = EngineCore::Get<SceneSystem>()->FindGameObject("CharacterController");
+        mpUICam = EngineCore::Get<SceneSystem>()->FindGameObject("Combat Counter");
+
 		auto& children = GetOwner()->GetComponent<Transform>()->GetAllChild();
 		for (auto& c : children)
 		{
@@ -209,7 +213,9 @@ namespace Dystopia
 		{
 			if (auto tr = mpCombatCount->GetComponent<TextRenderer>())
 			{
-				tr->SetText(std::to_string(mnCombatCounter).c_str());
+				std::string combo{"x"};
+				combo += std::to_string(mnCombatCounter);
+				tr->SetText(combo.c_str());
 				mfCounterDt += _dt;
 				
 				if (mfCounterDt >= mfCounterDuration)
@@ -325,19 +331,8 @@ namespace Dystopia
 				if (auto shader = CORE::Get<ShaderSystem>()->GetShader("Health Bar"))
 				{
 					sr->SetShader(shader);
-
-					if (Math::ApproxEq(mfCurStamina, 1.f))
-					{
-						sr->SetManualShaderOverride("fHealth", 1.1f);
-						sr->SetManualShaderOverride("fRedZone", 1.1f);
-					}
-					else
-					{
-						sr->SetManualShaderOverride("fHealth", mfCurStamina);
-						sr->SetManualShaderOverride("fRedZone", mfCurStamina);
-					}
-
-
+					sr->SetManualShaderOverride("fHealth", Math::ApproxEq(mfCurStamina, 1.f) ? 1.1f : mfCurStamina);
+					sr->SetManualShaderOverride("fRedZone", Math::ApproxEq(mfCurStamina, 1.f) ? 1.1f : mfCurStamina);
 					sr->SetManualShaderOverride("fWave", mfAccuDt);
 					sr->SetManualShaderOverride("vColor", Math::Vec4{1,1,1,1});
 					sr->SetManualShaderOverride("vDmgCol", Math::Vec4{1,1,1,1});
@@ -433,17 +428,18 @@ namespace Dystopia
 		
 	void PlayerUIController::SetCounter(unsigned _n)
 	{
+		PlayerUIController_MSG::SendExternalMessage(mpUICam, "InvokeShake", .5f, 45.0f, 20.0f, 2.0f);
+
 		mnCombatCounter = _n;
 		mbShowCounter = true;
 		mbFadeCounter = false;
 		mfCounterDt = 0.f;
 		
-		if (mpCombatCount)
-			if (auto tr = mpCombatCount->GetComponent<TextRenderer>())
-			{
-				tr->SetAlpha(1.f);
-				tr->SetActive(true);
-			}
+		if (auto tr = mpCombatCount->GetComponent<TextRenderer>())
+		{
+			tr->SetAlpha(1.f);
+			tr->SetActive(true);
+		}
 	}
     
     void PlayerUIController::TakeImpact(void)

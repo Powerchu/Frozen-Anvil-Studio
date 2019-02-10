@@ -94,8 +94,8 @@ namespace Dystopia
 
 	void CharacterHitBox::Update(const float)
 	{
-		mnEnemyCount    = static_cast<int>(mArrFoundEnemies.size());
-		mnInteractCount = static_cast<int>(mArrInteractable.size());
+		mnEnemyCount = mArrFoundEnemies.size();
+		mnInteractCount = mArrInteractable.size();
 	}
 
 	void CharacterHitBox::FixedUpdate(const float)

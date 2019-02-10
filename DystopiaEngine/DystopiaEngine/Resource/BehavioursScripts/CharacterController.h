@@ -332,6 +332,9 @@ namespace Dystopia
         int mnRunningCheck;
         unsigned mnHitCounter;
 
+        bool GodMode = false;
+        bool GodStam = false;
+
         Math::Vector3D orgOffset;
         Math::Vector3D orgScale; 
         Math::Vector3D orgOffsetC;
@@ -384,7 +387,7 @@ namespace Dystopia
   Uncomment the line PP_REFLECT and add in the names of the variable you want to show
   Comment out PP_REFLECT_EMPTY.
 */
-PP_REFLECT_STUFF(Dystopia::CharacterController, mbDisableControls,  mnPriorityDir, mbFaceRight, mfTimer, mfMaxSpeed, mfJumpStrength, mfAirMovementScalerForward, mfAirMovementScalerBackward, mnStateDebug, mfAttackDelay, mfCastingDelay, mfRollDelay, mfFlinchDelay, mfLandDelay, mfAnimSpdIdle, mfAnimSpdRunning, mfAnimSpdJumping, mfAnimSpdFalling, mbSpammedAttack, mbIsInForce, mbSpammedCast, mfAttackPower, mfAttackKnockback, mfAttackPushfoward, mfAnalogSens, mfRollForce, mfInvulTimer, mfMaxHealth, mfCurrHealth, mfMaxMana, mfCurrMana, mfRollCost, mnRunningCheck, mfInternalForceMultiplier, mbCanDoubleJump, mfManaRegen, mfHealthRegen, mfDeathCounter, mfComboTimer);
+PP_REFLECT_STUFF(Dystopia::CharacterController, mbDisableControls,  mnPriorityDir, mbFaceRight, mfTimer, mfMaxSpeed, mfJumpStrength, mfAirMovementScalerForward, mfAirMovementScalerBackward, mnStateDebug, mfAttackDelay, mfCastingDelay, mfRollDelay, mfFlinchDelay, mfLandDelay, mfAnimSpdIdle, mfAnimSpdRunning, mfAnimSpdJumping, mfAnimSpdFalling, mbSpammedAttack, mbIsInForce, mbSpammedCast, mfAttackPower, mfAttackKnockback, mfAttackPushfoward, mfAnalogSens, mfRollForce, mfInvulTimer, mfMaxHealth, mfCurrHealth, mfMaxMana, mfCurrMana, mfRollCost, mnRunningCheck, mfInternalForceMultiplier, mbCanDoubleJump, mfManaRegen, mfHealthRegen, mfDeathCounter, mfComboTimer, GodMode, GodStam);
 
 #endif //_CharacterController_H_
 

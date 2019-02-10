@@ -37,6 +37,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/Collider.h"
 #include "Component/AudioSource.h"
 
+#include <random>
+
 #define A_GOBLIN_FLINCH "goblin_flinch.wav"
 #define A_GOBLIN_HIT "EnemyHit.wav"
 
@@ -113,12 +115,16 @@ namespace Dystopia
                 }
             }
         }
+		PrimativeEnemy_MSG::SendExternalMessage(GetOwner(), "SetMaxHealth", mfMaximumHealth);
+
 	}
 
 	void PrimativeEnemy::Update(const float _f)
 	{
         if (mbUsePrimitiveUI)
             UpdatePrimitiveUI(_f);
+
+		PrimativeEnemy_MSG::SendExternalMessage(GetOwner(), "SetCurrHealth", mfCurrentHealth);
 	}
 
 	void PrimativeEnemy::GameObjectDestroy(void)
@@ -208,9 +214,27 @@ namespace Dystopia
 			mbIsDead = true;
 			GetOwner()->Destroy();
 		}
+		auto pos = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
+		pos.z = 5.f;
+        auto hit = EngineCore::Get<SceneSystem>()->Instantiate("SlashInd.dobj", pos);
+
+		std::random_device rd;
+		std::mt19937 gen(rd());
+    	std::uniform_int_distribution<> dis(0, 45);
+		auto ang = static_cast<float>(dis(gen));
+
+		hit->GetComponent<Transform>()->SetRotation(Math::Quaternion::FromEuler(0_rad,0_rad,Math::Degrees{ang}));
 
 		if (mpPlayer)
 			PrimativeEnemy_MSG::SendExternalMessage(mpPlayer, "IncreaseCombo");
+
+		if (auto o = EngineCore::Get<SceneSystem>()->FindGameObject_cstr("BossUI"))
+		{
+			DEBUG_PRINT(eLog::MESSAGE, "HLELO");
+			PrimativeEnemy_MSG::SendExternalMessage(o, "BossGoToHealthPercentage", mfCurrentHealth/mfMaximumHealth);
+			PrimativeEnemy_MSG::SendExternalMessage(o, "InvokeShake", .5f, 45.0f, 20.0f, 2.0f);
+
+		}
 	}
 	
 	void PrimativeEnemy::TakeForce(float _force, Math::Vec2 _dir)

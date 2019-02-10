@@ -89,7 +89,7 @@ namespace Dystopia
 
 		auto mContBlackboard = mController->GetBlackboard();		 
 		const auto& root = NeuralTree::Builder()     
-			.composite<NeuralTree::Selector>() // root   
+			.composite<NeuralTree::RandomSelector>() // root   
 				.composite<NeuralTree::Selector>()
 					.task<CheckHealth>(mContBlackboard,200.f) 
 					.decorator<NeuralTree::Inverter>()
@@ -102,7 +102,7 @@ namespace Dystopia
 				.composite<NeuralTree::Selector>() 
 					.task<CheckHealth>(mContBlackboard, 50.f)
 					.decorator<NeuralTree::Inverter>() 
-						.composite<NeuralTree::Selector>()
+						.composite<NeuralTree::RandomSelector>()
 							.composite<NeuralTree::Sequence>()
 								.task<Move>(mContBlackboard)
 								.task<Melee>(mContBlackboard) 
@@ -119,6 +119,17 @@ namespace Dystopia
 
 		mController->SetTree(root); 
 	}  
+
+	void BossAI::SetMaxHealth(float _hp)
+	{
+		maxHealth = _hp;
+		currHealth = maxHealth;
+	}
+
+	void BossAI::SetCurrHealth(float _hp)
+	{
+		currHealth = _hp;
+	}
 
 	void BossAI::Init() 
 	{
@@ -140,10 +151,20 @@ namespace Dystopia
 		mContBlackboard->SetFloat("Dist Target", _dist);
 		mContBlackboard->SetObject("Self", GetOwner()->GetID());  
 		mContBlackboard->SetObject("CharacterController", Target->GetID());
+		mContBlackboard->SetFloat("Health", currHealth);
+
 		//mContBlackboard->SetObject("Flame", Flame->GetID());
-	    if (Math::Abs(_dist) <= mContBlackboard->GetFloat("Alert Range"))
-			if (auto o = EngineCore::Get<SceneSystem>()->FindGameObject_cstr("CharacterController"))
-				BossAI_MSG::SendExternalMessage(o, "FadeHUD", true);
+	    if (Math::Abs(_dist) <= mContBlackboard->GetFloat("Alert Range") && !HasShownHP)
+		{
+			if (auto o = EngineCore::Get<SceneSystem>()->FindGameObject_cstr("B_Health"))
+				BossAI_MSG::SendExternalMessage(o, "StartFadeReverse");
+			if (auto o = EngineCore::Get<SceneSystem>()->FindGameObject_cstr("B_UI_BG"))
+				BossAI_MSG::SendExternalMessage(o, "StartFadeReverse");
+			if (auto o = EngineCore::Get<SceneSystem>()->FindGameObject_cstr("B_Name"))
+				BossAI_MSG::SendExternalMessage(o, "StartFadeReverse");
+
+			HasShownHP = true;
+		}
 	}
 
 	void BossAI::FixedUpdate(const float )

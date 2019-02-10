@@ -169,17 +169,17 @@ namespace Dystopia
 		Behaviour::GameObjectDestroy();
 	}
 
-	void Dystopia::FormSpikeChild::OnCollisionEnter(const CollisionEvent& )
+	void Dystopia::FormSpikeChild::OnCollisionEnter(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::FormSpikeChild::OnCollisionStay(const CollisionEvent& )
+	void Dystopia::FormSpikeChild::OnCollisionStay(const CollisionEvent& _colEvent)
 	{
 
 	}
 
-	void Dystopia::FormSpikeChild::OnCollisionExit(const CollisionEvent& )
+	void Dystopia::FormSpikeChild::OnCollisionExit(const CollisionEvent& _colEvent)
 	{
 
 	}
@@ -201,7 +201,7 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::FormSpikeChild::OnTriggerExit(GameObject * const )
+	void Dystopia::FormSpikeChild::OnTriggerExit(GameObject * const _obj)
 	{
 	}
 
@@ -288,7 +288,7 @@ namespace Dystopia
 		if (_obj && !(_obj->GetFlags() & FLAG_REMOVE))
 		{
 			FormSpikeChild_MSG::SendExternalMessage(_obj, "TakeDamage", mfCastDamage);
-            float growth = static_cast<float>(mnSpikeID == 1 ? 0.6 : mnSpikeID == 2 ? 0.8f : mnSpikeID == 3 ? 1.f : 0.f);
+            float growth = mnSpikeID == 1 ? 0.6 : mnSpikeID == 2 ? 0.8f : mnSpikeID == 3 ? 1.f : 0.f;
 			FormSpikeChild_MSG::SendExternalMessage(_obj, "TakeForce", mfCastKnockback * growth, mForceDir);
 		}
 	}
