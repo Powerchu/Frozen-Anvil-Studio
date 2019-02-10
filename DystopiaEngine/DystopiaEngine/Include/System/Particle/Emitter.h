@@ -11,11 +11,9 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _PARTICLE_EMITTER_H_
-#define _PARTICLE_EMITTER_H_
+#ifndef _EMITTER_H_
+#define _EMITTER_H_
 
-#include "Component/Component.h"
-#include "Component/ComponentList.h"
 #include "System/Particle/Particle.h"
 #include "System/Particle/ParticleAffector.h"
 
@@ -32,24 +30,13 @@ namespace Dystopia
 	class Shader;
 	class Texture;
 	class ParticleSystem;
+	class ParticleEmitter;
 	struct ParticleAffector;
 
-	class _DLL_EXPORT Emitter : public Component
+	class Emitter
 	{
 	public:
-		using SYSTEM = ParticleSystem;
-		unsigned GetComponentType(void) const
-		{
-			return Ut::MetaFind_t<Ut::Decay_t<decltype(*this)>, AllComponents>::value;
-		};
-		unsigned GetRealComponentType(void) const
-		{
-			return Ut::MetaFind_t<Ut::Decay_t<decltype(*this)>, UsableComponents>::value;
-		};
-		static const std::string GetCompileName(void) { return "Particle Emitter"; }
-		const std::string GetEditorName(void) const { return GetCompileName(); }
-
-		Emitter(void) noexcept;
+		explicit Emitter(ParticleEmitter* _owner) noexcept;
 		Emitter(const Emitter&) noexcept;
 		~Emitter(void) noexcept;
 
@@ -79,17 +66,19 @@ namespace Dystopia
 		AutoArray<float>& GetInitialLifetime(void) noexcept;
 		AutoArray<float>& GetLifetime(void) noexcept;
 		AutoArray<Math::Vec4>& GetColour(void) noexcept;
-		AutoArray<Math::Vec4>& GetPosition(void) noexcept;
 		AutoArray<Math::Vec3>& GetVelocity(void) noexcept;
 		AutoArray<Math::Vec3>& GetAcceleration(void) noexcept;
+
+		template <typename Ty>
+		inline auto GetAffector(void) noexcept -> Ut::EnableIf_t<std::is_base_of_v<ParticleAffector, Ty>, Ty* const>;
+
 		AutoArray<ParticleAffector>& GetSpawnAffectors(void) noexcept;
 		AutoArray<ParticleAffector>& GetUpdateAffectors(void) noexcept;
 		AutoArray<ParticleAffector>& GetFixedUpdateAffectors(void) noexcept;
 
-		Emitter * Duplicate(void) const;
-		void Serialise(TextSerialiser&) const override;
-		void Unserialise(TextSerialiser&) override;
-		void EditorUI(void) noexcept override;
+		void Serialise(TextSerialiser&) const noexcept;
+		void Unserialise(TextSerialiser&) noexcept;
+		void EditorUI(void) noexcept;
 
 
 	private:
@@ -104,6 +93,7 @@ namespace Dystopia
 		AutoArray<ParticleAffector> mSpawn;
 		AutoArray<ParticleAffector> mUpdate;
 		AutoArray<ParticleAffector> mFixedUpdate;
+		AutoArray<ParticleAffector> mDeath;
 
 		GfxParticle mParticle;
 
@@ -118,6 +108,8 @@ namespace Dystopia
 
 		bool mbUpdatedPositions;
 
+		template <typename Ty, typename U>
+		bool AffectorExists(Ty&, U);
 
 		template <typename Ty>
 		void AddAffector(Ty&&, AffectorTag::OnSpawn) noexcept;
@@ -125,6 +117,8 @@ namespace Dystopia
 		void AddAffector(Ty&&, AffectorTag::OnUpdate) noexcept;
 		template <typename Ty>
 		void AddAffector(Ty&&, AffectorTag::OnFixedUpdate) noexcept;
+		template <typename Ty>
+		void AddAffector(Ty&&, AffectorTag::OnDeath) noexcept;
 	};
 }
 
@@ -141,34 +135,67 @@ inline auto Dystopia::Emitter::AddAffector(Ty&& _affector) noexcept -> Ut::Enabl
 	AddAffector(Ut::Fwd<Ty>(_affector), typename Ut::RemoveRef_t<Ty>::UPDATE{});
 }
 
+template<typename Ty>
+inline auto Dystopia::Emitter::GetAffector(void) noexcept -> Ut::EnableIf_t<std::is_base_of_v<ParticleAffector, Ty>, Ty* const>
+{
+	static const auto finder = [](AutoArray<ParticleAffector>& pool) -> Ty* {
+		for (auto& e : pool)
+			if (Ut::MetaFind_t<Ty, AffectorList>::value == e.GetID())
+				return static_cast<Ty*>(&e);
+		return { nullptr };
+	};
+
+	if constexpr (Ut::IsSame<AffectorTag::OnSpawn, typename Ty::UPDATE>::value)
+		return finder(mSpawn);
+
+	else if constexpr (Ut::IsSame<AffectorTag::OnUpdate, typename Ty::UPDATE>::value)
+		return finder(mUpdate);
+
+	else if constexpr (Ut::IsSame<AffectorTag::OnFixedUpdate, typename Ty::UPDATE>::value)
+		return finder(mFixedUpdate);
+
+	else if (Ut::IsSame<AffectorTag::OnDeath, typename Ty::UPDATE>::value)
+		return finder(mDeath);
+
+	return { nullptr };
+}
+
+template<typename Ty, typename U>
+inline bool Dystopia::Emitter::AffectorExists(Ty& _arr, U _nID)
+{
+	for (auto& e : _arr)
+		if (e.GetID() == _nID)
+			return true;
+
+	return false;
+}
+
 template <typename Ty>
 inline void Dystopia::Emitter::AddAffector(Ty&& _affector, AffectorTag::OnSpawn) noexcept
 {
-	for (auto& e : mSpawn)
-		if (_affector.GetID() == e.GetID())
-			return;
-
-	mSpawn.EmplaceBack(Ut::Fwd<Ty>(_affector));
+	if (!AffectorExists(mSpawn, _affector.GetID()))
+		mSpawn.EmplaceBack(Ut::Fwd<Ty>(_affector));
 }
 
 template <typename Ty>
 inline void Dystopia::Emitter::AddAffector(Ty&& _affector, AffectorTag::OnUpdate) noexcept
 {
-	for (auto& e : mUpdate)
-		if (_affector.GetID() == e.GetID())
-			return;
-
-	mUpdate.EmplaceBack(Ut::Fwd<Ty>(_affector));
+	if (!AffectorExists(mUpdate, _affector.GetID()))
+		mUpdate.EmplaceBack(Ut::Fwd<Ty>(_affector));
 }
 
 template <typename Ty>
 inline void Dystopia::Emitter::AddAffector(Ty&& _affector, AffectorTag::OnFixedUpdate) noexcept
 {
-	for (auto& e : mFixedUpdate)
-		if (_affector.GetID() == e.GetID())
-			return;
+	if (!AffectorExists(mFixedUpdate, _affector.GetID()))
+		mFixedUpdate.EmplaceBack(Ut::Fwd<Ty>(_affector));
+}
 
-	mFixedUpdate.EmplaceBack(Ut::Fwd<Ty>(_affector));
+template <typename Ty>
+inline void Dystopia::Emitter::AddAffector(Ty&& _affector, AffectorTag::OnDeath) noexcept
+{
+	if (!AffectorExists(mDeath, _affector.GetID()))
+		mDeath.EmplaceBack(Ut::Fwd<Ty>(_affector));
 }
 
 

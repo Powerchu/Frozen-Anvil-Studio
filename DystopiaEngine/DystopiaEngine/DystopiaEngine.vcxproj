@@ -31,6 +31,7 @@
     <ClCompile Include="Include\IO\XMLParser.cpp" />
     <ClCompile Include="Source\System\Particle\AccelerationAffector.cpp" />
     <ClCompile Include="Source\System\Particle\ColorAffector.cpp" />
+    <ClCompile Include="Source\System\Particle\Emitter.cpp" />
     <ClCompile Include="Source\System\Particle\LifetimeAffector.cpp" />
     <ClCompile Include="Source\System\Particle\LocationAffector.cpp" />
     <ClCompile Include="Source\System\Particle\ParticleAffector.cpp" />
@@ -43,7 +44,7 @@
     <ClCompile Include="Source\Component\Colliders\PointCollider.cpp" />
     <ClCompile Include="Source\Component\Colliders\RayCollider.cpp" />
     <ClCompile Include="Source\Allocator\StackAlloc.cpp" />
-    <ClCompile Include="Source\Component\Particle\Emitter.cpp" />
+    <ClCompile Include="Source\Component\Particle\ParticleEmitter.cpp" />
     <ClCompile Include="Source\DataStructure\OString.cpp" />
     <ClCompile Include="Source\Editor\BehaviourTreeEditor.cpp" />
     <ClCompile Include="Source\Editor\CommandTypes.cpp" />
@@ -284,9 +285,10 @@
     <ClInclude Include="Include\System\Graphics\ShaderProgram.h" />
     <ClInclude Include="Include\System\Graphics\TextureAtlas.h" />
     <ClInclude Include="Include\System\Logger\FileLogger.h" />
-    <ClInclude Include="Include\Component\Emitter.h" />
+    <ClInclude Include="Include\Component\ParticleEmitter.h" />
     <ClInclude Include="Include\System\Particle\AccelerationAffector.h" />
     <ClInclude Include="Include\System\Particle\ColorAffector.h" />
+    <ClInclude Include="Include\System\Particle\Emitter.h" />
     <ClInclude Include="Include\System\Particle\LifetimeAffector.h" />
     <ClInclude Include="Include\System\Particle\LocationAffector.h" />
     <ClInclude Include="Include\System\Particle\Particle.h" />

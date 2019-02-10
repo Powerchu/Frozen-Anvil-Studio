@@ -21,7 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Time/ScopedTimer.h"
 #include "System/Profiler/ProfilerAction.h"
 
-#include "Component/Emitter.h"
+#include "Component/ParticleEmitter.h"
 #include "Component/Camera.h"
 #include "Object/GameObject.h"
 

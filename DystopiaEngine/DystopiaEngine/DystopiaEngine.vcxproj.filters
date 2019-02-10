@@ -388,9 +388,6 @@
     <ClCompile Include="Include\System\Database\DataSheet.cpp">
       <Filter>Game Engine\Systems\Database</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Component\Particle\Emitter.cpp">
-      <Filter>Game Engine\Components\Emitter</Filter>
-    </ClCompile>
     <ClCompile Include="Source\System\Particle\ParticleSystem.cpp">
       <Filter>Game Engine\Systems\Particle\ParticleSystem</Filter>
     </ClCompile>
@@ -432,6 +429,12 @@
     </ClCompile>
     <ClCompile Include="Source\System\Particle\AccelerationAffector.cpp">
       <Filter>Game Engine\Systems\Particle\Affectors\Acceleration</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Component\Particle\ParticleEmitter.cpp">
+      <Filter>Game Engine\Components\Emitter</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Particle\Emitter.cpp">
+      <Filter>Game Engine\Systems\Particle\Emitter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1125,9 +1128,6 @@
     <ClInclude Include="Include\System\Particle\ParticleSystem.h">
       <Filter>Game Engine\Systems\Particle\ParticleSystem</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Component\Emitter.h">
-      <Filter>Game Engine\Components\Emitter</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Utility\MetaBind.h">
       <Filter>Utility\Meta\Functions</Filter>
     </ClInclude>
@@ -1187,6 +1187,12 @@
     </ClInclude>
     <ClInclude Include="Include\System\Collision\CollisionLayers.h">
       <Filter>Game Engine\Systems\Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Particle\Emitter.h">
+      <Filter>Game Engine\Systems\Particle\Emitter</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\Component\ParticleEmitter.h">
+      <Filter>Game Engine\Components\Emitter</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1705,6 +1711,9 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Particle\Affectors\Acceleration">
       <UniqueIdentifier>{ca83b01c-c483-46c9-a9ae-a4306b9ba01e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Particle\Emitter">
+      <UniqueIdentifier>{48d5155a-1ed9-4911-817a-cfc4db59da86}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -11,10 +11,7 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#include "Component/Emitter.h"
-#include "Component/Component.h"
-#include "Component/Transform.h"
-#include "Object/GameObject.h"
+#include "System/Particle/Emitter.h"
 
 #include "System/Driver/Driver.h"
 #include "System/Particle/ParticleAffector.h"
@@ -47,7 +44,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 Dystopia::Emitter::Emitter(void) noexcept
 	: mColour{}, mPosition{}, mVelocity{}, mAccel{}, mLifetime{}, mSpawnCount{},
 	mSpawn{}, mUpdate{}, mFixedUpdate{}, mpShader{ nullptr }, mpTexture{ nullptr },
-	mInitialLife{}, mbUpdatedPositions{ false }, mTextureName{ "EditorStartup.png" }, 
+	mInitialLife{}, mbUpdatedPositions{ false }, mTextureName{ "EditorStartup.png" },
 	mShaderName{ "Default Particle" }, mnParticleLimit{ 1000 }
 {
 	glGenVertexArrays(1, &mVAO);
@@ -65,11 +62,11 @@ Dystopia::Emitter::Emitter(void) noexcept
 }
 
 Dystopia::Emitter::Emitter(Dystopia::Emitter const& _rhs) noexcept
-	: mColour{ _rhs.mColour }, mPosition{ _rhs.mPosition }, mVelocity{ _rhs.mVelocity }, mAccel{ _rhs.mAccel }, 
+	: mColour{ _rhs.mColour }, mPosition{ _rhs.mPosition }, mVelocity{ _rhs.mVelocity }, mAccel{ _rhs.mAccel },
 	mLifetime{ _rhs.mLifetime }, mSpawnCount{ _rhs.mSpawnCount },
-	mSpawn{ _rhs.mSpawn }, mUpdate{ _rhs.mUpdate }, mFixedUpdate{ _rhs.mFixedUpdate }, 
+	mSpawn{ _rhs.mSpawn }, mUpdate{ _rhs.mUpdate }, mFixedUpdate{ _rhs.mFixedUpdate },
 	mpShader{ _rhs.mpShader }, mpTexture{ _rhs.mpTexture },
-	mInitialLife{ _rhs.mInitialLife }, mTextureName{ _rhs.mTextureName }, 
+	mInitialLife{ _rhs.mInitialLife }, mTextureName{ _rhs.mTextureName },
 	mShaderName{ _rhs.mTextureName }, mnParticleLimit{ _rhs.mnParticleLimit }
 {
 	glGenVertexArrays(1, &mVAO);
@@ -119,16 +116,16 @@ void Dystopia::Emitter::Init(void)
 
 	mbUpdatedPositions = false;
 
-	mColour  .clear();
+	mColour.clear();
 	mPosition.clear();
 	mVelocity.clear();
-	mAccel   .clear();
+	mAccel.clear();
 	mLifetime.clear();
 
-	mColour  .reserve(mParticle.mnLimit);
+	mColour.reserve(mParticle.mnLimit);
 	mPosition.reserve(mParticle.mnLimit);
 	mVelocity.reserve(mParticle.mnLimit);
-	mAccel   .reserve(mParticle.mnLimit);
+	mAccel.reserve(mParticle.mnLimit);
 	mLifetime.reserve(mParticle.mnLimit);
 	mInitialLife.reserve(mParticle.mnLimit);
 
@@ -138,7 +135,7 @@ void Dystopia::Emitter::Init(void)
 	}
 	if (!mpTexture)
 	{
-		mpTexture = CORE::Get<TextureSystem>()->LoadTexture(CORE::Get<FileSystem>()->FindFilePath(mTextureName.c_str(),eFileDir::eResource).c_str());
+		mpTexture = CORE::Get<TextureSystem>()->LoadTexture(CORE::Get<FileSystem>()->FindFilePath(mTextureName.c_str(), eFileDir::eResource).c_str());
 	}
 
 	Bind();
@@ -164,10 +161,10 @@ void Dystopia::Emitter::Init(void)
 void Dystopia::Emitter::FixedUpdate(float _fDT)
 {
 #if defined(_OPENMP)
-	long long l = mPosition.size();
+	long long const l = mPosition.size();
 
 #	pragma omp parallel for
-	for(long long n = 0; n < l; ++n)
+	for (long long n = 0; n < l; ++n)
 	{
 		mVelocity[n] += mAccel[n] * _fDT;
 	}
@@ -221,7 +218,15 @@ void Dystopia::Emitter::UploadPositionBuffer(void) const noexcept
 
 	//for (size_t n = 0; n < mPosition.size(); ++n)
 	//	static_cast<Math::Vec4*>(MapPtr)[n] = *(mPosition.begin() + n);
-	std::memcpy(MapPtr, mPosition.begin(), mPosition.size() * sizeof(Math::Vec4));
+
+#if defined(_OPENMP)
+	long long const lim = mPosition.size();
+#	pragma omp parallel for
+	for (long long n = 0; n < lim; ++n)
+		static_cast<Math::Vec4*>(MapPtr)[n] = *(mPosition.begin() + n);
+#else
+	std::memcpy(MapPtr, mPosition.begin(), mPosition.size() * sizeof(Math::Vec4));	std::memcpy(MapPtr, mColour.begin(), mColour.size() * sizeof(Math::Vec4));
+#endif
 
 	glUnmapBuffer(GL_ARRAY_BUFFER);
 
@@ -233,12 +238,15 @@ void Dystopia::Emitter::UploadColourBuffer(void) const noexcept
 	ScopedTimer<ProfilerAction> timeKeeper{ "Emitter", "Colour Upload" };
 	glBindBuffer(GL_ARRAY_BUFFER, mColourBuffer);
 	auto MapPtr = glMapBufferRange(GL_ARRAY_BUFFER, 0, mColour.size() * sizeof(Math::Vec4), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT);
-	long long const lim = mColour.size();
 
-//#	pragma omp parallel for
-//	for (long long n = 0; n < lim; ++n)
-//		static_cast<Math::Vec4*>(MapPtr)[n] = *(mColour.begin() + n);
+#if defined(_OPENMP)
+	long long const lim = mColour.size();
+#	pragma omp parallel for
+	for (long long n = 0; n < lim; ++n)
+		static_cast<Math::Vec4*>(MapPtr)[n] = *(mColour.begin() + n);
+#else
 	std::memcpy(MapPtr, mColour.begin(), mColour.size() * sizeof(Math::Vec4));
+#endif
 
 	glUnmapBuffer(GL_ARRAY_BUFFER);
 }
@@ -253,16 +261,16 @@ void Dystopia::Emitter::KillParticle(unsigned _nIdx) noexcept
 	DEBUG_ASSERT(!mSpawnCount, "Particle System Error: No particles to kill!");
 	--mSpawnCount;
 
-	mLifetime   .FastRemove(_nIdx);
+	mLifetime.FastRemove(_nIdx);
 
 	mColour[_nIdx].w = 0;
-	mColour     .FastRemove(_nIdx);
+	mColour.FastRemove(_nIdx);
 
-	mAccel      .FastRemove(_nIdx);
-	mVelocity   .FastRemove(_nIdx);
+	mAccel.FastRemove(_nIdx);
+	mVelocity.FastRemove(_nIdx);
 
 	mPosition[_nIdx].w = 0;
-	mPosition   .FastRemove(_nIdx);
+	mPosition.FastRemove(_nIdx);
 
 	mInitialLife.FastRemove(_nIdx);
 }
@@ -279,13 +287,13 @@ void Dystopia::Emitter::SpawnParticle(void) noexcept
 		auto transform = GetOwner()->GetComponent<Transform>();
 		Math::Vec4 vpos = mParticle.mPos.xyz1;
 		auto pos = transform->GetTransformMatrix() * mParticle.mPos.xyz1;
-		pos.w    = mParticle.mfSize;
+		pos.w = mParticle.mfSize;
 
-		mLifetime   .EmplaceBackUnsafe(mParticle.mfLifeDur);
-		mColour     .EmplaceBackUnsafe(mParticle.mColour  );
-		mAccel      .EmplaceBackUnsafe(mParticle.mAccel   );
-		mVelocity   .EmplaceBackUnsafe(mParticle.mVelocity);
-		mPosition   .EmplaceBackUnsafe(pos                );
+		mLifetime.EmplaceBackUnsafe(mParticle.mfLifeDur);
+		mColour.EmplaceBackUnsafe(mParticle.mColour);
+		mAccel.EmplaceBackUnsafe(mParticle.mAccel);
+		mVelocity.EmplaceBackUnsafe(mParticle.mVelocity);
+		mPosition.EmplaceBackUnsafe(pos);
 		mInitialLife.EmplaceBackUnsafe(mParticle.mfLifeDur);
 
 		mbUpdatedPositions = true;
@@ -364,16 +372,11 @@ AutoArray<Dystopia::ParticleAffector>& Dystopia::Emitter::GetFixedUpdateAffector
 	return mFixedUpdate;
 }
 
-Dystopia::Emitter* Dystopia::Emitter::Duplicate(void) const
-{
-	return static_cast<ComponentDonor<Emitter>*>(CORE::Get<Emitter::SYSTEM>())->RequestComponent(*this);
-}
-
 
 void Dystopia::Emitter::Serialise(TextSerialiser& _out) const
 {
 	_out.InsertStartBlock("Emitter");
-	Component::Serialise(_out);
+
 	if (mpShader)
 		_out << mpShader->GetName();
 	else
@@ -385,9 +388,6 @@ void Dystopia::Emitter::Serialise(TextSerialiser& _out) const
 	_out << mnParticleLimit;
 	_out.InsertEndBlock("Emitter");
 
-
-
-
 	_out.InsertStartBlock("Spawn affectors");
 	_out << mSpawn.size();
 	for (auto& e : mSpawn)
@@ -396,9 +396,6 @@ void Dystopia::Emitter::Serialise(TextSerialiser& _out) const
 	for (auto& e : mSpawn)
 		e.Serialise(_out);
 
-
-
-
 	_out.InsertStartBlock("Update affectors");
 	_out << mUpdate.size();
 	for (auto& e : mUpdate)
@@ -406,9 +403,6 @@ void Dystopia::Emitter::Serialise(TextSerialiser& _out) const
 	_out.InsertEndBlock("Update affectors");
 	for (auto& e : mUpdate)
 		e.Serialise(_out);
-
-
-
 
 	_out.InsertStartBlock("Fixed Update affectors");
 	_out << mFixedUpdate.size();
@@ -422,7 +416,6 @@ void Dystopia::Emitter::Serialise(TextSerialiser& _out) const
 void Dystopia::Emitter::Unserialise(TextSerialiser& _in)
 {
 	_in.ConsumeStartBlock();
-	Component::Unserialise(_in);
 
 	std::string buf;
 	buf.reserve(128);
@@ -502,8 +495,8 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 	if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::ALL_IMG))
 	{
 		cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand(&Emitter::SetTexture, mpTexture),
-										   cmd->MakeFnCommand(&Emitter::SetTexture,
-										   CORE::Get<TextureSystem>()->GetTexture(t->mName.c_str())));
+			cmd->MakeFnCommand(&Emitter::SetTexture,
+				CORE::Get<TextureSystem>()->GetTexture(t->mName.c_str())));
 		EGUI::Display::EndPayloadReceiver();
 	}
 
