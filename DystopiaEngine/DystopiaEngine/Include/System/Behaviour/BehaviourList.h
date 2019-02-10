@@ -52,6 +52,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Resource/BehavioursScripts/WiloShadow.h"
 #include "../Resource/BehavioursScripts/IntroductionScene.h"
 #include "../Resource/BehavioursScripts/CheckPoint.h"
+
+/*Include your header for new behaviour here. Remember to include the
+  behaviour in project. Make sure the behaviour file is in Resource/BehaviourScripts
+  After including, add your behaviour to the BehaviourList below*/
 #endif
 
 #if EDITOR
