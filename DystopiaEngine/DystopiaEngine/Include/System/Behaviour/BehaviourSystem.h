@@ -234,7 +234,7 @@ namespace Dystopia
 				_EDITOR_CATCH(std::exception& e)
 				{
 					_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
-					_EDITOR_CODE(const_cast<GameObject *>(_GameObj)->RemoveComponent(iter.second));
+					_EDITOR_CODE(const_cast<GameObject *>(_GameObj)->RemoveComponent(BehaveElem));
 					_EDITOR_CODE(BehaveElem->DestroyComponent());
 				}
 #else
@@ -258,15 +258,15 @@ namespace Dystopia
 				{
 #if EDITOR
 					/*Try to send Message to other components*/
-					_EDITOR_START_TRY
+					//_EDITOR_START_TRY
 						BehaveElem->ReceiveMessage(_FuncName, Message);
 					/*If behaviour throws, remove it from game object*/
-					_EDITOR_CATCH(std::exception& e)
-					{
-						_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
-						_EDITOR_CODE(const_cast<GameObject *>(_GameObj)->RemoveComponent(iter.second));
-						_EDITOR_CODE(BehaveElem->DestroyComponent());
-					}
+					//_EDITOR_CATCH(std::exception& e)
+					//{
+					//	_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
+					//	_EDITOR_CODE((elem).RemoveComponent(BehaveElem));
+					//	_EDITOR_CODE(BehaveElem->DestroyComponent());
+					//}
 #else
 					BehaveElem->ReceiveMessage(_FuncName, Message);
 

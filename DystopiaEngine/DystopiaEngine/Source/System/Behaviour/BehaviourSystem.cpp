@@ -301,10 +301,9 @@ namespace Dystopia
 							{
 								if (auto ai = x->GetComponent<AiController>())
 								{
-									if (ai->GetTreeAsPtr().GetCtrl() != nullptr)
-										if (ai->GetTreeAsPtr().GetRaw() != nullptr)
-											if (ai->GetTreeAsRef()->IsValidTree())
-												ai->ClearTree();
+									if (ai->GetTreeAsPtr().GetRaw() != nullptr)
+										if (ai->GetTreeAsRef()->IsValidTree())
+											ai->ClearTree();
 								}
 								x->RemoveComponent(iter.second);
 							}
