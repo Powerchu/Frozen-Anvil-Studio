@@ -1,0 +1,222 @@
+[START_GO_PREFAB]
+0,[START_START_GO_DATA]
+1540308480,33,"PlayerUI",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+0.23,0.23,1,-702.947,417.47,5.1,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"PlayerUIController",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+6,
+[END_Behaviour  Meta Count]
+[START_mfSpeed]
+"mfSpeed",
+[END_mfSpeed]
+[START_Member Variable]
+0.4,
+[END_Member Variable]
+[START_mfStamSpeed]
+"mfStamSpeed",
+[END_mfStamSpeed]
+[START_Member Variable]
+1,
+[END_Member Variable]
+[START_mfCounterDuration]
+"mfCounterDuration",
+[END_mfCounterDuration]
+[START_Member Variable]
+1,
+[END_Member Variable]
+[START_mfCounterFadeDuration]
+"mfCounterFadeDuration",
+[END_mfCounterFadeDuration]
+[START_Member Variable]
+1,
+[END_Member Variable]
+[START_mfImpactStay]
+"mfImpactStay",
+[END_mfImpactStay]
+[START_Member Variable]
+0.2,
+[END_Member Variable]
+[START_mfImpactFade]
+"mfImpactFade",
+[END_mfImpactFade]
+[START_Member Variable]
+0.3,
+[END_Member Variable]
+[START_Recursion Counter]
+7,
+[END_Recursion Counter]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+1540308992,33,"BlackBG",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+438.38,160.77,1,-702.947,417.47,5.1,0,0,0,1,1540308480,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+577447936,1,1540308992,"backborder.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+1540309504,33,"GoldRing",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+132.94,132.71,1,-843.224,416.498,5.12,0,0,0,1,1540308480,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+578498048,1,1540309504,"gold ring.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+1540310016,33,"Mode",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+83.03,108.56,1,-843.788,417.188,6.1,0,0,0,1,1540308480,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+578499584,1,1540310016,"Force.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+1540310528,33,"Stamina",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+356.27,153.41,1,-740.132,417.188,6.27,0,0,0,1,1540308480,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+577452544,1,1540310528,"force bar.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+1540311040,33,"Health",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+295.09,69.46,1,-639.16,410.971,6.1,0,0,0,1,1540308480,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+578502656,1,1540311040,"health.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+1540311552,33,"Combat Counter",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+189,189,1,745.483,334.507,10.1,0,0,0,1,1540308480,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+8,578504192,0,1540311552,"Times New Roman.ttf","0",1,0.924377,0.835938,1,1,1,0,0,1,0.924377,0.835938,1,0.5,0.1,0.1,1,0.7,0.2,0.2,1,0.5,0.5,0.5,1,1,
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+1540312064,33,"UI_Hit_Impact",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+2031.7,1269.81,1,0.0549316,-0.0274353,9.1,0,0,0,1,1540308480,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+578505728,0,1540312064,"Hit_Feedback.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,0.488281,0.354767,0.354767,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]

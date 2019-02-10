@@ -1,0 +1,27 @@
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+18446744072044340736,65,"Tree34",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+698.568,871.486,0.999758,12146.1,1170.66,-2.75,0,0,0,1,18446744072862399488,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+18446744072044341760,1,18446744072044340736,"Trees_Outlined.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,12,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_Recursion Counter]
+0,
+[END_Recursion Counter]

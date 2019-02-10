@@ -531,7 +531,7 @@ namespace Dystopia
 			e.mNorm3.Negate<Math::NegateFlag::Y>();
 
 #endif
-			if(GetWorldMatrix()[0] * GetWorldMatrix()[5] < 0.f)
+			if (GetWorldMatrix()[0] * GetWorldMatrix()[5] < 0.f)
 			{
 				e.mNorm3 = -e.mNorm3;
 			}
@@ -912,7 +912,6 @@ namespace Dystopia
 #else
 			EdgeNorm.Negate<Math::NegateFlag::X>();
 #endif
-
 			if (EdgeNorm.MagnitudeSqr() > FLT_EPSILON)
 			{
 				EdgeNorm.Normalise();

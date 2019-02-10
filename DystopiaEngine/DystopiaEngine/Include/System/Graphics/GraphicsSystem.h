@@ -83,6 +83,7 @@ namespace Dystopia
 		void     LoadMesh(const std::string&);
 		Texture* LoadTexture(HashString const&);
 		_DLL_EXPORT Texture* LoadTexture(const char *);
+		_DLL_EXPORT void LoadAllTexture();
 		Texture* LoadFont(const std::string&);
 
 		Framebuffer& GetGameView(void) const noexcept;

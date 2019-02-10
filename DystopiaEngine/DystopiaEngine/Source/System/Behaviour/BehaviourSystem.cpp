@@ -206,6 +206,7 @@ namespace Dystopia
 		}
 #else
 		static constexpr size_t size = Ut::SizeofList<BehaviourList>::value;
+
 		BehaviourSystemHelper::BehaviourSystemFunction<std::make_index_sequence< size >>::Insert();
 
 #endif

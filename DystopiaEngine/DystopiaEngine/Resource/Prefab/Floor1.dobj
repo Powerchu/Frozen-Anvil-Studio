@@ -1,0 +1,30 @@
+[START_GO_PREFAB]
+2,[START_START_GO_DATA]
+779941888,65,"Floor1",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,677.581,96.5625,0,0,0,0,1,189592576,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+4,[START_Convex_Collider]
+1465711616,1,779941888,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,5000,100,1,0,0,0,1,0,256,
+[END_Convex_Collider]
+
+[END_Component]
+[START_Component]
+2,[START_RigidBody]
+16587776,1,779941888,0,0.5,0.5,0.5,0.5,0.7,0,1,0,1,1,0,1,2,0,
+[END_RigidBody]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_Recursion Counter]
+0,
+[END_Recursion Counter]

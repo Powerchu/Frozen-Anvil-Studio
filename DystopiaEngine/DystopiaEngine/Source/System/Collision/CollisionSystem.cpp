@@ -147,6 +147,8 @@ namespace Dystopia
 		{
 #if EDITOR
 			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+#else
+			if (!(elem.GetFlags() & eObjFlag::FLAG_ACTIVE)) continue;
 #endif 
 			if (elem.GetOwner())
 			{
@@ -164,6 +166,8 @@ namespace Dystopia
 		{
 #if EDITOR
 			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+#else
+			if (!(elem.GetFlags() & eObjFlag::FLAG_ACTIVE)) continue;
 #endif 
 			if (elem.GetOwner())
 			{
@@ -182,6 +186,8 @@ namespace Dystopia
 		{
 #if EDITOR
 			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+#else
+			if (!(elem.GetFlags() & eObjFlag::FLAG_ACTIVE)) continue;
 #endif 
 			if (elem.GetOwner())
 			{
@@ -198,6 +204,8 @@ namespace Dystopia
 		{
 #if EDITOR
 			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+#else
+			if (!(elem.GetFlags() & eObjFlag::FLAG_ACTIVE)) continue;
 #endif 
 			if (elem.GetOwner())
 			{
@@ -345,7 +353,7 @@ namespace Dystopia
 				_out << mIgnoreBoolTable[u][i];
 			}
 	}
-
+#if EDITOR
 	void CollisionSystem::EditorUI(void)
 	{
 		static char buffer[256];
@@ -430,7 +438,7 @@ namespace Dystopia
 		}
 
 	}
-
+#endif
 	bool CollisionSystem::AABBvsAABB(Collider * const & _ColA, Collider * const & _ColB) const
 	{
 		const auto col_a = dynamic_cast<AABB * const>(_ColA);
@@ -695,7 +703,8 @@ namespace Dystopia
 		{
 			if (auto isolate = flags & (0x00000001u << count))
 			{
-				if (mIgnoreTable[static_cast<eColLayer>(isolate)] & _Layer2)
+				auto res = mIgnoreTable[static_cast<eColLayer>(isolate)];
+				if (res & _Layer2)
 					return true;
 			}
 		}

@@ -115,10 +115,7 @@ namespace Dystopia
 		HashString mTextureName, mShaderName;
 		unsigned mVAO, mColourBuffer, mPosBuffer;
 
-#if EDITOR
 		int mnParticleLimit;
-#endif
-
 		bool mbUpdatedPositions;
 		bool mbIsAlive;
 
