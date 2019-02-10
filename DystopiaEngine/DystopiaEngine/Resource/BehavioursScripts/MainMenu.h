@@ -220,6 +220,7 @@ namespace Dystopia
 			Howtoplay_Button,
 			Credits_Button,
 			Quit_Button,
+			BlackScreen,
 
 			
 		};

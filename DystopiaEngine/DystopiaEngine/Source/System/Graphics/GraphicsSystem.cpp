@@ -124,7 +124,7 @@ float Dystopia::GraphicsSystem::GetGamma(void) noexcept
 void Dystopia::GraphicsSystem::ToggleVsync(bool _b) noexcept
 {
 	mSettings &= _b ? eGfxSettings::GRAPHICS_ALL : ~eGfxSettings::GRAPHICS_VSYNC;
-
+	mbVsync = _b;
 	pGfxAPI->ToggleVSync(_b);
 }
 

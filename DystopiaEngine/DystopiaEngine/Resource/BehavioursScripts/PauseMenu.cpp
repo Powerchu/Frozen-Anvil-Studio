@@ -570,7 +570,10 @@ namespace Dystopia
 
 		mSFX = EngineCore::Get<SoundSystem>()->GetFX()  != 0;
 		mBGM = EngineCore::Get<SoundSystem>()->GetBGM() != 0;
-
+		if(pObject)
+		{
+			pObject->SetActive(true);
+		}
 		if(mSettingsObjects[SettingsButtons::eSoundFx])
 			mSettingsObjects[SettingsButtons::eSoundFx]->SetActive(mSFX);
 		if(mSettingsObjects[SettingsButtons::eSound])
@@ -642,7 +645,6 @@ namespace Dystopia
 		/*When whatever animation is done, set the pointer to point to the Howtoplay function*/
 		if(pObject)
 		{
-			pObject->SetActive(true);
 			if(auto && p = pObject->GetComponent<SpriteRenderer>())
 			{
 				p->SetAlpha(alpha);

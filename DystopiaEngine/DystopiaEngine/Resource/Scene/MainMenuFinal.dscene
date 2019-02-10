@@ -1,10 +1,10 @@
 [START_Scene]
-623378432,"MainMenuFinal",32,[START_START_GO_DATA]
+623378432,"MainMenuFinal",33,[START_START_GO_DATA]
 2006978048,65,"___Scene_Camera___",0,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-0.877219,0.877219,1,-151.232,98.5839,7.00044,0,0,0,1,18446744073709551615,
+0.99932,0.99932,1,-151.232,98.5839,7.00044,0,0,0,1,18446744073709551615,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -22,7 +22,7 @@
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-1324,710,1,0,0,6,0,0,0,1,18446744073709551615,
+1150,710,1,0,0,6,0,0,0,1,18446744073709551615,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -287,6 +287,15 @@
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
+[START_START_GO_DATA]
+606670848,32,"BlackScreen",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+11500,7100,1,0,0,5.5,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
 [START_ComponentDonor]
 3,
 [END_ComponentDonor End]
@@ -333,7 +342,7 @@
 
 [END_Component End]
 [START_ComponentDonor]
-27,
+28,
 [END_ComponentDonor End]
 [START_Component]
 [START_Renderer]
@@ -578,6 +587,15 @@
 [END_Sprite Renderer]
 
 [END_Component End]
+[START_Component]
+[START_Renderer]
+1444485632,0,606670848,"white.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,0,0,0,0.784314,
+[END_Sprite Renderer]
+
+[END_Component End]
 [START_ComponentDonor]
 0,
 [END_ComponentDonor End]
@@ -597,8 +615,7 @@
 0,
 [END_ComponentDonor End]
 [START_BEHAVIOUR_SYSTEM_BLOCK]
-27,[START_str]
-"BossAI",0,[START_str]
+26,[START_str]
 "CamAi",0,[START_str]
 "CamShake",0,[START_str]
 "CharacterController",0,[START_str]
