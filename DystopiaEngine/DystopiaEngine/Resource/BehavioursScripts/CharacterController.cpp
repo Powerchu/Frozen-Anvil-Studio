@@ -509,16 +509,16 @@ namespace Dystopia
         }
        
     }
-    void Dystopia::CharacterController::OnCollisionExit(const CollisionEvent& _colEvent)
+    void Dystopia::CharacterController::OnCollisionExit(const CollisionEvent& )
     {
     }
-    void Dystopia::CharacterController::OnTriggerEnter(GameObject * const _obj)
+    void Dystopia::CharacterController::OnTriggerEnter(GameObject * const )
     {
     }
-    void Dystopia::CharacterController::OnTriggerStay(GameObject * const _obj)
+    void Dystopia::CharacterController::OnTriggerStay(GameObject * const )
     {
     }
-    void Dystopia::CharacterController::OnTriggerExit(GameObject * const _obj)
+    void Dystopia::CharacterController::OnTriggerExit(GameObject * const )
     {
     }
     CharacterController * CharacterController::Duplicate() const
@@ -630,7 +630,7 @@ namespace Dystopia
             return false;
         return true;
     }
-    void CharacterController::HandleTranslate(bool _inair, float _dt)
+    void CharacterController::HandleTranslate(bool _inair, float )
     {
 		//prevFace = mbFaceRight;
         HandleRunning();

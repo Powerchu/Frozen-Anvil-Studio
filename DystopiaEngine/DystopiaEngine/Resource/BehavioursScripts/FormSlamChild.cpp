@@ -172,25 +172,25 @@ namespace Dystopia
 		}
 	}
 
-	void Dystopia::FormSlamChild::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::FormSlamChild::OnCollisionStay(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::FormSlamChild::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::FormSlamChild::OnCollisionExit(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::FormSlamChild::OnTriggerEnter(GameObject * const _obj)
+	void Dystopia::FormSlamChild::OnTriggerEnter(GameObject * const )
 	{
 	}
 
-	void Dystopia::FormSlamChild::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::FormSlamChild::OnTriggerStay(GameObject * const )
 	{
 	}
 
-	void Dystopia::FormSlamChild::OnTriggerExit(GameObject * const _obj)
+	void Dystopia::FormSlamChild::OnTriggerExit(GameObject * const )
 	{
 	}
 

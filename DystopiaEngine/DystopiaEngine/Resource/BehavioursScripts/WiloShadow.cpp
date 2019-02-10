@@ -85,7 +85,7 @@ namespace Dystopia
 	{
 	}
 
-	void WiloShadow::Update(const float _fDeltaTime)
+	void WiloShadow::Update(const float )
 	{
 		auto myTransform = GetOwner()->GetComponent<Transform>();
 		auto myPosition = myTransform->GetGlobalPosition();
@@ -107,7 +107,7 @@ namespace Dystopia
 		}
 	}
 
-	void WiloShadow::FixedUpdate(const float _fDeltaTime)
+	void WiloShadow::FixedUpdate(const float )
 	{
 	}
 	
@@ -123,30 +123,30 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::WiloShadow::OnCollisionEnter(const CollisionEvent& _colEvent)
+	void Dystopia::WiloShadow::OnCollisionEnter(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::WiloShadow::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::WiloShadow::OnCollisionStay(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::WiloShadow::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::WiloShadow::OnCollisionExit(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::WiloShadow::OnTriggerEnter(GameObject * const _obj)
+	void Dystopia::WiloShadow::OnTriggerEnter(GameObject * const )
 	{
 	}
 
-	void Dystopia::WiloShadow::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::WiloShadow::OnTriggerStay(GameObject * const )
 	{
 	}
 
-	void Dystopia::WiloShadow::OnTriggerExit(GameObject * const _obj)
+	void Dystopia::WiloShadow::OnTriggerExit(GameObject * const )
 	{
 	}
 
@@ -155,11 +155,11 @@ namespace Dystopia
 		return new WiloShadow{*this};
 	}
 
-	void WiloShadow::Serialise(TextSerialiser& _ser) const
+	void WiloShadow::Serialise(TextSerialiser& ) const
 	{
 	}
 
-	void WiloShadow::Unserialise(TextSerialiser& _ser)
+	void WiloShadow::Unserialise(TextSerialiser& )
 	{
 	}
 

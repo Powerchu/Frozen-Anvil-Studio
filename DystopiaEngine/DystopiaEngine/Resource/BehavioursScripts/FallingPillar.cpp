@@ -140,25 +140,25 @@ namespace Dystopia
                 }
 	}
 
-	void Dystopia::FallingPillar::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::FallingPillar::OnCollisionStay(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::FallingPillar::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::FallingPillar::OnCollisionExit(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::FallingPillar::OnTriggerEnter(GameObject * const _obj)
+	void Dystopia::FallingPillar::OnTriggerEnter(GameObject * const )
 	{
 	}
 
-	void Dystopia::FallingPillar::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::FallingPillar::OnTriggerStay(GameObject * const )
 	{
 	}
 
-	void Dystopia::FallingPillar::OnTriggerExit(GameObject * const _obj)
+	void Dystopia::FallingPillar::OnTriggerExit(GameObject * const )
 	{
 	}
 

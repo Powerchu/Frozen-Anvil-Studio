@@ -84,11 +84,11 @@ namespace Dystopia
 	{
 	}
 
-	void RuneAnim::Update(const float _fDeltaTime)
+	void RuneAnim::Update(const float )
 	{
 	}
 
-	void RuneAnim::FixedUpdate(const float _fDeltaTime)
+	void RuneAnim::FixedUpdate(const float )
 	{
 	}
 	
@@ -104,30 +104,30 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::RuneAnim::OnCollisionEnter(const CollisionEvent& _colEvent)
+	void Dystopia::RuneAnim::OnCollisionEnter(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::RuneAnim::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::RuneAnim::OnCollisionStay(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::RuneAnim::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::RuneAnim::OnCollisionExit(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::RuneAnim::OnTriggerEnter(GameObject * const _obj)
+	void Dystopia::RuneAnim::OnTriggerEnter(GameObject * const )
 	{
 	}
 
-	void Dystopia::RuneAnim::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::RuneAnim::OnTriggerStay(GameObject * const )
 	{
 	}
 
-	void Dystopia::RuneAnim::OnTriggerExit(GameObject * const _obj)
+	void Dystopia::RuneAnim::OnTriggerExit(GameObject * const )
 	{
 	}
 
@@ -136,11 +136,11 @@ namespace Dystopia
 		return new RuneAnim{*this};
 	}
 
-	void RuneAnim::Serialise(TextSerialiser& _ser) const
+	void RuneAnim::Serialise(TextSerialiser& ) const
 	{
 	}
 
-	void RuneAnim::Unserialise(TextSerialiser& _ser)
+	void RuneAnim::Unserialise(TextSerialiser& )
 	{
 	}
 

@@ -98,7 +98,7 @@ namespace Dystopia
 		}
 	}
 
-	void SortChildOrder::Update(const float _fDeltaTime)
+	void SortChildOrder::Update(const float )
 	{
 		
 	}

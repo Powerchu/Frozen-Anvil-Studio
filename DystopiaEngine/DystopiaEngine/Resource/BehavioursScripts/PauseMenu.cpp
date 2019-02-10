@@ -354,10 +354,10 @@ namespace Dystopia
 		mQuitButtons[eYesButton] = FIND_GAME_OBJECT("QuitYesBtn");
 		mQuitButtons[eNoButton]  = FIND_GAME_OBJECT("QuitNoBtn");
 		
-		if (!pSelector) DEBUG_PRINT(eLog::MESSAGE, "pSelector not found");
-		if (!mQuitButtons[eYesButton]) DEBUG_PRINT(eLog::MESSAGE, "Yes Button not found");
-		if (!mQuitButtons[eNoButton]) DEBUG_PRINT(eLog::MESSAGE, "No Button not found");
-		if (!Background) DEBUG_PRINT(eLog::MESSAGE, "Background not found");
+		//if (!pSelector) DEBUG_PRINT(eLog::MESSAGE, "pSelector not found");
+		//if (!mQuitButtons[eYesButton]) DEBUG_PRINT(eLog::MESSAGE, "Yes Button not found");
+		//if (!mQuitButtons[eNoButton]) DEBUG_PRINT(eLog::MESSAGE, "No Button not found");
+		//if (!Background) DEBUG_PRINT(eLog::MESSAGE, "Background not found");
 		index = eNoButton;;
 		pSelector && MoveSelector();  
 

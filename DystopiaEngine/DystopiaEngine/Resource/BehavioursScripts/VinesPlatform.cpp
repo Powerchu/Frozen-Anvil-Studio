@@ -129,30 +129,30 @@ namespace Dystopia
 		Behaviour::GameObjectDestroy();
 	}
 
-	void Dystopia::VinesPlatform::OnCollisionEnter(const CollisionEvent& _colEvent)
+	void Dystopia::VinesPlatform::OnCollisionEnter(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::VinesPlatform::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::VinesPlatform::OnCollisionStay(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::VinesPlatform::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::VinesPlatform::OnCollisionExit(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::VinesPlatform::OnTriggerEnter(GameObject * const _obj)
+	void Dystopia::VinesPlatform::OnTriggerEnter(GameObject * const )
 	{
 	}
 
-	void Dystopia::VinesPlatform::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::VinesPlatform::OnTriggerStay(GameObject * const )
 	{
 	}
 
-	void Dystopia::VinesPlatform::OnTriggerExit(GameObject * const _obj)
+	void Dystopia::VinesPlatform::OnTriggerExit(GameObject * const )
 	{
 	}
 

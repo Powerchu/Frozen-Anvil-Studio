@@ -108,7 +108,7 @@ namespace Dystopia
 		charPos = CharacterObj->GetComponent<Transform>()->GetGlobalPosition();
 	}
 
-	void CamAi::Update(const float _fDeltaTime)
+	void CamAi::Update(const float )
 	{ 
 		
 	}
@@ -138,7 +138,7 @@ namespace Dystopia
 		auto heroScaleX = CharacterObj->GetComponent<Transform>()->GetGlobalScale().x;
 		auto heroScaleY = CharacterObj->GetComponent<Transform>()->GetGlobalScale().y;
 		auto heroBody = CharacterObj->GetComponent<RigidBody>(); 
-		float temp = focusAreaPos.x;
+		//float temp = focusAreaPos.x;
 
 		// Timer to return to neutral
 		if (mpInput->GetAxis("Horizontal") != 0.0f || mpInput->GetAxis("L Stick Horizontal") != 0.0f || mpInput->GetButton("Roll") || mpInput->GetAxis("C_Roll") != 0.0f)
@@ -257,30 +257,30 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::CamAi::OnCollisionEnter(const CollisionEvent& _colEvent)
+	void Dystopia::CamAi::OnCollisionEnter(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::CamAi::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::CamAi::OnCollisionStay(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::CamAi::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::CamAi::OnCollisionExit(const CollisionEvent& )
 	{
 		
 	}
 
-	void Dystopia::CamAi::OnTriggerEnter(GameObject * const _obj)
+	void Dystopia::CamAi::OnTriggerEnter(GameObject * const )
 	{
 	}
 
-	void Dystopia::CamAi::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::CamAi::OnTriggerStay(GameObject * const )
 	{
 	}
 
-	void Dystopia::CamAi::OnTriggerExit(GameObject * const _obj)
+	void Dystopia::CamAi::OnTriggerExit(GameObject * const )
 	{
 
 	}
@@ -290,11 +290,11 @@ namespace Dystopia
 		return new CamAi{*this};
 	}
 
-	void CamAi::Serialise(TextSerialiser& _ser) const
+	void CamAi::Serialise(TextSerialiser& ) const
 	{
 	}
 
-	void CamAi::Unserialise(TextSerialiser& _ser)
+	void CamAi::Unserialise(TextSerialiser& )
 	{
 	}
 

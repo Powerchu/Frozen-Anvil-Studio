@@ -82,11 +82,11 @@ namespace Dystopia
 	{
 	}
 
-	void AiDirector::Update(const float _fDeltaTime)
+	void AiDirector::Update(const float )
 	{
 	}
 
-	void AiDirector::FixedUpdate(const float _fDeltaTime)
+	void AiDirector::FixedUpdate(const float )
 	{
 	}
 	
@@ -102,30 +102,30 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::AiDirector::OnCollisionEnter(const CollisionEvent& _colEvent)
+	void Dystopia::AiDirector::OnCollisionEnter(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::AiDirector::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::AiDirector::OnCollisionStay(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::AiDirector::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::AiDirector::OnCollisionExit(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::AiDirector::OnTriggerEnter(GameObject * const _obj)
+	void Dystopia::AiDirector::OnTriggerEnter(GameObject * const )
 	{
 	}
 
-	void Dystopia::AiDirector::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::AiDirector::OnTriggerStay(GameObject * const )
 	{
 	}
 
-	void Dystopia::AiDirector::OnTriggerExit(GameObject * const _obj)
+	void Dystopia::AiDirector::OnTriggerExit(GameObject * const )
 	{
 	}
 
@@ -134,11 +134,11 @@ namespace Dystopia
 		return new AiDirector{*this};
 	}
 
-	void AiDirector::Serialise(TextSerialiser& _ser) const
+	void AiDirector::Serialise(TextSerialiser& ) const
 	{
 	}
 
-	void AiDirector::Unserialise(TextSerialiser& _ser)
+	void AiDirector::Unserialise(TextSerialiser& )
 	{
 	}
 

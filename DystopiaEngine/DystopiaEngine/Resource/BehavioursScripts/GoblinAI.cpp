@@ -201,7 +201,7 @@ namespace Dystopia
 		mContBlackboard->SetObject("Self", GetOwner()->GetID());
 	}
 
-	void GoblinAI::FixedUpdate(const float _fDeltaTime)
+	void GoblinAI::FixedUpdate(const float )
 	{
 	}
 	
@@ -217,30 +217,30 @@ namespace Dystopia
 	{
 	}
 
-	void Dystopia::GoblinAI::OnCollisionEnter(const CollisionEvent& _colEvent)
+	void Dystopia::GoblinAI::OnCollisionEnter(const CollisionEvent& )
 	{
 
 	} 
 
-	void Dystopia::GoblinAI::OnCollisionStay(const CollisionEvent& _colEvent)
+	void Dystopia::GoblinAI::OnCollisionStay(const CollisionEvent& )
 	{
 
 	}
 
-	void Dystopia::GoblinAI::OnCollisionExit(const CollisionEvent& _colEvent)
+	void Dystopia::GoblinAI::OnCollisionExit(const CollisionEvent& )
 	{
  
 	}
 
-	void Dystopia::GoblinAI::OnTriggerEnter(GameObject * const _obj)
+	void Dystopia::GoblinAI::OnTriggerEnter(GameObject * const )
 	{
 	}
 
-	void Dystopia::GoblinAI::OnTriggerStay(GameObject * const _obj)
+	void Dystopia::GoblinAI::OnTriggerStay(GameObject * const )
 	{
 	}
 
-	void Dystopia::GoblinAI::OnTriggerExit(GameObject * const _obj)
+	void Dystopia::GoblinAI::OnTriggerExit(GameObject * const )
 	{
 	}
 
@@ -249,11 +249,11 @@ namespace Dystopia
 		return new GoblinAI{*this};
 	}
 
-	void GoblinAI::Serialise(TextSerialiser& _ser) const
+	void GoblinAI::Serialise(TextSerialiser& ) const
 	{
 	}
 
-	void GoblinAI::Unserialise(TextSerialiser& _ser)
+	void GoblinAI::Unserialise(TextSerialiser& )
 	{
 	}
 
@@ -326,7 +326,7 @@ namespace Dystopia
 		return eStatus::RUNNING;
 	}
 
-	void GoblinAI::Idle::Exit(eStatus _status) 
+	void GoblinAI::Idle::Exit(eStatus ) 
 	{
 		if (IsRunning())
 		{
@@ -408,7 +408,7 @@ namespace Dystopia
 		return eStatus::RUNNING;
 	}
 
-	void GoblinAI::Patrol::Exit(eStatus _status) 
+	void GoblinAI::Patrol::Exit(eStatus ) 
 	{
 	
 	}
@@ -463,7 +463,7 @@ namespace Dystopia
 		return eStatus::FAIL;
 	}
 
-	void GoblinAI::Alert::Exit(eStatus _status) 
+	void GoblinAI::Alert::Exit(eStatus ) 
 	{
 	
 	}
@@ -500,7 +500,7 @@ namespace Dystopia
 		return eStatus::SUCCESS;
 	}
 
-	void GoblinAI::Rally::Exit(eStatus _status) 
+	void GoblinAI::Rally::Exit(eStatus ) 
 	{
 	
 	}
@@ -575,7 +575,7 @@ namespace Dystopia
 		return eStatus::RUNNING;
 	}
 
-	void GoblinAI::Chase::Exit(eStatus _status) 
+	void GoblinAI::Chase::Exit(eStatus ) 
 	{
 	
 	}
@@ -633,7 +633,7 @@ namespace Dystopia
 		return eStatus::RUNNING;
 	}
 
-	void GoblinAI::Melee_Slash::Exit(eStatus _status)
+	void GoblinAI::Melee_Slash::Exit(eStatus )
 	{
 		const auto isRight = mpBlackboard->GetBool("Is Facing Right");
 		if (IsSuccess())
@@ -691,7 +691,7 @@ namespace Dystopia
 		return eStatus::SUCCESS;
 	}
 
-	void GoblinAI::Melee_Lunge::Exit(eStatus _status) 
+	void GoblinAI::Melee_Lunge::Exit(eStatus ) 
 	{
 	
 	}
@@ -709,7 +709,7 @@ namespace Dystopia
 		return eStatus::SUCCESS;
 	}
 
-	void GoblinAI::Death::Exit(eStatus _status) 
+	void GoblinAI::Death::Exit(eStatus ) 
 	{
 	
 	}
