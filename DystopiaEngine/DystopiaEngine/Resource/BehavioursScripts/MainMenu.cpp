@@ -160,7 +160,7 @@ namespace Dystopia
 		static_cast<CreditsMenuType*>(this)->SetUp();
 
 		pSelector = FIND_GAME_OBJECT("Selector");  
-
+		isPress = false;
 	}   
 
 	void MainMenu::Update(const float _dt)
@@ -176,18 +176,21 @@ namespace Dystopia
 		{
 			static float Axis = 0.f;
 			Axis = pInputSys->GetAxis("L Stick Vertical");
+
 			/*Check Key Down*/
-			if(pInputSys->GetButtonDown("Vertical", true) || Axis < -0.8f)
+			if(!isPress && (pInputSys->GetButtonDown("Vertical", true) || Axis < -0.9f))
 			{
 				//DEBUG_PRINT(eLog::MESSAGE, "Keypress Down");
 				index = static_cast<MenuStates>((static_cast<int>(index) + 1) % static_cast<int>(MenuStates::Total));
 				(pSelector && mMenuTabs[static_cast<MenuStates>(static_cast<int>(index) + static_cast<int>(MenuStates::Total) + 1)]) &&  MoveSelector();
+				isPress = true;
 			}
 			/*Check Key Up*/
-			else if(pInputSys->GetButtonDown("Vertical", false) || Axis < -0.8f)
+			else if(!isPress && (pInputSys->GetButtonDown("Vertical", false) || Axis > 0.9f))
 			{
 				index = (static_cast<int>(index) - 1) < 0 ? static_cast<MenuStates>(static_cast<int>(MenuStates::Total)-1) : static_cast<MenuStates>( static_cast<int>(index) - 1);
 				(pSelector && mMenuTabs[static_cast<MenuStates>(static_cast<int>(index) + static_cast<int>(MenuStates::Total) + 1)]) && MoveSelector();
+				isPress = true;
 			}
 			/*Check Key Accept*/
 			else if(pInputSys->GetButtonDown("Select"))
@@ -201,6 +204,7 @@ namespace Dystopia
 			{      
 				
 			}
+			isPress = Axis < -0.9f || Axis > 0.9f;
 		}  
 	}
 
@@ -372,7 +376,8 @@ namespace Dystopia
 			mSettingsObjects[SettingsButtons::eVSync]->SetActive(mVSync);
 
 		alpha   = 0.f;
-		fpState = &SettingsState::Transition;   
+		fpState = &SettingsState::Transition;
+		isPress = false;
 		return true;
 	}
 	bool SettingsState::SetUp()
@@ -434,24 +439,26 @@ namespace Dystopia
 	{
 		static float Axis = 0.f;
 		Axis = pInputSys->GetAxis("L Stick Vertical");
-
-		if( pInputSys->GetButtonDown("Vertical", true) || Axis < -0.8f)
+		if(!isPress && (pInputSys->GetButtonDown("Vertical", true) || Axis < -0.9f))
 		{
 			s_index = static_cast<SettingsButtons>((static_cast<int>(s_index) + 1) % static_cast<int>(SettingsButtons::eTotal));
 			(pSelector && mSettingsObjects[s_index]) &&  MoveSelector();
 			fpButton = mSettingsFunc[s_index];
+			isGammaPress = false;
 		}
-		else if(pInputSys->GetButtonDown("Vertical", false)|| Axis > 0.8f)
+		else if(!isPress && (pInputSys->GetButtonDown("Vertical", false)|| Axis > 0.9f))
 		{
 			s_index = (static_cast<int>(s_index) - 1) < 0 ? static_cast<SettingsButtons>(static_cast<int>(SettingsButtons::eTotal)-1) : static_cast<SettingsButtons>( static_cast<int>(s_index) - 1);
 			(pSelector && mSettingsObjects[s_index]) && MoveSelector();
 			fpButton = mSettingsFunc[s_index];
+			isGammaPress = false;
 		}
 		else if(pInputSys->GetButtonDown("Back"))
 		{
 			fpState = &SettingsState::Quit;
 			return true;
 		}
+		isPress = Axis < -0.9f || Axis > 0.9f;
 		fpButton && (this->*fpButton)(_dt);
 		return true; 
 	} 
@@ -541,8 +548,10 @@ namespace Dystopia
 	}
 	bool SettingsState::ApplyGamma(float)
 	{
+		static float Axis = 0.f;
+		Axis = pInputSys->GetAxis("L Stick Horizontal");
 		/*Right*/
-		if(pInputSys && pInputSys->GetButtonDown("Horizontal", false))
+		if(!isGammaPress && (pInputSys && (pInputSys->GetButtonDown("Horizontal", false) || Axis > 0.9f)))
 		{
 			auto && temp  = mSettingsObjects[SettingsButtons::eGammaPointer]->GetComponent<Transform>()->GetGlobalPosition();
 			mGamma = mGamma >=4.6f? 5.0f: mGamma + mGammaInterval;
@@ -551,7 +560,7 @@ namespace Dystopia
 			mSettingsObjects[SettingsButtons::eGammaPointer]->GetComponent<Transform>()->SetGlobalPosition(Begin.x + static_cast<int>((mGamma-1.f)/mGammaInterval) * mGammaSpriteInterval, temp.y,temp.z);
 		}
 		// /*Left*/
-		if(pInputSys && pInputSys->GetButtonDown("Horizontal", true))
+		if(!isGammaPress && (pInputSys && (pInputSys->GetButtonDown("Horizontal", true) || Axis < -0.9f)))
 		{
 			auto && temp  = mSettingsObjects[SettingsButtons::eGammaPointer]->GetComponent<Transform>()->GetGlobalPosition();
 			mGamma = mGamma <= 1.3f? 1.0f: mGamma - mGammaInterval; 
@@ -559,7 +568,7 @@ namespace Dystopia
 			auto && Begin = SliderBegin->GetComponent<Transform>()->GetGlobalPosition();
 			mSettingsObjects[SettingsButtons::eGammaPointer]->GetComponent<Transform>()->SetGlobalPosition(Begin.x + static_cast<int>((mGamma-1.f)/mGammaInterval) * mGammaSpriteInterval, temp.y,temp.z);
 		}
-		
+		isGammaPress = Axis < -0.9f || Axis > 0.9f;
 		return true;
 	}
 

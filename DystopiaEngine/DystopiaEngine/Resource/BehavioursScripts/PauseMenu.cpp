@@ -132,10 +132,7 @@ namespace Dystopia
 
 	void PauseMenu::Update(const float _dt)
 	{
-		static bool hasPress = false;
 		static float Axis = 0.f;
-
-		if (Axis > -0.1f && Axis < 0.1f) hasPress = true;
 
 		if(!isPause)
 		{
@@ -164,19 +161,17 @@ namespace Dystopia
 			Axis = pInputSys->GetAxis("L Stick Vertical");
 
 			/*Check Key Down*/
-			if(pInputSys->GetButtonDown("Vertical", true) || Axis <= -0.8f)
+			if(!isPress && (pInputSys->GetButtonDown("Vertical", true) || Axis <= -0.8f))
 			{
 				//DEBUG_PRINT(eLog::MESSAGE, "Keypress Down");
 				index = static_cast<MenuStates>((static_cast<int>(index) + 1) % static_cast<int>(MenuStates::P_Total));
 				(pSelector && mMenuObjects[static_cast<MenuStates>(static_cast<int>(index) + static_cast<int>(MenuStates::P_Total) + 1)]) &&  MoveSelector();
-				hasPress = true;
 			}
 			/*Check Key Up*/
-			else if(pInputSys->GetButtonDown("Vertical", false) || Axis >= 0.8f)
+			else if(!isPress && (pInputSys->GetButtonDown("Vertical", false) || Axis >= 0.8f))
 			{ 
 				index = (static_cast<int>(index) - 1) < 0 ? static_cast<MenuStates>(static_cast<int>(MenuStates::P_Total)-1) : static_cast<MenuStates>( static_cast<int>(index) - 1);
 				(pSelector && mMenuObjects[static_cast<MenuStates>(static_cast<int>(index) + static_cast<int>(MenuStates::P_Total) + 1)]) && MoveSelector();
-				hasPress = true;
 			}
 			/*Check Key Accept*/
 			else if(pInputSys->GetButtonDown("Select")) 
@@ -197,6 +192,8 @@ namespace Dystopia
 				if (auto player = CORE::Get<SceneSystem>()->FindGameObject("CharacterController"))
                 	PauseMenu_MSG::SendExternalMessage(player, "DisableControls", false);
 			}
+
+			isPress = Axis < -0.9f || Axis > 0.9f;
 		}  
 	}
 
@@ -360,7 +357,7 @@ namespace Dystopia
 		//if (!Background) DEBUG_PRINT(eLog::MESSAGE, "Background not found");
 		index = eNoButton;;
 		pSelector && MoveSelector();  
-
+		isPress = false;
 		return true;
 	}
 	bool P_QuitState::Transition(float)
@@ -379,13 +376,13 @@ namespace Dystopia
 		static float Axis = 0.f;
 		Axis = pInputSys->GetAxis("L Stick Horizontal");
 		/*Check Key Down*/
-		if(pInputSys->GetButtonDown("Horizontal", false) || Axis >= 0.8f)
+		if(!isPress && (pInputSys->GetButtonDown("Horizontal", false) || Axis >= 0.9f))
 		{
 			index = static_cast<QuitStateButtons>((static_cast<int>(index) + 1) % static_cast<int>(QuitStateButtons::eQuitTotal));
 			(pSelector && mQuitButtons[static_cast<QuitStateButtons>(static_cast<int>(index))]) &&  MoveSelector();
 		}
 		/*Check Key Up*/
-		else if(pInputSys->GetButtonDown("Horizontal", true) || Axis < -0.8f)
+		else if(!isPress && (pInputSys->GetButtonDown("Horizontal", true) || Axis < -0.9f))
 		{ 
 			index = (static_cast<int>(index) - 1) < 0 ? static_cast<QuitStateButtons>(static_cast<int>(QuitStateButtons::eQuitTotal)-1) : static_cast<QuitStateButtons>( static_cast<int>(index) - 1);
 			(pSelector && mQuitButtons[static_cast<QuitStateButtons>(static_cast<int>(index))]) && MoveSelector();
@@ -421,6 +418,7 @@ namespace Dystopia
 			fpState = &P_QuitState::Init; 
 			Terminate();
 		}
+		isPress = Axis < -0.9f || Axis > 0.9f;
 		return true;  
 	}
 	bool P_QuitState::Exit(float)
@@ -659,32 +657,31 @@ namespace Dystopia
 	}  
 	bool P_SettingsState::Update(float _dt)
 	{
-		static bool hasPress = false;
 		static float Axis = 0.f;
-		if (Axis > -0.1f && Axis < 0.1f) hasPress = true;
 		DEBUG_PRINT(eLog::MESSAGE, "Settings Update");
 
 		Axis = pInputSys->GetAxis("L Stick Vertical");
 
-		if( pInputSys->GetButtonDown("Vertical", true) || Axis <= -1.0f)
+		if(!isPress && ( pInputSys->GetButtonDown("Vertical", true) || Axis <= -0.9f))
 		{
 			s_index = static_cast<SettingsButtons>((static_cast<int>(s_index) + 1) % static_cast<int>(SettingsButtons::eTotal));
 			(pSelector && mSettingsObjects[s_index]) &&  MoveSelector();
 			fpButton = mSettingsFunc[s_index];
-				hasPress = true;
+			isGammaPress = false;
 		}
-		else if(pInputSys->GetButtonDown("Vertical", false) || Axis >= 1.0f)
+		else if(!isPress && (pInputSys->GetButtonDown("Vertical", false) || Axis >= 0.9f))
 		{
 			s_index = (static_cast<int>(s_index) - 1) < 0 ? static_cast<SettingsButtons>(static_cast<int>(SettingsButtons::eTotal)-1) : static_cast<SettingsButtons>( static_cast<int>(s_index) - 1);
 			(pSelector && mSettingsObjects[s_index]) && MoveSelector();
 			fpButton = mSettingsFunc[s_index];
-			hasPress = true;
+			isGammaPress = false;
 		}
 		else if(pInputSys->GetButtonDown("Back"))
 		{
 			fpState = &P_SettingsState::Quit;
 			return true;
 		}
+		isPress = Axis < -0.9f || Axis > 0.9f;
 		fpButton && (this->*fpButton)(_dt);
 		return true;  
 	} 
@@ -776,7 +773,10 @@ namespace Dystopia
 	bool P_SettingsState::ApplyGamma(float)
 	{
 		/*Right*/
-		if(pInputSys && pInputSys->GetButtonDown("Horizontal", false))
+		static float Axis = 0.f;
+		Axis = pInputSys->GetAxis("L Stick Horizontal");
+		/*Right*/
+		if (!isGammaPress && (pInputSys && (pInputSys->GetButtonDown("Horizontal", false) || Axis > 0.9f)))
 		{
 			auto && temp  = mSettingsObjects[SettingsButtons::eGammaPointer]->GetComponent<Transform>()->GetGlobalPosition();
 			mGamma = mGamma >=4.6f? 5.0f: mGamma + mGammaInterval;
@@ -785,7 +785,7 @@ namespace Dystopia
 			mSettingsObjects[SettingsButtons::eGammaPointer]->GetComponent<Transform>()->SetGlobalPosition(Begin.x + static_cast<int>((mGamma-1.f)/mGammaInterval) * mGammaSpriteInterval, temp.y,temp.z);
 		}
 		// /*Left*/
-		if(pInputSys && pInputSys->GetButtonDown("Horizontal", true))
+		if (!isGammaPress && (pInputSys && (pInputSys->GetButtonDown("Horizontal", true) || Axis < -0.9f)))
 		{
 			auto && temp  = mSettingsObjects[SettingsButtons::eGammaPointer]->GetComponent<Transform>()->GetGlobalPosition();
 			mGamma = mGamma <= 1.3f? 1.0f: mGamma - mGammaInterval; 
@@ -793,7 +793,7 @@ namespace Dystopia
 			auto && Begin = SliderBegin->GetComponent<Transform>()->GetGlobalPosition();
 			mSettingsObjects[SettingsButtons::eGammaPointer]->GetComponent<Transform>()->SetGlobalPosition(Begin.x + static_cast<int>((mGamma-1.f)/mGammaInterval) * mGammaSpriteInterval, temp.y,temp.z);
 		}
-		
+		isGammaPress = Axis < -0.9f || Axis > 0.9f;
 		return true;
 	}
 	

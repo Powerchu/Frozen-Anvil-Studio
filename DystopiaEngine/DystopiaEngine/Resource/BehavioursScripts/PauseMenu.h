@@ -85,6 +85,7 @@ namespace Dystopia
 		GameObject *  Background;
 		GameObject *  pSelector;
 		QuitStateButtons index;
+		bool isPress = false;
 		std::map<QuitStateButtons,GameObject*> mQuitButtons;
 	};
 
@@ -155,7 +156,8 @@ namespace Dystopia
 		bool mSFX;
 		bool mVibrate;
 		bool mVSync;
-
+		bool isPress = false;
+		bool isGammaPress = false;
 		float mGammaInterval;
 		float mGammaSpriteInterval;
 		float mGamma;
@@ -317,6 +319,7 @@ namespace Dystopia
 		GameObject* pSelector;
 		InputManager * pInputSys;
 		bool isPause;
+		bool isPress = false;
 	};
 
 	extern "C"
