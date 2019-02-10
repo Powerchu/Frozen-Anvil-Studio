@@ -132,6 +132,7 @@ namespace Dystopia
 		protected:
 			MagicArray<Node::Ptr> mparrChildren;
 			MagicArray<Node::Ptr>::Itor_t iter;
+			Node::Ptr mpChild;
 		};
 
 /*

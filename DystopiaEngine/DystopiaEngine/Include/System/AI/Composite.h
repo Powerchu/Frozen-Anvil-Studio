@@ -176,19 +176,19 @@ namespace Dystopia
 			void Init() override
 			{
 				iter = mparrChildren.begin();
+
+				std::random_device random_device;
+				std::mt19937 engine{ random_device() };
+				const std::uniform_int_distribution<size_t> dist(0, mparrChildren.size() - 1);
+
+				mpChild = mparrChildren[dist(engine)];
 			}
 
 			eStatus Update() override
 			{
 				assert(HasChildren() && "Composite has no children");
 
-				std::random_device random_device;
-				std::mt19937 engine{ random_device() };
-				const std::uniform_int_distribution<size_t> dist(0, mparrChildren.size() - 1);
-
-				auto random_element = mparrChildren[dist(engine)];
-
-				const auto status = random_element->Tick();
+				const auto status = mpChild->Tick();
 
 				if (status != eStatus::FAIL) 
 				{
@@ -207,19 +207,19 @@ namespace Dystopia
 			void Init() override
 			{
 				iter = mparrChildren.begin();
+
+				std::random_device random_device;
+				std::mt19937 engine{ random_device() };
+				const std::uniform_int_distribution<size_t> dist(0, mparrChildren.size() - 1);
+
+				mpChild = mparrChildren[dist(engine)];
 			}
 
 			eStatus Update() override
 			{
 				assert(HasChildren() && "Composite has no children");
 
-				std::random_device random_device;
-				std::mt19937 engine{ random_device() };
-				const std::uniform_int_distribution<size_t> dist(0, mparrChildren.size() - 1);
-
-				auto random_element = mparrChildren[dist(engine)];
-
-				const auto status = random_element->Tick();
+				const auto status = mpChild->Tick();
 
 				if (status != eStatus::SUCCESS)
 				{
