@@ -236,7 +236,7 @@ namespace Dystopia
 		virtual Math::Matrix3D GetTransformationMatrix() const;
 		Math::Matrix3D GetOwnerTransform()       const;
 		Math::Matrix3D GetWorldMatrix()          const;
-		void SetOwnerTransform(Math::Matrix3D const & _ownerMatrix);
+		virtual void SetOwnerTransform(Math::Matrix3D const & _ownerMatrix);
 
 		/*Serialise and Unserialise*/
 		virtual void Serialise(TextSerialiser&) const = 0;

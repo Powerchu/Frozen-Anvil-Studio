@@ -250,23 +250,23 @@ namespace Dystopia
 		{
 
 			BehaviourMessage Message(_FuncParams...);
-			auto & Array = EngineCore::GetInstance()->Get<SceneSystem>()->GetActiveScene().GetAllGameObjects();
-			for (auto & elem : Array)
+			auto && Array = EngineCore::GetInstance()->Get<SceneSystem>()->GetActiveScene();
+			for (auto & elem : Array.GetAllGameObjects())
 			{
 				auto BehaviourArray = elem.GetAllBehaviours();
 				for (auto & BehaveElem : BehaviourArray)
 				{
 #if EDITOR
 					/*Try to send Message to other components*/
-					//_EDITOR_START_TRY
+					_EDITOR_START_TRY
 						BehaveElem->ReceiveMessage(_FuncName, Message);
 					/*If behaviour throws, remove it from game object*/
-					//_EDITOR_CATCH(std::exception& e)
-					//{
-					//	_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
-					//	_EDITOR_CODE((elem).RemoveComponent(BehaveElem));
-					//	_EDITOR_CODE(BehaveElem->DestroyComponent());
-					//}
+					_EDITOR_CATCH(std::exception& e)
+					{
+						_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
+						_EDITOR_CODE(elem.RemoveComponent(BehaveElem));
+						_EDITOR_CODE(BehaveElem->DestroyComponent());
+					}
 #else
 					BehaveElem->ReceiveMessage(_FuncName, Message);
 

@@ -458,6 +458,27 @@ namespace Dystopia
 		return Convex::GetFarthestPoint(*this, _Dir);
 	}
 
+	void Convex::Reorder()
+	{
+		auto cpy = mVertices;
+		auto back  = cpy.end() - 1;
+		for (auto & v : mVertices)
+		{
+			v = *back;
+			--back;
+		}
+	}
+
+	void Convex::SetOwnerTransform(Math::Matrix3D const & _ownerMatrix)
+	{
+		auto v = GetWorldMatrix()[0] * GetWorldMatrix()[5];
+		Collider::SetOwnerTransform(_ownerMatrix);
+		if (GetWorldMatrix()[0] * GetWorldMatrix()[5] * v  < 0.f)
+		{
+			Reorder();
+		}
+	}
+
 	/*Support Function for getting the farthest point with relation to a Vector*/
 	Vertice Convex::GetFarthestPoint(const Convex & _ColA, const Math::Vec3D & _Dir)
 	{
@@ -531,10 +552,6 @@ namespace Dystopia
 			e.mNorm3.Negate<Math::NegateFlag::Y>();
 
 #endif
-			if (GetWorldMatrix()[0] * GetWorldMatrix()[5] < 0.f)
-			{
-				e.mNorm3 = -e.mNorm3;
-			}
 			e.mNorm3.z = 0;
 			e.mPos.z   = 0;
 			e.mVec3.z  = 0;
@@ -802,10 +819,7 @@ namespace Dystopia
 #else
 			_v3Dir = Math::Vec3D{ -LastToFirst.y, LastToFirst.x,0,0 };
 #endif
-			if (GetWorldMatrix()[0] * GetWorldMatrix()[5] < 0.f)
-			{
-				_v3Dir = -_v3Dir;
-			}
+
 			/*Ensure that the normal is pointing away from the inside
 			of the triangle. If it is not, inverse it*/
 			_v3Dir = Dot(_v3Dir, _Simplex[1].mPosition) > 0 ? -_v3Dir : _v3Dir;
@@ -830,10 +844,7 @@ namespace Dystopia
 #else
 			_v3Dir = Math::Vec3D{ -LastToSecond.y,  LastToSecond.x,0,0 };
 #endif
-			if (GetWorldMatrix()[0] * GetWorldMatrix()[5] < 0.f)
-			{
-				_v3Dir = -_v3Dir;
-			}
+
 			/*Ensure that the normal is pointing away from the inside
 			of the triangle. If it is not, inverse it*/
 			_v3Dir = Dot(_v3Dir, _Simplex[0].mPosition) > 0 ? -_v3Dir : _v3Dir;
@@ -998,10 +1009,6 @@ namespace Dystopia
 #else
 				Math::Vec3D Normal = ClosestEdge.mNorm3.MagnitudeSqr() ? ClosestEdge.mNorm3 : Math::Vec3D{ (end - start).yxzw }.Negate< Math::NegateFlag::X>();
 #endif
-				if (GetWorldMatrix()[0] * GetWorldMatrix()[5] < 0.f)
-				{
-					Normal = -Normal;
-				}
 				Math::Vec3D OriginVector = Math::MakePoint3D(0.f, 0.f, 0.f) - ClosestEdge.mPos;
 				const float BarycentricRatio   = Math::Abs(OriginVector.Dot(ClosestEdge.mVec3.Normalise()) / ClosestEdge.mVec3.Magnitude());
 				col_info.mCollisionPoint = (end_A - start_A) * BarycentricRatio + start_A;

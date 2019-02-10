@@ -91,8 +91,8 @@ namespace Dystopia
 		virtual ~Convex();
 
 		Vertice GetFarthestPoint(const Math::Vec3D & _Dir)const;
-
-
+		void Reorder();
+		virtual void SetOwnerTransform(Math::Matrix3D const & _ownerMatrix);
 		// Convex-Convex Collision Detection
 		bool isColliding(Convex & _ColB);
 		bool isColliding(Convex * const & _pColB);

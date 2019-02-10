@@ -248,12 +248,13 @@ namespace Dystopia
 
 				const auto pair_key1 = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
 				const auto pair_key2 = std::make_pair(bodyB->GetColliderType(), (bodyA)->GetColliderType());
+				bool hasCollision = true;
 				for (auto & key : CollisionFuncTable)
 				{
 					if (key.first == pair_key1)
 					{
-						(this->*key.second)(bodyA, bodyB);
-						bodyA->SetColliding(bodyA->Collider::HasCollision());
+						hasCollision &= (this->*key.second)(bodyA, bodyB);
+
 
 						break;
 					}
@@ -262,12 +263,12 @@ namespace Dystopia
 				{
 					if (key.first == pair_key2)
 					{
-						(this->*key.second)(bodyB, bodyA);
-						bodyB->SetColliding(bodyB->Collider::HasCollision());
-
+						hasCollision &= (this->*key.second)(bodyB, bodyA);
 						break;
 					}
 				}
+				bodyA->SetColliding(hasCollision);
+				bodyB->SetColliding(hasCollision);
 			}
 		}
 
