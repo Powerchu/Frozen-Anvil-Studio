@@ -35,8 +35,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #undef NOMINMAX
 #undef WIN32_LEAN_AND_MEAN
 
+#include "Math/NormInt.h"
 
-#include "Math/Vectors.h"
 
 // Entry point for editor
 int WinMain(HINSTANCE, HINSTANCE, char *, int){
@@ -44,17 +44,19 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int){
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	Math::Vec4 a{ 1, 2, 3, };
+	constexpr Math::NormInt<char> x{ (char)177 };
 
-	a.xzwy = a.yyzz;
+	float constexpr y = x;
 
-	//if (AllocConsole())
-	//{
-	//	FILE* file;
-	//
-	//	freopen_s(&file, "CONOUT$", "wt", stdout);
-	//	freopen_s(&file, "CONOUT$", "wt", stderr);
-	//}
+	if (AllocConsole())
+	{
+		FILE* file;
+	
+		freopen_s(&file, "CONOUT$", "wt", stdout);
+		freopen_s(&file, "CONOUT$", "wt", stderr);
+	}
+
+	std::cout << y << std::endl;
 
 	Editor::EditorMain *pMain = Editor::EditorMain::GetInstance();
 	pMain->Init();

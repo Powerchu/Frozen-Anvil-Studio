@@ -63,8 +63,6 @@ namespace Dystopia
 
 		void Render(void) const noexcept;
 
-		void SetTexture(Texture*);
-
 		Emitter* GetEmitter(unsigned) const noexcept;
 
 		ParticleEmitter* Duplicate(void) const;

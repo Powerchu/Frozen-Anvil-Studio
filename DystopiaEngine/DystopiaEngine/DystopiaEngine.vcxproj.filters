@@ -1179,6 +1179,9 @@
     <ClInclude Include="Include\System\Particle\LifetimeAffector.h">
       <Filter>Game Engine\Systems\Particle\Affectors\Lifetime</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Math\NormInt.h">
+      <Filter>Math\Types</Filter>
+    </ClInclude>
     <ClInclude Include="Include\Math\PerlinNoise.h">
       <Filter>Math\Utility</Filter>
     </ClInclude>
@@ -1714,6 +1717,9 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Particle\Emitter">
       <UniqueIdentifier>{48d5155a-1ed9-4911-817a-cfc4db59da86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math\Types">
+      <UniqueIdentifier>{0f7c8cb4-cd8d-47c3-a532-660b365f1952}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

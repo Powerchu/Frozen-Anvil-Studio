@@ -207,6 +207,7 @@
     <ClInclude Include="Include\Lib\Gfx\Shaders.h" />
     <ClInclude Include="Include\Math\MathConstants.h" />
     <ClInclude Include="Include\Math\PerlinNoise.h" />
+    <ClInclude Include="Include\Math\NormInt.h" />
     <ClInclude Include="Include\Math\Vectors.h" />
     <ClInclude Include="Include\Math\Vector\Vector3.h" />
     <ClInclude Include="Include\Math\Vector\SwizzleOps.h" />

@@ -17,7 +17,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System/Particle/LifetimeAffector.h"
 
-#include "Component/Emitter.h"
+#include "System/Particle/Emitter.h"
 
 #include "Math/MathLib.h"
 

@@ -41,7 +41,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #endif 
 
 
-Dystopia::Emitter::Emitter(void) noexcept
+Dystopia::Emitter::Emitter(ParticleEmitter* _owner) noexcept
 	: mColour{}, mPosition{}, mVelocity{}, mAccel{}, mLifetime{}, mSpawnCount{},
 	mSpawn{}, mUpdate{}, mFixedUpdate{}, mpShader{ nullptr }, mpTexture{ nullptr },
 	mInitialLife{}, mbUpdatedPositions{ false }, mTextureName{ "EditorStartup.png" },
@@ -284,16 +284,16 @@ void Dystopia::Emitter::SpawnParticle(void) noexcept
 		for (auto& e : mSpawn)
 			e.Update(*this, 0);
 
-		auto transform = GetOwner()->GetComponent<Transform>();
-		Math::Vec4 vpos = mParticle.mPos.xyz1;
-		auto pos = transform->GetTransformMatrix() * mParticle.mPos.xyz1;
-		pos.w = mParticle.mfSize;
+		//auto transform = GetOwner()->GetComponent<Transform>();
+		//Math::Vec4 vpos = mParticle.mPos.xyz1;
+		//auto pos = transform->GetTransformMatrix() * mParticle.mPos.xyz1;
+		//pos.w = mParticle.mfSize;
 
 		mLifetime.EmplaceBackUnsafe(mParticle.mfLifeDur);
 		mColour.EmplaceBackUnsafe(mParticle.mColour);
 		mAccel.EmplaceBackUnsafe(mParticle.mAccel);
 		mVelocity.EmplaceBackUnsafe(mParticle.mVelocity);
-		mPosition.EmplaceBackUnsafe(pos);
+		//mPosition.EmplaceBackUnsafe(pos);
 		mInitialLife.EmplaceBackUnsafe(mParticle.mfLifeDur);
 
 		mbUpdatedPositions = true;
@@ -337,11 +337,6 @@ AutoArray<Math::Vec4>& Dystopia::Emitter::GetColour(void) noexcept
 	return mColour;
 }
 
-AutoArray<Math::Vec4>& Dystopia::Emitter::GetPosition(void) noexcept
-{
-	return mPosition;
-}
-
 AutoArray<Math::Vec3>& Dystopia::Emitter::GetVelocity(void) noexcept
 {
 	return mVelocity;
@@ -373,7 +368,7 @@ AutoArray<Dystopia::ParticleAffector>& Dystopia::Emitter::GetFixedUpdateAffector
 }
 
 
-void Dystopia::Emitter::Serialise(TextSerialiser& _out) const
+void Dystopia::Emitter::Serialise(TextSerialiser& _out) const noexcept
 {
 	_out.InsertStartBlock("Emitter");
 
@@ -413,7 +408,7 @@ void Dystopia::Emitter::Serialise(TextSerialiser& _out) const
 		e.Serialise(_out);
 }
 
-void Dystopia::Emitter::Unserialise(TextSerialiser& _in)
+void Dystopia::Emitter::Unserialise(TextSerialiser& _in) noexcept
 {
 	_in.ConsumeStartBlock();
 
@@ -486,84 +481,84 @@ void Dystopia::Emitter::Unserialise(TextSerialiser& _in)
 void Dystopia::Emitter::EditorUI(void) noexcept
 {
 #if EDITOR
-	static const auto affectorNames = Dystopia::AffectorUI<Dystopia::AffectorList>::GetUIName();
-	static bool bDebug = false;
-
-	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
-
-	EGUI::Display::EmptyBox("Particle Texture", 150, (mpTexture) ? mpTexture->GetName().c_str() : "-empty-", true);
-	if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::ALL_IMG))
-	{
-		cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand(&Emitter::SetTexture, mpTexture),
-			cmd->MakeFnCommand(&Emitter::SetTexture,
-				CORE::Get<TextureSystem>()->GetTexture(t->mName.c_str())));
-		EGUI::Display::EndPayloadReceiver();
-	}
-
-	OString buffer = "No Shader";
-	if (mpShader)
-		buffer = mpShader->GetName().c_str();
-
-	if (EGUI::Display::EmptyBox("Shader", 150, buffer.c_str(), true))
-		bDebug = !bDebug;
-
-	buffer += "                               ";
-	if (bDebug && EGUI::Display::TextField("Manual", buffer, true, 150))
-		if (auto pShader = CORE::Get<ShaderSystem>()->GetShader(buffer.c_str()))
-			mpShader = pShader;
-
-	switch (EGUI::Display::DragInt("Maximum Particle Count", &mnParticleLimit, 1.f, 0, INT_MAX))
-	{
-	case EGUI::eDragStatus::eSTART_DRAG:
-		cmd->StartRec(&Emitter::mnParticleLimit, this);
-		break;
-	case EGUI::eDragStatus::eEND_DRAG:
-	case EGUI::eDragStatus::eDEACTIVATED:
-	case EGUI::eDragStatus::eENTER:
-		cmd->EndRec(&Emitter::mnParticleLimit, this);
-		break;
-	}
-
-	EGUI::Display::Label("Particle Count: %u", mSpawnCount);
-	EGUI::Display::HorizontalSeparator();
-	if (EGUI::Display::StartTreeNode("Spawn Affectors"))
-	{
-		for (int i = 0; i < mSpawn.size(); ++i)
-		{
-			EGUI::PushID(static_cast<int>(i));
-			EGUI::Indent(30.f);
-			EGUI::Display::Label((mSpawn[i].*affectorNames[mSpawn[i].GetID()])());
-			EGUI::UnIndent(30.f);
-			EGUI::PopID();
-		}
-		EGUI::Display::EndTreeNode();
-	}
-	EGUI::Display::HorizontalSeparator();
-	if (EGUI::Display::StartTreeNode("Update Affectors"))
-	{
-		for (int i = 0; i < mUpdate.size(); ++i)
-		{
-			EGUI::PushID(static_cast<int>(i));
-			EGUI::Indent(30.f);
-			EGUI::Display::Label((mUpdate[i].*affectorNames[mUpdate[i].GetID()])());
-			EGUI::UnIndent(30.f);
-			EGUI::PopID();
-		}
-		EGUI::Display::EndTreeNode();
-	}
-	EGUI::Display::HorizontalSeparator();
-	if (EGUI::Display::StartTreeNode("Fixed Update Affectors"))
-	{
-		for (int i = 0; i < mFixedUpdate.size(); ++i)
-		{
-			EGUI::PushID(static_cast<int>(i));
-			EGUI::Indent(30.f);
-			EGUI::Display::Label((mFixedUpdate[i].*affectorNames[mFixedUpdate[i].GetID()])());
-			EGUI::UnIndent(30.f);
-			EGUI::PopID();
-		}
-		EGUI::Display::EndTreeNode();
-	}
+	//static const auto affectorNames = Dystopia::AffectorUI<Dystopia::AffectorList>::GetUIName();
+	//static bool bDebug = false;
+	//
+	//auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
+	//
+	//EGUI::Display::EmptyBox("Particle Texture", 150, (mpTexture) ? mpTexture->GetName().c_str() : "-empty-", true);
+	//if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::ALL_IMG))
+	//{
+	//	cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand(&Emitter::SetTexture, mpTexture),
+	//		cmd->MakeFnCommand(&Emitter::SetTexture,
+	//			CORE::Get<TextureSystem>()->GetTexture(t->mName.c_str())));
+	//	EGUI::Display::EndPayloadReceiver();
+	//}
+	//
+	//OString buffer = "No Shader";
+	//if (mpShader)
+	//	buffer = mpShader->GetName().c_str();
+	//
+	//if (EGUI::Display::EmptyBox("Shader", 150, buffer.c_str(), true))
+	//	bDebug = !bDebug;
+	//
+	//buffer += "                               ";
+	//if (bDebug && EGUI::Display::TextField("Manual", buffer, true, 150))
+	//	if (auto pShader = CORE::Get<ShaderSystem>()->GetShader(buffer.c_str()))
+	//		mpShader = pShader;
+	//
+	//switch (EGUI::Display::DragInt("Maximum Particle Count", &mnParticleLimit, 1.f, 0, INT_MAX))
+	//{
+	//case EGUI::eDragStatus::eSTART_DRAG:
+	//	cmd->StartRec(&Emitter::mnParticleLimit, this);
+	//	break;
+	//case EGUI::eDragStatus::eEND_DRAG:
+	//case EGUI::eDragStatus::eDEACTIVATED:
+	//case EGUI::eDragStatus::eENTER:
+	//	cmd->EndRec(&Emitter::mnParticleLimit, this);
+	//	break;
+	//}
+	//
+	//EGUI::Display::Label("Particle Count: %u", mSpawnCount);
+	//EGUI::Display::HorizontalSeparator();
+	//if (EGUI::Display::StartTreeNode("Spawn Affectors"))
+	//{
+	//	for (int i = 0; i < mSpawn.size(); ++i)
+	//	{
+	//		EGUI::PushID(static_cast<int>(i));
+	//		EGUI::Indent(30.f);
+	//		EGUI::Display::Label((mSpawn[i].*affectorNames[mSpawn[i].GetID()])());
+	//		EGUI::UnIndent(30.f);
+	//		EGUI::PopID();
+	//	}
+	//	EGUI::Display::EndTreeNode();
+	//}
+	//EGUI::Display::HorizontalSeparator();
+	//if (EGUI::Display::StartTreeNode("Update Affectors"))
+	//{
+	//	for (int i = 0; i < mUpdate.size(); ++i)
+	//	{
+	//		EGUI::PushID(static_cast<int>(i));
+	//		EGUI::Indent(30.f);
+	//		EGUI::Display::Label((mUpdate[i].*affectorNames[mUpdate[i].GetID()])());
+	//		EGUI::UnIndent(30.f);
+	//		EGUI::PopID();
+	//	}
+	//	EGUI::Display::EndTreeNode();
+	//}
+	//EGUI::Display::HorizontalSeparator();
+	//if (EGUI::Display::StartTreeNode("Fixed Update Affectors"))
+	//{
+	//	for (int i = 0; i < mFixedUpdate.size(); ++i)
+	//	{
+	//		EGUI::PushID(static_cast<int>(i));
+	//		EGUI::Indent(30.f);
+	//		EGUI::Display::Label((mFixedUpdate[i].*affectorNames[mFixedUpdate[i].GetID()])());
+	//		EGUI::UnIndent(30.f);
+	//		EGUI::PopID();
+	//	}
+	//	EGUI::Display::EndTreeNode();
+	//}
 #endif 
 }
 

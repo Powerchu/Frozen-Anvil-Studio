@@ -313,6 +313,9 @@ namespace Ut
 		IsSame<unsigned long long, T> ::value
 	> {};
 
+	template <typename Ty>
+	constexpr inline auto IsIntegral_v = IsIntegral<Ty>::value;
+
 
 	// Is Float
 	// =========== =========================================================
@@ -340,6 +343,49 @@ namespace Ut
 
 	template <typename T>
 	struct IsSigned : Constant<bool, T( -1 ) < T( 0 )> {};
+
+
+	// RemoveSigned
+	// ============== ======================================================
+
+	template <typename T>
+	struct MakeUnsigned
+	{
+		using type = T;
+	};
+
+	template<>
+	struct MakeUnsigned<char>
+	{
+		using type = unsigned char;
+	};
+
+	template<>
+	struct MakeUnsigned<short>
+	{
+		using type = unsigned short;
+	};
+
+	template<>
+	struct MakeUnsigned<int>
+	{
+		using type = unsigned int;
+	};
+
+	template<>
+	struct MakeUnsigned<long>
+	{
+		using type = unsigned long;
+	};
+
+	template<>
+	struct MakeUnsigned<long long>
+	{
+		using type = unsigned long long;
+	};
+
+	template <typename T>
+	using MakeUnsigned_t = typename MakeUnsigned<T>::type;
 
 
 	// Has Members
