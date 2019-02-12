@@ -327,6 +327,9 @@ namespace Ut
 		IsSame<long double, T> ::value
 	> {};
 
+	template <typename T>
+	inline constexpr auto IsFloatType_v = IsFloatType<T>::value;
+
 
 	// Is Numeral
 	// =========== =========================================================

@@ -39,6 +39,7 @@ namespace Math
 		{
 		private:
 			using Val_t = Ut::Decay_t<T>;
+			using Child_t = ::Math::NormInt<T>;
 
 		public:
 
@@ -57,7 +58,7 @@ namespace Math
 			// ===================================== MEMBER FUNCTIONS ==================================== // 
 
 			template <typename U>
-			constexpr inline auto As(void) const noexcept -> Ut::EnableIf_t<Ut::IsFloatType<U>::value, U>;
+			constexpr inline U As(void) const noexcept;
 
 			constexpr inline Ut::Decay_t<T> Raw(void) const noexcept;
 
@@ -66,26 +67,34 @@ namespace Math
 
 			constexpr inline auto operator -  (void) const noexcept -> Ut::EnableIf_t<Ut::IsSigned<T>::value, NormInt>;
 
-			constexpr inline Math::NormInt<T>& operator  = (float) noexcept;
-			constexpr inline Math::NormInt<T>& operator *= (float) noexcept;
-			constexpr inline Math::NormInt<T>& operator /= (float) noexcept;
-			constexpr inline Math::NormInt<T>& operator += (float) noexcept;
-			constexpr inline Math::NormInt<T>& operator -= (float) noexcept;
+			template <typename U>
+			constexpr inline auto operator  = (U&&) noexcept -> Ut::EnableIf_t<Ut::IsFloatType_v<Ut::Decay_t<U>>, Child_t&>;
+			template <typename U>
+			constexpr inline auto operator *= (U&&) noexcept -> Ut::EnableIf_t<Ut::IsFloatType_v<Ut::Decay_t<U>>, Child_t&>;
+			template <typename U>
+			constexpr inline auto operator /= (U&&) noexcept -> Ut::EnableIf_t<Ut::IsFloatType_v<Ut::Decay_t<U>>, Child_t&>;
+			template <typename U>
+			constexpr inline auto operator += (U&&) noexcept -> Ut::EnableIf_t<Ut::IsFloatType_v<Ut::Decay_t<U>>, Child_t&>;
+			template <typename U>
+			constexpr inline auto operator -= (U&&) noexcept -> Ut::EnableIf_t<Ut::IsFloatType_v<Ut::Decay_t<U>>, Child_t&>;
 
 			template <typename U>
-			constexpr inline Math::NormInt<T>& operator  = (Math::NormInt<U>) noexcept;
+			constexpr inline decltype(auto) operator  = (Math::NormInt<U>) noexcept;
 			template <typename U>
-			constexpr inline Math::NormInt<T>& operator *= (Math::NormInt<U>) noexcept;
+			constexpr inline decltype(auto) operator *= (Math::NormInt<U>) noexcept;
 			template <typename U>
-			constexpr inline Math::NormInt<T>& operator /= (Math::NormInt<U>) noexcept;
+			constexpr inline decltype(auto) operator /= (Math::NormInt<U>) noexcept;
 			template <typename U>
-			constexpr inline Math::NormInt<T>& operator += (Math::NormInt<U>) noexcept;
+			constexpr inline decltype(auto) operator += (Math::NormInt<U>) noexcept;
 			template <typename U>
-			constexpr inline Math::NormInt<T>& operator -= (Math::NormInt<U>) noexcept;
+			constexpr inline decltype(auto) operator -= (Math::NormInt<U>) noexcept;
 
-			constexpr inline bool operator <  (float) const noexcept;
-			constexpr inline bool operator == (float) const noexcept;
-			constexpr inline bool operator != (float) const noexcept;
+			template <typename U>
+			constexpr inline auto operator <  (U&&) const noexcept -> Ut::EnableIf_t<Ut::IsFloatType_v<Ut::Decay_t<U>>, Child_t&>;
+			template <typename U>
+			constexpr inline auto operator == (U&&) const noexcept -> Ut::EnableIf_t<Ut::IsFloatType_v<Ut::Decay_t<U>>, Child_t&>;
+			template <typename U>
+			constexpr inline auto operator != (U&&) const noexcept -> Ut::EnableIf_t<Ut::IsFloatType_v<Ut::Decay_t<U>>, Child_t&>;
 
 			template <typename U>
 			constexpr inline bool operator <  (Math::NormInt<U>) const noexcept;
@@ -110,14 +119,14 @@ namespace Math
 
 	// ======================================== OPERATORS ======================================== // 
 
-	template <typename T>
-	constexpr inline NormInt<T> operator - (NormInt<T>, NormInt<T>);
-	template <typename T>
-	constexpr inline NormInt<T> operator + (NormInt<T>, NormInt<T>);
-	template <typename T>
-	constexpr inline NormInt<T> operator * (NormInt<T>, NormInt<T>);
-	template <typename T>
-	constexpr inline NormInt<T> operator / (NormInt<T>, NormInt<T>);
+	template <typename T, typename U>
+	constexpr inline NormInt<T> operator - (NormInt<T> const&, NormInt<U> const&);
+	template <typename T, typename U>
+	constexpr inline NormInt<T> operator + (NormInt<T> const&, NormInt<U> const&);
+	template <typename T, typename U>
+	constexpr inline NormInt<T> operator * (NormInt<T> const&, NormInt<U> const&);
+	template <typename T, typename U>
+	constexpr inline NormInt<T> operator / (NormInt<T> const&, NormInt<U> const&);
 
 	template <typename T>
 	constexpr inline NormInt<T> operator - (float, NormInt<T>);
@@ -144,8 +153,8 @@ namespace Math
 
 
 // ============================================ FUNCTION DEFINITIONS ============================================ // 
-
 namespace Math::Internal {
+
 
 template <typename T>
 inline constexpr NormInt<::Math::NormInt<T>, Ut::EnableIf_t<Ut::IsIntegral_v<T>, T>>::NormInt(void) noexcept
@@ -174,18 +183,27 @@ inline constexpr Ut::Decay_t<T> NormInt<::Math::NormInt<T>, Ut::EnableIf_t<Ut::I
 
 
 template <typename T> template <typename U>
-inline constexpr auto NormInt<::Math::NormInt<T>, Ut::EnableIf_t<Ut::IsIntegral_v<T>, T>>::As(void) const noexcept -> Ut::EnableIf_t<Ut::IsFloatType<U>::value, U>
+inline constexpr U NormInt<::Math::NormInt<T>, Ut::EnableIf_t<Ut::IsIntegral_v<T>, T>>::As(void) const noexcept
 {
-	if constexpr (Ut::IsSigned<Val_t>::value)
-	{
-		auto a = static_cast<Val_t>(value);
+	static_assert(Ut::IsFloatType<U>::value || Ut::IsSame<Val_t, U>::value, "Must be converted to floating point type!");
 
-		return (Ut::Decay_t<U>{ 1 } * a) /
-			(a < Ut::Constant<Val_t, 0>::value ? -std::numeric_limits<Val_t>::lowest() : std::numeric_limits<Val_t>::max());
+	if constexpr (Ut::IsFloatType<U>::value)
+	{
+		if constexpr (Ut::IsSigned<Val_t>::value)
+		{
+			auto a = static_cast<Val_t>(value);
+
+			return (Ut::Decay_t<U>{ 1 } *a) /
+				(a < Ut::Constant<Val_t, 0>::value ? -std::numeric_limits<Val_t>::lowest() : std::numeric_limits<Val_t>::max());
+		}
+		else
+		{
+			return (Ut::Decay_t<U>{ 1 } *value) / std::numeric_limits<Val_t>::max();
+		}
 	}
 	else
 	{
-		return (Ut::Decay_t<U>{ 1 } * value) / std::numeric_limits<Val_t>::max();
+		return static_cast<Val_t>(value);
 	}
 }
 
@@ -198,6 +216,101 @@ template<typename T>
 inline constexpr NormInt<::Math::NormInt<T>, Ut::EnableIf_t<Ut::IsIntegral_v<T>, T>>::operator float(void) const noexcept
 {
 	return As<float>();
+}
+
+template <typename T>
+inline constexpr auto NormInt<::Math::NormInt<T>, Ut::EnableIf_t<Ut::IsIntegral_v<T>, T>>::operator - (void) const noexcept
+	-> Ut::EnableIf_t<Ut::IsSigned<T>::value, NormInt>
+{
+	return NormInt{ ~value + 1 };
+}
+
+template <typename T> template <typename U>
+inline constexpr auto NormInt<::Math::NormInt<T>, Ut::EnableIf_t<Ut::IsIntegral_v<T>, T>>::operator = (U&& _v) noexcept
+	-> Ut::EnableIf_t<Ut::IsFloatType_v<Ut::Decay_t<U>>, Child_t&>
+{
+	return static_cast<::Math::NormInt<T>&>(*this = NormInt{ Ut::Fwd<U>(_v) });
+}
+
+template <typename T> template <typename U>
+inline constexpr auto NormInt<::Math::NormInt<T>, Ut::EnableIf_t<Ut::IsIntegral_v<T>, T>>::operator *= (U&& _v) noexcept
+	-> Ut::EnableIf_t<Ut::IsFloatType_v<Ut::Decay_t<U>>, Child_t&>
+{
+	value = Ut::Round<decltype(value)>(As<Val_t>() * _v);
+
+	return static_cast<::Math::NormInt<T>&>(*this);
+}
+
+template <typename T> template <typename U>
+inline constexpr auto NormInt<::Math::NormInt<T>, Ut::EnableIf_t<Ut::IsIntegral_v<T>, T>>::operator /= (U&& _v) noexcept
+	-> Ut::EnableIf_t<Ut::IsFloatType_v<Ut::Decay_t<U>>, Child_t&>
+{
+	return (*this *= 1.f / _v);
+}
+
+template <typename T> template <typename U>
+inline constexpr auto NormInt<::Math::NormInt<T>, Ut::EnableIf_t<Ut::IsIntegral_v<T>, T>>::operator += (U&& _v) noexcept
+	-> Ut::EnableIf_t<Ut::IsFloatType_v<Ut::Decay_t<U>>, Child_t&>
+{
+	return static_cast<::Math::NormInt<T>&>(*this += NormInt{ Ut::Fwd<U>(_v) });
+}
+
+template <typename T> template <typename U>
+inline constexpr auto NormInt<::Math::NormInt<T>, Ut::EnableIf_t<Ut::IsIntegral_v<T>, T>>::operator -= (U&& _v) noexcept
+	-> Ut::EnableIf_t<Ut::IsFloatType_v<Ut::Decay_t<U>>, Child_t&>
+{
+	return static_cast<::Math::NormInt<T>&>(*this -= NormInt{ Ut::Fwd<U>(_v) });
+}
+
+template <typename T> template <typename U>
+inline constexpr decltype(auto) NormInt<::Math::NormInt<T>, Ut::EnableIf_t<Ut::IsIntegral_v<T>, T>>::operator = (Math::NormInt<U> _rhs) noexcept
+{
+	return *this = _rhs.As<long double>();
+}
+
+template <typename T> template <typename U>
+inline constexpr decltype(auto) NormInt<::Math::NormInt<T>, Ut::EnableIf_t<Ut::IsIntegral_v<T>, T>>::operator *= (Math::NormInt<U> _rhs) noexcept
+{
+	return *this *= _rhs.As<long double>();
+}
+
+template <typename T> template <typename U>
+inline constexpr decltype(auto) NormInt<::Math::NormInt<T>, Ut::EnableIf_t<Ut::IsIntegral_v<T>, T>>::operator /= (Math::NormInt<U> _rhs) noexcept
+{
+	return *this /= _rhs.As<long double>();
+}
+
+template <typename T> template <typename U>
+inline constexpr decltype(auto) NormInt<::Math::NormInt<T>, Ut::EnableIf_t<Ut::IsIntegral_v<T>, T>>::operator += (Math::NormInt<U> _rhs) noexcept
+{
+	return *this += _rhs.As<long double>();
+}
+
+template <typename T> template <typename U>
+inline constexpr decltype(auto) NormInt<::Math::NormInt<T>, Ut::EnableIf_t<Ut::IsIntegral_v<T>, T>>::operator -= (Math::NormInt<U> _rhs) noexcept
+{
+	return *this -= _rhs.As<long double>();
+}
+
+template <typename T>  template <typename U>
+inline constexpr auto NormInt<::Math::NormInt<T>, Ut::EnableIf_t<Ut::IsIntegral_v<T>, T>>::operator < (U&& _rhs) const noexcept
+	-> Ut::EnableIf_t<Ut::IsFloatType_v<Ut::Decay_t<U>>, Child_t&>
+{
+	return *this < NormInt{ Ut::Fwd<U>(_rhs) }.As<Val_t>();
+}
+
+template <typename T>  template <typename U>
+inline constexpr auto NormInt<::Math::NormInt<T>, Ut::EnableIf_t<Ut::IsIntegral_v<T>, T>>::operator == (U&& _rhs) const noexcept
+	-> Ut::EnableIf_t<Ut::IsFloatType_v<Ut::Decay_t<U>>, Child_t&>
+{
+	return *this == NormInt{ Ut::Fwd<U>(_rhs) }.As<Val_t>();
+}
+
+template <typename T> template <typename U>
+inline constexpr auto NormInt<::Math::NormInt<T>, Ut::EnableIf_t<Ut::IsIntegral_v<T>, T>>::operator != (U&& _rhs) const noexcept
+	 -> Ut::EnableIf_t<Ut::IsFloatType_v<Ut::Decay_t<U>>, Child_t&>
+{
+	return !(this->operator == (Ut::Fwd<U>(_rhs)));
 }
 
 

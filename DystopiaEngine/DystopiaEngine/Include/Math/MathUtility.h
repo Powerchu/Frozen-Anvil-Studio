@@ -81,6 +81,12 @@ namespace Math
 		return diff <= (scale * C::epsilon<T>);
 	}
 
+	template <typename T, typename U>
+	inline constexpr T Round(U _val)
+	{
+		return static_cast<T>(_val +  (_val > 0) ? U(.5) : U(-.5));
+	}
+
 	template <typename T>
 	inline constexpr T Clamp(T _input, Ut::Type_t<T> _min, Ut::Type_t<T> _max) noexcept
 	{
@@ -126,6 +132,7 @@ namespace Ut
 	using Math::Min;
 	using Math::Max;
 	using Math::Wrap;
+	using Math::Round;
 	using Math::Clamp;
 	using Math::Power;
 	using Math::IsZero;
