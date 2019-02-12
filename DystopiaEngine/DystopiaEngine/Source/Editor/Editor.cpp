@@ -44,19 +44,13 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int){
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-	constexpr Math::NormInt<char> x{ (char)177 };
-
-	float constexpr y = x;
-
-	if (AllocConsole())
-	{
-		FILE* file;
-	
-		freopen_s(&file, "CONOUT$", "wt", stdout);
-		freopen_s(&file, "CONOUT$", "wt", stderr);
-	}
-
-	std::cout << y << std::endl;
+	//if (AllocConsole())
+	//{
+	//	FILE* file;
+	//
+	//	freopen_s(&file, "CONOUT$", "wt", stdout);
+	//	freopen_s(&file, "CONOUT$", "wt", stderr);
+	//}
 
 	Editor::EditorMain *pMain = Editor::EditorMain::GetInstance();
 	pMain->Init();

@@ -84,7 +84,7 @@ namespace Math
 	template <typename T, typename U>
 	inline constexpr T Round(U _val)
 	{
-		return static_cast<T>(_val +  (_val > 0) ? U(.5) : U(-.5));
+		return static_cast<T>(_val + (_val > 0 ? U(.5) : U(-.5)));
 	}
 
 	template <typename T>
