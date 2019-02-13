@@ -53,6 +53,7 @@ namespace Dystopia
 
 		bool mbIsCustom, mbValid;
 
+		AutoArray<std::pair<OString, unsigned>> mTextures;
 		AutoArray<std::pair<OString, ::Gfx::eUniform_t>> mVars;
 	};
 }

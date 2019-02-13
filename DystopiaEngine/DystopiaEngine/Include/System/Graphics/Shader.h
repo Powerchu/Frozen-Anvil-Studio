@@ -39,9 +39,6 @@ namespace Dystopia
 		~Shader(void);
 
 		bool IsValid(void) const noexcept;
-
-		//void CreateShader(char const* _strVert, char const* _strFrag);
-		//void CreateShader(char const* _strVert, char const* _strFrag, char const* _strGeo);
 		
 		void AttachProgram(ShaderProgram*);
 		void DetachProgram(ShaderProgram*);

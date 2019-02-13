@@ -31,7 +31,7 @@ namespace
 
 Dystopia::ShaderProgram::ShaderProgram(bool _bIsCustom) noexcept
 	: mProgram{ pGfxAPI->CreateShaderProgram() }, mStage{ Gfx::ShaderStage::NONE }, mstrName{}, mVars{},
-	mbIsCustom{ _bIsCustom }, mbValid{ false }
+	mbIsCustom{ _bIsCustom }, mbValid{ false }, mTextures{}
 {
 
 }
@@ -127,15 +127,14 @@ bool Dystopia::ShaderProgram::LoadProgram(Gfx::ShaderStage _stage, char const* _
 
 	if (!shader)
 	{
-		// TODO
+		// GfxAPI writes the error message to the stack buffer on error!
+		DEBUG_PRINT(eLog::ERROR, "%s %s\n", _strName, StackAlloc_t::GetBufferAs<char>());
 		return true;
 	}
 
 	if (pGfxAPI->LinkShader(mProgram, shader))
 	{
-#	if EDITOR
-		mVars = pGfxAPI->QueryVariables(mProgram);
-#	endif
+		pGfxAPI->QueryVariables(mProgram, mVars, mTextures);
 	}
 
 	pGfxAPI->Free(shader);

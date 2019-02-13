@@ -18,8 +18,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/MetaAlgorithms.h"
 #include "Utility/DebugAssert.h"
 
-#include <cstring>
-#include <type_traits>
+#include <cstring>	   // memcpy
+#include <type_traits> // is_nothrow_constructible
 
 
 
@@ -277,6 +277,7 @@ Variant<Ty...>& Variant<Ty...>::operator = (Variant<Ty...> const& _rhs)
 
 
 
+#undef VARIANT_TYPE_RESOLUTION
 #undef VARIANT_ENABLE_IF_SFINAE
 
 

@@ -69,13 +69,13 @@ namespace Ut
 		using type = T;
 	};
 
-	template<typename T>
+	template <typename T>
 	struct RemoveRef<T&>
 	{
 		using type = T;
 	};
 
-	template<typename T>
+	template <typename T>
 	struct RemoveRef<T&&>
 	{
 		using type = T;
@@ -83,6 +83,25 @@ namespace Ut
 
 	template <typename T>
 	using RemoveRef_t = typename RemoveRef<T>::type;
+
+
+	// RemovePtr
+	// ========== ==========================================================
+
+	template <typename T>
+	struct RemovePtr
+	{
+		using type = T;
+	};
+
+	template <typename T>
+	struct RemovePtr<T*>
+	{
+		using type = T;
+	};
+
+	template <typename T>
+	using RemovePtr_t = typename RemovePtr<T>::type;
 
 
 	// RemoveConst
@@ -94,7 +113,7 @@ namespace Ut
 		using type = T;
 	};
 
-	template<typename T>
+	template <typename T>
 	struct RemoveConst<const T>
 	{
 		using type = T;
@@ -113,25 +132,25 @@ namespace Ut
 		using type = T;
 	};
 
-	template<typename T>
+	template <typename T>
 	struct RemoveLowConst<const T>
 	{
 		using type = const typename RemoveLowConst<T>::type;
 	};
 
-	template<typename T>
+	template <typename T>
 	struct RemoveLowConst<T const*>
 	{
 		using type = T*;
 	};
 
-	template<typename T>
+	template <typename T>
 	struct RemoveLowConst<T const&>
 	{
 		using type = T&;
 	};
 
-	template<typename T>
+	template <typename T>
 	struct RemoveLowConst<T const &&>
 	{
 		using type = T&&;
@@ -150,25 +169,25 @@ namespace Ut
 		using type = T;
 	};
 
-	template<typename T>
+	template <typename T>
 	struct AddLowConst<const T>
 	{
 		using type = const typename AddLowConst<T>::type;
 	};
 
-	template<typename T>
+	template <typename T>
 	struct AddLowConst<T*>
 	{
 		using type = T const*;
 	};
 
-	template<typename T>
+	template <typename T>
 	struct AddLowConst<T&>
 	{
 		using type = T const&;
 	};
 
-	template<typename T>
+	template <typename T>
 	struct AddLowConst<T&&>
 	{
 		using type = T const &&;
