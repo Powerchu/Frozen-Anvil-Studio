@@ -84,7 +84,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace
 {
-	static auto const& pGfxAPI = ::Gfx::GetInstance();
+	static auto const pGfxAPI = ::Gfx::GetInstance();
 }
 
 

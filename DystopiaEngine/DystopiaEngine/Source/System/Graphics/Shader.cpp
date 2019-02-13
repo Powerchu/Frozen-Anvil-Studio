@@ -27,7 +27,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace
 {
-	static auto const& pGfxAPI = ::Gfx::GetInstance();
+	static auto const pGfxAPI = ::Gfx::GetInstance();
 }
 
 
@@ -168,6 +168,14 @@ void Dystopia::Shader::OnEditorUI(void) const
 {
 }
 
+AutoArray<std::pair<OString, unsigned>> const & Dystopia::Shader::GetTextureList(void) noexcept
+{
+	if (mbUpdate)
+		ImportVariables();
+
+	return mTextures;
+}
+
 AutoArray<std::pair<OString, Gfx::eUniform_t>> const& Dystopia::Shader::GetVariables(void) noexcept
 {
 	if (mbUpdate)
@@ -196,7 +204,15 @@ void Dystopia::Shader::ImportVariables(void) noexcept
 
 			if (bNew) mVars.EmplaceBack(e);
 		}
+
+		for (auto& e : p->GetTextureList())
+			if (mTextures.size() < e.second)
+				mTextures.EmplaceBack(e);
 	}
+
+	mTextures.Sort([](auto& lhs, auto& rhs) {
+		return lhs.second < rhs.second;
+	});
 
 	mbUpdate = false;
 }

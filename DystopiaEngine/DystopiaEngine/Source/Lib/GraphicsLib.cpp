@@ -29,9 +29,9 @@ namespace
 	static Gfx::GfxMode ActiveMode = Gfx::GfxMode::NONE;
 }
 
-API_PTR const& Gfx::GetInstance(void) noexcept
+::Gfx::GfxAPI* Gfx::GetInstance(void) noexcept
 {
-	return pInstance;
+	return ((pInstance));
 }
 
 Gfx::GfxMode Gfx::GetActiveMode(void) noexcept

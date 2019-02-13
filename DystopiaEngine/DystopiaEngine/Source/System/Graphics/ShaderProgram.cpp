@@ -25,7 +25,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace
 {
-	static auto const& pGfxAPI = ::Gfx::GetInstance();
+	static auto const pGfxAPI = ::Gfx::GetInstance();
 }
 
 
@@ -79,6 +79,11 @@ bool Dystopia::ShaderProgram::IsCustomProgram(void) const noexcept
 void Dystopia::ShaderProgram::TrackChangesCallback(void)
 {
 	CORE::Get<ShaderSystem>()->NotifyReplace(this);
+}
+
+AutoArray<std::pair<OString, unsigned>> const & Dystopia::ShaderProgram::GetTextureList(void) noexcept
+{
+	return mTextures;
 }
 
 AutoArray<std::pair<HashString, Gfx::eUniform_t>> const& Dystopia::ShaderProgram::GetVariables(void) noexcept

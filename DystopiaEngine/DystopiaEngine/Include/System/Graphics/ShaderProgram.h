@@ -41,6 +41,7 @@ namespace Dystopia
 		bool IsCustomProgram(void) const noexcept;
 
 		void TrackChangesCallback(void);
+		AutoArray<std::pair<OString, unsigned>> const& GetTextureList(void) noexcept;
 		AutoArray<std::pair<OString, ::Gfx::eUniform_t>> const& GetVariables(void) noexcept;
 
 		ShaderProgram& operator= (ShaderProgram&&) noexcept;

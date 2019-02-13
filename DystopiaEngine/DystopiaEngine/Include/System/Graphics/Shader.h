@@ -71,6 +71,7 @@ namespace Dystopia
 
 		void OnEditorUI(void) const;
 
+		AutoArray<std::pair<OString, unsigned>> const& GetTextureList(void) noexcept;
 		AutoArray<std::pair<OString, ::Gfx::eUniform_t>> const& GetVariables(void) noexcept;
 
 	private:
@@ -83,6 +84,7 @@ namespace Dystopia
 		AutoArray<ShaderProgram*> mPrograms;
 
 		bool mbUpdate, mbIsCustom, mbValid;
+		AutoArray<std::pair<OString, unsigned>> mTextures;
 		AutoArray<std::pair<OString, ::Gfx::eUniform_t>> mVars;
 	};
 }

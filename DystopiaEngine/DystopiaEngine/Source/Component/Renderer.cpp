@@ -275,26 +275,57 @@ void Dystopia::Renderer::MeshField()
 	}
 }
 
+
+namespace
+{
+	template <typename, typename>
+	struct GenVariantList;
+
+	template <template<unsigned...> class S, unsigned ... V, typename T>
+	struct GenVariantList<S<V...>, T>
+	{
+		template <typename Variant_t>
+		static inline void Init(Variant_t& v, unsigned _idx) noexcept
+		{
+			static void(*x[])(Variant_t&) noexcept {
+				[](Variant_t& v) noexcept { v = typename Ut::MetaExtract_t<V, T>::type{}; }...
+			};
+
+			x[_idx](v);
+		}
+	};
+
+	template <typename, typename>
+	struct ShaderTypeGetAux;
+
+	template <template<unsigned...> class S, unsigned ... V, typename T>
+	struct ShaderTypeGetAux<S<V...>, T>
+	{
+		static inline Gfx::eUniform_t(*get[])(void) { [](void) { 
+			return static_cast<::Gfx::eUniform_t>(Ut::MetaExtract_t<V, T>::value); 
+		} ... };
+
+		static inline constexpr auto Get(size_t _nIdx) noexcept
+		{
+			return get[_nIdx]();
+		}
+	};
+
+	template <typename T>
+	struct VariantList : GenVariantList<
+		Ut::MetaMakeRange_t<Ut::SizeofList<T>::value>, T
+	> {};
+
+	template <typename T>
+	struct ShaderTypeGet : ShaderTypeGetAux<
+		Ut::MetaMakeRange_t<Ut::SizeofList<T>::value>, T
+	> {};
+}
+
 void Dystopia::Renderer::ShaderField()
 {
 	static bool debug = false;
 	EGUI::PushLeftAlign(80);
-	static void(*x[])(ShaderVariant_t&) {
-		[](ShaderVariant_t& v) { v = Ut::MetaExtract_t<0, ShaderTypeList>::type{}; },
-		[](ShaderVariant_t& v) { v = Ut::MetaExtract_t<1, ShaderTypeList>::type{}; },
-		[](ShaderVariant_t& v) { v = Ut::MetaExtract_t<2, ShaderTypeList>::type{}; },
-		[](ShaderVariant_t& v) { v = Ut::MetaExtract_t<3, ShaderTypeList>::type{}; },
-		[](ShaderVariant_t& v) { v = Ut::MetaExtract_t<4, ShaderTypeList>::type{}; },
-		[](ShaderVariant_t& v) { v = Ut::MetaExtract_t<5, ShaderTypeList>::type{}; }
-	};
-	static ::Gfx::eUniform_t(*y[])(void) {
-		[]() { return static_cast<::Gfx::eUniform_t>(Ut::MetaExtract_t<0, ShaderTypeList>::value); },
-		[]() { return static_cast<::Gfx::eUniform_t>(Ut::MetaExtract_t<1, ShaderTypeList>::value); },
-		[]() { return static_cast<::Gfx::eUniform_t>(Ut::MetaExtract_t<2, ShaderTypeList>::value); },
-		[]() { return static_cast<::Gfx::eUniform_t>(Ut::MetaExtract_t<3, ShaderTypeList>::value); },
-		[]() { return static_cast<::Gfx::eUniform_t>(Ut::MetaExtract_t<4, ShaderTypeList>::value); },
-		[]() { return static_cast<::Gfx::eUniform_t>(Ut::MetaExtract_t<5, ShaderTypeList>::value); }
-	};
 
 	char const* str = "No Shader";
 	if (mpShader)
@@ -342,10 +373,10 @@ void Dystopia::Renderer::ShaderField()
 		}())
 		{
 			for (int n = 0; n < Ut::SizeofList<ShaderTypeList>::value; ++n)
-				if (y[n]() == vars[sele - 1].second)
+				if (ShaderTypeGet<ShaderTypeList>::Get(n) == vars[sele - 1].second)
 				{
 					type = vars[sele - 1].second;
-					x[n](myVariant);
+					VariantList<ShaderTypeList>::Init(myVariant, n);
 					break;
 				}
 
@@ -399,33 +430,34 @@ inline void Dystopia::Renderer::UIVisitor::operator()(Math::Vec4& _variant)
 	EGUI::Display::LabelWrapped(strName.c_str());
 	EGUI::Display::VectorFields("", &_variant, 0.1f, -FLT_MAX, FLT_MAX);
 }
-template<>
-inline void Dystopia::Renderer::UIVisitor::operator()(std::pair<Texture*, int>& _variant)
-{
-	::Editor::File *t = nullptr;
-	EGUI::Display::LabelWrapped(strName.c_str());
+//template<>
+//inline void Dystopia::Renderer::UIVisitor::operator()(std::pair<Texture*, int>& _variant)
+//{
+//	::Editor::File *t = nullptr;
+//	EGUI::Display::LabelWrapped(strName.c_str());
+//
+//	EGUI::Display::EmptyBox("Texture", 150, (_variant.first) ? _variant.first->GetName().c_str() : "-empty-", true);
+//	t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PNG);
+//	if (t)  EGUI::Display::EndPayloadReceiver();
+//
+//	if (!t)
+//	{
+//		t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::DDS);
+//		if (t) EGUI::Display::EndPayloadReceiver();
+//	}
+//
+//	if (!t)
+//	{
+//		t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::BMP);
+//		if (t) EGUI::Display::EndPayloadReceiver();
+//	}
+//
+//	if (t)
+//	{
+//		_variant.first = CORE::Get<GraphicsSystem>()->LoadTexture(t->mPath.c_str());
+//	}
+//
+//	EGUI::Display::DragInt(strName.c_str(), &_variant.second, 1, -INT_MAX, INT_MAX, true);
+//}
 
-	EGUI::Display::EmptyBox("Texture", 150, (_variant.first) ? _variant.first->GetName().c_str() : "-empty-", true);
-	t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PNG);
-	if (t)  EGUI::Display::EndPayloadReceiver();
-
-	if (!t)
-	{
-		t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::DDS);
-		if (t) EGUI::Display::EndPayloadReceiver();
-	}
-
-	if (!t)
-	{
-		t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::BMP);
-		if (t) EGUI::Display::EndPayloadReceiver();
-	}
-
-	if (t)
-	{
-		_variant.first = CORE::Get<GraphicsSystem>()->LoadTexture(t->mPath.c_str());
-	}
-
-	EGUI::Display::DragInt(strName.c_str(), &_variant.second, 1, -INT_MAX, INT_MAX, true);
-}
 #endif

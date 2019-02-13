@@ -22,11 +22,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if defined(RUNTIME_GFXAPI) && RUNTIME_GFXAPI
 #define VIRTUAL_ virtual
 #define ABSTRACT_ = 0
-#define API_PTR ::Gfx::GfxAPI*
 #else
 #define VIRTUAL_
 #define ABSTRACT_
-#define API_PTR ::Gfx::OpenGL_API*
 #endif
 
 
@@ -106,7 +104,7 @@ namespace Gfx
 
 	using GfxAPI = GraphicsAPI;
 
-	API_PTR const& GetInstance(void) noexcept;
+	GfxAPI* GetInstance(void) noexcept;
 	GfxMode GetActiveMode(void) noexcept;
 
 	bool InitGraphicsAPI(void const* phwnd, GfxMode = GfxMode::DEFAULT);
