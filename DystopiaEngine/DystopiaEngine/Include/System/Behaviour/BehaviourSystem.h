@@ -234,7 +234,7 @@ namespace Dystopia
 				_EDITOR_CATCH(std::exception& e)
 				{
 					_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
-					_EDITOR_CODE(const_cast<GameObject *>(_GameObj)->RemoveComponent(iter.second));
+					_EDITOR_CODE(const_cast<GameObject *>(_GameObj)->RemoveComponent(BehaveElem));
 					_EDITOR_CODE(BehaveElem->DestroyComponent());
 				}
 #else
@@ -250,8 +250,8 @@ namespace Dystopia
 		{
 
 			BehaviourMessage Message(_FuncParams...);
-			auto & Array = EngineCore::GetInstance()->Get<SceneSystem>()->GetActiveScene().GetAllGameObjects();
-			for (auto & elem : Array)
+			auto && Array = EngineCore::GetInstance()->Get<SceneSystem>()->GetActiveScene();
+			for (auto & elem : Array.GetAllGameObjects())
 			{
 				auto BehaviourArray = elem.GetAllBehaviours();
 				for (auto & BehaveElem : BehaviourArray)
@@ -264,7 +264,7 @@ namespace Dystopia
 					_EDITOR_CATCH(std::exception& e)
 					{
 						_EDITOR_CODE(DEBUG_PRINT((eLog::WARNING), "Behaviour Message Error: %s!", e.what()));
-						_EDITOR_CODE(const_cast<GameObject *>(_GameObj)->RemoveComponent(iter.second));
+						_EDITOR_CODE(elem.RemoveComponent(BehaveElem));
 						_EDITOR_CODE(BehaveElem->DestroyComponent());
 					}
 #else

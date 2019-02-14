@@ -534,7 +534,7 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 		break;
 	}
 
-	bool alive = mbIsAlive;
+	//bool alive = mbIsAlive;
 	EGUI::Display::CheckBox("Is Alive", &mbIsAlive);
 		//cmd->ChangeValue(GetOwnerID(), &Emitter::mbIsAlive, !alive, alive);
 

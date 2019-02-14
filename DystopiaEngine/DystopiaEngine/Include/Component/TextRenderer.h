@@ -27,6 +27,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <string>
 
+#include "System/Graphics/VertexDefs.h"
 
 namespace Dystopia
 {

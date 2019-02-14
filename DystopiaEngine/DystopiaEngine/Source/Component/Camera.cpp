@@ -63,7 +63,7 @@ void Dystopia::Camera::Awake(void)
 	if (mnProjectionIndex == 0)
 		SetOrthographic(mViewAspect.mnX, mViewAspect.mnY, mClippingPlane.mnNear, mClippingPlane.mnFar);
 	else
-		SetPerspective(Math::Degrees{ static_cast<float>(mnPersFOV_deg) }, 0.625f, mClippingPlane.mnNear, mClippingPlane.mnFar);
+		SetPerspective(Math::Degrees{ static_cast<float>(mnPersFOV_deg) }, EngineCore::Get<GraphicsSystem>()->GetAspectRatio(), mClippingPlane.mnNear, mClippingPlane.mnFar);
 }
 
 void Dystopia::Camera::Init(void)
@@ -381,7 +381,7 @@ void Dystopia::Camera::EditorProjectionDropdown(void)
 			SetOrthographic(mViewAspect.mnX, mViewAspect.mnY, mClippingPlane.mnNear, mClippingPlane.mnFar);
 			break;
 		case 1: // Perspective
-			SetPerspective(Math::Degrees{ static_cast<float>(mnPersFOV_deg) }, 0.625f, mClippingPlane.mnNear, mClippingPlane.mnFar);
+			SetPerspective(Math::Degrees{ static_cast<float>(mnPersFOV_deg) }, EngineCore::Get<GraphicsSystem>()->GetAspectRatio(), mClippingPlane.mnNear, mClippingPlane.mnFar);
 			break;
 		default:
 			break;
@@ -441,7 +441,7 @@ void Dystopia::Camera::EditorOptions(void)
 		default:
 		case EGUI::eDragStatus::eNO_CHANGE:
 		case EGUI::eDragStatus::eDRAGGING:
-			SetPerspective(Math::Degrees{ static_cast<float>(mnPersFOV_deg) }, 0.625f, mClippingPlane.mnNear, mClippingPlane.mnFar);
+			SetPerspective(Math::Degrees{ static_cast<float>(mnPersFOV_deg) }, EngineCore::Get<GraphicsSystem>()->GetAspectRatio(), mClippingPlane.mnNear, mClippingPlane.mnFar);
 			break;
 		}
 		break;
@@ -477,7 +477,7 @@ void Dystopia::Camera::EditorOptions(void)
 		}
 		else // pers
 		{
-			SetPerspective(Math::Degrees{ static_cast<float>(mnPersFOV_deg) }, 0.625f, mClippingPlane.mnNear, mClippingPlane.mnFar);
+			SetPerspective(Math::Degrees{ static_cast<float>(mnPersFOV_deg) }, EngineCore::Get<GraphicsSystem>()->GetAspectRatio(), mClippingPlane.mnNear, mClippingPlane.mnFar);
 		}
 		break;
 	}

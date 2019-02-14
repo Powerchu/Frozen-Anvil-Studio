@@ -206,6 +206,7 @@ namespace Dystopia
 		}
 #else
 		static constexpr size_t size = Ut::SizeofList<BehaviourList>::value;
+
 		BehaviourSystemHelper::BehaviourSystemFunction<std::make_index_sequence< size >>::Insert();
 
 #endif
@@ -298,12 +299,12 @@ namespace Dystopia
 							//iter.first = iter.second->GetOwner()->GetID();
 							if (auto x = iter.second->GetOwner())
 							{
-								/*if (auto ai = x->GetComponent<AiController>())
+								if (auto ai = x->GetComponent<AiController>())
 								{
 									if (ai->GetTreeAsPtr().GetRaw() != nullptr)
 										if (ai->GetTreeAsRef()->IsValidTree())
 											ai->ClearTree();
-								}*/
+								}
 								x->RemoveComponent(iter.second);
 							}
 							//iter.second->GetOwner()->RemoveComponent(iter.second);

@@ -59,6 +59,12 @@ bool Dystopia::SoundSystem::Init(void)
 	if (!mpFMOD || mpFMOD->init(512, FMOD_INIT_NORMAL, 0) != FMOD_OK)
 		return false;
 
+	auto && Sounds = EngineCore::Get<FileSystem>()->GetAllFiles((EngineCore::Get<FileSystem>()->GetProjectFolders<std::string>(eFileDir::eResource) + "/Audio/").c_str());
+	for (auto && elem : Sounds)
+	{
+		LoadSound(elem.c_str());
+	}
+
 	return true;
 }
 
@@ -124,7 +130,7 @@ for (auto& c : ComponentDonor<AudioSource>::mComponents)
 		}
 		c.Update(_dt);
 		if (c.IsReady() && c.GetSound())
-			PlayAudio(c);
+			 PlayAudio(c);
 	}
 }
 }

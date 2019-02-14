@@ -147,6 +147,8 @@ namespace Dystopia
 		{
 #if EDITOR
 			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+#else
+			if (!(elem.GetFlags() & eObjFlag::FLAG_ACTIVE)) continue;
 #endif 
 			if (elem.GetOwner())
 			{
@@ -164,6 +166,8 @@ namespace Dystopia
 		{
 #if EDITOR
 			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+#else
+			if (!(elem.GetFlags() & eObjFlag::FLAG_ACTIVE)) continue;
 #endif 
 			if (elem.GetOwner())
 			{
@@ -182,6 +186,8 @@ namespace Dystopia
 		{
 #if EDITOR
 			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+#else
+			if (!(elem.GetFlags() & eObjFlag::FLAG_ACTIVE)) continue;
 #endif 
 			if (elem.GetOwner())
 			{
@@ -198,6 +204,8 @@ namespace Dystopia
 		{
 #if EDITOR
 			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+#else
+			if (!(elem.GetFlags() & eObjFlag::FLAG_ACTIVE)) continue;
 #endif 
 			if (elem.GetOwner())
 			{
@@ -240,12 +248,13 @@ namespace Dystopia
 
 				const auto pair_key1 = std::make_pair(bodyA->GetColliderType(), (bodyB)->GetColliderType());
 				const auto pair_key2 = std::make_pair(bodyB->GetColliderType(), (bodyA)->GetColliderType());
+				bool hasCollision = true;
 				for (auto & key : CollisionFuncTable)
 				{
 					if (key.first == pair_key1)
 					{
-						(this->*key.second)(bodyA, bodyB);
-						bodyA->SetColliding(bodyA->Collider::HasCollision());
+						hasCollision &= (this->*key.second)(bodyA, bodyB);
+
 
 						break;
 					}
@@ -254,12 +263,12 @@ namespace Dystopia
 				{
 					if (key.first == pair_key2)
 					{
-						(this->*key.second)(bodyB, bodyA);
-						bodyB->SetColliding(bodyB->Collider::HasCollision());
-
+						hasCollision &= (this->*key.second)(bodyB, bodyA);
 						break;
 					}
 				}
+				bodyA->SetColliding(hasCollision);
+				bodyB->SetColliding(hasCollision);
 			}
 		}
 
@@ -345,7 +354,7 @@ namespace Dystopia
 				_out << mIgnoreBoolTable[u][i];
 			}
 	}
-
+#if EDITOR
 	void CollisionSystem::EditorUI(void)
 	{
 		static char buffer[256];
@@ -365,7 +374,7 @@ namespace Dystopia
 		//	EGUI::SameLine();
 		//	EGUI::PopID();
 		//}
-		for (unsigned i = 1; i <= 32; ++i)
+		for (unsigned i = 32; i >= 1; --i)
 		{
 			//EGUI::Display::LabelWrapped(std::to_string(i).c_str());
 			if (i == 0)
@@ -384,7 +393,7 @@ namespace Dystopia
 		for (unsigned i = 1; i <= 32; ++i)
 		{
 			//EGUI::PushID(i);
-			for (unsigned u = 1; u <= 33 - i; ++u)
+			for (unsigned u = 32; u >= i; --u)
 			{
 				EGUI::PushID(unique++);
 				ImGui::PushItemWidth(10.f);
@@ -430,7 +439,7 @@ namespace Dystopia
 		}
 
 	}
-
+#endif
 	bool CollisionSystem::AABBvsAABB(Collider * const & _ColA, Collider * const & _ColB) const
 	{
 		const auto col_a = dynamic_cast<AABB * const>(_ColA);
@@ -695,7 +704,8 @@ namespace Dystopia
 		{
 			if (auto isolate = flags & (0x00000001u << count))
 			{
-				if (mIgnoreTable[static_cast<eColLayer>(isolate)] & _Layer2)
+				auto res = mIgnoreTable[static_cast<eColLayer>(isolate)];
+				if (res & _Layer2)
 					return true;
 			}
 		}
@@ -705,8 +715,8 @@ namespace Dystopia
 
 	void CollisionSystem::SetIgnore(unsigned _Layer1, unsigned _Layer2, bool _toignore)
 	{
-		mIgnoreTable[static_cast<eColLayer>(_Layer1)] = _toignore ? static_cast<eColLayer>(mIgnoreTable[static_cast<eColLayer>(_Layer1)] | _Layer2) : static_cast<eColLayer>(~mIgnoreTable[static_cast<eColLayer>(_Layer1)] & ~_Layer2);
-		mIgnoreTable[static_cast<eColLayer>(_Layer2)] = _toignore ? static_cast<eColLayer>(mIgnoreTable[static_cast<eColLayer>(_Layer2)] | _Layer1) : static_cast<eColLayer>(~mIgnoreTable[static_cast<eColLayer>(_Layer2)] & ~_Layer1);
+		mIgnoreTable[static_cast<eColLayer>(_Layer1)] = _toignore ? static_cast<eColLayer>(mIgnoreTable[static_cast<eColLayer>(_Layer1)] | _Layer2) : static_cast<eColLayer>(mIgnoreTable[static_cast<eColLayer>(_Layer1)] & ~_Layer2);
+		mIgnoreTable[static_cast<eColLayer>(_Layer2)] = _toignore ? static_cast<eColLayer>(mIgnoreTable[static_cast<eColLayer>(_Layer2)] | _Layer1) : static_cast<eColLayer>(mIgnoreTable[static_cast<eColLayer>(_Layer2)] & ~_Layer1);
 
 		unsigned count = 0;
 		unsigned count2 = 0;

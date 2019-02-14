@@ -287,8 +287,9 @@ namespace Dystopia
 		bool mbCanVibrate;
 
 		// ComboFilterStates Array
+#if EDITOR
 		AutoArray<ComboStruct> marrCombos;
-
+#endif
 		// Virtual Button/Axis Mapping
 		std::map<HashString, VirtualButton> mAxisMapping;
 

@@ -124,7 +124,7 @@ float Dystopia::GraphicsSystem::GetGamma(void) noexcept
 void Dystopia::GraphicsSystem::ToggleVsync(bool _b) noexcept
 {
 	mSettings &= _b ? eGfxSettings::GRAPHICS_ALL : ~eGfxSettings::GRAPHICS_VSYNC;
-
+	mbVsync = _b;
 	pGfxAPI->ToggleVSync(_b);
 }
 
@@ -140,6 +140,11 @@ void Dystopia::GraphicsSystem::ToggleDebugDraw(bool _bDebugDraw) const
 
 	for (auto& e : CamSys->GetAllCameras())
 		e.SetDebugDraw(_bDebugDraw);
+}
+
+float Dystopia::GraphicsSystem::GetAspectRatio() const
+{
+	return (mvResolution.y / mvResolution.x);
 }
 
 void Dystopia::GraphicsSystem::SetAllCameraAspect(const float _x, const float _y) const
@@ -837,6 +842,20 @@ Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(HashString const& _strN
 Dystopia::Texture* Dystopia::GraphicsSystem::LoadTexture(const char * _strName)
 {
 	return CORE::Get<TextureSystem>()->LoadTexture(_strName);
+}
+
+_DLL_EXPORT void Dystopia::GraphicsSystem::LoadAllTexture()
+{
+	auto && allTex = CORE::Get<FileSystem>()->GetAllFiles_Full((CORE::Get<FileSystem>()->GetProjectFolders<std::string>(eFileDir::eResource) + "/Asset/").c_str());
+	for (auto && tex : allTex)
+	{
+		if (tex.find(".dmap") != HashString::nPos || tex.find(".dmeta") != HashString::nPos)
+			continue;
+
+		if (tex.rfind(".png") != HashString::nPos || tex.rfind(".dds") != HashString::nPos)
+			LoadTexture(tex.c_str());
+	}
+
 }
 
 Dystopia::Texture* Dystopia::GraphicsSystem::LoadFont(const std::string &)

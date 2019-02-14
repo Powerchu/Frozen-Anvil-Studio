@@ -458,6 +458,27 @@ namespace Dystopia
 		return Convex::GetFarthestPoint(*this, _Dir);
 	}
 
+	void Convex::Reorder()
+	{
+		auto cpy = mVertices;
+		auto back  = cpy.end() - 1;
+		for (auto & v : mVertices)
+		{
+			v = *back;
+			--back;
+		}
+	}
+
+	void Convex::SetOwnerTransform(Math::Matrix3D const & _ownerMatrix)
+	{
+		auto v = GetWorldMatrix()[0] * GetWorldMatrix()[5];
+		Collider::SetOwnerTransform(_ownerMatrix);
+		if (GetWorldMatrix()[0] * GetWorldMatrix()[5] * v  < 0.f)
+		{
+			Reorder();
+		}
+	}
+
 	/*Support Function for getting the farthest point with relation to a Vector*/
 	Vertice Convex::GetFarthestPoint(const Convex & _ColA, const Math::Vec3D & _Dir)
 	{
@@ -798,6 +819,7 @@ namespace Dystopia
 #else
 			_v3Dir = Math::Vec3D{ -LastToFirst.y, LastToFirst.x,0,0 };
 #endif
+
 			/*Ensure that the normal is pointing away from the inside
 			of the triangle. If it is not, inverse it*/
 			_v3Dir = Dot(_v3Dir, _Simplex[1].mPosition) > 0 ? -_v3Dir : _v3Dir;
@@ -822,6 +844,7 @@ namespace Dystopia
 #else
 			_v3Dir = Math::Vec3D{ -LastToSecond.y,  LastToSecond.x,0,0 };
 #endif
+
 			/*Ensure that the normal is pointing away from the inside
 			of the triangle. If it is not, inverse it*/
 			_v3Dir = Dot(_v3Dir, _Simplex[0].mPosition) > 0 ? -_v3Dir : _v3Dir;
@@ -900,7 +923,6 @@ namespace Dystopia
 #else
 			EdgeNorm.Negate<Math::NegateFlag::X>();
 #endif
-
 			if (EdgeNorm.MagnitudeSqr() > FLT_EPSILON)
 			{
 				EdgeNorm.Normalise();

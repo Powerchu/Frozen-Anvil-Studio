@@ -133,9 +133,9 @@ bool Dystopia::ShaderProgram::LoadProgram(Gfx::ShaderStage _stage, char const* _
 
 	if (pGfxAPI->LinkShader(mProgram, shader))
 	{
-#	if EDITOR
+//#	if EDITOR
 		mVars = pGfxAPI->QueryVariables(mProgram);
-#	endif
+//#	endif
 	}
 
 	pGfxAPI->Free(shader);

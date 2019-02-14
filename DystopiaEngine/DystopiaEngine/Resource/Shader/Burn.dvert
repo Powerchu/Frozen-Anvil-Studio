@@ -1,0 +1,30 @@
+#version 410 core
+
+out gl_PerVertex
+{
+  vec4 gl_Position;
+};
+
+uniform mat4 ProjectMat;
+uniform mat4 ViewMat;
+uniform mat4 ModelMat;
+uniform vec4 vUVBounds = vec4(0, 0, 1, 1);
+
+layout(location = 0) in vec3 vertexPos;
+layout(location = 2) in vec2 vertexUV;
+
+layout(location = 0)out vec3 vPosition;
+layout(location = 2)out vec2 vUV;
+layout(location = 3)out vec2 vVertUV;
+
+void main()
+{
+  mat4 modelView = ViewMat * ModelMat;
+  vec4 temp = modelView * vec4(vertexPos, 1.f);
+  vPosition = temp.xyz;
+  vUV       = vUVBounds.xy + vertexUV * (vUVBounds.zw - vUVBounds.xy);
+  vVertUV   = vertexUV;
+  
+  gl_Position = ProjectMat * temp;
+}
+
