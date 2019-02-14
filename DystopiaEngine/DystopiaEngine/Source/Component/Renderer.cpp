@@ -198,7 +198,8 @@ void Dystopia::Renderer::Serialise(TextSerialiser& _out) const
 		}
 	}
 
-	_out.InsertEndBlock("START_OVERRIDE");
+	_out.InsertEndBlock("RENDERER_BASE");
+	_out.InsertStartBlock("OVERRIDE");
 	for (auto& e : mOverride)
 	{
 		_out << e.Get<0>();
@@ -242,6 +243,7 @@ void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 		}
 
 		_in.ConsumeEndBlock();
+		_in.ConsumeStartBlock();
 
 		ShaderVariant_t var;
 		std::underlying_type_t<::Gfx::eUniform_t> type;
