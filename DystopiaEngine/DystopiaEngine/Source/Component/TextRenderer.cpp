@@ -100,13 +100,13 @@ void Dystopia::TextRenderer::SetFont(const std::string& _strPath)
 	if (_strPath != "")
 	{
 		mpData = CORE::Get<FontSystem>()->LoadFont(_strPath);
-		mpTexture = mpData->mpAtlas->GetInternal();
+		Renderer::SetTexture(mpData->mpAtlas->GetInternal());
 		RegenMesh();
 	}
 	else
 	{
 		mpData    = nullptr;
-		mpTexture = nullptr;
+		Renderer::SetTexture(nullptr);
 	}
 }
 

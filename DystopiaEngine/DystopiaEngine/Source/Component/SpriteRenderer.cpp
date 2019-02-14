@@ -62,9 +62,9 @@ Dystopia::SpriteRenderer::SpriteRenderer(const SpriteRenderer& _rhs) noexcept
 void Dystopia::SpriteRenderer::Awake(void)
 {
 	Renderer::Awake();
-	if (mpTexture)
+	if (auto mpTexture = Renderer::GetTexture())
 	{
-		mpAtlas = EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->GetAtlas(mpTexture->GetName());
+		mpAtlas = CORE::Get<TextureSystem>()->GetAtlas(mpTexture->GetName());
 		if (mpAtlas)
 		{
 			if (!mpAtlas->GetAllSections().size())
@@ -79,7 +79,7 @@ void Dystopia::SpriteRenderer::Awake(void)
 void Dystopia::SpriteRenderer::Init(void)
 {
 	Renderer::Init();
-	if (mpTexture)
+	if (auto mpTexture = Renderer::GetTexture())
 	{
 		mpAtlas = EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->GetAtlas(mpTexture->GetName());
 		if (mpAtlas)
@@ -260,7 +260,7 @@ void Dystopia::SpriteRenderer::EditorUI(void) noexcept
 	TextureFields();
 	AnimFields();
 
-	if (mpAtlas && mpTexture)
+	if (mpAtlas && Renderer::GetTexture())
 	{
 		AddAnimations();
 
@@ -296,6 +296,8 @@ void Dystopia::SpriteRenderer::SetTexture(Texture* _pTexture) noexcept
 		if (!mpAtlas)
 			mpAtlas = EngineCore::Get<TextureSystem>()->GenAtlas(_pTexture);
 	}
+
+	auto mpTexture = Renderer::GetTexture();
 	if (mpTexture && mpAtlas && !mpAtlas->GetAllSections().size())
 		mpAtlas->AddSection(Math::Vec2{ 0,0 }, mpTexture->GetWidth(), mpTexture->GetHeight());
 
@@ -390,7 +392,7 @@ unsigned Dystopia::SpriteRenderer::GetFrameSize(unsigned _i) const
 
 Math::Vec2 Dystopia::SpriteRenderer::Resized(float _xMult, float _yMult) const
 {
-	if (mpTexture)
+	if (auto mpTexture = Renderer::GetTexture())
 	{
 		auto nScale = GetOwner()->GetComponent<Transform>()->GetGlobalScale();
 		nScale.x = static_cast<float>(mpTexture->GetWidth()) * _xMult;
@@ -423,13 +425,14 @@ void Dystopia::SpriteRenderer::TextureFields(void)
 {
 #if EDITOR
 
+	auto mpTexture = Renderer::GetTexture();
 	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
 	EGUI::Display::EmptyBox("Texture", 150, (mpTexture) ? mpTexture->GetName().c_str() : "-empty-", true);
 	if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::ALL_IMG))
 	{
 		cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand(&SpriteRenderer::SetTexture, mpTexture), 
 										   cmd->MakeFnCommand(&SpriteRenderer::SetTexture, 
-															  EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t->mPath.c_str())
+															  CORE::Get<GraphicsSystem>()->LoadTexture(t->mPath)
 															  ));
 		EGUI::Display::EndPayloadReceiver();
 	}
@@ -461,21 +464,6 @@ void Dystopia::SpriteRenderer::TextureFields(void)
 											   cmd->MakeFnCommand<Transform, const Math::Vec4&>(&Transform::SetGlobalScale, nScale));
 		}
 	}
-
-	//if (EGUI::Display::EmptyBox("Mesh", 150, (mpMesh) ? mpMesh->GetName().c_str() : "-no mesh-", true))
-	//{
-	//}
-	//if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::FILE))
-	//{
-	//	EGUI::Display::EndPayloadReceiver();
-	//}
-	//if (EGUI::Display::EmptyBox("Shader", 150, "shader has no name or id", true))
-	//{
-	//}
-	//if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::FILE))
-	//{
-	//	EGUI::Display::EndPayloadReceiver();
-	//}
 
 #endif
 }

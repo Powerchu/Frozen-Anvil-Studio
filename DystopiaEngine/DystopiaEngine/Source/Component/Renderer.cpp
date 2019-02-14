@@ -125,6 +125,8 @@ void Dystopia::Renderer::SetTexture(Texture* _pTexture, unsigned _idx) noexcept
 		if (e.Get<0>() == _idx)
 			e.Get<1>() = _pTexture;
 
+	mTexturePaths.resize(_idx);
+
 	if (_pTexture)
 		mTexturePaths[_idx] = _pTexture->GetPath();
 	else
