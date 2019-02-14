@@ -78,8 +78,8 @@ namespace Dystopia
 		void SetShader(const std::string&) noexcept;
 		Shader* GetShader(void) const noexcept;
 
-		void SetTexture(Texture*) noexcept;
-		Texture* GetTexture(void) const noexcept;
+		void SetTexture(Texture*, unsigned = 0) noexcept;
+		Texture* GetTexture(unsigned = 0) const noexcept;
 
 		bool HasTransparency(void) const noexcept;
 

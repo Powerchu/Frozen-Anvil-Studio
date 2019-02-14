@@ -59,7 +59,7 @@ public:
 	template <typename Visitor>
 	inline void Visit(Visitor&&);
 
-	inline unsigned short GetTypeID(void) const noexcept;
+	inline unsigned short const& GetTypeID(void) const noexcept;
 
 
 	// ======================================== OPERATORS ======================================== // 
@@ -189,9 +189,9 @@ inline bool Variant<Ty...>::IsValidType(void) const noexcept
 }
 
 template <typename ... Ty>
-inline unsigned short Variant<Ty...>::GetTypeID(void) const noexcept
+inline unsigned short const& Variant<Ty...>::GetTypeID(void) const noexcept
 {
-	return mType;
+	return (mType);
 }
 
 template <typename ... Ty>
