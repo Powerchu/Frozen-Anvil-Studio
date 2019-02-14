@@ -198,6 +198,16 @@ void Dystopia::Renderer::Serialise(TextSerialiser& _out) const
 		}
 	}
 
+	_out.InsertEndBlock("START_OVERRIDE");
+	for (auto& e : mOverride)
+	{
+		_out << e.Get<0>();
+		_out << static_cast<unsigned>(e.Get<1>());
+		_out << e.Get<2>().GetTypeID();
+
+		e.Get<2>().Visit([&_out](auto& _var) { _out << _var; });
+	}
+
 	_out.InsertEndBlock("Renderer");
 }
 
