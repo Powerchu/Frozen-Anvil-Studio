@@ -174,27 +174,73 @@ Dystopia::Renderer* Dystopia::Renderer::Duplicate(void) const
 
 void Dystopia::Renderer::Serialise(TextSerialiser& _out) const
 {
+	auto pFileSys = CORE::Get<FileSystem>();
+
 	_out.InsertStartBlock("Renderer");
 	Component::Serialise(_out);
-	//_out << EngineCore::GetInstance()->Get<FileSystem>()->ConvertToRelative(mTexturePath);
-	std::string rp = CORE::Get<FileSystem>()->ConvertToRelative(std::string{ mTexturePath.c_str() });
-	auto pos = rp.find_last_of("/\\");
-	if (pos != std::string::npos)
-		_out << rp.substr(pos + 1);
+
+	_out << "SENTRY";
+
+	for (auto& e : mTextureFields)
+	{
+		if (Texture*& ptr = e.Get<1>())
+		{
+			auto rp  = pFileSys->ConvertToRelative(ptr->GetPath());
+			auto pos = rp.find_last_of("/\\");
+
+			if (pos != OString::nPos)
+				_out << rp.substr(pos + 1);
+			else
+				_out << "";
+		}
+	}
+
 	_out.InsertEndBlock("Renderer");
 }
 
 void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 {
+	auto pFileSys = CORE::Get<FileSystem>();
+
+	OString strShader;
 	std::string path;
+
+	mTexturePaths.clear();
+
 	_in.ConsumeStartBlock();
 	Component::Unserialise(_in);
 	_in >> path;
+
+	// NEW VERSION
+	if ("SENTRY" == path)
+	{
+		unsigned count;
+		_in >> count;
+
+		while (count--)
+		{
+			_in >> path;
+
+			if (path.size())
+				mTexturePaths.EmplaceBack(
+					pFileSys->Normalize(pFileSys->GetFullPath(path, eFileDir::eResource)).c_str()
+				);
+			else
+				mTexturePaths.EmplaceBack("");
+		}
+	}
+	else // OLD SAVE
+	{
+		auto pos = path.find_last_of("/\\");
+		if (pos != std::string::npos)
+			path = path.substr(pos + 1);
+
+		mTexturePaths.EmplaceBack(
+			pFileSys->Normalize(pFileSys->GetFullPath(path.c_str(), eFileDir::eResource)).c_str()
+		);
+	}
+
 	_in.ConsumeEndBlock();
-	auto pos = path.find_last_of("/\\");
-	if (pos != std::string::npos)
-		path = path.substr(pos + 1);
-	mTexturePath = CORE::Get<FileSystem>()->Normalize(CORE::Get<FileSystem>()->GetFullPath(path, eFileDir::eResource)).c_str();
 }
 
 void Dystopia::Renderer::EditorUI(void) noexcept

@@ -124,8 +124,7 @@ namespace Dystopia
 
 		Mesh* mpMesh;
 		Shader* mpShader;
-		Texture* mpTexture;
-		HashString mTexturePath;
+		AutoArray<HashString> mTexturePaths;
 		AutoArray<Tuple<unsigned, Texture*>> mTextureFields;
 		AutoArray<Tuple<OString, ::Gfx::eUniform_t, ShaderVariant_t>> mOverride;
 
