@@ -115,6 +115,8 @@ namespace Dystopia
 		_DLL_EXPORT Math::Vector2 GetMousePosition(const Window&) const;
 		_DLL_EXPORT Math::Vector2 GetMouseDelta(void) const noexcept;
 		_DLL_EXPORT float GetMouseWheel(void) const noexcept;
+		_DLL_EXPORT bool IsVibrateOn() const;
+		_DLL_EXPORT void ToggleVibrate(bool);
 
 #if EDITOR	
 		void EditorUI(void);
@@ -282,10 +284,12 @@ namespace Dystopia
 			}
 		};
 
+		bool mbCanVibrate;
 
 		// ComboFilterStates Array
+#if EDITOR
 		AutoArray<ComboStruct> marrCombos;
-
+#endif
 		// Virtual Button/Axis Mapping
 		std::map<HashString, VirtualButton> mAxisMapping;
 

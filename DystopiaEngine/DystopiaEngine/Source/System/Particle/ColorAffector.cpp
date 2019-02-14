@@ -268,9 +268,94 @@ Dystopia::ColorOverLifeAffector::ColorOverLifeAffector(void)
 Dystopia::ColorOverLifeAffector::~ColorOverLifeAffector(void)
 {}
 
-void Dystopia::ColorOverLifeAffector::AffectorUpdate(Emitter&, float)
+void Dystopia::ColorOverLifeAffector::SetTargetR(unsigned short _n)
 {
+	*reinterpret_cast<unsigned short*>(data) = _n;
+}
 
+void Dystopia::ColorOverLifeAffector::SetTargetG(unsigned short  _n)
+{
+	*reinterpret_cast<unsigned short*>(data + 2) = _n;
+}
+
+void Dystopia::ColorOverLifeAffector::SetTargetB(unsigned short  _n)
+{
+	*reinterpret_cast<unsigned short*>(data + 4) = _n;
+}
+
+void Dystopia::ColorOverLifeAffector::SetTargetA(unsigned short  _n)
+{
+	*reinterpret_cast<unsigned short*>(data + 6) = _n;
+}
+
+void Dystopia::ColorOverLifeAffector::SetTargetLife(float _f)
+{
+	*reinterpret_cast<float*>(data + 8) = _f;
+}
+
+unsigned short Dystopia::ColorOverLifeAffector::GetTargetR(void) const
+{
+	return *reinterpret_cast<const unsigned short*>(data);
+}
+
+unsigned short Dystopia::ColorOverLifeAffector::GetTargetG(void) const
+{
+	return *reinterpret_cast<const unsigned short*>(data + 2);
+}
+
+unsigned short Dystopia::ColorOverLifeAffector::GetTargetB(void) const
+{
+	return *reinterpret_cast<const unsigned short*>(data + 4);
+}
+
+unsigned short Dystopia::ColorOverLifeAffector::GetTargetA(void) const
+{
+	return *reinterpret_cast<const unsigned short*>(data + 6);
+}
+
+float Dystopia::ColorOverLifeAffector::GetTargetLife(void) const
+{
+	return *reinterpret_cast<const float*>(data + 8);
+}
+
+void Dystopia::ColorOverLifeAffector::AffectorUpdate(Emitter& _emitter, float _dt)
+{
+	auto& allInitialLife = _emitter.GetInitialLifetime();
+	auto& allLife = _emitter.GetLifetime();
+	auto& allCol = _emitter.GetColour();
+
+	Math::Vec4 targetCol = Math::Vec4( GetTargetR(), GetTargetG(), GetTargetB(), GetTargetA() );
+
+	targetCol /= 255.f;
+
+	for (unsigned i = 0; i < allCol.size(); ++i)
+	{
+		float alphaLife = Math::Clamp(allLife[i] / allInitialLife[i], 0.f, 1.f);
+		float ratioLeft = alphaLife - GetTargetLife();
+		if (ratioLeft < Math::epsilon)
+		{
+			allCol[i] = targetCol;
+		}
+		else// if (ratioLeft > 0.f)
+		{
+			Math::Vec4 delta = (targetCol - allCol[i]) * _dt / ratioLeft;
+
+			allCol[i] += delta;
+			//float r = ratioLeft * _dt;
+
+			//float change = r * ((GetTargetR() / 255.f) - allCol[i].x);
+			//allCol[i].x = allCol[i].x + change;
+			//
+			//change = r * ((GetTargetG() / 255.f) - allCol[i].y);
+			//allCol[i].y = allCol[i].y + change;
+			//
+			//change = r * ((GetTargetB() / 255.f) - allCol[i].z);
+			//allCol[i].z = allCol[i].z + change;
+			//
+			//change = r * ((GetTargetA() / 255.f) - allCol[i].w);
+			//allCol[i].w = allCol[i].w + change;
+		}
+	}
 }
 
 const char * Dystopia::ColorOverLifeAffector::EditorDisplayLabel(void) const
@@ -281,9 +366,32 @@ const char * Dystopia::ColorOverLifeAffector::EditorDisplayLabel(void) const
 void Dystopia::ColorOverLifeAffector::EditorUI(void)
 {
 #if EDITOR
+	EGUI::PushLeftAlign(80.f);
+	EGUI::PushID(57);
 
+	int targetR = static_cast<int>(GetTargetR());
+	int targetG = static_cast<int>(GetTargetG());
+	int targetB = static_cast<int>(GetTargetB());
+	int targetA = static_cast<int>(GetTargetA());
+	float targetL = GetTargetLife();
 
+	if (EGUI::Display::DragInt("Red", &targetR, 1.f, 0, 255))
+		SetTargetR(static_cast<unsigned short>(targetR));
 
+	if (EGUI::Display::DragInt("Green", &targetG, 1.f, 0, 255))
+		SetTargetG(static_cast<unsigned short>(targetG));
+
+	if (EGUI::Display::DragInt("Blue", &targetB, 1.f, 0, 255))
+		SetTargetB(static_cast<unsigned short>(targetB));
+
+	if (EGUI::Display::DragInt("Alpha", &targetA, 0.1f, 0, 255))
+		SetTargetA(static_cast<unsigned short>(targetA));
+
+	if (EGUI::Display::DragFloat("Val", &targetL, 0.1f, 0.f, 1.f))
+		SetTargetLife(targetL);
+
+	EGUI::PopID();
+	EGUI::PopLeftAlign();
 #endif 
 }
 

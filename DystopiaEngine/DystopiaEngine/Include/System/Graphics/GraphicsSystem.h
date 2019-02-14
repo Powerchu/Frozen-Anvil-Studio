@@ -62,9 +62,12 @@ namespace Dystopia
 		_DLL_EXPORT float GetGamma(void) noexcept;
 
 		_DLL_EXPORT void ToggleVsync(bool) noexcept;
+		_DLL_EXPORT bool GetVsync(void) noexcept;
 
 		bool GetDebugDraw(void) const;
 		void ToggleDebugDraw(bool) const;
+
+		float GetAspectRatio() const;
 
 		void SetAllCameraAspect(float _x, float _y) const;
 
@@ -80,6 +83,7 @@ namespace Dystopia
 		void     LoadMesh(const std::string&);
 		Texture* LoadTexture(HashString const&);
 		_DLL_EXPORT Texture* LoadTexture(const char *);
+		_DLL_EXPORT void LoadAllTexture();
 		Texture* LoadFont(const std::string&);
 
 		Framebuffer& GetGameView(void) const noexcept;

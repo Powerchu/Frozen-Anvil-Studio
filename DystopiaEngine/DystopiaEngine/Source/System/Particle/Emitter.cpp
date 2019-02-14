@@ -44,8 +44,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 Dystopia::Emitter::Emitter(ParticleEmitter* _owner) noexcept
 	: mColour{}, mPosition{}, mVelocity{}, mAccel{}, mLifetime{}, mSpawnCount{},
 	mSpawn{}, mUpdate{}, mFixedUpdate{}, mpShader{ nullptr }, mpTexture{ nullptr },
-	mInitialLife{}, mbUpdatedPositions{ false }, mTextureName{ "EditorStartup.png" },
-	mShaderName{ "Default Particle" }, mnParticleLimit{ 1000 }
+	mInitialLife{}, mbUpdatedPositions{ false }, mTextureName{ "EditorStartup.png" }, 
+	mShaderName{ "Default Particle" }, mnParticleLimit{ 1000 }, mbIsAlive{ true }
 {
 	glGenVertexArrays(1, &mVAO);
 	glGenBuffers(2, &mColourBuffer);
@@ -66,8 +66,8 @@ Dystopia::Emitter::Emitter(Dystopia::Emitter const& _rhs) noexcept
 	mLifetime{ _rhs.mLifetime }, mSpawnCount{ _rhs.mSpawnCount },
 	mSpawn{ _rhs.mSpawn }, mUpdate{ _rhs.mUpdate }, mFixedUpdate{ _rhs.mFixedUpdate },
 	mpShader{ _rhs.mpShader }, mpTexture{ _rhs.mpTexture },
-	mInitialLife{ _rhs.mInitialLife }, mTextureName{ _rhs.mTextureName },
-	mShaderName{ _rhs.mTextureName }, mnParticleLimit{ _rhs.mnParticleLimit }
+	mInitialLife{ _rhs.mInitialLife }, mTextureName{ _rhs.mTextureName }, 
+	mShaderName{ _rhs.mTextureName }, mnParticleLimit{ _rhs.mnParticleLimit }, mbIsAlive{ _rhs.mbIsAlive }
 {
 	glGenVertexArrays(1, &mVAO);
 	glGenBuffers(2, &mColourBuffer);
@@ -175,6 +175,7 @@ void Dystopia::Emitter::FixedUpdate(float _fDT)
 		mPosition[n] += mVelocity[n].xyz0 * _fDT;
 	}
 #else
+
 	auto pAcc = mAccel.begin();
 	auto pVel = mVelocity.begin();
 
@@ -216,8 +217,6 @@ void Dystopia::Emitter::UploadPositionBuffer(void) const noexcept
 	glBindBuffer(GL_ARRAY_BUFFER, mPosBuffer);
 	auto MapPtr = glMapBufferRange(GL_ARRAY_BUFFER, 0, mPosition.size() * sizeof(Math::Vec4), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT);
 
-	//for (size_t n = 0; n < mPosition.size(); ++n)
-	//	static_cast<Math::Vec4*>(MapPtr)[n] = *(mPosition.begin() + n);
 
 #if defined(_OPENMP)
 	long long const lim = mPosition.size();
@@ -273,6 +272,7 @@ void Dystopia::Emitter::KillParticle(unsigned _nIdx) noexcept
 	mPosition.FastRemove(_nIdx);
 
 	mInitialLife.FastRemove(_nIdx);
+	mbUpdatedPositions = true;
 }
 
 void Dystopia::Emitter::SpawnParticle(void) noexcept
@@ -289,11 +289,11 @@ void Dystopia::Emitter::SpawnParticle(void) noexcept
 		//auto pos = transform->GetTransformMatrix() * mParticle.mPos.xyz1;
 		//pos.w = mParticle.mfSize;
 
-		mLifetime.EmplaceBackUnsafe(mParticle.mfLifeDur);
-		mColour.EmplaceBackUnsafe(mParticle.mColour);
-		mAccel.EmplaceBackUnsafe(mParticle.mAccel);
-		mVelocity.EmplaceBackUnsafe(mParticle.mVelocity);
-		//mPosition.EmplaceBackUnsafe(pos);
+		mLifetime   .EmplaceBackUnsafe(mParticle.mfLifeDur);
+		mColour     .EmplaceBackUnsafe(mParticle.mColour  );
+		mAccel      .EmplaceBackUnsafe(mParticle.mAccel   );
+		mVelocity   .EmplaceBackUnsafe(mParticle.mVelocity);
+		//mPosition   .EmplaceBackUnsafe(pos                );
 		mInitialLife.EmplaceBackUnsafe(mParticle.mfLifeDur);
 
 		mbUpdatedPositions = true;
@@ -381,6 +381,7 @@ void Dystopia::Emitter::Serialise(TextSerialiser& _out) const noexcept
 	else
 		_out << "EditorStartup.png";
 	_out << mnParticleLimit;
+	_out << mbIsAlive;
 	_out.InsertEndBlock("Emitter");
 
 	_out.InsertStartBlock("Spawn affectors");
@@ -420,11 +421,18 @@ void Dystopia::Emitter::Unserialise(TextSerialiser& _in) noexcept
 	mpShader = CORE::Get<ShaderSystem>()->GetShader(mShaderName.c_str());
 	_in >> buf;
 	mTextureName = CORE::Get<FileSystem>()->GetFullPath(buf.c_str(), eFileDir::eResource).c_str();
-	mpTexture = CORE::Get<TextureSystem>()->LoadTexture(mTextureName);
+	if (!mTextureName.length())
+	{
+		mTextureName = "EditorStartup.png";
+		mpTexture = CORE::Get<TextureSystem>()->GetTexture(mTextureName);
+	}
+	else
+		mpTexture = CORE::Get<TextureSystem>()->LoadTexture(mTextureName);
 	int n = 0;
 	_in >> n;
 	mnParticleLimit = n;
 	mParticle.mnLimit = static_cast<size_t>(mnParticleLimit);
+	_in >> mbIsAlive;
 	_in.ConsumeEndBlock();
 
 	static AffectorGet affectorsList;
@@ -560,6 +568,21 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 	//	EGUI::Display::EndTreeNode();
 	//}
 #endif 
+}
+
+void Dystopia::Emitter::StopEmission(void) noexcept
+{
+	mbIsAlive = false;
+}
+
+void Dystopia::Emitter::StartEmission(void) noexcept
+{
+	mbIsAlive = true;
+}
+
+bool Dystopia::Emitter::IsAlive(void) const noexcept
+{
+	return mbIsAlive;
 }
 
 

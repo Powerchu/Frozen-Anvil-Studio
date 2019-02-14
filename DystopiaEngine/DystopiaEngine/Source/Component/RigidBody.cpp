@@ -6,7 +6,7 @@
 \brief
 Component to store the information about the object's transformations in space.
 
-All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+All Content Copyright ï¿½ 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -398,7 +398,6 @@ namespace Dystopia
 			mfYAngleDeg += Math::Radians{ mAngularVelocity.y }.Degrees() * _dt;
 		}
 
-
 		if (mfZAngleDeg < -180.0F) mfZAngleDeg = 179.999F;
 		if (mfZAngleDeg > 180.0F) mfZAngleDeg = -179.999F;
 
@@ -745,6 +744,12 @@ namespace Dystopia
 	void RigidBody::SetFixedRotation(bool flag)
 	{
 		mbFixedRot = flag;
+	}
+
+	void RigidBody::SetRotation(float zDeg)
+	{
+		mfZAngleDeg = zDeg;
+	
 	}
 
 	void RigidBody::Set_IsStatic(bool _state)

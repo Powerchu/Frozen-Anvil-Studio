@@ -116,6 +116,13 @@ void Dystopia::SpawnAffector::AffectorUpdate(Dystopia::Emitter& _emitter, float 
 	float& dtCounter = *reinterpret_cast<float*>(data);
 	float& delay = *reinterpret_cast<float*>(data + 10);
 
+	if (!_emitter.IsAlive())
+	{
+		dtCounter = 0.f;		// reset continuous
+		reserved[0] &= ~(1 << 3); //reset burst
+		return;
+	}
+
 	if (delay)
 	{
 		delay = Math::Clamp(delay - _dt, 0.f, delay - _dt);
@@ -165,7 +172,7 @@ void Dystopia::SpawnAffector::AffectorUpdate(Dystopia::Emitter& _emitter, float 
 		// do fixed burst
 		else
 		{
-			unsigned short& count = *reinterpret_cast<unsigned short*>(data + 6);
+			unsigned short count = *reinterpret_cast<unsigned short*>(data + 6);
 			while (count)
 			{
 				_emitter.SpawnParticle();

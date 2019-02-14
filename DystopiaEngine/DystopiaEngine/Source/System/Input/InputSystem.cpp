@@ -165,23 +165,24 @@ namespace
 void Dystopia::InputManager::LoadDefaultUserKeys(void)
 {
 	MapButton("Horizontal", KEYBOARD_RIGHT, KEYBOARD_LEFT, XBUTTON_DPAD_RIGHT, XBUTTON_DPAD_LEFT);
-	MapButton("Vertical", KEYBOARD_UP, KEYBOARD_DOWN, XBUTTON_DPAD_UP, XBUTTON_DPAD_UP);
+	MapButton("Vertical", KEYBOARD_UP, KEYBOARD_DOWN, XBUTTON_DPAD_UP, XBUTTON_DPAD_DOWN);
 	MapButton("L Stick Horizontal", 2, 0);
 	MapButton("L Stick Vertical", 2, 1);
 	MapButton("Camera X", 2, 2);
 	MapButton("Camera Y", 2, 3);
 	MapButton("C_Roll", 2, 4);
 	MapButton("Right Trigger", 2, 5);
-	MapButton("SetForm", KEYBOARD_Q, NONE, XBUTTON_LEFT_SHOULDER);
-	MapButton("SetForce", KEYBOARD_E, NONE, XBUTTON_RIGHT_SHOULDER);
-	MapButton("Attack", KEYBOARD_CTRL, NONE, XBUTTON_X);
+	//MapButton("SetForm", KEYBOARD_Q, NONE, XBUTTON_LEFT_SHOULDER);
+	//MapButton("SetForce", KEYBOARD_E, NONE, XBUTTON_RIGHT_SHOULDER);
+	MapButton("ChangeSkill", KEYBOARD_Q, NONE, XBUTTON_LEFT_SHOULDER);
+	MapButton("Attack", KEYBOARD_C, NONE, XBUTTON_X);
 	MapButton("Jump", KEYBOARD_SPACEBAR, NONE, XBUTTON_A);
-	MapButton("Skill Y", KEYBOARD_F, NONE, XBUTTON_Y);
-	MapButton("Skill B", KEYBOARD_A, NONE, XBUTTON_B);
+	MapButton("Skill Y", KEYBOARD_Z, NONE, XBUTTON_Y);
+	MapButton("Skill B", KEYBOARD_X, NONE, XBUTTON_B);
 	MapButton("Pause", KEYBOARD_ESCAPE, NONE, XBUTTON_START);
 	MapButton("Select", KEYBOARD_ENTER, NONE, XBUTTON_A);
 	MapButton("Back", KEYBOARD_ESCAPE, NONE, XBUTTON_B);
-	MapButton("Roll", KEYBOARD_LALT, NONE);
+	MapButton("Roll", KEYBOARD_CTRL, NONE, XBUTTON_RIGHT_SHOULDER);
 }
 
 
@@ -201,7 +202,7 @@ Dystopia::InputManager::KeyboardState::operator const unsigned long*() const
 }
 
 Dystopia::InputManager::InputManager(void)
-	:mGamePad{ 0 }
+	:mGamePad{ 0 }, mbCanVibrate{ true }
 {
 
 }
@@ -275,7 +276,8 @@ void Dystopia::InputManager::Update(const float _dt)
 	if (mGamePad.mfTimer >= 0.0f)
 		mGamePad.mfTimer -= mfDecay * _dt;
 
-	mGamePad.VibrateHelper();
+	if (mbCanVibrate)
+		mGamePad.VibrateHelper();
 
 	/*Commenting this out makes the input smoother*/
 	//SetKeyboardState(Reset);
@@ -644,6 +646,16 @@ Math::Vector2 Dystopia::InputManager::GetMouseDelta(void) const noexcept
 float Dystopia::InputManager::GetMouseWheel(void) const noexcept
 {
 	return mMouseInput.mnWheel * MOUSEWHEEL_SCALE;
+}
+
+_DLL_EXPORT bool Dystopia::InputManager::IsVibrateOn() const
+{
+	return mbCanVibrate;
+}
+
+_DLL_EXPORT void Dystopia::InputManager::ToggleVibrate(bool _b)
+{
+	mbCanVibrate = _b;
 }
 
 #if EDITOR

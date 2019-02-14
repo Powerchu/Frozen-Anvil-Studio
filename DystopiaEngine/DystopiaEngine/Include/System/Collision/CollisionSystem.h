@@ -101,7 +101,8 @@ namespace Dystopia
 		_DLL_EXPORT bool RaycastAllHits (Math::Vec3D const & _Dir, Math::Point3D const & _mPos,AutoArray<CollisionEvent> & _Output, float _MaxLength = 0.f) const;
 
 		void MapIgnoreLayer(eColLayer _layer, eColLayer _toIgnore);
-		bool ToIgnore      (eColLayer _Layer1, eColLayer _Layer2);
+		_DLL_EXPORT bool ToIgnore      (eColLayer _Layer1, eColLayer _Layer2);
+		_DLL_EXPORT void SetIgnore	   (unsigned _Layer1, unsigned _Layer2, bool _toignore);
 
 		static std::string const * GetColLayerNames();
 		static unsigned            GetColLayerSize();

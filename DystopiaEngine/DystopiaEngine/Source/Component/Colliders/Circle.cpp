@@ -140,6 +140,16 @@ namespace Dystopia
 		return Math::Abs(m_radius * Scale * 0.5f);
 	}
 
+	float Circle::GetRadiusRaw() const
+	{
+		return m_radius;
+	}
+
+	void Circle::SetRadius(float _radius)
+	{
+		m_radius = _radius;
+	}
+
 	/*Serialise and Unserialise*/
 	void Circle::Serialise(TextSerialiser& _out) const
 	{

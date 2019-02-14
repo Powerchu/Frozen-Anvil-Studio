@@ -491,7 +491,7 @@ template<>
 inline void Dystopia::Renderer::UIVisitor::operator()(Math::Vec4& _variant)
 {
 	EGUI::Display::LabelWrapped(strName.c_str());
-	EGUI::Display::VectorFields("", &_variant, 0.1f, -FLT_MAX, FLT_MAX);
+	EGUI::Display::VectorFields("", &_variant, 0.1f, -FLT_MAX, FLT_MAX, 50.f, true);
 }
 //template<>
 //inline void Dystopia::Renderer::UIVisitor::operator()(std::pair<Texture*, int>& _variant)

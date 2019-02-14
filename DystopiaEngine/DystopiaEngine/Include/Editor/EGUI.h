@@ -239,7 +239,7 @@ namespace EGUI
 		}
 		======================================================================================================================= */
 		Array<eDragStatus, 3> VectorFields(const char * _label, Math::Vector4 *_outputVec, float _dragSpeed = 1.0f,
-			float _min = 0.0f, float _max = 1.0f, float _width = 50.f);
+			float _min = 0.0f, float _max = 1.0f, float _width = 50.f, bool _wParamEnable = false);
 		Array<eDragStatus, 2> VectorFields(const char * _label, Math::Vector2 *_outputVec, float _dragSpeed = 1.0f,
 			float _min = 0.0f, float _max = 1.0f, float _width = 50.f);
 		Array<eDragStatus, 2> VectorFieldsInt(const char *_label, Math::Vector2 *_outputVec, int _dragSpeed = 1,
@@ -713,6 +713,12 @@ namespace EGUI
 		}
 		======================================================================================================================= */
 		bool ComboFilter(const char *id, char *buffer, int bufferlen, const char **hints, int num_hints, ComboFilterState &s);
+
+		/* ====================================================================================================================
+		Brief:
+		Vertical Tabs (todo: will update how to use)
+		======================================================================================================================= */
+		bool GoxTab(const char *text, bool *v);
 
 	}
 }

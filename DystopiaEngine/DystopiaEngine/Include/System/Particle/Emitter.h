@@ -80,6 +80,9 @@ namespace Dystopia
 		void Unserialise(TextSerialiser&) noexcept;
 		void EditorUI(void) noexcept;
 
+		void StopEmission(void) noexcept;
+		void StartEmission(void) noexcept;
+		bool IsAlive(void) const noexcept;
 
 	private:
 
@@ -102,11 +105,9 @@ namespace Dystopia
 		HashString mTextureName, mShaderName;
 		unsigned mVAO, mColourBuffer, mPosBuffer;
 
-#if EDITOR
 		int mnParticleLimit;
-#endif
-
 		bool mbUpdatedPositions;
+		bool mbIsAlive;
 
 		template <typename Ty, typename U>
 		bool AffectorExists(Ty&, U);

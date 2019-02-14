@@ -98,7 +98,8 @@ namespace Math
 		struct _DLL_EXPORT Swizzle<N> : DataMembers
 		{
 			inline Swizzle<N>& _CALL operator = (float _rhs) noexcept;
-			inline _CALL operator float& (void) const noexcept;
+			inline _CALL operator const float& (void) const noexcept;
+			inline _CALL operator float& (void) noexcept;
 		};
 
 		template <unsigned X, unsigned Y>
@@ -442,7 +443,13 @@ inline Math::Vector3::Swizzle<N>& _CALL Math::Vector3::Swizzle<N>::operator = (f
 }
 
 template <unsigned N>
-inline _CALL Math::Vector3::Swizzle<N>::operator float& (void) const noexcept
+inline _CALL Math::Vector3::Swizzle<N>::operator const float& (void) const noexcept
+{
+	return mData[N];
+}
+
+template <unsigned N>
+inline _CALL Math::Vector3::Swizzle<N>::operator float& (void) noexcept
 {
 	return mData[N];
 }

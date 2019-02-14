@@ -39,7 +39,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Dystopia::TextRenderer::TextRenderer(void) noexcept
 	: Renderer{}, mPrevState(mCurrState), mpData{ nullptr },
-	mText {}, mnAnchorX{ 0 }, mnAnchorY{ 0 }, mColor{ 1.f, 1.f, 1.f, 1.f }
+	mText {}, mnAnchorX{ 0 }, mnAnchorY{ 0 }, mColor{ 1.f, 1.f, 1.f, 1.f }, mVerts{}
 {
 }
 
@@ -47,9 +47,9 @@ Dystopia::TextRenderer::TextRenderer(const TextRenderer& _rhs) noexcept
 	: Renderer{ _rhs }, mCurrState(_rhs.mCurrState), mPrevState(_rhs.mCurrState),
 	mpData{ _rhs.mpData }, mText{ _rhs.mText }, mnAnchorX{ _rhs.mnAnchorX }, mnAnchorY{ _rhs.mnAnchorY }
 	,mColor{ _rhs.mColor },mDefaultCol(_rhs.mDefaultCol),mHoverCol(_rhs.mHoverCol),mClickColor(_rhs.mClickColor),mDisabledColor(_rhs.mDisabledColor)
-	,mfTintPerc(_rhs.mfTintPerc)
+	,mfTintPerc(_rhs.mfTintPerc), mVerts{ _rhs.mVerts}
 {
-	mpTexture = _rhs.mpTexture;
+	mTextureFields = Ut::Move(_rhs.mTextureFields);
 }
 
 void Dystopia::TextRenderer::Awake(void)

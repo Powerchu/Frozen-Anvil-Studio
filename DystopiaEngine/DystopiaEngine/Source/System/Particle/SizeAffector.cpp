@@ -113,41 +113,25 @@ Dystopia::SizeOverLifeAffector::SizeOverLifeAffector(void)
 Dystopia::SizeOverLifeAffector::~SizeOverLifeAffector(void)
 {}
 
-void Dystopia::SizeOverLifeAffector::SetTargetSize(float _val)
+void Dystopia::SizeOverLifeAffector::SetSizeChangePerSecond(float _f)
 {
-	*reinterpret_cast<float*>(data + 4) = _val;
+	*reinterpret_cast<float*>(data) = _f;
 }
 
-void Dystopia::SizeOverLifeAffector::SetTargetDuration(float _val)
+float Dystopia::SizeOverLifeAffector::GetSizeChangePerSecond(void) const
 {
-	*reinterpret_cast<float*>(data + 8) = _val;
+	return *reinterpret_cast<const float*>(data);
 }
 
-void Dystopia::SizeOverLifeAffector::SetTargetSizeAfter(float _val)
+void Dystopia::SizeOverLifeAffector::AffectorUpdate(Emitter& _emitter, float _dt)
 {
-	*reinterpret_cast<float*>(data + 12) = _val;
-}
+	float rate = GetSizeChangePerSecond() * _dt;
+	auto& allpos = _emitter.GetPosition();
 
-void Dystopia::SizeOverLifeAffector::EnableBounceback(bool _enabled)
-{
-	if (_enabled)
-		reserved[0] |= (1 << 1);
-	else
-		reserved[0] &= ~(1 << 1);
-}
-
-void Dystopia::SizeOverLifeAffector::AffectorUpdate(Emitter&, float)
-{
-	// float change = *reinterpret_cast<float*>(data + 4) - _emitter.GetSpawnDefaults().mfSize;
-	// unsigned int idx = _emitter.GetInitialLifetime().size();
-	// while (idx)
-	// {
-	// 	--idx;
-	// 
-	// 	float initial = _emitter.GetInitialLifetime()[idx];
-	// 	float current = _emitter.GetLifetime()[idx];
-	// 	float alphaV = (initial - current) / initial;
-	// }
+	for (auto& p : allpos)
+	{
+		p.w = Math::Max<float>(p.w + rate, 0.f);
+	}
 }
 
 const char * Dystopia::SizeOverLifeAffector::EditorDisplayLabel(void) const
@@ -159,7 +143,13 @@ void Dystopia::SizeOverLifeAffector::EditorUI(void)
 {
 #if EDITOR
 	EGUI::PushLeftAlign(100.f);
+	EGUI::PushID(58);
 
+	float f = GetSizeChangePerSecond();
+	if (EGUI::Display::DragFloat("Change(s)", &f, 0.1f, -FLT_MAX, FLT_MAX))
+		SetSizeChangePerSecond(f);
+
+	EGUI::PopID();
 	EGUI::PopLeftAlign();
 #endif 
 }

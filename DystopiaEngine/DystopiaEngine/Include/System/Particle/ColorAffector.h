@@ -68,10 +68,35 @@ namespace Dystopia
 		void EditorUI(void);
 	};
 
+
+
+	/*
+		bytes and bits:
+
+		data[0,1] for red 
+		data[2,3] for green 
+		data[4,5] for blue
+		data[6,7] for alpha 
+		data[8,9,10,11] for life target 
+	*/
+
 	struct ColorOverLifeAffector : ParticleAffector
 	{
 		ColorOverLifeAffector(void);
 		~ColorOverLifeAffector(void);
+
+		/* target color */
+		void SetTargetR(unsigned short);
+		void SetTargetG(unsigned short);
+		void SetTargetB(unsigned short);
+		void SetTargetA(unsigned short);
+		void SetTargetLife(float);
+
+		unsigned short GetTargetR(void) const;
+		unsigned short GetTargetG(void) const;
+		unsigned short GetTargetB(void) const;
+		unsigned short GetTargetA(void) const;
+		float GetTargetLife(void) const;
 
 		void AffectorUpdate(Emitter&, float);
 

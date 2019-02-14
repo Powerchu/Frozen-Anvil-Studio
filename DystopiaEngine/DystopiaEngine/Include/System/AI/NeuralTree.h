@@ -132,6 +132,7 @@ namespace Dystopia
 		protected:
 			MagicArray<Node::Ptr> mparrChildren;
 			MagicArray<Node::Ptr>::Itor_t iter;
+			Node::Ptr mpChild;
 		};
 
 /*
@@ -245,7 +246,9 @@ namespace Dystopia
 
 			bool IsValidTree(void) const 
 			{
-				return (mpRoot.GetRaw() != nullptr);
+				if (nullptr != this)
+					return (mpRoot.GetRaw() != nullptr);
+				return false;
 			}
 
 			HashString GetEditorName(void) const override { return mnName; }

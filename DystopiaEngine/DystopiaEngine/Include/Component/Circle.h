@@ -66,6 +66,8 @@ namespace Dystopia
 		//virtual Math::Matrix3D   GetTransformationMatrix() const;
 		virtual BroadPhaseCircle GenerateBoardPhaseCircle() const;
 		float GetRadius() const;
+		float GetRadiusRaw() const;
+		void SetRadius(float _radius);
 
 		/*Serialise and Unserialise*/
 		virtual void Serialise(TextSerialiser&) const;

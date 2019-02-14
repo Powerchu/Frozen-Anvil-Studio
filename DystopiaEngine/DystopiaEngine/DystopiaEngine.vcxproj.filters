@@ -436,6 +436,9 @@
     <ClCompile Include="Source\System\Particle\Emitter.cpp">
       <Filter>Game Engine\Systems\Particle\Emitter</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Particle\AttractionAffector.cpp">
+      <Filter>Game Engine\Systems\Particle\Affectors\Attractor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -1197,6 +1200,9 @@
     <ClInclude Include="Include\Component\ParticleEmitter.h">
       <Filter>Game Engine\Components\Emitter</Filter>
     </ClInclude>
+    <ClInclude Include="Include\System\Particle\AttractionAffector.h">
+      <Filter>Game Engine\Systems\Particle\Affectors\Attractor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1720,6 +1726,9 @@
     </Filter>
     <Filter Include="Math\Types">
       <UniqueIdentifier>{0f7c8cb4-cd8d-47c3-a532-660b365f1952}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Particle\Affectors\Attractor">
+      <UniqueIdentifier>{1d3e63c3-fef7-4d0c-ba29-3057e8cfe5a9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

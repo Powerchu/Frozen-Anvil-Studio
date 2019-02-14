@@ -159,6 +159,7 @@ namespace Dystopia
 		void SetRestitution(const float);
 		void SetSleeping(const bool);
 		void SetFixedRotation(bool flag);
+		void SetRotation(float zDeg);
 
 		// Gettors
 		Vec3D GetPosition() const;

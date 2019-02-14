@@ -81,7 +81,7 @@ void Dystopia::ShaderProgram::TrackChangesCallback(void)
 	CORE::Get<ShaderSystem>()->NotifyReplace(this);
 }
 
-AutoArray<std::pair<OString, unsigned>> const & Dystopia::ShaderProgram::GetTextureList(void) noexcept
+AutoArray<std::pair<OString, unsigned>> const& Dystopia::ShaderProgram::GetTextureList(void) noexcept
 {
 	return mTextures;
 }

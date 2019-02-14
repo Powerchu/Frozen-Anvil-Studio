@@ -158,6 +158,7 @@ void Dystopia::Renderer::SetManualShaderOverride(char const* _strName, T&& _obj)
 			return;
 		}
 
+#if EDITOR
 	if (auto f = FindUniformInShader(_strName))
 	{
 		using Result = typename Ut::MetaFind<Ut::Decay_t<T>, ShaderTypeList>;
@@ -166,6 +167,15 @@ void Dystopia::Renderer::SetManualShaderOverride(char const* _strName, T&& _obj)
 		if (static_cast<::Gfx::eUniform_t>(Result::result::value) == f->second)
 			mOverride.EmplaceBack(f->first, f->second, ShaderVariant_t{ Ut::Fwd<T>(_obj) });
 	}
+#else
+
+	using Result = typename Ut::MetaFind<Ut::Decay_t<T>, ShaderTypeList>;
+	mOverride.EmplaceBack( 
+		_strName, 
+		static_cast<::Gfx::eUniform_t>(Result::result::value), 
+		ShaderVariant_t{ Ut::Fwd<T>(_obj) }
+	);
+#endif
 }
 
 

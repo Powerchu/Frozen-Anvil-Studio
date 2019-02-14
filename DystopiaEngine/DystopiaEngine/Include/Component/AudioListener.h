@@ -46,7 +46,9 @@ namespace Dystopia
 
 		void Serialise(TextSerialiser&) const;
 		void Unserialise(TextSerialiser&);
+#if EDITOR
 		void EditorUI(void) noexcept;
+#endif
 
 		float GetMaxRange() const;
 		void  SetMaxRange(float const & _Range);
