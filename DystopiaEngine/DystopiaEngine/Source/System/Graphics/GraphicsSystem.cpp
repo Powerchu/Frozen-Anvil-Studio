@@ -101,8 +101,8 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 
 
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
-	mvDebugColour{.0f, 1.f, .0f, .1f}, mvClearCol{0, 0, 0, 0}, mfGamma{2.0f}, mfDebugLineThreshold{0.958f}, mOpenGL{nullptr},
-	mPixelFormat{0}, mAvailable{0}, mSettings(0), mbVsync{false}, mvResolution{Gbl::WINDOW_WIDTH, Gbl::WINDOW_HEIGHT}
+	mvDebugColour{.0f, 1.f, .0f, .1f}, mvClearCol{0, 0, 0, 0}, mfGamma{2.0f}, mfDebugLineThreshold{0.958f},
+	mPixelFormat{0}, mAvailable{0}, mSettings(0), mbVSync{false}, mvResolution{Gbl::WINDOW_WIDTH, Gbl::WINDOW_HEIGHT}
 {
 }
 
@@ -126,6 +126,10 @@ void Dystopia::GraphicsSystem::ToggleVsync(bool _b) noexcept
 	mSettings = _b ? 
 		mSettings | eGfxSettings::GRAPHICS_VSYNC : 
 		mSettings & ~eGfxSettings::GRAPHICS_VSYNC;
+
+#   if EDITOR
+	mbVSync = _b;
+#   endif
 
 	pGfxAPI->ToggleVSync(_b);
 }
@@ -247,11 +251,10 @@ Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetView(int _n) const
 
 void Dystopia::GraphicsSystem::DrawSplash(void)
 {
-	auto pCore = EngineCore::GetInstance();
-	MeshSystem    *pMeshSys   = pCore->GetSubSystem <MeshSystem   >();
-	TextureSystem *pTexSys    = pCore->GetSubSystem <TextureSystem>();
-	ShaderSystem  *pShaderSys = pCore->GetSubSystem <ShaderSystem >();
-	WindowManager *pWinSys    = pCore->GetSystem    <WindowManager>();
+	MeshSystem    *pMeshSys   = CORE::Get<MeshSystem   >();
+	TextureSystem *pTexSys    = CORE::Get<TextureSystem>();
+	ShaderSystem  *pShaderSys = CORE::Get<ShaderSystem >();
+	WindowManager *pWinSys    = CORE::Get<WindowManager>();
 
 	Mesh*      mesh    = pMeshSys->GetMesh("Quad");
 	Shader*    shader  = (*pShaderSys)["Logo Shader"];
@@ -309,7 +312,7 @@ namespace
 		}
 
 		template <>
-		void operator() < int > (int&& value)
+		void operator() <int> (int&& value)
 		{
 			s->UploadUniformi(strName.c_str(), value);
 		}
@@ -317,13 +320,6 @@ namespace
 		void operator() <int&> (int& value)
 		{
 			s->UploadUniformi(strName.c_str(), value);
-		}
-
-		template <>
-		void operator() < std::pair<Dystopia::Texture*, int>&> (std::pair<Dystopia::Texture*, int>& value)
-		{
-			if (value.first)
-				value.first->Bind(value.second);
 		}
 	};
 
@@ -789,14 +785,15 @@ void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
 
 		mViews.Emplace(w, h, alpha, src, dst);
 	}
+
 	_in >> mbDebugDrawCheckBox;
 	_in >> mfDebugLineThreshold;
 	_in >> mvDebugColour;
-	_in >> mbVsync;
+	_in >> alpha;
 	_in >> mvClearCol;
 	_in >> mvResolution;
 
-	ToggleVsync(mbVsync);
+	ToggleVsync(alpha);
 }
 
 void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
@@ -816,7 +813,7 @@ void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
 	_out << mbDebugDrawCheckBox;
 	_out << mfDebugLineThreshold;
 	_out << mvDebugColour;
-	_out << mbVsync;
+	_out << (mSettings & eGfxSettings::GRAPHICS_VSYNC);
 	_out << mvClearCol;
 	_out << mvResolution;
 }
@@ -866,7 +863,7 @@ Dystopia::Texture* Dystopia::GraphicsSystem::LoadFont(const std::string &)
 
 void Dystopia::GraphicsSystem::BindOpenGL(Window& _window) noexcept
 {
-	wglMakeCurrent(_window.GetDeviceContext(), static_cast<HGLRC>(mOpenGL));
+	pGfxAPI->BindContext(_window.GetDeviceContext());
 }
 
 bool Dystopia::GraphicsSystem::InitOpenGL(Window&)
@@ -900,9 +897,9 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 	}
 
 	//const auto& sceneCam = pCamSys->GetMasterCamera();
-	if (EGUI::Display::CheckBox("V Sync", &mbVsync))
+	if (EGUI::Display::CheckBox("V Sync", &mbVSync))
 	{
-		ToggleVsync(mbVsync);
+		ToggleVsync(mbVSync);
 	}
 
 	EditorAspectRatio();

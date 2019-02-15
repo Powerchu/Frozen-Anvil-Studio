@@ -46,9 +46,11 @@ namespace Gfx
 
 		// Generics
 		
-		VIRTUAL_ void PrintEnvironment(void) const noexcept ABSTRACT_;
+		VIRTUAL_ bool BindContext(void* _hdc) const noexcept ABSTRACT_;
 
 		VIRTUAL_ void ToggleVSync(bool) const noexcept ABSTRACT_;
+
+		VIRTUAL_ void PrintEnvironment(void) const noexcept ABSTRACT_;
 
 		template <typename T>
 		inline void Free(T&) noexcept;

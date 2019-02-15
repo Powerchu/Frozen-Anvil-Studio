@@ -59,11 +59,11 @@ namespace Dystopia
 
 		void Bind(void) const noexcept;
 		void Unbind(void) const noexcept;
-		void UploadBuffers(void) const noexcept;
 
 		void Render(void) const noexcept;
 
 		Emitter* GetEmitter(unsigned) const noexcept;
+		AutoArray<Emitter>& GetEmitters(void) noexcept;
 
 		ParticleEmitter* Duplicate(void) const;
 

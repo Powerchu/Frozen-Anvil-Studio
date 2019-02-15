@@ -31,6 +31,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/Meta.h"
 #include "Utility/MetaAlgorithms.h"
 #include "Utility/DebugAssert.h"
+#include "DataStructure/AutoArray.h"
 
 #include "Editor/RuntimeMeta.h"
 
@@ -72,19 +73,24 @@ void Dystopia::ParticleEmitter::FixedUpdate(float _fDT)
 
 void Dystopia::ParticleEmitter::Bind(void) const noexcept
 {
-	//glBindVertexArray(mVAO);
-	//mpTexture->Bind();
 }
 
 void Dystopia::ParticleEmitter::Unbind(void) const noexcept
 {
-	//mpTexture->Unbind();
-	//glBindVertexArray(0);
 }
 
 void Dystopia::ParticleEmitter::Render(void) const noexcept
 {
-	//glDrawArraysInstanced(GL_POINTS, 0, 1, static_cast<GLsizei>(mPosition.size()));
+}
+
+Dystopia::Emitter* Dystopia::ParticleEmitter::GetEmitter(unsigned _n) const noexcept
+{
+	return nullptr;
+}
+
+AutoArray<Dystopia::Emitter>& Dystopia::ParticleEmitter::GetEmitters(void) noexcept
+{
+	return mEmitters;
 }
 
 Dystopia::ParticleEmitter* Dystopia::ParticleEmitter::Duplicate(void) const

@@ -138,6 +138,8 @@ Dystopia::Texture* Dystopia::Renderer::GetTexture(unsigned _idx) const noexcept
 	for (auto& e : mTextureFields)
 		if (e.Get<0>() == _idx)
 			return e.Get<1>();
+
+	return nullptr;
 }
 
 
@@ -251,7 +253,7 @@ void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 		{
 			_in >> strOverride;
 			_in >> type;
-			_in >> const_cast<unsigned short const&>(var.GetTypeID());
+			_in >> const_cast<unsigned short&>(var.GetTypeID());
 
 			var.Visit([&_in](auto& _var) { _in >> _var; });
 			mOverride.EmplaceBack(strOverride, static_cast<::Gfx::eUniform_t>(type), Ut::Move(var));

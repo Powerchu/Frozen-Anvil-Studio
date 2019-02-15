@@ -29,6 +29,7 @@ namespace Dystopia
 {
 	class Shader;
 	class Texture;
+	class Transform;
 	class ParticleSystem;
 	class ParticleEmitter;
 	struct ParticleAffector;
@@ -36,7 +37,7 @@ namespace Dystopia
 	class Emitter
 	{
 	public:
-		explicit Emitter(ParticleEmitter* _owner) noexcept;
+		explicit Emitter(ParticleEmitter* _owner = nullptr) noexcept;
 		Emitter(const Emitter&) noexcept;
 		~Emitter(void) noexcept;
 
@@ -55,12 +56,15 @@ namespace Dystopia
 
 		void KillParticle(unsigned _nIdx) noexcept;
 		void SpawnParticle(void) noexcept;
-		void SetTexture(Texture*);
+		void SetTexture(Texture*) noexcept;
+		void SetOwner(ParticleEmitter*) noexcept;
 
 		template <typename Ty>
 		auto AddAffector(Ty&&) noexcept -> Ut::EnableIf_t<std::is_base_of_v<ParticleAffector, Ty>>;
 
 		Shader& GetShader(void) noexcept;
+		Transform const& GetOwnerTransform(void) const noexcept;
+
 		size_t GetSpawnCount(void) const noexcept;
 		GfxParticle& GetSpawnDefaults(void) noexcept;
 		AutoArray<float>& GetInitialLifetime(void) noexcept;
@@ -100,6 +104,7 @@ namespace Dystopia
 
 		GfxParticle mParticle;
 
+		ParticleEmitter* mpOwner;  Transform* mpTransform;
 		Shader* mpShader; Texture* mpTexture;
 		size_t mSpawnCount;
 		HashString mTextureName, mShaderName;

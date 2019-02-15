@@ -82,6 +82,11 @@ void Gfx::ShutdownGraphicsAPI(void) noexcept
 }
 
 
+bool Gfx::GfxAPI::BindContext(void* hdc) const noexcept
+{
+	return pInstance->BindContext(hdc);
+}
+
 void Gfx::GfxAPI::PrintEnvironment(void) const noexcept
 {
 	return pInstance->PrintEnvironment();

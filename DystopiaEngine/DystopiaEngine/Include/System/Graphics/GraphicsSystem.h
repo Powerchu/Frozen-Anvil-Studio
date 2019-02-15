@@ -114,15 +114,12 @@ namespace Dystopia
 		float mfGamma;
 		float mfDebugLineThreshold;
 
-		void* mOpenGL; 
 		int mPixelFormat;
 		int mAvailable, mSettings;
 
 		Ctor::MagicArrayBuilder<Framebuffer>::SetBlockLimit<1>::type mViews;
 
 		static int DRAW_MODE;
-		bool mbDebugDrawCheckBox = false;
-		bool mbVsync = false;
 
 		void StartFrame(void);
 		void EndFrame(void);
@@ -130,7 +127,10 @@ namespace Dystopia
 		void DrawScene(Camera&, Math::Matrix4&, Math::Matrix4&);
 		void DrawDebug(Camera&, Math::Matrix4&, Math::Matrix4&);
 
-		bool SelectOpenGLVersion(Window&) noexcept;
+#	if EDITOR
+		bool mbVSync;
+		bool mbDebugDrawCheckBox = false;
+#   endif
 	};
 }
 

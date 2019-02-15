@@ -69,6 +69,7 @@ namespace Gfx
 		void FreeShaderProgram(ShaderProg&) noexcept OVERRIDE_;
 		void FreeShaderPipeline(ShaderPipeline&) noexcept OVERRIDE_;
 
+		bool BindContext(void*) noexcept;
 		bool InitGraphicsAPI(void const*) noexcept;
 
 	private:
@@ -78,7 +79,6 @@ namespace Gfx
 		unsigned CreateShader(Gfx::ShaderStage) noexcept;
 		unsigned StageToBitmask(Gfx::ShaderStage) noexcept;
 
-		bool BindContext(void*) noexcept;
 		bool VersionSelect(void* const&) noexcept;
 	};
 }
