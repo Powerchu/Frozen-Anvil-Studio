@@ -79,10 +79,8 @@ void Dystopia::Renderer::Init(void)
 
 void Dystopia::Renderer::Draw(void) const noexcept
 {
-	if (mpMesh)
-	{
-		mpMesh->DrawMesh(GraphicsSystem::GetDrawMode());
-	}
+	_EDITOR_CODE(if (mpMesh))
+	mpMesh->DrawMesh(GraphicsSystem::GetDrawMode());
 }
 
 
@@ -102,10 +100,9 @@ void Dystopia::Renderer::SetShader(Shader* _p) noexcept
 	mpShader = _p;
 }
 
-void Dystopia::Renderer::SetShader(const std::string&) noexcept
+void Dystopia::Renderer::SetShader(const std::string& _strName) noexcept
 {
-	// TODO
-	__debugbreak();
+	SetShader(CORE::Get<ShaderSystem>()->GetShader(_strName.c_str()));
 }
 
 Dystopia::Shader* Dystopia::Renderer::GetShader(void) const noexcept
@@ -140,6 +137,11 @@ Dystopia::Texture* Dystopia::Renderer::GetTexture(unsigned _idx) const noexcept
 			return e.Get<1>();
 
 	return nullptr;
+}
+
+AutoArray<Tuple<unsigned, Dystopia::Texture*>> const& Dystopia::Renderer::GetTextures(void) const noexcept
+{
+	return mTextureFields;
 }
 
 

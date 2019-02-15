@@ -326,10 +326,12 @@ namespace
 	template <typename T>
 	inline void DrawRenderer(T& _renderer, Dystopia::Shader* s, float _fGamma)
 	{
-		auto t = _renderer->GetTexture();
 		auto m = _renderer->GetOwner()->GetComponent<Dystopia::Transform>()->GetTransformMatrix();
 
-		if (t) t->Bind();
+		for(auto& [n, t] : _renderer->GetTextures())
+			_EDITOR_CODE(if (t))
+				t->Bind(n);
+			_EDITOR_CODE(else t->Unbind();)
 
 		s->UploadUniform("ModelMat", m);
 		s->UploadUniform("Gamma", _fGamma);
@@ -340,8 +342,6 @@ namespace
 		}
 
 		_renderer->Draw();
-
-		if (t) t->Unbind();
 	}
 }
 

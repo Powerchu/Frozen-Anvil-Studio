@@ -80,6 +80,7 @@ namespace Dystopia
 
 		void SetTexture(Texture*, unsigned = 0) noexcept;
 		Texture* GetTexture(unsigned = 0) const noexcept;
+		AutoArray<Tuple<unsigned, Texture*>> const& GetTextures(void) const noexcept;
 
 		bool HasTransparency(void) const noexcept;
 
