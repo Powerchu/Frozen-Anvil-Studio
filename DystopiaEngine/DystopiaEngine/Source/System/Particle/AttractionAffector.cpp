@@ -175,33 +175,33 @@ void Dystopia::PointAffector::AffectorUpdate(Emitter& _emitter, float _dt)
 void Dystopia::PointAffector::PointAttract(Emitter& _emitter, float)
 {
 	Math::Point3D emitterPos = _emitter.GetOwnerTransform().GetGlobalPosition();
-	//auto& allPos = _emitter.GetPosition();
-	//auto& allAccel = _emitter.GetAcceleration();
-	//for (unsigned i = 0; i < allAccel.size(); ++i)
-	//{
-	//	Math::Vec3 direction{ GetOffsetX() + emitterPos.x - allPos[i].x, 
-	//						  GetOffsetY() + emitterPos.y - allPos[i].y, 
-	//						  emitterPos.z - allPos[i].z };
-	//
-	//	if (direction.MagnitudeSqr() > Math::epsilon && direction.MagnitudeSqr() < (GetRange()*GetRange()))
-	//		allAccel[i] = direction.Normalise() * static_cast<float>(GetStrength());
-	//}
+	auto& allPos = _emitter.GetPosition();
+	auto& allAccel = _emitter.GetAcceleration();
+	for (unsigned i = 0; i < allAccel.size(); ++i)
+	{
+		Math::Vec3 direction{ GetOffsetX() + emitterPos.x - allPos[i].x, 
+							  GetOffsetY() + emitterPos.y - allPos[i].y, 
+							  emitterPos.z - allPos[i].z };
+	
+		if (direction.MagnitudeSqr() > Math::epsilon && direction.MagnitudeSqr() < (GetRange()*GetRange()))
+			allAccel[i] = direction.Normalise() * static_cast<float>(GetStrength());
+	}
 }
 
 void Dystopia::PointAffector::PointRepulse(Emitter& _emitter, float)
 {
-	//Math::Point3D emitterPos = _emitter.GetOwnerTransform().GetGlobalPosition();
-	//auto& allPos = _emitter.GetPosition();
-	//auto& allAccel = _emitter.GetAcceleration();
-	//for (unsigned i = 0; i < allAccel.size(); ++i)
-	//{
-	//	Math::Vec3 direction{ allPos[i].x - (GetOffsetX() + emitterPos.x),
-	//						  allPos[i].y - (GetOffsetY() + emitterPos.y),
-	//						  allPos[i].z - emitterPos.z };
-	//
-	//	if (direction.MagnitudeSqr() > Math::epsilon && direction.MagnitudeSqr() < (GetRange()*GetRange()))
-	//		allAccel[i] = direction.Normalise() * static_cast<float>(GetStrength());
-	//}
+	Math::Point3D emitterPos = _emitter.GetOwnerTransform().GetGlobalPosition();
+	auto& allPos = _emitter.GetPosition();
+	auto& allAccel = _emitter.GetAcceleration();
+	for (unsigned i = 0; i < allAccel.size(); ++i)
+	{
+		Math::Vec3 direction{ allPos[i].x - (GetOffsetX() + emitterPos.x),
+							  allPos[i].y - (GetOffsetY() + emitterPos.y),
+							  allPos[i].z - emitterPos.z };
+	
+		if (direction.MagnitudeSqr() > Math::epsilon && direction.MagnitudeSqr() < (GetRange()*GetRange()))
+			allAccel[i] = direction.Normalise() * static_cast<float>(GetStrength());
+	}
 }
 
 const char * Dystopia::PointAffector::EditorDisplayLabel(void) const

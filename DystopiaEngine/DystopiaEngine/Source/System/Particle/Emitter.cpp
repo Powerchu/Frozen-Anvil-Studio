@@ -51,7 +51,7 @@ Dystopia::Emitter::Emitter(ParticleEmitter* _owner) noexcept
 	mpOwner{ _owner }, mpTransform{ nullptr }
 {
 	glGenVertexArrays(1, &mVAO);
-	glGenBuffers(2, &mColourBuffer);
+	glGenBuffers(4, &mClrBuffer);
 }
 
 Dystopia::Emitter::Emitter(Dystopia::Emitter const& _rhs) noexcept
@@ -64,7 +64,7 @@ Dystopia::Emitter::Emitter(Dystopia::Emitter const& _rhs) noexcept
 	mpOwner{ nullptr }, mpTransform{ nullptr }
 {
 	glGenVertexArrays(1, &mVAO);
-	glGenBuffers(2, &mColourBuffer);
+	glGenBuffers(4, &mClrBuffer);
 }
 
 Dystopia::Emitter::~Emitter(void) noexcept
@@ -73,8 +73,10 @@ Dystopia::Emitter::~Emitter(void) noexcept
 
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(2);
+	glDisableVertexAttribArray(3);
 
-	glDeleteBuffers(2, &mColourBuffer);
+	glDeleteBuffers(4, &mClrBuffer);
 	glDeleteVertexArrays(1, &mVAO);
 
 	Unbind();
@@ -101,19 +103,27 @@ void Dystopia::Emitter::Init(void)
 
 	mbUpdatedPositions = false;
 
-	mColour     .clear();
-	mPosition   .clear();
-	mVelocity   .clear();
-	mAccel      .clear();
-	mLifetime   .clear();
 	mInitialLife.clear();
+	mLifetime   .clear();
+	mRotVel		.clear();
+	mRotAcc		.clear();
+	mSize       .clear();
+	mColour     .clear();
+	mAccel      .clear();
+	mVelocity   .clear();
+	mPosition   .clear();
+	mRotation   .clear();
 
-	mColour     .reserve(mParticle.mnLimit);
-	mPosition   .reserve(mParticle.mnLimit);
-	mVelocity   .reserve(mParticle.mnLimit);
-	mAccel      .reserve(mParticle.mnLimit);
-	mLifetime   .reserve(mParticle.mnLimit);
 	mInitialLife.reserve(mParticle.mnLimit);
+	mLifetime   .reserve(mParticle.mnLimit);
+	mRotVel		.reserve(mParticle.mnLimit);
+	mRotAcc		.reserve(mParticle.mnLimit);
+	mSize       .reserve(mParticle.mnLimit);
+	mColour     .reserve(mParticle.mnLimit);
+	mAccel      .reserve(mParticle.mnLimit);
+	mVelocity   .reserve(mParticle.mnLimit);
+	mPosition   .reserve(mParticle.mnLimit);
+	mRotation	.reserve(mParticle.mnLimit);
 
 	if (!mpShader)
 	{
@@ -134,14 +144,26 @@ void Dystopia::Emitter::Init(void)
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, mPosBuffer);
 	glBufferData(GL_ARRAY_BUFFER, mParticle.mnLimit * sizeof(decltype(mPosition)::Val_t), nullptr, GL_STREAM_DRAW);
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glVertexAttribDivisor(0, 1);
 
 	glEnableVertexAttribArray(1);
-	glBindBuffer(GL_ARRAY_BUFFER, mColourBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, mClrBuffer);
 	glBufferData(GL_ARRAY_BUFFER, mParticle.mnLimit * sizeof(decltype(mColour)::Val_t), nullptr, GL_STREAM_DRAW);
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, 0);
 	glVertexAttribDivisor(1, 1);
+
+	glEnableVertexAttribArray(2);
+	glBindBuffer(GL_ARRAY_BUFFER, mSzBuffer);
+	glBufferData(GL_ARRAY_BUFFER, mParticle.mnLimit * sizeof(decltype(mSize)::Val_t), nullptr, GL_STREAM_DRAW);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribDivisor(2, 1);
+
+	glEnableVertexAttribArray(3);
+	glBindBuffer(GL_ARRAY_BUFFER, mRotBuffer);
+	glBufferData(GL_ARRAY_BUFFER, mParticle.mnLimit * sizeof(decltype(mRotation)::Val_t), nullptr, GL_STREAM_DRAW);
+	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribDivisor(3, 1);
 
 #   if defined(DEBUG) | defined(_DEBUG)
 	if (auto err = glGetError())
@@ -165,7 +187,7 @@ void Dystopia::Emitter::FixedUpdate(float _fDT)
 #	pragma omp parallel for
 	for (long long n = 0; n < l; ++n)
 	{
-		mPosition[n] += mVelocity[n].xyz0 * _fDT;
+		mPosition[n] += mVelocity[n].xyz * _fDT;
 	}
 #else
 	auto pAcc = mAccel.begin();
@@ -179,7 +201,7 @@ void Dystopia::Emitter::FixedUpdate(float _fDT)
 
 	for (auto& e : mPosition)
 	{
-		e += (*pVel).xyz0 * _fDT;
+		e += *pVel * _fDT;
 		++pVel;
 	}
 #endif
@@ -222,21 +244,14 @@ namespace
 	}
 }
 
-void Dystopia::Emitter::UploadPositionBuffer(void) const noexcept
+void Dystopia::Emitter::UploadBuffers(void) const noexcept
 {
-	ScopedTimer<ProfilerAction> timeKeeper{ "Emitter", "Position Upload" };
+	ScopedTimer<ProfilerAction> timeKeeper{ "Emitter", "Upload" };
 
-	if (!mbUpdatedPositions)
-		return;
-
-	UploadBufferAux(mPosBuffer, mPosition);
+	UploadBufferAux(mSzBuffer, mSize);
+	UploadBufferAux(mClrBuffer, mColour);
+	if (mbUpdatedPositions) UploadBufferAux(mPosBuffer, mPosition);
 	const_cast<bool&>(mbUpdatedPositions) = false;
-}
-
-void Dystopia::Emitter::UploadColourBuffer(void) const noexcept
-{
-	ScopedTimer<ProfilerAction> timeKeeper{ "Emitter", "Colour Upload" };
-	UploadBufferAux(mColourBuffer, mColour);
 }
 
 void Dystopia::Emitter::Render(void) const noexcept
@@ -244,23 +259,22 @@ void Dystopia::Emitter::Render(void) const noexcept
 	glDrawArraysInstanced(GL_POINTS, 0, 1, static_cast<GLsizei>(mPosition.size()));
 }
 
-void Dystopia::Emitter::KillParticle(unsigned _nIdx) noexcept
+void Dystopia::Emitter::KillParticle(size_t _nIdx) noexcept
 {
 	DEBUG_ASSERT(!mSpawnCount, "Particle System Error: No particles to kill!");
 	--mSpawnCount;
 
-	mLifetime.FastRemove(_nIdx);
-
-	mColour[_nIdx].w = 0;
-	mColour.FastRemove(_nIdx);
-
-	mAccel.FastRemove(_nIdx);
-	mVelocity.FastRemove(_nIdx);
-
-	mPosition[_nIdx].w = 0;
-	mPosition.FastRemove(_nIdx);
-
 	mInitialLife.FastRemove(_nIdx);
+	mLifetime   .FastRemove(_nIdx);
+	mRotVel     .FastRemove(_nIdx);
+	mRotAcc     .FastRemove(_nIdx);
+	mSize       .FastRemove(_nIdx);
+	mColour     .FastRemove(_nIdx);
+	mAccel      .FastRemove(_nIdx);
+	mVelocity   .FastRemove(_nIdx);
+	mPosition   .FastRemove(_nIdx);
+	mRotation   .FastRemove(_nIdx);
+
 	mbUpdatedPositions = true;
 }
 
@@ -274,15 +288,18 @@ void Dystopia::Emitter::SpawnParticle(void) noexcept
 			e.Update(*this, 0);
 
 		Math::Vec4 vpos = mParticle.mPos.xyz1;
-		auto pos = mpTransform->GetTransformMatrix() * mParticle.mPos.xyz1;
-		pos.w = mParticle.mfSize;
+		auto&& trs = mpTransform->GetTransformMatrix();
 
+		mInitialLife.EmplaceBackUnsafe(mParticle.mfLifeDur);
 		mLifetime   .EmplaceBackUnsafe(mParticle.mfLifeDur);
+		mRotVel     .EmplaceBackUnsafe(mParticle.mRotVel  );
+		mRotAcc     .EmplaceBackUnsafe(mParticle.mRotAccel);
+		mSize       .EmplaceBackUnsafe(mParticle.mSize    );
 		mColour     .EmplaceBackUnsafe(mParticle.mColour  );
 		mAccel      .EmplaceBackUnsafe(mParticle.mAccel   );
 		mVelocity   .EmplaceBackUnsafe(mParticle.mVelocity);
-		mPosition   .EmplaceBackUnsafe(pos                );
-		mInitialLife.EmplaceBackUnsafe(mParticle.mfLifeDur);
+		mPosition   .EmplaceBackUnsafe((trs * vpos).xyz   );
+		mRotation   .EmplaceBackUnsafe(mParticle.mRotation);
 
 		mbUpdatedPositions = true;
 	}
@@ -325,9 +342,19 @@ Dystopia::GfxParticle& Dystopia::Emitter::GetSpawnDefaults(void) noexcept
 	return mParticle;
 }
 
+AutoArray<float>& Dystopia::Emitter::GetLifetime(void) noexcept
+{
+	return mLifetime;
+}
+
 AutoArray<float>& Dystopia::Emitter::GetInitialLifetime(void) noexcept
 {
 	return mInitialLife;
+}
+
+AutoArray<Math::Vec3>& Dystopia::Emitter::GetPosition(void) noexcept
+{
+	return mPosition;
 }
 
 AutoArray<Math::Vec4>& Dystopia::Emitter::GetColour(void) noexcept
@@ -345,9 +372,14 @@ AutoArray<Math::Vec3>& Dystopia::Emitter::GetAcceleration(void) noexcept
 	return mAccel;
 }
 
-AutoArray<float>& Dystopia::Emitter::GetLifetime(void) noexcept
+AutoArray<float>& Dystopia::Emitter::GetRotationalVelocity(void) noexcept
 {
-	return mLifetime;
+	return mRotVel;
+}
+
+AutoArray<float>& Dystopia::Emitter::GetRotationalAcceleration(void) noexcept
+{
+	return mRotAcc;
 }
 
 AutoArray<Dystopia::ParticleAffector>& Dystopia::Emitter::GetSpawnAffectors(void) noexcept

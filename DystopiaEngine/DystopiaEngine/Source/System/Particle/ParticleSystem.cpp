@@ -72,10 +72,7 @@ void Dystopia::ParticleSystem::Update(float _dt)
 					}
 
 					if (emit.GetSpawnCount())
-					{
-						emit.UploadColourBuffer();
-						emit.UploadPositionBuffer();
-					}
+						emit.UploadBuffers();
 				}
 			}
 		}

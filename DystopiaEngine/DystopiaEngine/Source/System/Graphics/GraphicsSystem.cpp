@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/GraphicsSystem.h"	// File header
 #include "System/Graphics/GraphicsDefs.h"	// eGraphicSettings
 #include "System/Graphics/CharSpace.h"
+#include "System/Graphics/Framebuffer.h"
 #include "System/Driver/Driver.h"			// EngineCore
 #include "Lib/GraphicsLib.h"
 
@@ -406,7 +407,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 		}
 		else
 		{
-			s = CORE::Get<ShaderSystem>()->GetShader("No Texture");
+			s = CORE::Get<ShaderSystem>()->GetShader("Error Shader");
 			s->Bind();
 		}
 
@@ -427,7 +428,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 		if (r->GetOwner()->GetFlags() & ActiveFlags)
 		{
 			auto s = r->GetShader();
-			s = r->GetTexture() ? s : CORE::Get<ShaderSystem>()->GetShader("No Texture");
+			s = r->GetTexture() ? s : CORE::Get<ShaderSystem>()->GetShader("Error Shader");
 			s->Bind();
 			s->UploadUniform("ProjectMat", _Proj);
 			s->UploadUniform("ViewMat", _View);
@@ -493,10 +494,9 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _View, Math::
 			else
 			{
 				auto pos = pOwner->GetComponent<Transform>()->GetGlobalPosition();
-				auto scaleV = pOwner->GetComponent<Transform>()->GetGlobalScale();
-				//auto LocalScale = Math::Scale(scaleV.x, scaleV.y);
-				auto scale = Math::Abs(scaleV[0]) > Math::Abs(scaleV[1]) ? Math::Abs(scaleV[0]) : Math::Abs(scaleV[1]);
-				auto scaleM = Math::Scale(scale, scale);
+				auto scaleV = Math::Abs(pOwner->GetComponent<Transform>()->GetGlobalScale());
+				auto scale = Math::Max(scaleV, scaleV.yxwz);
+				auto scaleM = Math::Scale(scale);
 				auto Translation = Math::Translate(pos.x, pos.y);
 				s->UploadUniform("ModelMat", Translation * pOwner->GetComponent<Transform>()->GetGlobalRotation().Matrix() * Math::Translate(scaleV*Obj->GetOffSet()) * scaleM * Obj->GetTransformationMatrix());
 			}
@@ -559,7 +559,7 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 	auto& AllCam = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetAllCameras();
 
 	/*
-	// Do batching, depth sorting and grouping of translucent elements.
+	// Do batching?
 	for (auto& e : ComponentDonor<Renderer>::mComponents)
 	{
 	auto flags = e.GetFlags();
@@ -619,21 +619,15 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 			glViewport(static_cast<int>(vp.mnX), static_cast<int>(vp.mnY),
 				static_cast<int>(vp.mnWidth), static_cast<int>(vp.mnHeight));
 
-			// Temporary code
 			surface->Bind();
-			//Cam.GetSurface().SetBlendMode();
-			//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-
 			DrawScene(Cam, View, Proj);
 
 			if (Cam.DrawDebug())
 				DrawDebug(Cam, View, Proj);
-
-			surface->Unbind();
 		}
 	}
 
+	static_cast<Dystopia::Framebuffer const*>(nullptr)->Unbind();
 #  if defined(_DEBUG) | defined(DEBUG)
 		if (auto err = glGetError())
 			__debugbreak();
@@ -677,13 +671,10 @@ void Dystopia::GraphicsSystem::PostUpdate(void)
 
 void Dystopia::GraphicsSystem::StartFrame(void)
 {
-	//SetAllCameraAspect(mvResolution.x, mvResolution.y);
 }
 
 void Dystopia::GraphicsSystem::EndFrame(void)
 {
-	// TODO: Final draw to combine layers & draw to screen
-	// TODO: Draw a fullscreen quad fusing the GameView and UIView
 	static Mesh* quad = EngineCore::GetInstance()->Get<MeshSystem>()->GetMesh("Quad");
 	auto& fb = GetFrameBuffer();
 
@@ -708,11 +699,14 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 	Shader* shader = CORE::Get<ShaderSystem>()->GetShader("FinalStage");
 	shader->Bind();
 	shader->UploadUniform("ModelMat", model);
-	//shader->UploadUniform("Gamma", mfGamma);
+	shader->UploadUniform("Gamma", mfGamma);
 
 	quad->DrawMesh(GL_TRIANGLES);
+
+#   if defined(_DEBUG) | defined(DEBUG)
 	if (auto err = glGetError())
 		__debugbreak();
+#   endif 
 
 #if (EDITOR)
 	fb.Unbind();
@@ -856,20 +850,14 @@ _DLL_EXPORT void Dystopia::GraphicsSystem::LoadAllTexture()
 	}
 }
 
-Dystopia::Texture* Dystopia::GraphicsSystem::LoadFont(const std::string &)
+Dystopia::Font* Dystopia::GraphicsSystem::LoadFont(std::string const& _strPath)
 {
-	return nullptr;
+	return CORE::Get<FontSystem>()->LoadFont(_strPath);
 }
 
-void Dystopia::GraphicsSystem::BindOpenGL(Window& _window) noexcept
+void Dystopia::GraphicsSystem::MakeActiveWindow(Window& _window) noexcept
 {
 	pGfxAPI->BindContext(_window.GetDeviceContext());
-}
-
-bool Dystopia::GraphicsSystem::InitOpenGL(Window&)
-{
-	// Return true to indicate success
-	return true;
 }
 
 

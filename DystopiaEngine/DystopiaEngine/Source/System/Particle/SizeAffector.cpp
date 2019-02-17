@@ -67,10 +67,10 @@ void Dystopia::InitialSizeAffector::AffectorSpawn(Emitter& _emitter, float)
 		std::random_device rDev;
 		std::mt19937 gen{ rDev() };
 		std::uniform_real_distribution<float> distr{ GetInitialSizeMin(), GetInitialSizeMax() };
-		_emitter.GetSpawnDefaults().mfSize = distr(gen);
+		_emitter.GetSpawnDefaults().mSize = Math::Vec2{ distr(gen) };
 	}
 	else
-		_emitter.GetSpawnDefaults().mfSize = GetInitialSizeMax();
+		_emitter.GetSpawnDefaults().mSize = Math::Vec2{ GetInitialSizeMax() };
 }
 
 const char * Dystopia::InitialSizeAffector::EditorDisplayLabel(void) const

@@ -1,9 +1,7 @@
 [START_PROGRAMS]
-"Shader\\DefaultVert.dvert","Shader\\DefaultFrag.dfrag","Shader\\NoTextureFrag.dfrag","Shader\\ColourFrag.dfrag","Shader\\FinalStage.dvert","Shader\\FinalStage.dfrag","Shader\\LogoFrag.dfrag","Shader\\Font.dvert","Shader\\FontFrag.dfrag","Shader\\Collider.dvert","Shader\\Collider.dfrag","Shader\\Particle.dvert","Shader\\Particle.dgeog","Shader\\Particle.dfrag","Shader\\Error.dfrag",
+"Shader\\DefaultVert.dvert","Shader\\DefaultFrag.dfrag","Shader\\ColourFrag.dfrag","Shader\\FinalStage.dvert","Shader\\FinalStage.dfrag","Shader\\LogoFrag.dfrag","Shader\\Font.dvert","Shader\\FontFrag.dfrag","Shader\\Collider.dvert","Shader\\Collider.dfrag","Shader\\Particle.dvert","Shader\\Particle.dgeog","Shader\\Particle.dfrag","Shader\\Error.dfrag","Shader\\TrailParticle.dgeog"
 [START_SHADER]
 "Default Shader","Shader\DefaultVert.dvert","Shader\DefaultFrag.dfrag",
-[START_SHADER]
-"No Texture","Shader\DefaultVert.dvert","Shader\NoTextureFrag.dfrag"
 [START_SHADER]
 "Colour Shader","Shader\DefaultVert.dvert","Shader\ColourFrag.dfrag",
 [START_SHADER]
@@ -17,5 +15,6 @@
 [START_SHADER]
 "Default Particle","Shader\Particle.dvert","Shader\Particle.dgeog","Shader\Particle.dfrag",
 [START_SHADER]
+"Def Trail Particle","Shader\Particle.dvert","Shader\TrailParticle.dgeog","Shader\Particle.dfrag",
+[START_SHADER]
 "Error Shader","Shader\DefaultVert.dvert","Shader\Error.dfrag",
-

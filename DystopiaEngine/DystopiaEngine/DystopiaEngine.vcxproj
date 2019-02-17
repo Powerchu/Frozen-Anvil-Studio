@@ -299,6 +299,7 @@
     <ClInclude Include="Include\System\Particle\ParticleSystem.h" />
     <ClInclude Include="Include\System\Particle\SizeAffector.h" />
     <ClInclude Include="Include\System\Particle\SpawnAffector.h" />
+    <ClInclude Include="Include\System\Particle\TrailEmitter.h" />
     <ClInclude Include="Include\System\Particle\VelocityAffector.h" />
     <ClInclude Include="Include\System\Physics\CollisionResolution.h" />
     <ClInclude Include="Include\Component\Collider.h" />

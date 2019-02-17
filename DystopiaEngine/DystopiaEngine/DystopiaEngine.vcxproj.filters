@@ -433,11 +433,11 @@
     <ClCompile Include="Source\Component\Particle\ParticleEmitter.cpp">
       <Filter>Game Engine\Components\Emitter</Filter>
     </ClCompile>
-    <ClCompile Include="Source\System\Particle\Emitter.cpp">
-      <Filter>Game Engine\Systems\Particle\Emitter</Filter>
-    </ClCompile>
     <ClCompile Include="Source\System\Particle\AttractionAffector.cpp">
       <Filter>Game Engine\Systems\Particle\Affectors\Attractor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Particle\Emitter.cpp">
+      <Filter>Game Engine\Systems\Particle\Emitter\Base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1194,14 +1194,17 @@
     <ClInclude Include="Include\System\Collision\CollisionLayers.h">
       <Filter>Game Engine\Systems\Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Include\System\Particle\Emitter.h">
-      <Filter>Game Engine\Systems\Particle\Emitter</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Component\ParticleEmitter.h">
       <Filter>Game Engine\Components\Emitter</Filter>
     </ClInclude>
     <ClInclude Include="Include\System\Particle\AttractionAffector.h">
       <Filter>Game Engine\Systems\Particle\Affectors\Attractor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Particle\Emitter.h">
+      <Filter>Game Engine\Systems\Particle\Emitter\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Particle\TrailEmitter.h">
+      <Filter>Game Engine\Systems\Particle\Emitter\Trail</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1729,6 +1732,12 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Particle\Affectors\Attractor">
       <UniqueIdentifier>{1d3e63c3-fef7-4d0c-ba29-3057e8cfe5a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Particle\Emitter\Base">
+      <UniqueIdentifier>{9bd9269a-4cf7-4c90-80ce-973d6d527220}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Particle\Emitter\Trail">
+      <UniqueIdentifier>{aa78bf0c-7015-4c32-bbe6-76377b3f317e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

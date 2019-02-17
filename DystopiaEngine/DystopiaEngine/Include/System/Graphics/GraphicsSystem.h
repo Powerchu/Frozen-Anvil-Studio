@@ -29,6 +29,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
+	struct Font;
 	class Mesh;
 	class Shader;
 	class Camera;
@@ -72,8 +73,7 @@ namespace Dystopia
 		void SetAllCameraAspect(float _x, float _y) const;
 
 		// Sets up Window for openGL rendering
-		bool InitOpenGL(Window&);
-		void BindOpenGL(Window&) noexcept;
+		void MakeActiveWindow(Window&) noexcept;
 
 		void LoadDefaults(void) override;
 		void LoadSettings(DysSerialiser_t&) override;
@@ -84,7 +84,7 @@ namespace Dystopia
 		Texture* LoadTexture(HashString const&);
 		_DLL_EXPORT Texture* LoadTexture(const char *);
 		_DLL_EXPORT void LoadAllTexture();
-		Texture* LoadFont(const std::string&);
+		Font* LoadFont(const std::string&);
 
 		Framebuffer& GetGameView(void) const noexcept;
 		Framebuffer& GetUIView(void) const noexcept;

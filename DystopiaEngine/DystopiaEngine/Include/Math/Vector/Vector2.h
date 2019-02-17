@@ -37,6 +37,7 @@ namespace Math
 
 		inline constexpr Vector2(void) noexcept;
 		inline constexpr Vector2(float x, float y) noexcept;
+		inline constexpr explicit Vector2(float xy) noexcept;
 
 
 		// ==================================== VECTOR OPERATIONS ==================================== // 
@@ -192,6 +193,12 @@ namespace Math
 
 inline constexpr Math::Vector2::Vector2(void) noexcept
 	: mData { 0 }
+{
+
+}
+
+inline constexpr Math::Vector2::Vector2(float _xy) noexcept
+	: mData{ _xy, _xy }
 {
 
 }

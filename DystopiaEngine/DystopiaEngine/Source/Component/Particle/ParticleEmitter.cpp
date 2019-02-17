@@ -51,7 +51,7 @@ Dystopia::ParticleEmitter::ParticleEmitter(void) noexcept
 }
 
 Dystopia::ParticleEmitter::ParticleEmitter(Dystopia::ParticleEmitter const& _rhs) noexcept
-	: mEmitters{}
+	: mEmitters{ _rhs.mEmitters }
 {
 }
 
@@ -67,7 +67,7 @@ void Dystopia::ParticleEmitter::Init(void)
 {
 }
 
-void Dystopia::ParticleEmitter::FixedUpdate(float _fDT)
+void Dystopia::ParticleEmitter::FixedUpdate(float)
 {
 }
 
@@ -85,7 +85,7 @@ void Dystopia::ParticleEmitter::Render(void) const noexcept
 
 Dystopia::Emitter* Dystopia::ParticleEmitter::GetEmitter(unsigned _n) const noexcept
 {
-	return nullptr;
+	return mEmitters.begin() + _n;
 }
 
 AutoArray<Dystopia::Emitter>& Dystopia::ParticleEmitter::GetEmitters(void) noexcept
