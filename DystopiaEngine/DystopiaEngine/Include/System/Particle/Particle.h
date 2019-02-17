@@ -27,6 +27,7 @@ namespace Dystopia
 
 		Math::Vec3 mPos;
 		Math::Vec2 mSize = { 100.f, 100.f };
+		Math::Vec4 mUV   = { 0, 0, 1, 1 };
 
 		float mRotation;
 		float mRotVel;

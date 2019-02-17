@@ -125,13 +125,13 @@ float Dystopia::SizeOverLifeAffector::GetSizeChangePerSecond(void) const
 
 void Dystopia::SizeOverLifeAffector::AffectorUpdate(Emitter& _emitter, float _dt)
 {
-	//float rate = GetSizeChangePerSecond() * _dt;
-	//auto& allpos = _emitter.GetPosition();
-	//
-	//for (auto& p : allpos)
-	//{
-	//	p.w = Math::Max<float>(p.w + rate, 0.f);
-	//}
+	float rate = GetSizeChangePerSecond() * _dt;
+	auto& allSz = _emitter.GetSize();
+	
+	for (auto& p : allSz)
+	{
+		p = Math::Max(p + Math::Vec2{ rate }, Math::Vec2{ 0.f });
+	}
 }
 
 const char * Dystopia::SizeOverLifeAffector::EditorDisplayLabel(void) const

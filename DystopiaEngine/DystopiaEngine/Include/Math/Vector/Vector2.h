@@ -167,7 +167,10 @@ namespace Math
 	// ====================================== MATH UTILITY ======================================= // 
 	// Manually overload the math utility functions which cannot be called for type Vector4
 
-	inline Vector2 _CALL Abs(const Vector2);
+	inline Vector2 _CALL Abs(Vector2 const&);
+
+	inline Vector2 _CALL Min(Vector2 const&, Vector2 const&);
+	inline Vector2 _CALL Max(Vector2 const&, Vector2 const&);
 
 
 	// ======================================== OPERATORS ======================================== // 
@@ -266,9 +269,19 @@ inline float _CALL Math::Vector2::MagnitudeSqr(void) const noexcept
 }
 
 
-inline Math::Vector2 _CALL Math::Abs(const Vector2 _v)
+inline Math::Vector2 _CALL Math::Abs(Vector2 const& _v)
 {
 	return Vector2{ Math::Abs<float>(_v.x), Math::Abs<float>(_v.y) };
+}
+
+inline Math::Vector2 _CALL Math::Min(Vector2 const& _lhs, Vector2 const& _rhs)
+{
+	return Vector2{ Min(_lhs[0], _rhs[0]), Min(_lhs[1], _rhs[1]) };
+}
+
+inline Math::Vector2 _CALL Math::Max(Vector2 const& _lhs, Vector2 const& _rhs)
+{
+	return Vector2{ Max(_lhs[0], _rhs[0]), Max(_lhs[1], _rhs[1]) };
 }
 
 

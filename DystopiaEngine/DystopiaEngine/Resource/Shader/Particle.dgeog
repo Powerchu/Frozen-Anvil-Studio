@@ -10,6 +10,9 @@ out gl_PerVertex
 
 layout(location = 0) flat in vec4 vPosition[];
 layout(location = 1) flat in vec4 vertCol[];
+layout(location = 2) flat in vec2 Size[];
+layout(location = 3) flat in float Rotation[];
+layout(location = 4) flat in vec4 UVBuf[];
 
 layout(location = 0) out vec2 vUV;
 layout(location = 1) out vec4 vColor;

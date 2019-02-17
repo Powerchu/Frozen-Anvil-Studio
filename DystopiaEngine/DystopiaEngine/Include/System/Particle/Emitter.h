@@ -55,6 +55,7 @@ namespace Dystopia
 		virtual void SpawnParticle(void) noexcept;
 		void SetTexture(Texture*) noexcept;
 		void SetOwner(ParticleEmitter*) noexcept;
+		void NotifyUVChanged(void) noexcept;
 
 		template <typename Ty>
 		auto AddAffector(Ty&&) noexcept -> Ut::EnableIf_t<std::is_base_of_v<ParticleAffector, Ty>>;
@@ -66,12 +67,15 @@ namespace Dystopia
 		GfxParticle& GetSpawnDefaults(void) noexcept;
 		AutoArray<float>& GetLifetime(void) noexcept;
 		AutoArray<float>& GetInitialLifetime(void) noexcept;
-		AutoArray<Math::Vec3>& GetPosition(void) noexcept;
+		AutoArray<Math::Vec4>& GetUV(void) noexcept;
 		AutoArray<Math::Vec4>& GetColour(void) noexcept;
 		AutoArray<Math::Vec3>& GetVelocity(void) noexcept;
 		AutoArray<Math::Vec3>& GetAcceleration(void) noexcept;
+		AutoArray<float>& GetRotation(void) noexcept;
 		AutoArray<float>& GetRotationalVelocity(void) noexcept;
 		AutoArray<float>& GetRotationalAcceleration(void) noexcept;
+		AutoArray<Math::Vec2>& GetSize(void) noexcept;
+		AutoArray<Math::Vec3>& GetPosition(void) noexcept;
 
 		template <typename Ty>
 		inline auto GetAffector(void) noexcept -> Ut::EnableIf_t<std::is_base_of_v<ParticleAffector, Ty>, Ty* const>;
@@ -94,6 +98,7 @@ namespace Dystopia
 		AutoArray<float>      mLifetime;
 		AutoArray<float>      mRotVel;
 		AutoArray<float>      mRotAcc;
+		AutoArray<Math::Vec4> mUV;
 		AutoArray<Math::Vec2> mSize;
 		AutoArray<Math::Vec4> mColour;
 		AutoArray<Math::Vec3> mAccel;
@@ -112,10 +117,10 @@ namespace Dystopia
 		Shader* mpShader; Texture* mpTexture;
 		size_t mSpawnCount;
 		HashString mTextureName, mShaderName;
-		unsigned mVAO, mClrBuffer, mPosBuffer, mSzBuffer, mRotBuffer;
+		unsigned mVAO, mClrBuffer, mPosBuffer, mSzBuffer, mRotBuffer, mUVBuffer;
 
 		int mnParticleLimit;
-		bool mbUpdatedPositions;
+		bool mbUpdatedPositions, mbUVChanged;
 		bool mbIsAlive;
 
 		template <typename Ty, typename U>
