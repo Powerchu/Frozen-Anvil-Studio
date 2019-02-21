@@ -190,7 +190,7 @@ void Editor::ParticleEditor::ListOfAffectors(void)
 	//EGUI::Display::HorizontalSeparator();
 }
 
-void Editor::ParticleEditor::AddAffector(int _id)
+void Editor::ParticleEditor::AddAffector(int )
 {
 	//Dystopia::Emitter* pEmitter = mpObject->GetComponent<Dystopia::Emitter>();
 	//static Dystopia::AffectorGet affectorGet;

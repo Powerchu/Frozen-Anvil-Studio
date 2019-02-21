@@ -130,6 +130,7 @@ namespace Dystopia
 		AutoArray<Tuple<OString, ::Gfx::eUniform_t, ShaderVariant_t>> mOverride;
 
 		void ResetOverride(void);
+		void InitializeTextureFields(void);
 
 #   if EDITOR
 		AutoArray<char const*> mOverrideNames;

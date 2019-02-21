@@ -298,16 +298,16 @@ inline void AutoArray<T, A>::resize(Sz_t _nSize, T const& _obj)
 
 	if (sz < _nSize)
 	{
-		_nSize -= sz;
-		while (_nSize--) Remove();
-	}
-	else
-	{
-		_nSize = sz - _nSize;
+		_nSize = _nSize - sz;
 		reserve(_nSize);
 
 		while (--_nSize) EmplaceBack(_obj);
 		EmplaceBack(Ut::Move(_obj));
+	}
+	else if (sz > _nSize)
+	{
+		_nSize = sz - _nSize;
+		while (_nSize--) Remove();
 	}
 }
 

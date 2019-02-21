@@ -65,12 +65,7 @@ void Dystopia::Renderer::Awake(void)
 {
 	SetMesh("Quad");
 	SetShader(CORE::Get<ShaderSystem>()->GetShader("Default Shader"));
-
-	unsigned n = 0;
-	mTextureFields.reserve(mTexturePaths.size());
-
-	for(auto& e : mTexturePaths)
-		mTextureFields.EmplaceBack(n++, CORE::Get<TextureSystem>()->GetTexture(e));
+	InitializeTextureFields();
 }
 
 void Dystopia::Renderer::Init(void)
@@ -122,12 +117,15 @@ void Dystopia::Renderer::SetTexture(Texture* _pTexture, unsigned _idx) noexcept
 		if (e.Get<0>() == _idx)
 			e.Get<1>() = _pTexture;
 
-	mTexturePaths.resize(_idx);
+	if (mTexturePaths.size() <= _idx)
+		mTexturePaths.resize(_idx + 1);
 
 	if (_pTexture)
 		mTexturePaths[_idx] = _pTexture->GetPath();
 	else
 		mTexturePaths[_idx].clear();
+
+	InitializeTextureFields();
 }
 
 Dystopia::Texture* Dystopia::Renderer::GetTexture(unsigned _idx) const noexcept
@@ -143,7 +141,6 @@ AutoArray<Tuple<unsigned, Dystopia::Texture*>> const& Dystopia::Renderer::GetTex
 {
 	return mTextureFields;
 }
-
 
 bool Dystopia::Renderer::HasTransparency(void) const noexcept
 {
@@ -166,6 +163,25 @@ void Dystopia::Renderer::ResetOverride(void)
 			mOverride.FastRemove(&e);
 }
 
+void Dystopia::Renderer::InitializeTextureFields(void)
+{
+	unsigned n = 0;
+	size_t count = mTexturePaths.size();
+
+	if (mTextureFields.size() < count)
+		mTextureFields.reserve(count);
+
+	for (auto& e : mTexturePaths)
+	{
+		auto t = CORE::Get<TextureSystem>()->GetTexture(e);
+		t = t ? t : CORE::Get<TextureSystem>()->LoadTexture(e);
+
+		if (!t)
+			__debugbreak();
+
+		mTextureFields.EmplaceBack(n++, t);
+	}
+}
 
 AutoArray<Tuple<OString, ::Gfx::eUniform_t, Dystopia::Renderer::ShaderVariant_t>>& Dystopia::Renderer::GetOverrides(void)
 {
@@ -187,12 +203,12 @@ void Dystopia::Renderer::Serialise(TextSerialiser& _out) const
 	Component::Serialise(_out);
 
 	_out << "SENTRY";
-
+	_out << mTextureFields.size();
 	for (auto& e : mTextureFields)
 	{
 		if (Texture*& ptr = e.Get<1>())
 		{
-			auto rp  = pFileSys->ConvertToRelative(ptr->GetPath());
+			auto rp = pFileSys->ConvertToRelative(ptr->GetPath());
 			auto pos = rp.find_last_of("/\\");
 
 			if (pos != OString::nPos)
@@ -200,6 +216,8 @@ void Dystopia::Renderer::Serialise(TextSerialiser& _out) const
 			else
 				_out << "";
 		}
+		else
+			_out << "";
 	}
 
 	_out.InsertEndBlock("RENDERER_BASE");
@@ -234,7 +252,7 @@ void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 		unsigned count;
 		_in >> count;
 
-		while (count--)
+		for (unsigned i = 0; i < count; ++i)
 		{
 			_in >> path;
 
@@ -270,6 +288,9 @@ void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 		mTexturePaths.EmplaceBack(
 			pFileSys->Normalize(pFileSys->GetFullPath(path.c_str(), eFileDir::eResource)).c_str()
 		);
+
+		if (mTexturePaths[0].length() == 0)
+			__debugbreak();
 	}
 
 	_in.ConsumeEndBlock();
