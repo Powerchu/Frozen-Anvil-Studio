@@ -89,7 +89,6 @@ namespace Dystopia
 		void EditorUI(void) noexcept override;
 		
 #endif // EDITOR
-	private:
 		SharedPtr<BehaviourTree> bTree;
 
 	};
