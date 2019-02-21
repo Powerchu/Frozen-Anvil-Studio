@@ -27,12 +27,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace
 {
-	static auto const pGfxAPI = ::Gfx::GetInstance();
+	using ::Gfx::GetInstance;
 }
 
 
 Dystopia::Shader::Shader(OString const& _strName, bool _bIsCustom) noexcept :
-	mID{ pGfxAPI->CreateShaderPipeline() }, mStages{ ::Gfx::ShaderStage::NONE }, mstrName{ _strName },
+	mID{ GetInstance()->CreateShaderPipeline() }, mStages{ ::Gfx::ShaderStage::NONE }, mstrName{ _strName },
 	mbUpdate{ true }, mbIsCustom{ _bIsCustom }, mbValid{ true }
 {
 
@@ -40,7 +40,7 @@ Dystopia::Shader::Shader(OString const& _strName, bool _bIsCustom) noexcept :
 
 Dystopia::Shader::~Shader(void)
 {
-	pGfxAPI->Free(mID);
+	GetInstance()->Free(mID);
 }
 
 
@@ -69,7 +69,7 @@ void Dystopia::Shader::AttachProgram(ShaderProgram* _prog)
 #if EDITOR
 	if (_prog->IsValid())
 #endif
-	pGfxAPI->AttachShaderProgram(mID, _prog->GetID(), _prog->GetStage());
+	GetInstance()->AttachShaderProgram(mID, _prog->GetID(), _prog->GetStage());
 
 #   if defined(_DEBUG) | defined(DEBUG)
 	if (auto err = glGetError())
@@ -83,7 +83,7 @@ void Dystopia::Shader::ReattachProgram(ShaderProgram* _prog)
 	for (auto& e : mPrograms)
 	{
 		if (e == _prog && e->IsValid())
-			pGfxAPI->AttachShaderProgram(mID, _prog->GetID(), _prog->GetStage());
+			GetInstance()->AttachShaderProgram(mID, _prog->GetID(), _prog->GetStage());
 
 		mbValid = mbValid && e->IsValid();
 	}
@@ -102,7 +102,7 @@ void Dystopia::Shader::DetachProgram(ShaderProgram* _prog)
 				break;
 			}
 
-		pGfxAPI->AttachShaderProgram(mID, 0, _prog->GetStage());
+		GetInstance()->AttachShaderProgram(mID, 0, _prog->GetStage());
 		mStages &= ~_prog->GetStage();
 	}
 
@@ -117,7 +117,7 @@ void Dystopia::Shader::DetachProgram(Gfx::ShaderStage _stage)
 		{
 			if (static_cast<unsigned>(e->GetStage() & _stage))
 			{
-				pGfxAPI->AttachShaderProgram(mID, 0, e->GetStage());
+				GetInstance()->AttachShaderProgram(mID, 0, e->GetStage());
 				mPrograms.FastRemove(&e);
 			}
 		}
@@ -131,7 +131,7 @@ void Dystopia::Shader::DetachProgram(Gfx::ShaderStage _stage)
 
 void Dystopia::Shader::Bind(void) const noexcept
 {
-	pGfxAPI->UseShaderPipeline(mID);
+	GetInstance()->UseShaderPipeline(mID);
 }
 
 void Dystopia::Shader::Unbind(void) const noexcept
@@ -225,8 +225,8 @@ namespace
 	{
 		for (auto& e : _target)
 		{
-			auto loc = pGfxAPI->GetUniformLocation(e->GetID(), _strName);
-			(pGfxAPI->*_func)(e->GetID(), loc, Ut::Fwd<U>(_args)...);
+			auto loc = GetInstance()->GetUniformLocation(e->GetID(), _strName);
+			(GetInstance()->*_func)(e->GetID(), loc, Ut::Fwd<U>(_args)...);
 		}
 	}
 }

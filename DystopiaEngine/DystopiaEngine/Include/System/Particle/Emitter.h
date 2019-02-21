@@ -41,10 +41,10 @@ namespace Dystopia
 		~Emitter(void) noexcept;
 
 		void Awake(void);
-		void Init(void);
+		virtual void Init(void);
 
 		// Update "physics"!
-		virtual void FixedUpdate(float _dt);
+		virtual void FixedUpdate(float _dt) noexcept;
 
 		void Bind(void) const noexcept;
 		void Unbind(void) const noexcept;
@@ -92,7 +92,11 @@ namespace Dystopia
 		void StartEmission(void) noexcept;
 		bool IsAlive(void) const noexcept;
 
-	private:
+	protected:
+
+		void BaseInit(void);
+		void InitArrays(void);
+		void InitBuffers(void) const noexcept;
 
 		AutoArray<float>      mInitialLife;
 		AutoArray<float>      mLifetime;
@@ -106,22 +110,28 @@ namespace Dystopia
 		AutoArray<Math::Vec3> mPosition;
 		AutoArray<float>      mRotation;
 
-		AutoArray<ParticleAffector> mSpawn;
-		AutoArray<ParticleAffector> mUpdate;
-		AutoArray<ParticleAffector> mFixedUpdate;
-		AutoArray<ParticleAffector> mDeath;
-
 		GfxParticle mParticle;
 
 		ParticleEmitter* mpOwner;  Transform* mpTransform;
 		Shader* mpShader; Texture* mpTexture;
 		size_t mSpawnCount;
 		HashString mTextureName, mShaderName;
-		unsigned mVAO, mClrBuffer, mPosBuffer, mSzBuffer, mRotBuffer, mUVBuffer;
 
-		int mnParticleLimit;
 		bool mbUpdatedPositions, mbUVChanged;
 		bool mbIsAlive;
+
+	private:
+		unsigned mVAO, mClrBuffer, mPosBuffer, mSzBuffer, mRotBuffer, mUVBuffer;
+
+		AutoArray<ParticleAffector> mSpawn;
+		AutoArray<ParticleAffector> mUpdate;
+		AutoArray<ParticleAffector> mFixedUpdate;
+		AutoArray<ParticleAffector> mDeath;
+
+
+#if EDITOR
+		int mnParticleLimit;
+#endif
 
 		template <typename Ty, typename U>
 		bool AffectorExists(Ty&, U);

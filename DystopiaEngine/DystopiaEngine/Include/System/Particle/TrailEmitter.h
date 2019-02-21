@@ -11,8 +11,8 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _EMITTER_H_
-#define _EMITTER_H_
+#ifndef _TRAILEMITTER_H_
+#define _TRAILEMITTER_H_
 
 #include "System/Particle/Emitter.h"
 #include "System/Particle/Particle.h"
@@ -34,14 +34,14 @@ namespace Dystopia
 	{
 	public:
 		explicit TrailEmitter(ParticleEmitter* _owner = nullptr) noexcept;
-		TrailEmitter(const TrailEmitter&) noexcept;
+		TrailEmitter(TrailEmitter const&) noexcept;
 		~TrailEmitter(void) noexcept;
 
-		// Update "physics"!
-		void FixedUpdate(float _dt) override;
+		void Init(void) override;
+		void FixedUpdate(float _dt) noexcept override;
 
-		virtual void KillParticle(size_t _nIdx) noexcept;
-		virtual void SpawnParticle(void) noexcept;
+		void KillParticle(size_t _nIdx) noexcept;
+		void SpawnParticle(void) noexcept;
 	};
 }
 

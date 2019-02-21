@@ -162,7 +162,7 @@ void Gfx::GfxAPI::UploadMatrix2(ShaderProg const& _prog, int _nLoc, unsigned _nC
 
 void Gfx::GfxAPI::UploadMatrix4(ShaderProg const& _prog, int _nLoc, unsigned _nCount, float const* _p, bool _bTranspose) noexcept
 {
-	return pInstance->UploadMatrix2(_prog, _nLoc, _nCount, _p, _bTranspose);
+	return pInstance->UploadMatrix4(_prog, _nLoc, _nCount, _p, _bTranspose);
 }
 
 

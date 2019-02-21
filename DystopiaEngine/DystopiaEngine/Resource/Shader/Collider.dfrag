@@ -16,6 +16,6 @@ void main()
   fragColor = vColor;
   
   fragColor.a = max(fragColor.a, 
-    1.f * !(dot(vNormal, planeNorm) < threshold * length(vNormal)));
+    1 * int(!(dot(vNormal, planeNorm) < threshold * length(vNormal))));
 }
 

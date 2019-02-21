@@ -10,8 +10,7 @@ out gl_PerVertex
 
 layout(location = 0) flat in vec4 vPosition[];
 layout(location = 1) flat in vec4 vertCol[];
-layout(location = 2) flat in vec2 Size[];
-layout(location = 3) flat in float Rotation[];
+layout(location = 2) flat in vec3 Params[];
 layout(location = 4) flat in vec4 UVBuf[];
 
 layout(location = 0) out vec2 vUV;
@@ -20,30 +19,39 @@ layout(location = 1) out vec4 vColor;
 uniform mat4 ModelViewMat;
 uniform mat4 ProjectMat;
 
+const mat3 Idnty = mat3(1,0,0,0,1,0,0,0,1);
 
 void main()
 {
-  vec3 right = ModelViewMat[0].xyz * vPosition[0].w;
-  vec3 up    = ModelViewMat[1].xyz * vPosition[0].w;
+  vec3 axis  = ModelViewMat[2].xyz;
+  
+  float cosA = cos(Params[0].z);
+  float sinA = sin(Params[0].z);
+  
+  mat3 cross = mat3(0, axis.z, -axis.y, -axis.z, 0, axis.x, axis.y, -axis.x, 0);
+  mat3 rot   = cosA * Idnty + sinA * cross + (1 - cosA) * outerProduct(axis, axis);
+
+  vec3 right = rot * (ModelViewMat[0].xyz * Params[0].x);
+  vec3 up    = rot * (ModelViewMat[1].xyz * Params[0].y);
   vec3 pos   = vPosition[0].xyz;
   
   
-  vUV = vec2(1, 1);
+  vUV = UVBuf[0].zw;
   vColor = vertCol[0];
   gl_Position = ProjectMat * vec4(pos + right - up, 1);
   EmitVertex();
   
-  vUV = vec2(1, 0);
+  vUV = UVBuf[0].zy;
   vColor = vertCol[0];
   gl_Position = ProjectMat * vec4(pos + right + up, 1);
   EmitVertex();
   
-  vUV = vec2(0, 1);
+  vUV = UVBuf[0].xw;
   vColor = vertCol[0];
   gl_Position = ProjectMat * vec4(pos - right - up, 1);
   EmitVertex();
   
-  vUV = vec2(0, 0);
+  vUV = UVBuf[0].xy;
   vColor = vertCol[0];
   gl_Position = ProjectMat * vec4(pos - right + up, 1);
   EmitVertex();

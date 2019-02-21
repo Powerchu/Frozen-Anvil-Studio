@@ -109,6 +109,7 @@
     <ClCompile Include="Source\System\Logger\LoggerSystem.cpp" />
     <ClCompile Include="Source\System\Particle\SizeAffector.cpp" />
     <ClCompile Include="Source\System\Particle\SpawnAffector.cpp" />
+    <ClCompile Include="Source\System\Particle\TrailEmitter.cpp" />
     <ClCompile Include="Source\System\Particle\VelocityAffector.cpp" />
     <ClCompile Include="Source\System\Physics\CollisionResolution.cpp" />
     <ClCompile Include="Source\System\Profiler\ProfileInfo.cpp" />

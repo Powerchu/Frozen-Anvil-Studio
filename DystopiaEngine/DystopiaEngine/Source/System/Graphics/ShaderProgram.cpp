@@ -25,12 +25,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace
 {
-	static auto const pGfxAPI = ::Gfx::GetInstance();
+	using ::Gfx::GetInstance;
 }
 
 
 Dystopia::ShaderProgram::ShaderProgram(bool _bIsCustom) noexcept
-	: mProgram{ pGfxAPI->CreateShaderProgram() }, mStage{ Gfx::ShaderStage::NONE }, mstrName{}, mVars{},
+	: mProgram{ GetInstance()->CreateShaderProgram() }, mStage{ Gfx::ShaderStage::NONE }, mstrName{}, mVars{},
 	mbIsCustom{ _bIsCustom }, mbValid{ false }, mTextures{}
 {
 
@@ -38,7 +38,7 @@ Dystopia::ShaderProgram::ShaderProgram(bool _bIsCustom) noexcept
 
 Dystopia::ShaderProgram::~ShaderProgram(void) noexcept
 {
-	pGfxAPI->Free(mProgram);
+	GetInstance()->Free(mProgram);
 }
 
 Dystopia::ShaderProgram::ShaderProgram(ShaderProgram&& _obj) noexcept
@@ -106,6 +106,7 @@ Dystopia::ShaderProgram& Dystopia::ShaderProgram::operator=(ShaderProgram&& _rhs
 bool Dystopia::ShaderProgram::LoadProgram(Gfx::ShaderStage _stage, char const* _file, char const* _strName) noexcept
 {
 	std::ifstream file{ _file, std::ios::ate | std::ios::in | std::ios::binary };
+	mbValid = false;
 
 	if (file.fail())
 	{
@@ -125,7 +126,7 @@ bool Dystopia::ShaderProgram::LoadProgram(Gfx::ShaderStage _stage, char const* _
 
 	file.read(pData, sz);
 	pData[sz] = '\0';
-	auto shader = pGfxAPI->CompileGLSL(_stage, pData);
+	auto shader = GetInstance()->CompileGLSL(_stage, pData);
 
 	mStage   = _stage;
 	mstrName = _strName;
@@ -133,16 +134,21 @@ bool Dystopia::ShaderProgram::LoadProgram(Gfx::ShaderStage _stage, char const* _
 	if (!shader)
 	{
 		// GfxAPI writes the error message to the stack buffer on error!
-		DEBUG_PRINT(eLog::ERROR, "%s %s\n", _strName, StackAlloc_t::GetBufferAs<char>());
+		DEBUG_PRINT(eLog::ERROR, "%s\n %s", _strName, StackAlloc_t::GetBufferAs<char>());
 		return true;
 	}
 
-	if (pGfxAPI->LinkShader(mProgram, shader))
+	if (GetInstance()->LinkShader(mProgram, shader))
 	{
-		pGfxAPI->QueryVariables(mProgram, mVars, mTextures);
+		GetInstance()->QueryVariables(mProgram, mVars, mTextures);
+	}
+	else
+	{
+		DEBUG_PRINT(eLog::ERROR, "%s\n %s", _strName, StackAlloc_t::GetBufferAs<char>());
+		return true;
 	}
 
-	pGfxAPI->Free(shader);
+	GetInstance()->Free(shader);
 #   if defined(_DEBUG) | defined(DEBUG)
 		if (auto err = glGetError())
 			__debugbreak();
