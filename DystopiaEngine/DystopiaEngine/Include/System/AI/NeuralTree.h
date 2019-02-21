@@ -55,17 +55,17 @@ namespace Dystopia
 			virtual ~Node() = default;
 
 			virtual void Init() {}
-			virtual eStatus Update() = 0;
+			virtual eStatus Update(float _deltaTime) = 0;
 			
 			virtual void Exit(eStatus) {}
 
-			eStatus Tick() 
+			eStatus Tick(float _deltaTime)
 			{
 				if (mStatus != eStatus::RUNNING || mStatus == eStatus::INVALID) {
 					Init();
 				}
 
-				mStatus = Update();
+				mStatus = Update(_deltaTime);
 
 				if (mStatus != eStatus::RUNNING) {
 					Exit(mStatus);
@@ -84,7 +84,7 @@ namespace Dystopia
 			//For Hotloading TODO
 			Node::Ptr CloneNode()
 			{
-				//return std::nullptr_t{};
+				return Ctor::CreateShared<Node>(this);
 			}
 
 		protected:
@@ -179,7 +179,7 @@ namespace Dystopia
 			
 			}
 			virtual ~Task() = default;
-			eStatus Update() override = 0;
+			eStatus Update(float _deltaTime) override = 0;
 
 		protected:
 			Blackboard::Ptr mpBlackboard;
@@ -216,7 +216,7 @@ namespace Dystopia
 				mpSharedboard = shared;
 			}
 
-			eStatus Update() override { return mpRoot->Tick();	}
+			eStatus Update(float _deltaTime) override { return mpRoot->Tick(_deltaTime);	}
 
 			void SetRoot(const Node::Ptr& node)
 			{
@@ -246,9 +246,7 @@ namespace Dystopia
 
 			bool IsValidTree(void) const 
 			{
-				if (nullptr != this)
-					return (mpRoot.GetRaw() != nullptr);
-				return false;
+				return (mpRoot.GetRaw() != nullptr);
 			}
 
 			HashString GetEditorName(void) const override { return mnName; }

@@ -26,9 +26,9 @@ namespace Dystopia
 		class Succeeder : public Decorator
 		{
 		public:
-			eStatus Update() override
+			eStatus Update(float _deltaTime) override
 			{
-				mpChild->Tick();
+				mpChild->Tick(_deltaTime);
 				return eStatus::SUCCESS;
 			}
 
@@ -40,9 +40,9 @@ namespace Dystopia
 		class Failer : public Decorator
 		{
 		public:
-			eStatus Update() override
+			eStatus Update(float _deltaTime) override
 			{
-				mpChild->Tick();
+				mpChild->Tick(_deltaTime);
 				return eStatus::FAIL;
 			}
 
@@ -55,9 +55,9 @@ namespace Dystopia
 		class Inverter : public Decorator
 		{
 		public:
-			eStatus Update() override
+			eStatus Update(float _deltaTime) override
 			{
-				const auto status = mpChild->Tick();
+				const auto status = mpChild->Tick(_deltaTime);
 
 				switch (status)
 				{
@@ -84,9 +84,9 @@ namespace Dystopia
 				counter = 0;
 			}
 
-			eStatus Update() override
+			eStatus Update(float _deltaTime) override
 			{
-				mpChild->Tick();
+				mpChild->Tick(_deltaTime);
 
 				if (limit > 0 && ++counter == limit) {
 					return eStatus::SUCCESS;
@@ -106,9 +106,9 @@ namespace Dystopia
 		class UntilSuccess : public Decorator
 		{
 		public:
-			eStatus Update() override
+			eStatus Update(float _deltaTime) override
 			{
-				const auto status = mpChild->Tick();
+				const auto status = mpChild->Tick(_deltaTime);
 
 				if (status == eStatus::SUCCESS) 
 				{
@@ -125,9 +125,9 @@ namespace Dystopia
 		class UntilFailure : public Decorator
 		{
 		public:
-			eStatus Update() override
+			eStatus Update(float _deltaTime) override
 			{
-				const auto status = mpChild->Tick();
+				const auto status = mpChild->Tick(_deltaTime);
 
 				if (status == eStatus::FAIL) 
 				{
@@ -139,13 +139,98 @@ namespace Dystopia
 			HashString GetEditorName(void) const override { return "Until Failure"; }
 		};
 
-		// TODO WIP GAM250
-		class Limiter : public Decorator
+		// The HardLimiter decorator limits the number of times its child is ticked, based on a Max Count. 
+		// When down to 0, the decorator returns a FAIL always and the child will never be run again.
+		class HardLimiter : public Decorator
 		{
 		public:
+			explicit HardLimiter(unsigned max_count = 1)
+				: maxCount(max_count)
+			{
+			}
+
+			void Init() override
+			{
+				if (maxCount > 0) 
+					--maxCount;
+			}
+
+			eStatus Update(float _deltaTime) override
+			{
+				if (maxCount == 0) return  eStatus::FAIL;
+				return mpChild->Tick(_deltaTime);
+			}
+
+			HashString GetEditorName(void) const override { return "Hard Limiter"; }
 
 		private:
 			unsigned maxCount;
+		};
+
+		// The Limiter decorator limits the number of times its child is ticked, based on a Max Count. 
+		// If the children all returned a failure, and the count will be reset to the original max count - repeating the cycle.
+		class Limiter : public Decorator
+		{
+		public:
+			explicit Limiter(unsigned max_count = 1)
+				: maxCount(max_count), currCount(max_count)
+			{
+			}
+
+			void Init() override
+			{
+				if (currCount > 0)
+					--currCount;
+			}
+
+			eStatus Update(float _deltaTime) override
+			{
+				if (currCount == 0) return eStatus::FAIL;
+				return mpChild->Tick(_deltaTime);
+			}
+
+			void Exit(eStatus _status) override
+			{
+				if (_status == eStatus::FAIL) currCount = maxCount;
+			}
+
+			HashString GetEditorName(void) const override { return "Limiter"; }
+
+
+		private:
+			unsigned maxCount;
+			unsigned currCount;
+		};
+
+
+		// The TimeHolder decorator forces a wait before ticking its child
+		// Use this to mimic "thinking"
+		class TimeHolder : public Decorator
+		{
+		public:
+			explicit TimeHolder(float _timeLimit = 1.0f) : mCurrTime(_timeLimit), mTimeLimit(_timeLimit) {}
+
+			eStatus Update(float _deltaTime) override
+			{
+				if (mCurrTime > 0.0f)
+				{
+					mCurrTime -= _deltaTime;
+					return eStatus::RUNNING;
+				}
+
+				return mpChild->Tick(_deltaTime);
+			}
+
+			void Exit (eStatus) override
+			{
+				if (mCurrTime <= 0.0f) mCurrTime = mTimeLimit;
+			}
+
+			HashString GetEditorName(void) const override { return "Time Holder"; }
+
+		private:
+			float mCurrTime;
+			float mTimeLimit;
 		};
 	}
 }

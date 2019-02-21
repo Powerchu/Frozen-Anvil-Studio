@@ -89,11 +89,11 @@ namespace Dystopia
 		_in.ConsumeEndBlock();
 	}
 
-	void AiController::Update(float)
+	void AiController::Update(float _dt)
 	{
-		if (bTree->IsValidTree())
+		if (bTree && bTree->IsValidTree())
 		{
-			mNodeStatus = bTree->Update();
+			mNodeStatus = bTree->Update(_dt);
 		}
 	}
 
