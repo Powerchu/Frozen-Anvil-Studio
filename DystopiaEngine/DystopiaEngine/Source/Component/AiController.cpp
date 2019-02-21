@@ -2,7 +2,7 @@
 /*!
 \file	AiController.cpp
 \author AARON CHU MING SAN (100%)
-\par    email: t.jieweijacky\@digipen.edu
+\par    email: m.chu\@digipen.edu
 \brief
 Wrapper class for AI Tree functions.
 

@@ -55,11 +55,6 @@ namespace Dystopia
 
 			}
 
-			void Exit(eStatus _status) override
-			{
-				
-			}
-
 		private:
 			float mWaitTime;
 		};
@@ -94,11 +89,6 @@ namespace Dystopia
 				}
 
 				return eStatus::FAIL;
-			}
-
-			void Exit(eStatus _status) override
-			{
-
 			}
 
 		private:
