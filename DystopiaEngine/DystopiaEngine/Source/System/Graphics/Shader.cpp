@@ -24,15 +24,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <GL/glew.h>
 #include <GL/GL.h>
 
-#if defined(EDITOR)
-#define PRINT_ERRORS EDITOR
-#else
-#define PRINT_ERRORS 0
-#endif
 
 namespace
 {
-	static auto const& pGfxAPI = ::Gfx::GetInstance();
+	static auto const pGfxAPI = ::Gfx::GetInstance();
 }
 
 
@@ -48,24 +43,6 @@ Dystopia::Shader::~Shader(void)
 	pGfxAPI->Free(mID);
 }
 
-//void Dystopia::Shader::CreateShader(char const* _strVert, char const* _strFrag)
-//{
-//	auto pShaderSys = CORE::Get<ShaderSystem>();
-//	
-//	if (auto prog = pShaderSys->CreateShaderProgram(::Gfx::ShaderStage::VERTEX, _strVert))
-//		AttachProgram(prog);
-//
-//	if (auto prog = pShaderSys->CreateShaderProgram(::Gfx::ShaderStage::FRAGMENT, _strFrag))
-//		AttachProgram(prog);
-//}
-//
-//void Dystopia::Shader::CreateShader(char const* _strVert, char const* _strFrag, char const* _strGeo)
-//{
-//	if (auto prog = CORE::Get<ShaderSystem>()->CreateShaderProgram(::Gfx::ShaderStage::GEOMETRY, _strGeo))
-//		AttachProgram(prog);
-//
-//	CreateShader(_strVert, _strFrag);
-//}
 
 void Dystopia::Shader::AttachProgram(ShaderProgram* _prog)
 {
@@ -191,6 +168,14 @@ void Dystopia::Shader::OnEditorUI(void) const
 {
 }
 
+AutoArray<std::pair<OString, unsigned>> const & Dystopia::Shader::GetTextureList(void) noexcept
+{
+	if (mbUpdate)
+		ImportVariables();
+
+	return mTextures;
+}
+
 AutoArray<std::pair<OString, Gfx::eUniform_t>> const& Dystopia::Shader::GetVariables(void) noexcept
 {
 	if (mbUpdate)
@@ -219,7 +204,15 @@ void Dystopia::Shader::ImportVariables(void) noexcept
 
 			if (bNew) mVars.EmplaceBack(e);
 		}
+
+		for (auto& e : p->GetTextureList())
+			if (mTextures.size() < e.second)
+				mTextures.EmplaceBack(e);
 	}
+
+	mTextures.Sort([](auto& lhs, auto& rhs) {
+		return lhs.second < rhs.second;
+	});
 
 	mbUpdate = false;
 }
@@ -317,6 +310,4 @@ void Dystopia::Shader::UploadUniform(char const* _strName, const Math::Matrix4& 
 
 
 
-// Remove our defines
-#undef PRINT_ERRORS
 

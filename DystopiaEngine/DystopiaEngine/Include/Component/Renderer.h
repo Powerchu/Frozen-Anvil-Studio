@@ -40,7 +40,7 @@ namespace Dystopia
 	class _DLL_EXPORT Renderer : public Component
 	{
 	protected:
-		using ShaderVariant_t = Variant<int, bool, float, Math::Vec2, Math::Vec4, std::pair<Texture*, int>>;
+		using ShaderVariant_t = Variant<int, bool, float, Math::Vec2, Math::Vec4>;
 
 	public:
 
@@ -78,8 +78,9 @@ namespace Dystopia
 		void SetShader(const std::string&) noexcept;
 		Shader* GetShader(void) const noexcept;
 
-		void SetTexture(Texture*) noexcept;
-		Texture* GetTexture(void) const noexcept;
+		void SetTexture(Texture*, unsigned = 0) noexcept;
+		Texture* GetTexture(unsigned = 0) const noexcept;
+		AutoArray<Tuple<unsigned, Texture*>> const& GetTextures(void) const noexcept;
 
 		bool HasTransparency(void) const noexcept;
 
@@ -99,12 +100,11 @@ namespace Dystopia
 		std::pair<OString, ::Gfx::eUniform_t> const* FindUniformInShader(const char*);
 
 		using ShaderTypeList = Ut::Collection<
-			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::INT       ), int>,
-			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::BOOL      ), bool>,
-			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::FLOAT     ), float>,
-			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::VEC2      ), Math::Vec2>,
-			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::VEC4      ), Math::Vec4>,
-			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::TEXTURE_2D), std::pair<Texture*, int>>
+			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::INT  ), int>,
+			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::BOOL ), bool>,
+			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::FLOAT), float>,
+			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::VEC2 ), Math::Vec2>,
+			Ut::Indexer<static_cast<unsigned>(::Gfx::eUniform_t::VEC4 ), Math::Vec4>
 		>;
 
 		struct UIVisitor
@@ -119,15 +119,14 @@ namespace Dystopia
 			template<> void operator()(bool&);
 			template<> void operator()(Math::Vec2&);
 			template<> void operator()(Math::Vec4&);
-			template<> void operator()(std::pair<Texture*, int>&);
 		};
 
 		unsigned mnUnique;
 
 		Mesh* mpMesh;
 		Shader* mpShader;
-		Texture* mpTexture;
-		HashString mTexturePath;
+		AutoArray<HashString> mTexturePaths;
+		AutoArray<Tuple<unsigned, Texture*>> mTextureFields;
 		AutoArray<Tuple<OString, ::Gfx::eUniform_t, ShaderVariant_t>> mOverride;
 
 		void ResetOverride(void);

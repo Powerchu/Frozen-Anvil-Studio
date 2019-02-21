@@ -37,7 +37,7 @@ namespace Dystopia
 		Texture(Texture&&) noexcept;
 		~Texture(void);
 
-		void Bind(int = 0) const noexcept;
+		void Bind(unsigned = 0) const noexcept;
 		void Unbind(void) const noexcept;
 
 		_DLL_EXPORT unsigned GetWidth(void) const noexcept;

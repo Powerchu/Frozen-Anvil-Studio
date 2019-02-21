@@ -18,8 +18,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/MetaAlgorithms.h"
 #include "Utility/DebugAssert.h"
 
-#include <cstring>
-#include <type_traits>
+#include <cstring>	   // memcpy
+#include <type_traits> // is_nothrow_constructible
 
 
 
@@ -59,7 +59,7 @@ public:
 	template <typename Visitor>
 	inline void Visit(Visitor&&);
 
-	inline unsigned short GetTypeID(void) const noexcept;
+	inline unsigned short const& GetTypeID(void) const noexcept;
 
 
 	// ======================================== OPERATORS ======================================== // 
@@ -189,9 +189,9 @@ inline bool Variant<Ty...>::IsValidType(void) const noexcept
 }
 
 template <typename ... Ty>
-inline unsigned short Variant<Ty...>::GetTypeID(void) const noexcept
+inline unsigned short const& Variant<Ty...>::GetTypeID(void) const noexcept
 {
-	return mType;
+	return (mType);
 }
 
 template <typename ... Ty>
@@ -277,6 +277,7 @@ Variant<Ty...>& Variant<Ty...>::operator = (Variant<Ty...> const& _rhs)
 
 
 
+#undef VARIANT_TYPE_RESOLUTION
 #undef VARIANT_ENABLE_IF_SFINAE
 
 

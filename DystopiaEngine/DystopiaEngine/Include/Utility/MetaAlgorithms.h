@@ -119,7 +119,7 @@ namespace Ut
 	// ============================================ META EXTRACTOR ============================================ //
 
 
-	template <unsigned N, typename T, typename ... Ty>
+	template <size_t N, typename T, typename ... Ty>
 	struct MetaExtract
 	{
 	private:
@@ -131,19 +131,19 @@ namespace Ut
 		using result = typename MetaConcat<curr, rest>::type;
 	};
 
-	template <unsigned N, typename T>
+	template <size_t N, typename T>
 	struct MetaExtract<N, T>
 	{
 		using result = typename Helper::MetaExtractor<N, T>::result;
 	};
 
-	template <unsigned N, typename T>
+	template <size_t N, typename T>
 	struct MetaExtractV
 	{
 		static constexpr auto value = typename Helper::MetaExtractorV<N, T>::value;
 	};
 
-	template <unsigned N, typename ... T>
+	template <size_t N, typename ... T>
 	using MetaExtract_t = typename MetaExtract<N, T...>::result;
 
 

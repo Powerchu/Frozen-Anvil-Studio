@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/Shader.h"
 #include "System/Graphics/ShaderSystem.h"
 #include "System/Graphics/Texture2D.h"
+#include "System/Graphics/TextureSystem.h"
 #include "System/Driver/Driver.h"
 #include "System/File/FileSystem.h"
 
@@ -42,22 +43,21 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Dystopia::Renderer::Renderer(void) noexcept
 	: Component{}, mnUnique{ 0 }, mpMesh{ nullptr }, mpShader{ nullptr },
-	mpTexture{ nullptr }, mTexturePath{""}
+	mTexturePaths{}, mTextureFields{}
 {
 }
 
 Dystopia::Renderer::Renderer(Dystopia::Renderer&& _rhs) noexcept
 	: Component{ Ut::Move(_rhs) }, mnUnique{ _rhs.mnUnique }, mpMesh{ _rhs.mpMesh }, mpShader{ _rhs.mpShader }, 
-	mpTexture{ _rhs.mpTexture }, mTexturePath{ _rhs.mTexturePath }
+	mTexturePaths{ Ut::Move(_rhs.mTexturePaths) }, mTextureFields{ Ut::Move(_rhs.mTextureFields) }
 {
 	_rhs.mpMesh    = nullptr;
 	_rhs.mpShader  = nullptr;
-	_rhs.mpTexture = nullptr;
 }
 
 Dystopia::Renderer::Renderer(const Renderer& _rhs) noexcept
-	: Component{ _rhs }, mnUnique{ 0 }, mpMesh{ nullptr }, mpShader{ nullptr }, 
-	mpTexture{ nullptr }, mTexturePath{ _rhs.mTexturePath }
+	: Component{ _rhs }, mnUnique{ 0 }, mpMesh{ nullptr }, mpShader{ nullptr },
+	mTexturePaths{ _rhs.mTexturePaths }, mTextureFields{ _rhs.mTextureFields }
 {
 }
 
@@ -66,10 +66,11 @@ void Dystopia::Renderer::Awake(void)
 	SetMesh("Quad");
 	SetShader(CORE::Get<ShaderSystem>()->GetShader("Default Shader"));
 
-	if (mTexturePath.length())
-	{
-		mpTexture = CORE::Get<GraphicsSystem>()->LoadTexture(mTexturePath);
-	}
+	unsigned n = 0;
+	mTextureFields.reserve(mTexturePaths.size());
+
+	for(auto& e : mTexturePaths)
+		mTextureFields.EmplaceBack(n++, CORE::Get<TextureSystem>()->GetTexture(e));
 }
 
 void Dystopia::Renderer::Init(void)
@@ -78,10 +79,8 @@ void Dystopia::Renderer::Init(void)
 
 void Dystopia::Renderer::Draw(void) const noexcept
 {
-	if (mpMesh)
-	{
-		mpMesh->DrawMesh(GraphicsSystem::GetDrawMode());
-	}
+	_EDITOR_CODE(if (mpMesh))
+	mpMesh->DrawMesh(GraphicsSystem::GetDrawMode());
 }
 
 
@@ -101,10 +100,9 @@ void Dystopia::Renderer::SetShader(Shader* _p) noexcept
 	mpShader = _p;
 }
 
-void Dystopia::Renderer::SetShader(const std::string&) noexcept
+void Dystopia::Renderer::SetShader(const std::string& _strName) noexcept
 {
-	// TODO
-	__debugbreak();
+	SetShader(CORE::Get<ShaderSystem>()->GetShader(_strName.c_str()));
 }
 
 Dystopia::Shader* Dystopia::Renderer::GetShader(void) const noexcept
@@ -118,23 +116,32 @@ Dystopia::Shader* Dystopia::Renderer::GetShader(void) const noexcept
 }
 
 
-void Dystopia::Renderer::SetTexture(Texture* _pTexture) noexcept
+void Dystopia::Renderer::SetTexture(Texture* _pTexture, unsigned _idx) noexcept
 {
-	mpTexture = _pTexture;
+	for (auto& e : mTextureFields)
+		if (e.Get<0>() == _idx)
+			e.Get<1>() = _pTexture;
+
+	mTexturePaths.resize(_idx);
 
 	if (_pTexture)
-	{
-		mTexturePath = _pTexture->GetPath();
-	}
+		mTexturePaths[_idx] = _pTexture->GetPath();
 	else
-	{
-		mTexturePath.clear(); 
-	}
+		mTexturePaths[_idx].clear();
 }
 
-Dystopia::Texture* Dystopia::Renderer::GetTexture(void) const noexcept
+Dystopia::Texture* Dystopia::Renderer::GetTexture(unsigned _idx) const noexcept
 {
-	return mpTexture;
+	for (auto& e : mTextureFields)
+		if (e.Get<0>() == _idx)
+			return e.Get<1>();
+
+	return nullptr;
+}
+
+AutoArray<Tuple<unsigned, Dystopia::Texture*>> const& Dystopia::Renderer::GetTextures(void) const noexcept
+{
+	return mTextureFields;
 }
 
 
@@ -174,27 +181,98 @@ Dystopia::Renderer* Dystopia::Renderer::Duplicate(void) const
 
 void Dystopia::Renderer::Serialise(TextSerialiser& _out) const
 {
+	auto pFileSys = CORE::Get<FileSystem>();
+
 	_out.InsertStartBlock("Renderer");
 	Component::Serialise(_out);
-	//_out << EngineCore::GetInstance()->Get<FileSystem>()->ConvertToRelative(mTexturePath);
-	std::string rp = CORE::Get<FileSystem>()->ConvertToRelative(std::string{ mTexturePath.length() ? mTexturePath.c_str() : "" });
-	auto pos = rp.find_last_of("/\\");
-	if (pos != std::string::npos)
-		_out << rp.substr(pos + 1);
+
+	_out << "SENTRY";
+
+	for (auto& e : mTextureFields)
+	{
+		if (Texture*& ptr = e.Get<1>())
+		{
+			auto rp  = pFileSys->ConvertToRelative(ptr->GetPath());
+			auto pos = rp.find_last_of("/\\");
+
+			if (pos != OString::nPos)
+				_out << rp.substr(pos + 1);
+			else
+				_out << "";
+		}
+	}
+
+	_out.InsertEndBlock("RENDERER_BASE");
+	_out.InsertStartBlock("OVERRIDE");
+	for (auto& e : mOverride)
+	{
+		_out << e.Get<0>();
+		_out << static_cast<unsigned>(e.Get<1>());
+		_out << e.Get<2>().GetTypeID();
+
+		e.Get<2>().Visit([&_out](auto& _var) { _out << _var; });
+	}
+
 	_out.InsertEndBlock("Renderer");
 }
 
 void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 {
+	auto pFileSys = CORE::Get<FileSystem>();
+
+	OString strOverride;
 	std::string path;
+
+	mTexturePaths.clear();
+
 	_in.ConsumeStartBlock();
 	Component::Unserialise(_in);
 	_in >> path;
+
+	if ("SENTRY" == path) // NEW VERSION
+	{
+		unsigned count;
+		_in >> count;
+
+		while (count--)
+		{
+			_in >> path;
+
+			if (path.size())
+				mTexturePaths.EmplaceBack(
+					pFileSys->Normalize(pFileSys->GetFullPath(path, eFileDir::eResource)).c_str()
+				);
+			else
+				mTexturePaths.EmplaceBack("");
+		}
+
+		_in.ConsumeEndBlock();
+		_in.ConsumeStartBlock();
+
+		ShaderVariant_t var;
+		std::underlying_type_t<::Gfx::eUniform_t> type;
+		while (!_in.EndOfInput())
+		{
+			_in >> strOverride;
+			_in >> type;
+			_in >> const_cast<unsigned short&>(var.GetTypeID());
+
+			var.Visit([&_in](auto& _var) { _in >> _var; });
+			mOverride.EmplaceBack(strOverride, static_cast<::Gfx::eUniform_t>(type), Ut::Move(var));
+		}
+	}
+	else // OLD SAVE
+	{
+		auto pos = path.find_last_of("/\\");
+		if (pos != std::string::npos)
+			path = path.substr(pos + 1);
+
+		mTexturePaths.EmplaceBack(
+			pFileSys->Normalize(pFileSys->GetFullPath(path.c_str(), eFileDir::eResource)).c_str()
+		);
+	}
+
 	_in.ConsumeEndBlock();
-	auto pos = path.find_last_of("/\\");
-	if (pos != std::string::npos)
-		path = path.substr(pos + 1);
-	mTexturePath = CORE::Get<FileSystem>()->Normalize(CORE::Get<FileSystem>()->GetFullPath(path, eFileDir::eResource)).c_str();
 }
 
 void Dystopia::Renderer::EditorUI(void) noexcept
@@ -213,52 +291,55 @@ void Dystopia::Renderer::EditorUI(void) noexcept
 #if EDITOR
 void Dystopia::Renderer::TextureField()
 {
-	::Editor::File *t = nullptr;
-	EGUI::Display::EmptyBox("Texture", 150, (mpTexture) ? mpTexture->GetName().c_str() : "-empty-", true);
-	auto cmd = ::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>();
-	t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PNG);
-	if (t)  EGUI::Display::EndPayloadReceiver();
+	::Editor::File *t;
 
-	if (!t)
+	for (auto& [idx, mpTexture] : mTextureFields)
 	{
-		t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::DDS);
-		if (t) EGUI::Display::EndPayloadReceiver();
-	}
-	if (!t)
-	{
-		t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::BMP);
-		if (t) EGUI::Display::EndPayloadReceiver();
-	}
-	if (t)
-	{
-		Texture *pTex = EngineCore::GetInstance()->GetSystem<GraphicsSystem>()->LoadTexture(t->mPath.c_str());
-		cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand(&Renderer::SetTexture, mpTexture),
-										   cmd->MakeFnCommand(&Renderer::SetTexture, pTex));
-	}
-
-	EGUI::SameLine();
-	if (EGUI::Display::IconCross("Clear", 8.f))
-	{
-		cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand(&Renderer::SetTexture, mpTexture),
-										   cmd->MakeFnCommand(&Renderer::SetTexture, nullptr));
-	}
-
-	if (mpTexture)
-	{
-		EGUI::Display::Label("Preview");
-		EGUI::SameLine(DefaultAlighnmentSpacing, 80);
-		float ratio = static_cast<float>(mpTexture->GetHeight()) / static_cast<float>(mpTexture->GetWidth());
-		EGUI::Display::Image(mpTexture->GetID(), Math::Vec2{ 140, 140 * ratio }, false, true);
-
-		EGUI::SameLine();
-		if (EGUI::Display::Button("Auto", Math::Vec2{ 35, 20 }))
+		EGUI::Display::EmptyBox("Texture", 150, (mpTexture) ? mpTexture->GetName().c_str() : "-empty-", true);
+		auto cmd = ::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>();
+		t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PNG);
+		if (t)  EGUI::Display::EndPayloadReceiver();
+		
+		if (!t)
 		{
-			auto w = static_cast<float>(mpTexture->GetWidth());
-			auto h = static_cast<float>(mpTexture->GetHeight());
-			w /= 10;
-			h /= 10;
-			cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand<Transform, const Math::Vec4&>(&Transform::SetScale, GetOwner()->GetComponent<Transform>()->GetScale()),
-											   cmd->MakeFnCommand<Transform, const Math::Vec4&>(&Transform::SetScale, Math::Vec4{ w, h, 1.f }));
+			t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::DDS);
+			if (t) EGUI::Display::EndPayloadReceiver();
+		}
+		if (!t)
+		{
+			t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::BMP);
+			if (t) EGUI::Display::EndPayloadReceiver();
+		}
+		if (t)
+		{
+			Texture *pTex = CORE::Get<TextureSystem>()->LoadTexture(t->mPath);
+			cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand(&Renderer::SetTexture, mpTexture, idx),
+			                                   cmd->MakeFnCommand(&Renderer::SetTexture, pTex, idx));
+		}
+		
+		EGUI::SameLine();
+		if (EGUI::Display::IconCross("Clear", 8.f))
+		{
+			cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand(&Renderer::SetTexture, mpTexture, idx),
+			                                   cmd->MakeFnCommand(&Renderer::SetTexture, nullptr, idx));
+		}
+		
+		if (mpTexture)
+		{
+			EGUI::Display::Label("Preview");
+			EGUI::SameLine(DefaultAlighnmentSpacing, 80);
+			float ratio = static_cast<float>(mpTexture->GetHeight()) / static_cast<float>(mpTexture->GetWidth());
+			EGUI::Display::Image(mpTexture->GetID(), Math::Vec2{ 140, 140 * ratio }, false, true);
+		
+			EGUI::SameLine();
+			if (EGUI::Display::Button("Auto", Math::Vec2{ 35, 20 }))
+			{
+				auto w = static_cast<float>(mpTexture->GetWidth())  * .1f;
+				auto h = static_cast<float>(mpTexture->GetHeight()) * .1f;
+
+				cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand<Transform, const Math::Vec4&>(&Transform::SetScale, GetOwner()->GetComponent<Transform>()->GetScale()),
+												   cmd->MakeFnCommand<Transform, const Math::Vec4&>(&Transform::SetScale, Math::Vec4{ w, h, 1.f }));
+			}
 		}
 	}
 }
@@ -275,26 +356,57 @@ void Dystopia::Renderer::MeshField()
 	}
 }
 
+
+namespace
+{
+	template <typename, typename>
+	struct GenVariantList;
+
+	template <template<unsigned...> class S, unsigned ... V, typename T>
+	struct GenVariantList<S<V...>, T>
+	{
+		template <typename Variant_t>
+		static inline void Init(Variant_t& v, unsigned _idx) noexcept
+		{
+			static void(*x[])(Variant_t&) noexcept {
+				[](Variant_t& v) noexcept { v = typename Ut::MetaExtract_t<V, T>::type{}; }...
+			};
+
+			x[_idx](v);
+		}
+	};
+
+	template <typename, typename>
+	struct ShaderTypeGetAux;
+
+	template <template<unsigned...> class S, unsigned ... V, typename T>
+	struct ShaderTypeGetAux<S<V...>, T>
+	{
+		static inline Gfx::eUniform_t(*get[])(void) { [](void) { 
+			return static_cast<::Gfx::eUniform_t>(Ut::MetaExtract_t<V, T>::value); 
+		} ... };
+
+		static inline constexpr auto Get(size_t _nIdx) noexcept
+		{
+			return get[_nIdx]();
+		}
+	};
+
+	template <typename T>
+	struct VariantList : GenVariantList<
+		Ut::MetaMakeRange_t<Ut::SizeofList<T>::value>, T
+	> {};
+
+	template <typename T>
+	struct ShaderTypeGet : ShaderTypeGetAux<
+		Ut::MetaMakeRange_t<Ut::SizeofList<T>::value>, T
+	> {};
+}
+
 void Dystopia::Renderer::ShaderField()
 {
 	static bool debug = false;
 	EGUI::PushLeftAlign(80);
-	static void(*x[])(ShaderVariant_t&) {
-		[](ShaderVariant_t& v) { v = Ut::MetaExtract_t<0, ShaderTypeList>::type{}; },
-		[](ShaderVariant_t& v) { v = Ut::MetaExtract_t<1, ShaderTypeList>::type{}; },
-		[](ShaderVariant_t& v) { v = Ut::MetaExtract_t<2, ShaderTypeList>::type{}; },
-		[](ShaderVariant_t& v) { v = Ut::MetaExtract_t<3, ShaderTypeList>::type{}; },
-		[](ShaderVariant_t& v) { v = Ut::MetaExtract_t<4, ShaderTypeList>::type{}; },
-		[](ShaderVariant_t& v) { v = Ut::MetaExtract_t<5, ShaderTypeList>::type{}; }
-	};
-	static ::Gfx::eUniform_t(*y[])(void) {
-		[]() { return static_cast<::Gfx::eUniform_t>(Ut::MetaExtract_t<0, ShaderTypeList>::value); },
-		[]() { return static_cast<::Gfx::eUniform_t>(Ut::MetaExtract_t<1, ShaderTypeList>::value); },
-		[]() { return static_cast<::Gfx::eUniform_t>(Ut::MetaExtract_t<2, ShaderTypeList>::value); },
-		[]() { return static_cast<::Gfx::eUniform_t>(Ut::MetaExtract_t<3, ShaderTypeList>::value); },
-		[]() { return static_cast<::Gfx::eUniform_t>(Ut::MetaExtract_t<4, ShaderTypeList>::value); },
-		[]() { return static_cast<::Gfx::eUniform_t>(Ut::MetaExtract_t<5, ShaderTypeList>::value); }
-	};
 
 	char const* str = "No Shader";
 	if (mpShader)
@@ -342,10 +454,10 @@ void Dystopia::Renderer::ShaderField()
 		}())
 		{
 			for (int n = 0; n < Ut::SizeofList<ShaderTypeList>::value; ++n)
-				if (y[n]() == vars[sele - 1].second)
+				if (ShaderTypeGet<ShaderTypeList>::Get(n) == vars[sele - 1].second)
 				{
 					type = vars[sele - 1].second;
-					x[n](myVariant);
+					VariantList<ShaderTypeList>::Init(myVariant, n);
 					break;
 				}
 
@@ -399,33 +511,34 @@ inline void Dystopia::Renderer::UIVisitor::operator()(Math::Vec4& _variant)
 	EGUI::Display::LabelWrapped(strName.c_str());
 	EGUI::Display::VectorFields("", &_variant, 0.1f, -FLT_MAX, FLT_MAX, 50.f, true);
 }
-template<>
-inline void Dystopia::Renderer::UIVisitor::operator()(std::pair<Texture*, int>& _variant)
-{
-	::Editor::File *t = nullptr;
-	EGUI::Display::LabelWrapped(strName.c_str());
+//template<>
+//inline void Dystopia::Renderer::UIVisitor::operator()(std::pair<Texture*, int>& _variant)
+//{
+//	::Editor::File *t = nullptr;
+//	EGUI::Display::LabelWrapped(strName.c_str());
+//
+//	EGUI::Display::EmptyBox("Texture", 150, (_variant.first) ? _variant.first->GetName().c_str() : "-empty-", true);
+//	t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PNG);
+//	if (t)  EGUI::Display::EndPayloadReceiver();
+//
+//	if (!t)
+//	{
+//		t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::DDS);
+//		if (t) EGUI::Display::EndPayloadReceiver();
+//	}
+//
+//	if (!t)
+//	{
+//		t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::BMP);
+//		if (t) EGUI::Display::EndPayloadReceiver();
+//	}
+//
+//	if (t)
+//	{
+//		_variant.first = CORE::Get<GraphicsSystem>()->LoadTexture(t->mPath.c_str());
+//	}
+//
+//	EGUI::Display::DragInt(strName.c_str(), &_variant.second, 1, -INT_MAX, INT_MAX, true);
+//}
 
-	EGUI::Display::EmptyBox("Texture", 150, (_variant.first) ? _variant.first->GetName().c_str() : "-empty-", true);
-	t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PNG);
-	if (t)  EGUI::Display::EndPayloadReceiver();
-
-	if (!t)
-	{
-		t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::DDS);
-		if (t) EGUI::Display::EndPayloadReceiver();
-	}
-
-	if (!t)
-	{
-		t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::BMP);
-		if (t) EGUI::Display::EndPayloadReceiver();
-	}
-
-	if (t)
-	{
-		_variant.first = CORE::Get<GraphicsSystem>()->LoadTexture(t->mPath.c_str());
-	}
-
-	EGUI::Display::DragInt(strName.c_str(), &_variant.second, 1, 0, INT_MAX, true);
-}
 #endif

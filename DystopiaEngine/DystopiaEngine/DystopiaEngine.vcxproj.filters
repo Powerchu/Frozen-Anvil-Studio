@@ -388,9 +388,6 @@
     <ClCompile Include="Include\System\Database\DataSheet.cpp">
       <Filter>Game Engine\Systems\Database</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Component\Particle\Emitter.cpp">
-      <Filter>Game Engine\Components\Emitter</Filter>
-    </ClCompile>
     <ClCompile Include="Source\System\Particle\ParticleSystem.cpp">
       <Filter>Game Engine\Systems\Particle\ParticleSystem</Filter>
     </ClCompile>
@@ -433,8 +430,14 @@
     <ClCompile Include="Source\System\Particle\AccelerationAffector.cpp">
       <Filter>Game Engine\Systems\Particle\Affectors\Acceleration</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Component\Particle\ParticleEmitter.cpp">
+      <Filter>Game Engine\Components\Emitter</Filter>
+    </ClCompile>
     <ClCompile Include="Source\System\Particle\AttractionAffector.cpp">
       <Filter>Game Engine\Systems\Particle\Affectors\Attractor</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Particle\Emitter.cpp">
+      <Filter>Game Engine\Systems\Particle\Emitter\Base</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1128,9 +1131,6 @@
     <ClInclude Include="Include\System\Particle\ParticleSystem.h">
       <Filter>Game Engine\Systems\Particle\ParticleSystem</Filter>
     </ClInclude>
-    <ClInclude Include="Include\Component\Emitter.h">
-      <Filter>Game Engine\Components\Emitter</Filter>
-    </ClInclude>
     <ClInclude Include="Include\Utility\MetaBind.h">
       <Filter>Utility\Meta\Functions</Filter>
     </ClInclude>
@@ -1182,6 +1182,9 @@
     <ClInclude Include="Include\System\Particle\LifetimeAffector.h">
       <Filter>Game Engine\Systems\Particle\Affectors\Lifetime</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Math\NormInt.h">
+      <Filter>Math\Types</Filter>
+    </ClInclude>
     <ClInclude Include="Include\Math\PerlinNoise.h">
       <Filter>Math\Utility</Filter>
     </ClInclude>
@@ -1191,8 +1194,17 @@
     <ClInclude Include="Include\System\Collision\CollisionLayers.h">
       <Filter>Game Engine\Systems\Collision</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Component\ParticleEmitter.h">
+      <Filter>Game Engine\Components\Emitter</Filter>
+    </ClInclude>
     <ClInclude Include="Include\System\Particle\AttractionAffector.h">
       <Filter>Game Engine\Systems\Particle\Affectors\Attractor</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Particle\Emitter.h">
+      <Filter>Game Engine\Systems\Particle\Emitter\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Particle\TrailEmitter.h">
+      <Filter>Game Engine\Systems\Particle\Emitter\Trail</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1712,8 +1724,20 @@
     <Filter Include="Game Engine\Systems\Particle\Affectors\Acceleration">
       <UniqueIdentifier>{ca83b01c-c483-46c9-a9ae-a4306b9ba01e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game Engine\Systems\Particle\Emitter">
+      <UniqueIdentifier>{48d5155a-1ed9-4911-817a-cfc4db59da86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math\Types">
+      <UniqueIdentifier>{0f7c8cb4-cd8d-47c3-a532-660b365f1952}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Game Engine\Systems\Particle\Affectors\Attractor">
       <UniqueIdentifier>{1d3e63c3-fef7-4d0c-ba29-3057e8cfe5a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Particle\Emitter\Base">
+      <UniqueIdentifier>{9bd9269a-4cf7-4c90-80ce-973d6d527220}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Particle\Emitter\Trail">
+      <UniqueIdentifier>{aa78bf0c-7015-4c32-bbe6-76377b3f317e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

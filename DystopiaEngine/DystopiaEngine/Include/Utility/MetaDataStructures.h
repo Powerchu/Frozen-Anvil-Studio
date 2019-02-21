@@ -179,14 +179,14 @@ namespace Ut
 	struct MetaMakeRange
 	{
 	private:
-		template <unsigned ... Vals>
+		template <auto ... Vals>
 		struct Range;
 
 		template <auto min, auto max, auto range>
 		struct RangeBuilder
 		{
 		private:
-			static constexpr unsigned midpt = (max + min) >> 1;
+			static constexpr auto midpt = (max + min) >> 1;
 
 		public:
 			using result = MetaConcat_t<

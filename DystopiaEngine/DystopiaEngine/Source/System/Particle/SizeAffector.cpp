@@ -12,7 +12,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System/Particle/SizeAffector.h"
 
-#include "Component/Emitter.h"
+#include "System/Particle/Emitter.h"
 
 #include "Math/MathLib.h"
 
@@ -67,10 +67,10 @@ void Dystopia::InitialSizeAffector::AffectorSpawn(Emitter& _emitter, float)
 		std::random_device rDev;
 		std::mt19937 gen{ rDev() };
 		std::uniform_real_distribution<float> distr{ GetInitialSizeMin(), GetInitialSizeMax() };
-		_emitter.GetSpawnDefaults().mfSize = distr(gen);
+		_emitter.GetSpawnDefaults().mSize = Math::Vec2{ distr(gen) };
 	}
 	else
-		_emitter.GetSpawnDefaults().mfSize = GetInitialSizeMax();
+		_emitter.GetSpawnDefaults().mSize = Math::Vec2{ GetInitialSizeMax() };
 }
 
 const char * Dystopia::InitialSizeAffector::EditorDisplayLabel(void) const
@@ -126,11 +126,11 @@ float Dystopia::SizeOverLifeAffector::GetSizeChangePerSecond(void) const
 void Dystopia::SizeOverLifeAffector::AffectorUpdate(Emitter& _emitter, float _dt)
 {
 	float rate = GetSizeChangePerSecond() * _dt;
-	auto& allpos = _emitter.GetPosition();
-
-	for (auto& p : allpos)
+	auto& allSz = _emitter.GetSize();
+	
+	for (auto& p : allSz)
 	{
-		p.w = Math::Max<float>(p.w + rate, 0.f);
+		p = Math::Max(p + Math::Vec2{ rate }, Math::Vec2{ 0.f });
 	}
 }
 
