@@ -85,7 +85,7 @@ public:
 	inline void shrink(void);
 
 	// Shrinks or inserts elements into the array
-	inline void resize(Sz_t _nSize, T const& = T{});
+	inline void resize(Sz_t _nSize, T&& = T{});
 
 	// Ensures that there are the specified amount of unused slots
 	inline void reserve(Sz_t _nSize);
@@ -292,7 +292,7 @@ inline void AutoArray<T, A>::shrink(void)
 }
 
 template<class T, class A>
-inline void AutoArray<T, A>::resize(Sz_t _nSize, T const& _obj)
+inline void AutoArray<T, A>::resize(Sz_t _nSize, T&& _obj)
 {
 	Sz_t const sz = size();
 
@@ -302,7 +302,7 @@ inline void AutoArray<T, A>::resize(Sz_t _nSize, T const& _obj)
 		reserve(_nSize);
 
 		while (--_nSize) EmplaceBack(_obj);
-		EmplaceBack(Ut::Move(_obj));
+		EmplaceBack(Ut::Fwd<T>(_obj));
 	}
 	else if (sz > _nSize)
 	{

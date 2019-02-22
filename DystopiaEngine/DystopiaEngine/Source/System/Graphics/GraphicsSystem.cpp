@@ -345,7 +345,6 @@ namespace
 		for(auto& [n, t] : _renderer->GetTextures())
 			_EDITOR_CODE(if (t))
 				t->Bind(n);
-			_EDITOR_CODE(else t->Unbind();)
 
 		s->UploadUniform("ModelMat", m);
 		s->UploadUniform("Gamma", _fGamma);
