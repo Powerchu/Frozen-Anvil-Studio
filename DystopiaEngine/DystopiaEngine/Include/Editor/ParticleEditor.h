@@ -49,6 +49,7 @@ namespace Editor
 
 		Dystopia::ParticleEmitter* mpTargetEmitter;
 		int mnTargetIndex;
+		uint64_t mnTargetID;
 
 		HashString mLabel;
 		uint64_t mnObjectID;

@@ -60,6 +60,25 @@ bool Editor::ParticleEditor::Init(void)
 
 void Editor::ParticleEditor::Update(float)
 {
+	auto ss = Dystopia::CORE::Get<Dystopia::SceneSystem>();
+	if (mpTargetEmitter)
+	{
+		if (auto o = ss->FindGameObject(mnTargetID))
+		{
+			if (!o->GetComponent<Dystopia::ParticleEmitter>())
+			{
+				mpTargetEmitter = nullptr;
+				mnTargetID = 0;
+				mnTargetIndex = -1;
+			}
+		}
+		else
+		{
+			mpTargetEmitter = nullptr;
+			mnTargetID = 0;
+			mnTargetIndex = -1;
+		}
+	}
 }
 
 void Editor::ParticleEditor::EditorUI(void)
@@ -127,6 +146,17 @@ void Editor::ParticleEditor::SetParticleEmitter(Dystopia::ParticleEmitter* _pe, 
 {
 	mnTargetIndex = _n;
 	mpTargetEmitter = _pe;
+
+	if (mpTargetEmitter && mpTargetEmitter->GetEmitter(mnTargetIndex))
+	{
+		EditorPanel::SetOpened(true);
+		mnTargetID = mpTargetEmitter->GetOwnerID();
+	}
+	else
+	{
+		mnTargetID = 0;
+		mnTargetIndex = -1;
+	}
 }
 
 bool Editor::ParticleEditor::ValidateEmitter(void)
@@ -149,6 +179,8 @@ bool Editor::ParticleEditor::ValidateEmitter(void)
 void Editor::ParticleEditor::AddAffectors(void)
 {
 	Dystopia::Emitter* pEmitter = mpTargetEmitter->GetEmitter(mnTargetIndex);
+	if (!pEmitter)
+		return;
 	
 	const auto& existingSpawnAffectors = pEmitter->GetSpawnAffectors();
 	const auto& existingUpdateAffectors = pEmitter->GetUpdateAffectors();
@@ -220,13 +252,19 @@ void Editor::ParticleEditor::ListOfAffectors(void)
 
 void Editor::ParticleEditor::AddAffector(int _id)
 {
+	Dystopia::Emitter* pEmitter = mpTargetEmitter->GetEmitter(mnTargetIndex);
+	if (!pEmitter)
+		return;
+
 	static Dystopia::AffectorGet affectorGet;
-	affectorGet.Get(_id, *mpTargetEmitter->GetEmitter(mnTargetIndex));
+	affectorGet.Get(_id, *pEmitter);
 }
 
 void Editor::ParticleEditor::EmitterAffectors(void)
 {
 	Dystopia::Emitter* pEmitter = mpTargetEmitter->GetEmitter(mnTargetIndex);
+	if (!pEmitter)
+		return;
 	
 	static Dystopia::AffectorGet affectorGet;
 	static const auto affectorNames = Dystopia::AffectorUI<Dystopia::AffectorList>::GetUIName();

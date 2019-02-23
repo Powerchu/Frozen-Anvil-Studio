@@ -61,18 +61,25 @@ Dystopia::ParticleEmitter::ParticleEmitter(Dystopia::ParticleEmitter const& _rhs
 
 Dystopia::ParticleEmitter::~ParticleEmitter(void) noexcept
 {
+	mEmitters.clear();
 }
 
 void Dystopia::ParticleEmitter::Awake(void)
 {
 	for (auto& e : mEmitters)
+	{
 		e.Awake();
+		e.SetOwner(this);
+	}
 }
 
 void Dystopia::ParticleEmitter::Init(void)
 {
 	for(auto& e : mEmitters)
+	{
 		e.Init();
+		e.SetOwner(this);
+	}
 }
 
 void Dystopia::ParticleEmitter::FixedUpdate(float)
@@ -112,20 +119,30 @@ Dystopia::ParticleEmitter* Dystopia::ParticleEmitter::Duplicate(void) const
 
 void Dystopia::ParticleEmitter::Serialise(TextSerialiser& _out) const
 {
-	_out.InsertStartBlock("Emitter");
+	_out.InsertStartBlock("Particle Emitter");
 	Component::Serialise(_out);
+	_out << mEmitters.size();
+	_out.InsertEndBlock("Particle Emitter");
 
-	//for(auto& e : mEmitters)
-	// e.Serialise(_out);
+	for(auto& e : mEmitters)
+		e.Serialise(_out);
 }
 
 void Dystopia::ParticleEmitter::Unserialise(TextSerialiser& _in)
 {
+	unsigned size = 0;
+
 	_in.ConsumeStartBlock();
 	Component::Unserialise(_in);
+	_in >> size;
+	_in.ConsumeEndBlock();
 
-	//for(auto& e : mEmitters)
-	// e.Unserialise(_out);
+	mEmitters.clear();
+	for (unsigned i = 0; i < size; ++i)
+	{
+		mEmitters.EmplaceBack(this);
+		mEmitters.back().Unserialise(_in);
+	}
 }
 
 void Dystopia::ParticleEmitter::EditorUI(void) noexcept
@@ -133,56 +150,29 @@ void Dystopia::ParticleEmitter::EditorUI(void) noexcept
 #if EDITOR
 	EGUI::PushLeftAlign(80);
 
-
-	if (EGUI::Display::Button("Add Emitter", { 100, 30 }))
+	if (EGUI::Display::Button("Add Emitter", { 100, 24 }))
 	{
 		mEmitters.EmplaceBack(this);
 		mEmitters.back().Awake();
 	}
 
-	EGUI::Display::HorizontalSeparator();
-
 	for (int i = 0; i < mEmitters.size(); ++i)
 	{
+		char buffer[50]{ "Emitter" };
+		sprintf_s(buffer, "Emitter %d", i);
+
 		EGUI::PushID(i);
 
-		EGUI::Display::Label("Emitter %d", i);
-		EGUI::SameLine(DefaultAlighnmentSpacing, 80);
-		if (EGUI::Display::Button("Edit", {100, 30}))
+		EGUI::Display::HorizontalSeparator();
+		if (EGUI::Display::StartTreeNode(buffer))
 		{
-			Editor::EditorMain::GetInstance()->GetPanel<Editor::ParticleEditor>()->SetParticleEmitter(this, i);
+			if (EGUI::Display::Button("Edit", { 150, 24 }))
+			{
+				Editor::EditorMain::GetInstance()->GetPanel<Editor::ParticleEditor>()->SetParticleEmitter(this, i);
+			}
+			mEmitters[i].EditorUI();
+			EGUI::Display::EndTreeNode();
 		}
-		EGUI::Display::Label("Count : %d", mEmitters[i].GetSpawnCount());
-
-		if (mEmitters[i].GetTexture())
-		{
-			EGUI::Display::EmptyBox("Texture", 150, mEmitters[i].GetTexture()->GetName().c_str(), true);
-		}
-		else
-		{
-			EGUI::Display::EmptyBox("Texture", 150, "-empty-", true);
-		}
-		
-		if (auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::ALL_IMG))
-		{
-			mEmitters[i].SetTexture(CORE::Get<TextureSystem>()->LoadTexture(t->mPath));
-			EGUI::Display::EndPayloadReceiver();
-		}
-
-		EGUI::SameLine(DefaultAlighnmentSpacing, 80);
-		if (EGUI::Display::IconCross("Clear", 8.f))
-		{
-			mEmitters[i].SetTexture(nullptr);
-		}
-
-		if (auto t = mEmitters[i].GetTexture())
-		{
-			EGUI::Display::Label("Preview");
-			EGUI::SameLine(DefaultAlighnmentSpacing, 80);
-			float ratio = static_cast<float>(t->GetHeight()) / static_cast<float>(t->GetWidth());
-			EGUI::Display::Image(t->GetID(), Math::Vec2{ 140, 140 * ratio }, false, true);
-		}
-
 
 		EGUI::PopID();
 	}

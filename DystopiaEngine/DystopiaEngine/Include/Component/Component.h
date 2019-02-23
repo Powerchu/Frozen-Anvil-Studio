@@ -52,7 +52,7 @@ namespace Dystopia
 		void Load(void);
 		virtual void Init(void);
 
-		void GameObjectDestroy(void);
+		virtual void GameObjectDestroy(void);
 		void Unload(void);
 
 		void DestroyComponent(void);
