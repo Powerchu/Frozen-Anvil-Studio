@@ -54,7 +54,6 @@ namespace Dystopia
 
 	void AiController::Awake()
 	{
-		
 	}
 
 	void AiController::Init()
@@ -135,27 +134,27 @@ namespace Dystopia
 	void AiController::EditorUI() noexcept
 	{
 		EditorCurrentStatus();
-		AddKeyToMap();
-		EGUI::SameLine(0);
-		if (EGUI::Display::CollapsingHeader("Blackboard", false))
+		// Blackboard
+		if (ImGui::CollapsingHeader("Blackboard Map", ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_DefaultOpen))
 		{
-			EGUI::Indent(10);
-			EditorFunctionNode();
-			EditorBoolNode();
-			EditorIntNode();
-			EditorFloatNode();
-			EditorDoubleNode();
-			EditorVectorNode();
-			EditorObjectNode();
-			EditorStringNode();
-			EGUI::UnIndent(10);
-
-			if (EGUI::Display::Button("Clear All", {256,24}))
-			{
+			AddKeyToMap();
+			EGUI::SameLine();
+			if (EGUI::Display::Button("Clear All", { ImGui::GetContentRegionAvailWidth()/2,24 }))
 				mpBlackboard->ClearAll();
-			}
-		}
 
+			EGUI::Indent(10);
+				EditorFunctionNode();
+				EditorBoolNode();
+				EditorIntNode();
+				EditorFloatNode();
+				EditorDoubleNode();
+				EditorVectorNode();
+				EditorObjectNode();
+				EditorStringNode();
+			EGUI::UnIndent(10);
+		}
+			
+		// Editor Tree View
 		EditorTreeView();
 
 	}
@@ -171,6 +170,15 @@ namespace Dystopia
 
 		if (EGUI::Display::StartTreeNode("Functions", nullptr, false, false, false, true))
 		{
+			if (ImGui::BeginPopupContextItem())
+			{
+				if (EGUI::Display::SelectableTxt("Remove Group"))
+				{
+					mpBlackboard->ClearSingle(ePointer);
+				}
+				ImGui::EndPopup();
+			}
+
 			std::vector<HashString> keys(map_size);
 			std::vector<void*> values(map_size);
 
@@ -180,19 +188,11 @@ namespace Dystopia
 			EGUI::Display::EndTreeNode();
 		}
 
-		if (ImGui::BeginPopupContextItem())
-		{
-			if (EGUI::Display::SelectableTxt("Remove Key"))
-			{
-				mpBlackboard->ClearSingle(ePointer);
-			}
-			ImGui::EndPopup();
-		}
+		
 	}
 
 	void AiController::EditorStringNode()
 	{
-		static HashString buffer;
 		const auto map = mpBlackboard->GetMapToNames();
 		const size_t map_size = map.size();
 
@@ -202,11 +202,21 @@ namespace Dystopia
 
 		if (EGUI::Display::StartTreeNode("Strings", nullptr, false, false, false, true))
 		{
+			if (ImGui::BeginPopupContextItem())
+			{
+				if (EGUI::Display::SelectableTxt("Remove Group"))
+				{
+					mpBlackboard->ClearSingle(eStrings);
+				}
+				ImGui::EndPopup();
+			}
+
 			std::vector<HashString> keys(map_size);
 			std::vector<HashString> values(map_size);
 
 			transform(map.begin(), map.end(), keys.begin(), AI::key_select);
 			transform(map.begin(), map.end(), values.begin(), AI::value_select);
+
 
 			for (unsigned i = 0; i < map_size; ++i)
 			{
@@ -214,24 +224,26 @@ namespace Dystopia
 				const auto str = values[i];
 				std::string _nName{ std::to_string(i) + ".K" };
 				EGUI::Display::EmptyBox(_nName.c_str(), 80.f, ( keys[i].c_str()));
+				if (ImGui::BeginPopupContextItem())
+				{
+					std::string _removeKey{ "Remove [" };
+					_removeKey += keys[i].c_str();
+					_removeKey += "]";
+					if (EGUI::Display::SelectableTxt(_removeKey.c_str()))
+					{
+						mpBlackboard->GetMapToNames().erase(keys[i].c_str());
+					}
+					ImGui::EndPopup();
+				}
 				EGUI::SameLine(AI::DEFAULT_ALIGN);
 				EGUI::ChangeAlignmentYOffset(0);
-				EGUI::Display::TextField("V", buffer, true, AI::BTN_SZ);
+				EGUI::Display::EmptyBox("V", AI::BTN_SZ, values[i].c_str());
 				//EGUI::Display::EmptyBox("V", AI::BTN_SZ, str.c_str());
 				EGUI::ChangeAlignmentYOffset();
 				EGUI::PopID();
 			}
 
 			EGUI::Display::EndTreeNode();
-		}
-
-		if (ImGui::BeginPopupContextItem())
-		{
-			if (EGUI::Display::SelectableTxt("Remove Key"))
-			{
-				mpBlackboard->ClearSingle(eStrings);
-			}
-			ImGui::EndPopup();
 		}
 	}
 
@@ -246,6 +258,15 @@ namespace Dystopia
 
 		if (EGUI::Display::StartTreeNode("Objects", nullptr, false, false, false, true))
 		{
+			if (ImGui::BeginPopupContextItem())
+			{
+				if (EGUI::Display::SelectableTxt("Remove Group"))
+				{
+					mpBlackboard->ClearSingle(eObject);
+				}
+				ImGui::EndPopup();
+			}
+
 			std::vector<HashString> keys(map_size);
 			std::vector<uint64_t> values(map_size);
 
@@ -260,6 +281,17 @@ namespace Dystopia
 				const auto val = values[i];
 				std::string _nName{ std::to_string(i) + ".K" };
 				EGUI::Display::EmptyBox(_nName.c_str(), 80.f, (keys[i].c_str()));
+				if (ImGui::BeginPopupContextItem())
+				{
+					std::string _removeKey{ "Remove [" };
+					_removeKey += keys[i].c_str();
+					_removeKey += "]";
+					if (EGUI::Display::SelectableTxt(_removeKey.c_str()))
+					{
+						mpBlackboard->GetMapToObjs().erase(keys[i].c_str());
+					}
+					ImGui::EndPopup();
+				}
 				EGUI::SameLine(AI::DEFAULT_ALIGN);
 				EGUI::ChangeAlignmentYOffset(0);
 				if (const auto obj = EngineCore::Get<SceneSystem>()->FindGameObject(val))
@@ -279,14 +311,7 @@ namespace Dystopia
 			EGUI::Display::EndTreeNode();
 		}
 
-		if (ImGui::BeginPopupContextItem())
-		{
-			if (EGUI::Display::SelectableTxt("Remove Key"))
-			{
-				mpBlackboard->ClearSingle(eObject);
-			}
-			ImGui::EndPopup();
-		}
+		
 	}
 
 	void AiController::EditorVectorNode()
@@ -300,6 +325,15 @@ namespace Dystopia
 
 		if (EGUI::Display::StartTreeNode("Vectors", nullptr, false, false, false, true))
 		{
+			if (ImGui::BeginPopupContextItem())
+			{
+				if (EGUI::Display::SelectableTxt("Remove Group"))
+				{
+					mpBlackboard->ClearSingle(eVector);
+				}
+				ImGui::EndPopup();
+			}
+
 			std::vector<HashString> keys(map_size);
 			std::vector<Math::Vector4> values(map_size);
 
@@ -317,6 +351,17 @@ namespace Dystopia
 					" W:" + std::to_string(static_cast<int>(val.w))
 				};
 				EGUI::Display::EmptyBox(_nName.c_str(), 80.f, (keys[i].c_str()));
+				if (ImGui::BeginPopupContextItem())
+				{
+					std::string _removeKey{ "Remove [" };
+					_removeKey += keys[i].c_str();
+					_removeKey += "]";
+					if (EGUI::Display::SelectableTxt(_removeKey.c_str()))
+					{
+						mpBlackboard->GetMapToVectors().erase(keys[i].c_str());
+					}
+					ImGui::EndPopup();
+				}
 				EGUI::SameLine(AI::DEFAULT_ALIGN);
 				EGUI::ChangeAlignmentYOffset(0);
 				EGUI::Display::EmptyBox("V", AI::BTN_SZ, _nVal.c_str());
@@ -325,15 +370,6 @@ namespace Dystopia
 			}
 
 			EGUI::Display::EndTreeNode();
-		}
-
-		if (ImGui::BeginPopupContextItem())
-		{
-			if (EGUI::Display::SelectableTxt("Remove Key"))
-			{
-				mpBlackboard->ClearSingle(eVector);
-			}
-			ImGui::EndPopup();
 		}
 	}
 
@@ -348,6 +384,15 @@ namespace Dystopia
 
 		if (EGUI::Display::StartTreeNode("Doubles", nullptr, false, false, false, true))
 		{
+			if (ImGui::BeginPopupContextItem())
+			{
+				if (EGUI::Display::SelectableTxt("Remove Group"))
+				{
+					mpBlackboard->ClearSingle(eDouble);
+				}
+				ImGui::EndPopup();
+			}
+
 			std::vector<HashString> keys(map_size);
 			std::vector<double> values(map_size);
 
@@ -360,6 +405,17 @@ namespace Dystopia
 				const auto val = values[i];
 				std::string _nName{ std::to_string(i) + ".K" };
 				EGUI::Display::EmptyBox(_nName.c_str(), 80.f, (keys[i].c_str()));
+				if (ImGui::BeginPopupContextItem())
+				{
+					std::string _removeKey{ "Remove [" };
+					_removeKey += keys[i].c_str();
+					_removeKey += "]";
+					if (EGUI::Display::SelectableTxt(_removeKey.c_str()))
+					{
+						mpBlackboard->GetMapToVectors().erase(keys[i].c_str());
+					}
+					ImGui::EndPopup();
+				}
 				EGUI::SameLine(AI::DEFAULT_ALIGN);
 				EGUI::ChangeAlignmentYOffset(0);
 				EGUI::Display::EmptyBox("V", AI::BTN_SZ, std::to_string(val).c_str());
@@ -370,14 +426,7 @@ namespace Dystopia
 			EGUI::Display::EndTreeNode();
 		}
 
-		if (ImGui::BeginPopupContextItem())
-		{
-			if (EGUI::Display::SelectableTxt("Remove Key"))
-			{
-				mpBlackboard->ClearSingle(eDouble);
-			}
-			ImGui::EndPopup();
-		}
+		
 	}
 
 	void AiController::EditorFloatNode()
@@ -391,6 +440,15 @@ namespace Dystopia
 
 		if (EGUI::Display::StartTreeNode("Floats", nullptr, false, false, false, true))
 		{
+			if (ImGui::BeginPopupContextItem())
+			{
+				if (EGUI::Display::SelectableTxt("Remove Group"))
+				{
+					mpBlackboard->ClearSingle(eFloat);
+				}
+				ImGui::EndPopup();
+			}
+
 			std::vector<HashString> keys(map_size);
 			std::vector<float> values(map_size);
 
@@ -403,23 +461,24 @@ namespace Dystopia
 				const auto val = values[i];
 				std::string _nName{ std::to_string(i) + ".K" };
 				EGUI::Display::EmptyBox(_nName.c_str(), 80.f, (keys[i].c_str()));
+				if (ImGui::BeginPopupContextItem())
+				{
+					std::string _removeKey{ "Remove [" };
+					_removeKey += keys[i].c_str();
+					_removeKey += "]";
+					if (EGUI::Display::SelectableTxt(_removeKey.c_str()))
+					{
+						mpBlackboard->GetMapToFloats().erase(keys[i].c_str());
+					}
+					ImGui::EndPopup();
+				}
 				EGUI::SameLine(AI::DEFAULT_ALIGN);
 				EGUI::ChangeAlignmentYOffset(0);
 				EGUI::Display::EmptyBox("V", AI::BTN_SZ, std::to_string(val).c_str());
 				EGUI::ChangeAlignmentYOffset();
 				EGUI::PopID();
 			}
-
 			EGUI::Display::EndTreeNode();
-		}
-
-		if (ImGui::BeginPopupContextItem())
-		{
-			if (EGUI::Display::SelectableTxt("Remove Key"))
-			{
-				mpBlackboard->ClearSingle(eFloat);
-			}
-			ImGui::EndPopup();
 		}
 	}
 
@@ -434,6 +493,15 @@ namespace Dystopia
 
 		if (EGUI::Display::StartTreeNode("Ints", nullptr, false, false, false, true))
 		{
+			if (ImGui::BeginPopupContextItem())
+			{
+				if (EGUI::Display::SelectableTxt("Remove Group"))
+				{
+					mpBlackboard->ClearSingle(eInt);
+				}
+				ImGui::EndPopup();
+			}
+
 			std::vector<HashString> keys(map_size);
 			std::vector<int> values(map_size);
 
@@ -446,6 +514,17 @@ namespace Dystopia
 				const auto val = values[i];
 				std::string _nName{ std::to_string(i) + ".K" };
 				EGUI::Display::EmptyBox(_nName.c_str(), 80.f, (keys[i].c_str()));
+				if (ImGui::BeginPopupContextItem())
+				{
+					std::string _removeKey{ "Remove [" };
+					_removeKey += keys[i].c_str();
+					_removeKey += "]";
+					if (EGUI::Display::SelectableTxt(_removeKey.c_str()))
+					{
+						mpBlackboard->GetMapToInts().erase(keys[i].c_str());
+					}
+					ImGui::EndPopup();
+				}
 				EGUI::SameLine(AI::DEFAULT_ALIGN);
 				EGUI::ChangeAlignmentYOffset(0);
 				EGUI::Display::EmptyBox("V", AI::BTN_SZ, std::to_string(val).c_str());
@@ -453,15 +532,6 @@ namespace Dystopia
 				EGUI::PopID();
 			}
 			EGUI::Display::EndTreeNode();
-		}
-
-		if (ImGui::BeginPopupContextItem())
-		{
-			if (EGUI::Display::SelectableTxt("Remove Key"))
-			{
-				mpBlackboard->ClearSingle(eInt);
-			}
-			ImGui::EndPopup();
 		}
 	}
 
@@ -476,6 +546,15 @@ namespace Dystopia
 
 		if (EGUI::Display::StartTreeNode("Bools", nullptr, false, false, false, true))
 		{
+			if (ImGui::BeginPopupContextItem())
+			{
+				if (EGUI::Display::SelectableTxt("Remove Group"))
+				{
+					mpBlackboard->ClearSingle(eBool);
+				}
+				ImGui::EndPopup();
+			}
+
 			std::vector<HashString> keys(map_size);
 			std::vector<bool> values(map_size);
 
@@ -488,6 +567,17 @@ namespace Dystopia
 				const bool b = values[i];
 				std::string _nName{ std::to_string(i) + ".K" };
 				EGUI::Display::EmptyBox(_nName.c_str(), 80.f, (keys[i].c_str()));
+				if (ImGui::BeginPopupContextItem())
+				{
+					std::string _removeKey{ "Remove [" };
+					_removeKey += keys[i].c_str();
+					_removeKey += "]";
+					if (EGUI::Display::SelectableTxt(_removeKey.c_str()))
+					{
+						mpBlackboard->GetMapToBools().erase(keys[i].c_str());
+					}
+					ImGui::EndPopup();
+				}
 				EGUI::SameLine(AI::DEFAULT_ALIGN);
 				EGUI::ChangeAlignmentYOffset(0);
 				EGUI::Display::EmptyBox("V", AI::BTN_SZ, (b ? "true" : "false"));
@@ -498,21 +588,14 @@ namespace Dystopia
 			EGUI::Display::EndTreeNode();
 		}
 
-		if (ImGui::BeginPopupContextItem())
-		{
-			if (EGUI::Display::SelectableTxt("Remove Key"))
-			{
-				mpBlackboard->ClearSingle(eBool);
-			}
-			ImGui::EndPopup();
-		}
+		
 	}
 
 	void AiController::AddKeyToMap()
 	{
 		static char buffer1[256];
 
-		if (EGUI::Display::Button("Add Key", { 60,24 }))
+		if (EGUI::Display::Button("Add Key", { ImGui::GetContentRegionAvailWidth()/2,24 }))
 		{
 			EGUI::Display::OpenPopup("Add Key", false);
 		}
@@ -538,7 +621,7 @@ namespace Dystopia
 
 			if (keyTypeIndex != 0 && keyTypeIndex != 4)
 			{
-				EGUI::Display::TextField("Key", buffer1 /*mSearchText*/, Editor::MAX_SEARCH, true, 128.f, false);
+				EGUI::Display::TextField("Key", buffer1 /*mSearchText*/, Editor::MAX_SEARCH, true, 128.f, true);
 				EGUI::SameLine(0);
 			}
 			else
@@ -566,10 +649,10 @@ namespace Dystopia
 					EGUI::Display::VectorFields("Vector", &Vectorer, 0.1f, -FLT_MAX, FLT_MAX);
 					break;
 				case 6:
-					EGUI::Display::TextField("Obj Name", GameObjectBuf, Editor::MAX_SEARCH, false, 100.f,false);
+					EGUI::Display::TextField("Obj Name", GameObjectBuf, Editor::MAX_SEARCH, false, 100.f, true);
 					break;
 				case 7:
-					EGUI::Display::TextField("String", Stringer, Editor::MAX_SEARCH, false, 100.f, false);
+					EGUI::Display::TextField("String", Stringer, Editor::MAX_SEARCH, false, 100.f, true);
 					break;
 				default:
 					break;
@@ -605,7 +688,7 @@ namespace Dystopia
 				}
 				break;
 				case 7:
-					mpBlackboard->SetString(static_cast<const char *>(buffer1), Stringer);
+					mpBlackboard->SetString(static_cast<const char *>(buffer1), static_cast<const char *>(Stringer));
 					break;
 				default:
 					break;
@@ -643,7 +726,6 @@ namespace Dystopia
 				EGUI::Display::EmptyBox("Current Node:", 128.f, mCurrentTask ? mCurrentTask->GetEditorName().c_str() : "None");
 				EGUI::Display::EmptyBox("Current Status:", 128.f, _eStatus.c_str());
 				EGUI::PopLeftAlign();
-				EGUI::Display::Dummy(0, 15);
 			}
 		}
 	}
@@ -746,6 +828,7 @@ namespace Dystopia
 	{
 		if (bTree->IsValidTree())
 		{
+			ImGui::Separator();
 			EGUI::Display::Label(bTree->GetEditorName().c_str());
 			RecursiveTree(bTree->GetRoot());
 		}

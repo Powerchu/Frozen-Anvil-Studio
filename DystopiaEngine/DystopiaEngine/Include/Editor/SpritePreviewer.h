@@ -53,7 +53,7 @@ namespace Editor
 		HashString  mTextureName;
 		HashString  mLabel;
 
-		HashString  GetTextureName(void);
+		HashString  GetTextureName(Dystopia::Texture* _pTex) const;
 	};
 }
 
