@@ -330,7 +330,7 @@ namespace Editor
 				break;
 			}
 		}
-		bool tree = EGUI::Display::StartTreeNode(_obj.GetNamePtr(), &clicked, selected, false, true, false);
+		const bool tree = EGUI::Display::StartTreeNode(_obj.GetNamePtr(), &clicked, selected, false, false, false);
 		GameObjectPayload(_obj);
 		GameObjectPopups(_obj);
 		if (tree)
