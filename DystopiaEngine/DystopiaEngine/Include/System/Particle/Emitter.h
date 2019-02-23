@@ -92,6 +92,8 @@ namespace Dystopia
 		void StartEmission(void) noexcept;
 		bool IsAlive(void) const noexcept;
 
+		Texture* GetTexture(void) const noexcept;
+
 	protected:
 
 		void BaseInit(void);

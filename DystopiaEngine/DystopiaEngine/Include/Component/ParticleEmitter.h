@@ -71,7 +71,6 @@ namespace Dystopia
 		void Unserialise(TextSerialiser&) override;
 		void EditorUI(void) noexcept override;
 
-
 	private:
 		AutoArray<Emitter> mEmitters;
 	};

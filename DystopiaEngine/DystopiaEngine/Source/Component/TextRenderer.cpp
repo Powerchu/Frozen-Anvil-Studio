@@ -41,6 +41,11 @@ Dystopia::TextRenderer::TextRenderer(void) noexcept
 	: Renderer{}, mPrevState(mCurrState), mpData{ nullptr },
 	mText {}, mnAnchorX{ 0 }, mnAnchorY{ 0 }, mColor{ 1.f, 1.f, 1.f, 1.f }, mVerts{}
 {
+	auto pMeshSys = CORE::Get<MeshSystem>();
+	auto pBaseMesh = pMeshSys->GetRaw(pMeshSys->GenerateRaw());
+	mpMesh = pMeshSys->CreateMesh(pBaseMesh, 0);
+
+	pBaseMesh->BuildEmpty<VertexBuffer, UVBuffer, IndexBuffer>();
 }
 
 Dystopia::TextRenderer::TextRenderer(const TextRenderer& _rhs) noexcept
@@ -55,17 +60,6 @@ Dystopia::TextRenderer::TextRenderer(const TextRenderer& _rhs) noexcept
 void Dystopia::TextRenderer::Awake(void)
 {
 	mpShader = CORE::Get<ShaderSystem>()->GetShader("Font Shader");
-
-	if (!mpMesh)
-	{
-		auto pMeshSys = EngineCore::GetInstance()->Get<MeshSystem>();
-		auto pBaseMesh = pMeshSys->GetRaw(pMeshSys->GenerateRaw());
-		mpMesh = EngineCore::GetInstance()->Get<MeshSystem>()->CreateMesh(
-			pBaseMesh, 0
-		);
-
-		pBaseMesh->BuildEmpty<VertexBuffer, UVBuffer, IndexBuffer>();
-	}
 
 	if (mpData)
 		RegenMesh();
