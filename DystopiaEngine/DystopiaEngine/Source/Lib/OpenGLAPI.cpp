@@ -266,7 +266,7 @@ void Gfx::OpenGL_API::QueryVariables(
 		switch (typeBuffer[n])
 		{
 		case GL_SAMPLER_2D:
-			tex.EmplaceBack(nameBuffer, texCount);
+			tex.EmplaceBack(static_cast<char const *>(nameBuffer), texCount);
 			glProgramUniform1i(nProg, glGetUniformLocation(nProg, nameBuffer), texCount++);
 			break;
 
@@ -280,7 +280,7 @@ void Gfx::OpenGL_API::QueryVariables(
 		//case GL_FLOAT_MAT3:
 		//case GL_FLOAT_MAT4:
 		case GL_UNSIGNED_INT:
-			vars.EmplaceBack(static_cast<char*>(nameBuffer), ResolveUniformType(typeBuffer[n]));
+			vars.EmplaceBack(static_cast<char const*>(nameBuffer), ResolveUniformType(typeBuffer[n]));
 			break;
 
 		default:

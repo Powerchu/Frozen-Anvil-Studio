@@ -118,14 +118,12 @@ namespace Editor
 		if (EditorMain::GetInstance()->GetCurState() == eState::PLAY)
 			ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.f);
 
-		Dystopia::Texture *pTex = mpGfxSys->GetFrameBuffer().AsTexture();
+		Dystopia::Texture *pTex = mpSceneCamera->GetSurface()->AsTexture();// mpGfxSys->GetFrameBuffer().AsTexture();
 
-		if (mpSceneCamera)
-			pTex = mpSceneCamera->GetSurface()->AsTexture();
-		else
-			__debugbreak();
-
-
+		//if (mpSceneCamera)
+		//	pTex =;
+		//else
+		//	__debugbreak();
 
 		const auto orig2 = ImGui::GetCursorPos();
 
@@ -139,8 +137,6 @@ namespace Editor
 			mAmFocused = true;
 		else
 			mAmFocused = false;
-		
-
 
 		if (mpSceneSys->GetCurrentScene().FindGameObject("___Scene_Camera___"))
 		{

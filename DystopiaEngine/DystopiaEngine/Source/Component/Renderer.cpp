@@ -42,35 +42,31 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::Renderer::Renderer(void) noexcept
-	: Component{}, mnUnique{ 0 }, mpMesh{ nullptr }, mpShader{ nullptr },
+	: Component{}, mnUnique{ 0 }, mpMesh{ CORE::Get<MeshSystem>()->GetMesh("Quad") }, mpShader{ nullptr },
 	mTexturePaths{}, mTextureFields{}
 {
+	SetShader(CORE::Get<ShaderSystem>()->GetShader("Default Shader"));
 }
 
 Dystopia::Renderer::Renderer(Dystopia::Renderer&& _rhs) noexcept
 	: Component{ Ut::Move(_rhs) }, mnUnique{ _rhs.mnUnique }, mpMesh{ _rhs.mpMesh }, mpShader{ _rhs.mpShader }, 
-	mTexturePaths{ Ut::Move(_rhs.mTexturePaths) }, mTextureFields{ Ut::Move(_rhs.mTextureFields) }
+	mTexturePaths{ Ut::Move(_rhs.mTexturePaths) }, mTextureFields{ Ut::Move(_rhs.mTextureFields) }, mOverride{ Ut::Move(_rhs.mOverride) }
 {
 	_rhs.mpMesh    = nullptr;
 	_rhs.mpShader  = nullptr;
 }
 
 Dystopia::Renderer::Renderer(const Renderer& _rhs) noexcept
-	: Component{ _rhs }, mnUnique{ 0 }, mpMesh{ nullptr }, mpShader{ nullptr },
-	mTexturePaths{ _rhs.mTexturePaths }, mTextureFields{ _rhs.mTextureFields }
+	: Component{ _rhs }, mnUnique{ 0 }, mpMesh{ _rhs.mpMesh }, mpShader{ _rhs.mpShader },
+	mTexturePaths{ _rhs.mTexturePaths }, mTextureFields{ _rhs.mTextureFields }, mOverride{ _rhs.mOverride }
 {
 }
 
 void Dystopia::Renderer::Awake(void)
 {
-	SetMesh("Quad");
-	SetShader(CORE::Get<ShaderSystem>()->GetShader("Default Shader"));
-
-	unsigned n = 0;
-	mTextureFields.reserve(mTexturePaths.size());
-
-	for(auto& e : mTexturePaths)
-		mTextureFields.EmplaceBack(n++, CORE::Get<TextureSystem>()->GetTexture(e));
+	// SetMesh("Quad");
+	// SetShader(CORE::Get<ShaderSystem>()->GetShader("Default Shader"));
+	// InitializeTextureFields();
 }
 
 void Dystopia::Renderer::Init(void)
@@ -94,10 +90,20 @@ void Dystopia::Renderer::SetMesh(const std::string& _strMesh) noexcept
 	mpMesh = CORE::Get<MeshSystem>()->GetMesh(_strMesh);
 }
 
-
 void Dystopia::Renderer::SetShader(Shader* _p) noexcept
 {
-	mpShader = _p;
+	mpShader = _p ? _p : CORE::Get<ShaderSystem>()->GetShader("Default Shader");
+
+	const auto& texList = mpShader->GetTextureList();
+
+	mTextureFields.clear();
+	mTextureFields.reserve(texList.size());
+
+	//mTexturePaths.clear();
+	//mTexturePaths.resize(texList.size);
+
+	for (const auto & e : texList)
+		mTextureFields.EmplaceBack(e.second, nullptr);
 }
 
 void Dystopia::Renderer::SetShader(const std::string& _strName) noexcept
@@ -115,19 +121,21 @@ Dystopia::Shader* Dystopia::Renderer::GetShader(void) const noexcept
 	return mpShader;
 }
 
-
 void Dystopia::Renderer::SetTexture(Texture* _pTexture, unsigned _idx) noexcept
 {
 	for (auto& e : mTextureFields)
 		if (e.Get<0>() == _idx)
 			e.Get<1>() = _pTexture;
 
-	mTexturePaths.resize(_idx);
+	//if (mTexturePaths.Cap() <= _idx)
+	//	mTexturePaths.resize(_idx + 1);
+	//
+	//if (_pTexture)
+	//	mTexturePaths[_idx] = _pTexture->GetPath();
+	//else
+	//	mTexturePaths[_idx].clear();
 
-	if (_pTexture)
-		mTexturePaths[_idx] = _pTexture->GetPath();
-	else
-		mTexturePaths[_idx].clear();
+	// InitializeTextureFields();
 }
 
 Dystopia::Texture* Dystopia::Renderer::GetTexture(unsigned _idx) const noexcept
@@ -143,7 +151,6 @@ AutoArray<Tuple<unsigned, Dystopia::Texture*>> const& Dystopia::Renderer::GetTex
 {
 	return mTextureFields;
 }
-
 
 bool Dystopia::Renderer::HasTransparency(void) const noexcept
 {
@@ -166,6 +173,29 @@ void Dystopia::Renderer::ResetOverride(void)
 			mOverride.FastRemove(&e);
 }
 
+void Dystopia::Renderer::InitializeTextureFields(void)
+{
+	//unsigned n = 0;
+	//
+	//mTextureFields.clear();
+	//mTextureFields.reserve(mTexturePaths.size());
+	//
+	//for (auto& e : mTexturePaths)
+	//{
+	//	if (e.length())
+	//	{
+	//		auto t = CORE::Get<TextureSystem>()->GetTexture(e);
+	//		t = t ? t : CORE::Get<TextureSystem>()->LoadTexture(e);
+	//
+	//		if (!t)
+	//			__debugbreak();
+	//
+	//		mTextureFields.EmplaceBack(n++, t);
+	//	}
+	//	else
+	//		mTextureFields.EmplaceBack(n++, nullptr);
+	//}
+}
 
 AutoArray<Tuple<OString, ::Gfx::eUniform_t, Dystopia::Renderer::ShaderVariant_t>>& Dystopia::Renderer::GetOverrides(void)
 {
@@ -187,12 +217,19 @@ void Dystopia::Renderer::Serialise(TextSerialiser& _out) const
 	Component::Serialise(_out);
 
 	_out << "SENTRY";
+	//_out << mTextureFields.size();
+	
+	if (mpShader)
+		_out << mpShader->GetName();
+	else
+		_out << "Error Shader";
 
 	for (auto& e : mTextureFields)
 	{
+		_out << e.Get<0>() + 1;
 		if (Texture*& ptr = e.Get<1>())
 		{
-			auto rp  = pFileSys->ConvertToRelative(ptr->GetPath());
+			auto rp = pFileSys->ConvertToRelative(ptr->GetPath());
 			auto pos = rp.find_last_of("/\\");
 
 			if (pos != OString::nPos)
@@ -200,10 +237,13 @@ void Dystopia::Renderer::Serialise(TextSerialiser& _out) const
 			else
 				_out << "";
 		}
+		else
+			_out << "";
 	}
 
 	_out.InsertEndBlock("RENDERER_BASE");
 	_out.InsertStartBlock("OVERRIDE");
+	_out << mOverride.size();
 	for (auto& e : mOverride)
 	{
 		_out << e.Get<0>();
@@ -224,26 +264,39 @@ void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 	std::string path;
 
 	mTexturePaths.clear();
-
+	
 	_in.ConsumeStartBlock();
 	Component::Unserialise(_in);
 	_in >> path;
 
 	if ("SENTRY" == path) // NEW VERSION
 	{
-		unsigned count;
-		_in >> count;
+		_in >> path; // shader saved name
 
-		while (count--)
+		auto t = CORE::Get<ShaderSystem>()->GetShader(path.c_str());
+		SetShader(t);
+
+		size_t count = t->GetTextureList().size();
+		//_in >> count;
+
+		for (size_t i = 0; i < count; ++i)
 		{
+			unsigned id;
+			_in >> id;
 			_in >> path;
 
+			id -= 1;
+
+			if (Ut::Constant<decltype(id), -1>::value == id)
+				break;
+
+			path = pFileSys->Normalize(pFileSys->GetFullPath(path, eFileDir::eResource));
+			//SetTexture(CORE::Get<TextureSystem>()->LoadTexture(path.c_str()), id);
+
 			if (path.size())
-				mTexturePaths.EmplaceBack(
-					pFileSys->Normalize(pFileSys->GetFullPath(path, eFileDir::eResource)).c_str()
-				);
+				SetTexture(CORE::Get<TextureSystem>()->LoadTexture(path.c_str()), id);
 			else
-				mTexturePaths.EmplaceBack("");
+				SetTexture(nullptr, id);
 		}
 
 		_in.ConsumeEndBlock();
@@ -251,6 +304,9 @@ void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 
 		ShaderVariant_t var;
 		std::underlying_type_t<::Gfx::eUniform_t> type;
+		ResetOverride();
+
+		_in >> count;
 		while (!_in.EndOfInput())
 		{
 			_in >> strOverride;
@@ -263,13 +319,21 @@ void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 	}
 	else // OLD SAVE
 	{
+		SetShader(nullptr);
+
 		auto pos = path.find_last_of("/\\");
 		if (pos != std::string::npos)
 			path = path.substr(pos + 1);
 
-		mTexturePaths.EmplaceBack(
-			pFileSys->Normalize(pFileSys->GetFullPath(path.c_str(), eFileDir::eResource)).c_str()
-		);
+		path = pFileSys->Normalize(pFileSys->GetFullPath(path, eFileDir::eResource));
+
+		if (path.length() == 0)
+		{
+			//__debugbreak();
+			SetTexture(nullptr, 0);
+		}
+		else
+			SetTexture(CORE::Get<TextureSystem>()->LoadTexture(path.c_str()), 0);
 	}
 
 	_in.ConsumeEndBlock();
@@ -278,13 +342,13 @@ void Dystopia::Renderer::Unserialise(TextSerialiser& _in)
 void Dystopia::Renderer::EditorUI(void) noexcept
 {
 #if EDITOR
-	/*EGUI::PushLeftAlign(80);
+	EGUI::PushLeftAlign(80);
 
 	TextureField();
 	MeshField();
 	ShaderField();
 
-	EGUI::PopLeftAlign();*/
+	EGUI::PopLeftAlign();
 #endif
 }
 
@@ -295,6 +359,8 @@ void Dystopia::Renderer::TextureField()
 
 	for (auto& [idx, mpTexture] : mTextureFields)
 	{
+		EGUI::PushID(idx);
+
 		EGUI::Display::EmptyBox("Texture", 150, (mpTexture) ? mpTexture->GetName().c_str() : "-empty-", true);
 		auto cmd = ::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>();
 		t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PNG);
@@ -341,6 +407,8 @@ void Dystopia::Renderer::TextureField()
 												   cmd->MakeFnCommand<Transform, const Math::Vec4&>(&Transform::SetScale, Math::Vec4{ w, h, 1.f }));
 			}
 		}
+
+		EGUI::PopID();
 	}
 }
 

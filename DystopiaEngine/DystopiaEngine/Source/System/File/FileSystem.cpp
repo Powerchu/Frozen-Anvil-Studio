@@ -209,18 +209,18 @@ namespace Dystopia
 		return std::wstring{};
 	}
 
-	HashString FileSystem::ConvertToRelative(HashString const &, eFileDir _ParentDirectory) const
+	HashString FileSystem::ConvertToRelative(HashString const& _e, eFileDir _ParentDirectory) const
 	{
-		std::filesystem::path DirPath{ mPathTable[_ParentDirectory] };
-		std::error_code error;
-		std::filesystem::recursive_directory_iterator DirIter{ DirPath, std::filesystem::directory_options::skip_permission_denied, error };
-		for (auto const & elem : DirIter)
-		{
-			if (std::filesystem::equivalent(DirPath, elem))
-				return HashString{ elem.path().string().c_str() };
-		}
+		//std::filesystem::path DirPath{ mPathTable[_ParentDirectory] };
+		//std::error_code error;
+		//std::filesystem::recursive_directory_iterator DirIter{ DirPath, std::filesystem::directory_options::skip_permission_denied, error };
+		//for (auto const & elem : DirIter)
+		//{
+		//	if (std::filesystem::equivalent(DirPath, elem))
+		//		return HashString{ elem.path().string().c_str() };
+		//}
 
-		return HashString{};
+		return ConvertToRelative(std::string{ _e.c_str() }, _ParentDirectory).c_str();
 	}
 
 	std::string FileSystem::ConvertToRelative(std::string const & _FullPath, eFileDir _ParentDirectory) const

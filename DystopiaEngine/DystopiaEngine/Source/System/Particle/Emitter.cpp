@@ -52,6 +52,9 @@ Dystopia::Emitter::Emitter(ParticleEmitter* _owner) noexcept
 {
 	glGenVertexArrays(1, &mVAO);
 	glGenBuffers(5, &mClrBuffer);
+	_EDITOR_CODE(if (_owner)
+		mpTransform = mpOwner->GetOwner()->GetComponent<Transform>();
+	)
 }
 
 Dystopia::Emitter::Emitter(Dystopia::Emitter const& _rhs) noexcept
@@ -108,7 +111,8 @@ void Dystopia::Emitter::BaseInit(void)
 	}
 	if (!mpTexture)
 	{
-		mpTexture = CORE::Get<TextureSystem>()->LoadTexture(CORE::Get<FileSystem>()->FindFilePath(mTextureName.c_str(), eFileDir::eResource).c_str());
+		auto path = CORE::Get<FileSystem>()->Normalize(CORE::Get<FileSystem>()->GetFullPath(mTextureName.c_str(), eFileDir::eResource));
+		mpTexture = CORE::Get<TextureSystem>()->LoadTexture(path.c_str());
 	}
 
 	if (!mpOwner)
@@ -232,6 +236,7 @@ void Dystopia::Emitter::FixedUpdate(float _fDT) noexcept
 void Dystopia::Emitter::Bind(void) const noexcept
 {
 	glBindVertexArray(mVAO);
+	_EDITOR_CODE(if (mpTexture))
 	mpTexture->Bind();
 }
 
@@ -351,6 +356,11 @@ void Dystopia::Emitter::SetTexture(Texture* _texture) noexcept
 void Dystopia::Emitter::SetOwner(ParticleEmitter* _pOwner) noexcept
 {
 	mpOwner = _pOwner;
+	_EDITOR_CODE(if (_pOwner)
+		mpTransform = mpOwner->GetOwner()->GetComponent<Transform>();
+	else
+		mpTransform = nullptr;
+	)
 }
 
 void Dystopia::Emitter::NotifyUVChanged(void) noexcept
@@ -664,6 +674,11 @@ void Dystopia::Emitter::StartEmission(void) noexcept
 bool Dystopia::Emitter::IsAlive(void) const noexcept
 {
 	return mbIsAlive;
+}
+
+Dystopia::Texture * Dystopia::Emitter::GetTexture(void) const noexcept
+{
+	return mpTexture;
 }
 
 

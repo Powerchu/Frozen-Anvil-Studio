@@ -85,7 +85,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace
 {
-	static auto const pGfxAPI = ::Gfx::GetInstance();
+	static ::Gfx::GfxAPI* pGfxAPI = nullptr;
 }
 
 
@@ -176,6 +176,8 @@ void Dystopia::GraphicsSystem::PreInit(void)
 	Window& window = CORE::Get<WindowManager>()->GetMainWindow();
 	::Gfx::InitGraphicsAPI(reinterpret_cast<void const*>(&window.GetWindowHandle()), ::Gfx::GfxMode::OPENGL);
 
+	const_cast<::Gfx::GfxAPI*&>(pGfxAPI) = ::Gfx::GetInstance();
+
 	CORE::Get<ShaderSystem>()->LoadShaderList("Shader/DefaultShaderList.txt", eFileDir::eResource, false);
 	auto file = Serialiser::OpenFile<TextSerialiser>("Resource/Meshes/DefaultMeshList.txt", Serialiser::MODE_READ);
 	MeshSystem* pMeshSys = CORE::Get<MeshSystem>();
@@ -257,9 +259,19 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	ShaderSystem  *pShaderSys = CORE::Get<ShaderSystem >();
 	WindowManager *pWinSys    = CORE::Get<WindowManager>();
 
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif
+
 	Mesh*      mesh    = pMeshSys->GetMesh("Quad");
 	Shader*    shader  = (*pShaderSys)["Logo Shader"];
 	Texture2D* texture = pTexSys->LoadTexture<Texture2D>("Resource/Editor/EditorStartup.png");
+
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif
 
 	unsigned w = texture->GetWidth(), h = texture->GetHeight();
 
@@ -276,6 +288,7 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	glViewport(0, 0, w, h);
 	glClearColor(.0f, .0f, .0f, .0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 
 	shader->Bind();
 	texture->Bind();
@@ -332,7 +345,6 @@ namespace
 		for(auto& [n, t] : _renderer->GetTextures())
 			_EDITOR_CODE(if (t))
 				t->Bind(n);
-			_EDITOR_CODE(else t->Unbind();)
 
 		s->UploadUniform("ModelMat", m);
 		s->UploadUniform("Gamma", _fGamma);

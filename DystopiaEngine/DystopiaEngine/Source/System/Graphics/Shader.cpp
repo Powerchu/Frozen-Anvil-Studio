@@ -206,7 +206,7 @@ void Dystopia::Shader::ImportVariables(void) noexcept
 		}
 
 		for (auto& e : p->GetTextureList())
-			if (mTextures.size() < e.second)
+			if (mTextures.size() <= e.second)
 				mTextures.EmplaceBack(e);
 	}
 

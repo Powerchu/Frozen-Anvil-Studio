@@ -20,7 +20,7 @@ void main()
   vec3 col = color1.rgb + color2.a * (color2.rgb - color1.rgb);
   
   // Gamma correction
-  //color1.rgb = pow(color1.rgb, vec3(1.f / Gamma));
+  col.rgb = pow(col.rgb, vec3(1.f / Gamma));
   
   fragColor = vec4(col, 1);
 }

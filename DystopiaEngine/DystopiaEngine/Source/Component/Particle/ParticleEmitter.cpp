@@ -42,6 +42,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorMain.h"
 #include "Editor/EditorCommands.h"
 #include "Editor/Payloads.h"
+#include "Editor/EditorMain.h"
+#include "Editor/ParticleEditor.h"
 #endif 
 
 
@@ -53,6 +55,8 @@ Dystopia::ParticleEmitter::ParticleEmitter(void) noexcept
 Dystopia::ParticleEmitter::ParticleEmitter(Dystopia::ParticleEmitter const& _rhs) noexcept
 	: mEmitters{ _rhs.mEmitters }
 {
+	for (auto& e : mEmitters)
+		e.SetOwner(this);
 }
 
 Dystopia::ParticleEmitter::~ParticleEmitter(void) noexcept
@@ -61,10 +65,14 @@ Dystopia::ParticleEmitter::~ParticleEmitter(void) noexcept
 
 void Dystopia::ParticleEmitter::Awake(void)
 {
+	for (auto& e : mEmitters)
+		e.Awake();
 }
 
 void Dystopia::ParticleEmitter::Init(void)
 {
+	for(auto& e : mEmitters)
+		e.Init();
 }
 
 void Dystopia::ParticleEmitter::FixedUpdate(float)
@@ -85,6 +93,9 @@ void Dystopia::ParticleEmitter::Render(void) const noexcept
 
 Dystopia::Emitter* Dystopia::ParticleEmitter::GetEmitter(unsigned _n) const noexcept
 {
+	if (_n > mEmitters.size() || _n < 0)
+		return nullptr;
+
 	return mEmitters.begin() + _n;
 }
 
@@ -119,6 +130,63 @@ void Dystopia::ParticleEmitter::Unserialise(TextSerialiser& _in)
 
 void Dystopia::ParticleEmitter::EditorUI(void) noexcept
 {
+#if EDITOR
+	EGUI::PushLeftAlign(80);
+
+
+	if (EGUI::Display::Button("Add Emitter", { 100, 30 }))
+	{
+		mEmitters.EmplaceBack(this);
+		mEmitters.back().Awake();
+	}
+
+	EGUI::Display::HorizontalSeparator();
+
+	for (int i = 0; i < mEmitters.size(); ++i)
+	{
+		EGUI::PushID(i);
+
+		EGUI::Display::Label("Emitter %d", i);
+		EGUI::SameLine(DefaultAlighnmentSpacing, 80);
+		if (EGUI::Display::Button("Edit", {100, 30}))
+		{
+			Editor::EditorMain::GetInstance()->GetPanel<Editor::ParticleEditor>()->SetParticleEmitter(this, i);
+		}
+		EGUI::Display::Label("Count : %d", mEmitters[i].GetSpawnCount());
+
+		if (mEmitters[i].GetTexture())
+		{
+			EGUI::Display::EmptyBox("Texture", 150, mEmitters[i].GetTexture()->GetName().c_str(), true);
+		}
+		else
+		{
+			EGUI::Display::EmptyBox("Texture", 150, "-empty-", true);
+		}
+		
+		if (auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::ALL_IMG))
+		{
+			mEmitters[i].SetTexture(CORE::Get<TextureSystem>()->LoadTexture(t->mPath));
+			EGUI::Display::EndPayloadReceiver();
+		}
+
+		EGUI::SameLine(DefaultAlighnmentSpacing, 80);
+		if (EGUI::Display::IconCross("Clear", 8.f))
+		{
+			mEmitters[i].SetTexture(nullptr);
+		}
+
+		if (auto t = mEmitters[i].GetTexture())
+		{
+			EGUI::Display::Label("Preview");
+			EGUI::SameLine(DefaultAlighnmentSpacing, 80);
+			float ratio = static_cast<float>(t->GetHeight()) / static_cast<float>(t->GetWidth());
+			EGUI::Display::Image(t->GetID(), Math::Vec2{ 140, 140 * ratio }, false, true);
+		}
+
+
+		EGUI::PopID();
+	}
+
+	EGUI::PopLeftAlign();
+#endif
 }
-
-
