@@ -94,12 +94,37 @@ void Dystopia::Emitter::Awake(void)
 
 void Dystopia::Emitter::Init(void)
 {
+	BaseInit();
+	InitArrays();
+	InitBuffers();
+}
+
+void Dystopia::Emitter::BaseInit(void)
+{
+#   if EDITOR
+	if (!mpShader)
+	{
+		mpShader = CORE::Get<ShaderSystem>()->GetShader(mShaderName.c_str());
+	}
+	if (!mpTexture)
+	{
+		mpTexture = CORE::Get<TextureSystem>()->LoadTexture(CORE::Get<FileSystem>()->FindFilePath(mTextureName.c_str(), eFileDir::eResource).c_str());
+	}
+
+	if (!mpOwner)
+		__debugbreak();
+#   endif
+
 #if EDITOR
 	mParticle.mnLimit = mnParticleLimit;
 #endif
+	mpTransform = mpOwner->GetOwner()->GetComponent<Transform>();
 
 	mbUpdatedPositions = false;
+}
 
+void Dystopia::Emitter::InitArrays(void)
+{
 	mInitialLife.clear();
 	mLifetime   .clear();
 	mRotVel		.clear();
@@ -123,23 +148,10 @@ void Dystopia::Emitter::Init(void)
 	mVelocity   .reserve(mParticle.mnLimit);
 	mPosition   .reserve(mParticle.mnLimit);
 	mRotation	.reserve(mParticle.mnLimit);
+}
 
-#   if EDITOR
-	if (!mpShader)
-	{
-		mpShader = CORE::Get<ShaderSystem>()->GetShader(mShaderName.c_str());
-	}
-	if (!mpTexture)
-	{
-		mpTexture = CORE::Get<TextureSystem>()->LoadTexture(CORE::Get<FileSystem>()->FindFilePath(mTextureName.c_str(), eFileDir::eResource).c_str());
-	}
-
-	if (!mpOwner)
-		__debugbreak();
-#   endif
-
-	mpTransform = mpOwner->GetOwner()->GetComponent<Transform>();
-
+void Dystopia::Emitter::InitBuffers(void) const noexcept
+{
 	Bind();
 
 	glEnableVertexAttribArray(0);
@@ -180,7 +192,8 @@ void Dystopia::Emitter::Init(void)
 	Unbind();
 }
 
-void Dystopia::Emitter::FixedUpdate(float _fDT)
+
+void Dystopia::Emitter::FixedUpdate(float _fDT) noexcept
 {
 #if defined(_OPENMP)
 	long long const l = mPosition.size();
