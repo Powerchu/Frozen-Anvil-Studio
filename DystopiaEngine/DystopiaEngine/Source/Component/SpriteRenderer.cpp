@@ -256,9 +256,9 @@ void Dystopia::SpriteRenderer::EditorUI(void) noexcept
 
 	EGUI::PushLeftAlign(95);
 
-	//Renderer::TextureField();
+	Renderer::TextureField();
 
-	//EGUI::Display::HorizontalSeparator();
+	EGUI::Display::HorizontalSeparator();
 	TintColorPicker();
 	TextureFields();
 	AnimFields();
@@ -453,7 +453,6 @@ void Dystopia::SpriteRenderer::TextureFields(void)
 		EGUI::SameLine(DefaultAlighnmentSpacing+35);
 		const float ratio = static_cast<float>(mpTexture->GetHeight()) / static_cast<float>(mpTexture->GetWidth());
 		EGUI::Display::Image(mpTexture->GetID(), Math::Vec2{ 140, 140 * ratio }, false, true);
-
 		EGUI::Display::Dummy(DefaultAlighnmentSpacing+80);
 		EGUI::SameLine();
 		if (EGUI::Display::Button("Auto Resize", Math::Vec2{ 140, 25 }))

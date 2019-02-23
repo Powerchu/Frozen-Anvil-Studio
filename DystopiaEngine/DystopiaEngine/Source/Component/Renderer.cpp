@@ -33,6 +33,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Object/ObjectFlags.h"
 #include "Object/GameObject.h"
 #include "IO/TextSerialiser.h"
+
 #if EDITOR
 #include "Editor/ProjectResource.h"
 #include "Editor/EditorMain.h"
@@ -355,57 +356,41 @@ void Dystopia::Renderer::EditorUI(void) noexcept
 #if EDITOR
 void Dystopia::Renderer::TextureField()
 {
-	::Editor::File *t;
+	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
 
 	for (auto& [idx, mpTexture] : mTextureFields)
 	{
 		EGUI::PushID(idx);
 
-		EGUI::Display::EmptyBox("Texture", 150, (mpTexture) ? mpTexture->GetName().c_str() : "-empty-", true);
-		auto cmd = ::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>();
-		t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PNG);
-		if (t)  EGUI::Display::EndPayloadReceiver();
-		
-		if (!t)
+		HashString displayName{"Texture"};
+		if (mpShader)
 		{
-			t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::DDS);
-			if (t) EGUI::Display::EndPayloadReceiver();
-		}
-		if (!t)
-		{
-			t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::BMP);
-			if (t) EGUI::Display::EndPayloadReceiver();
-		}
-		if (t)
-		{
-			Texture *pTex = CORE::Get<TextureSystem>()->LoadTexture(t->mPath);
-			cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand(&Renderer::SetTexture, mpTexture, idx),
-			                                   cmd->MakeFnCommand(&Renderer::SetTexture, pTex, idx));
-		}
-		
-		EGUI::SameLine();
-		if (EGUI::Display::IconCross("Clear", 8.f))
-		{
-			cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand(&Renderer::SetTexture, mpTexture, idx),
-			                                   cmd->MakeFnCommand(&Renderer::SetTexture, nullptr, idx));
-		}
-		
-		if (mpTexture)
-		{
-			EGUI::Display::Label("Preview");
-			EGUI::SameLine(DefaultAlighnmentSpacing, 80);
-			float ratio = static_cast<float>(mpTexture->GetHeight()) / static_cast<float>(mpTexture->GetWidth());
-			EGUI::Display::Image(mpTexture->GetID(), Math::Vec2{ 140, 140 * ratio }, false, true);
-		
-			EGUI::SameLine();
-			if (EGUI::Display::Button("Auto", Math::Vec2{ 35, 20 }))
+			const auto& texList = mpShader->GetTextureList();
+			for (auto& tp : texList)
 			{
-				auto w = static_cast<float>(mpTexture->GetWidth())  * .1f;
-				auto h = static_cast<float>(mpTexture->GetHeight()) * .1f;
-
-				cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand<Transform, const Math::Vec4&>(&Transform::SetScale, GetOwner()->GetComponent<Transform>()->GetScale()),
-												   cmd->MakeFnCommand<Transform, const Math::Vec4&>(&Transform::SetScale, Math::Vec4{ w, h, 1.f }));
+				if (tp.second == idx)
+				{
+					displayName = tp.first;
+				}
 			}
+		}
+
+		if (!mpTexture)
+			EGUI::Display::ImageEmpty(displayName.c_str(), { 150, 150 });
+		else
+		{
+			EGUI::Display::Label(displayName.c_str());
+			EGUI::SameLine(DefaultAlighnmentSpacing + 35);
+			const float ratio = static_cast<float>(mpTexture->GetHeight()) / static_cast<float>(mpTexture->GetWidth());
+			EGUI::Display::Image(mpTexture->GetID(), Math::Vec2{ 150, 150 * ratio }, false, true);
+		}
+
+		if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::ALL_IMG))
+		{
+			cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand(&Renderer::SetTexture, mpTexture, idx),
+											   cmd->MakeFnCommand(&Renderer::SetTexture, 
+																  CORE::Get<GraphicsSystem>()->LoadTexture(t->mPath), idx));
+			EGUI::Display::EndPayloadReceiver();
 		}
 
 		EGUI::PopID();

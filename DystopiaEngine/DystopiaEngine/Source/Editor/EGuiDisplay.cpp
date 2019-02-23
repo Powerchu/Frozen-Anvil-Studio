@@ -1095,6 +1095,20 @@ namespace EGUI
 			return ret;
 		}
 
+		void ImageEmpty(const char* _str, const Math::Vec2 & _imgSize)
+		{
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+			Label(_str);
+			SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+
+			ImGui::PushStyleColor(ImGuiCol_Border , ImVec4{ 1,1,1,1 });
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 2);
+			ImGui::Button(_str, _imgSize, true);
+			ImGui::PopStyleVar();
+			ImGui::PopStyleColor();
+		}
+
 		bool ComboFilter_DrawPopup(ComboFilterState& state, int START, const char** ENTRIES, const int ENTRY_COUNT)
 		{
 			UNUSED_PARAMETER(START);

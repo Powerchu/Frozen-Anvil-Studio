@@ -652,7 +652,8 @@ namespace EGUI
 		bool Image(const size_t& _imgID, const Math::Vec2& _imgSize = Math::Vec2{ 30, 30 },
 			bool _interactive = false, bool _outlineBG = false);
 
-		
+		void ImageEmpty(const char* _str, const Math::Vec2 & _imgSize);
+
 		struct ComboFilterState
 		{
 			int  activeIdx = 0;         // Index of currently 'active' item by use of up/down keys
