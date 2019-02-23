@@ -256,9 +256,9 @@ void Dystopia::SpriteRenderer::EditorUI(void) noexcept
 
 	EGUI::PushLeftAlign(95);
 
-	Renderer::TextureField();
+	//Renderer::TextureField();
 
-	EGUI::Display::HorizontalSeparator();
+	//EGUI::Display::HorizontalSeparator();
 	TintColorPicker();
 	TextureFields();
 	AnimFields();
