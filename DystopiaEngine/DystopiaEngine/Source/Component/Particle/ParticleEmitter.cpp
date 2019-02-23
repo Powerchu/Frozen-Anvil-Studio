@@ -154,6 +154,15 @@ void Dystopia::ParticleEmitter::EditorUI(void) noexcept
 		}
 		EGUI::Display::Label("Count : %d", mEmitters[i].GetSpawnCount());
 
+		//static char chBuf[1024]{  };
+		//if (EGUI::Display::TextField("Manual", chBuf, 1024, true, 150))
+		//{
+		//	if (auto pShader = CORE::Get<ShaderSystem>()->GetShader(chBuf))
+		//	{
+		//		mEmitters[i].SetShader(pShader);
+		//	}
+		//}
+
 		if (mEmitters[i].GetTexture())
 		{
 			EGUI::Display::EmptyBox("Texture", 150, mEmitters[i].GetTexture()->GetName().c_str(), true);

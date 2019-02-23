@@ -8,10 +8,10 @@ out gl_PerVertex
   vec4 gl_Position;
 };
 
-layout(location = 0) flat in vec4 vPosition[];
+layout(location = 0) flat in vec3 vPosition[];
 layout(location = 1) flat in vec4 vertCol[];
 layout(location = 2) flat in vec3 Params[];
-layout(location = 4) flat in vec4 UVBuf[];
+layout(location = 3) flat in vec4 UVBuf[];
 
 layout(location = 0) out vec2 vUV;
 layout(location = 1) out vec4 vColor;
@@ -30,10 +30,10 @@ void main()
   
   mat3 cross = mat3(0, axis.z, -axis.y, -axis.z, 0, axis.x, axis.y, -axis.x, 0);
   mat3 rot   = cosA * Idnty + sinA * cross + (1 - cosA) * outerProduct(axis, axis);
-
+  
   vec3 right = rot * (ModelViewMat[0].xyz * Params[0].x);
   vec3 up    = rot * (ModelViewMat[1].xyz * Params[0].y);
-  vec3 pos   = vPosition[0].xyz;
+  vec3 pos   = vPosition[0];
   
   
   vUV = UVBuf[0].zw;
