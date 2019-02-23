@@ -252,14 +252,14 @@ void ImGui::ShowDemoWindow(bool* p_open)
 
     if (ImGui::CollapsingHeader("Window options"))
     {
-        ImGui::Checkbox("No titlebar", &no_titlebar); ImGui::SameLine(150);
-        ImGui::Checkbox("No scrollbar", &no_scrollbar); ImGui::SameLine(300);
-        ImGui::Checkbox("No menu", &no_menu);
-        ImGui::Checkbox("No move", &no_move); ImGui::SameLine(150);
-        ImGui::Checkbox("No resize", &no_resize); ImGui::SameLine(300);
-        ImGui::Checkbox("No collapse", &no_collapse);
-        ImGui::Checkbox("No close", &no_close); ImGui::SameLine(150);
-        ImGui::Checkbox("No nav", &no_nav);
+        ImGui::Checkbox("No titlebar", &no_titlebar, 2.0f); ImGui::SameLine(150);
+        ImGui::Checkbox("No scrollbar", &no_scrollbar, 2.0f); ImGui::SameLine(300);
+        ImGui::Checkbox("No menu", &no_menu, 2.0f);
+        ImGui::Checkbox("No move", &no_move, 2.0f); ImGui::SameLine(150);
+        ImGui::Checkbox("No resize", &no_resize, 2.0f); ImGui::SameLine(300);
+        ImGui::Checkbox("No collapse", &no_collapse, 2.0f);
+        ImGui::Checkbox("No close", &no_close, 2.0f); ImGui::SameLine(150);
+        ImGui::Checkbox("No nav", &no_nav, 2.0f);
 
         if (ImGui::TreeNode("Style"))
         {
@@ -289,7 +289,7 @@ void ImGui::ShowDemoWindow(bool* p_open)
             }
 
             static bool check = true;
-            ImGui::Checkbox("checkbox", &check);
+            ImGui::Checkbox("checkbox", &check, 2.0f);
 
             static int e = 0;
             ImGui::RadioButton("radio a", &e, 0); ImGui::SameLine();
@@ -444,7 +444,7 @@ void ImGui::ShowDemoWindow(bool* p_open)
             {
                 ShowHelpMarker("This is a more standard looking tree with selectable nodes.\nClick to select, CTRL+Click to toggle, click on arrows or double-click to open.");
                 static bool align_label_with_current_x_position = false;
-                ImGui::Checkbox("Align label with current X position)", &align_label_with_current_x_position);
+                ImGui::Checkbox("Align label with current X position)", &align_label_with_current_x_position, 2.0f);
                 ImGui::Text("Hello!");
                 if (align_label_with_current_x_position)
                     ImGui::Unindent(ImGui::GetTreeNodeToLabelSpacing());
@@ -496,7 +496,7 @@ void ImGui::ShowDemoWindow(bool* p_open)
         if (ImGui::TreeNode("Collapsing Headers"))
         {
             static bool closable_group = true;
-            ImGui::Checkbox("Enable extra group", &closable_group);
+            ImGui::Checkbox("Enable extra group", &closable_group, 2.0f);
             if (ImGui::CollapsingHeader("Header"))
             {
                 ImGui::Text("IsItemHovered: %d", IsItemHovered());
@@ -800,7 +800,7 @@ void ImGui::ShowDemoWindow(bool* p_open)
                 "\tlock cmpxchg8b eax\n";
 
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0,0));
-            ImGui::Checkbox("Read-only", &read_only);
+            ImGui::Checkbox("Read-only", &read_only, 2.0f);
             ImGui::PopStyleVar();
             ImGui::InputTextMultiline("##source", text, IM_ARRAYSIZE(text), ImVec2(-1.0f, ImGui::GetTextLineHeight() * 16), ImGuiInputTextFlags_AllowTabInput | (read_only ? ImGuiInputTextFlags_ReadOnly : 0));
             ImGui::TreePop();
@@ -809,7 +809,7 @@ void ImGui::ShowDemoWindow(bool* p_open)
         if (ImGui::TreeNode("Plots Widgets"))
         {
             static bool animate = true;
-            ImGui::Checkbox("Animate", &animate);
+            ImGui::Checkbox("Animate", &animate, 2.0f);
 
             static float arr[] = { 0.6f, 0.1f, 1.0f, 0.5f, 0.92f, 0.1f, 0.2f };
             ImGui::PlotLines("Frame Times", arr, IM_ARRAYSIZE(arr));
@@ -879,11 +879,11 @@ void ImGui::ShowDemoWindow(bool* p_open)
             static bool drag_and_drop = true;
             static bool options_menu = true;
             static bool hdr = false;
-            ImGui::Checkbox("With Alpha Preview", &alpha_preview);
-            ImGui::Checkbox("With Half Alpha Preview", &alpha_half_preview);
-            ImGui::Checkbox("With Drag and Drop", &drag_and_drop);
-            ImGui::Checkbox("With Options Menu", &options_menu); ImGui::SameLine(); ShowHelpMarker("Right-click on the individual color widget to show options.");
-            ImGui::Checkbox("With HDR", &hdr); ImGui::SameLine(); ShowHelpMarker("Currently all this does is to lift the 0..1 limits on dragging widgets.");
+            ImGui::Checkbox("With Alpha Preview", &alpha_preview, 2.0f);
+            ImGui::Checkbox("With Half Alpha Preview", &alpha_half_preview, 2.0f);
+            ImGui::Checkbox("With Drag and Drop", &drag_and_drop, 2.0f);
+            ImGui::Checkbox("With Options Menu", &options_menu, 2.0f); ImGui::SameLine(); ShowHelpMarker("Right-click on the individual color widget to show options.");
+            ImGui::Checkbox("With HDR", &hdr, 2.0f); ImGui::SameLine(); ShowHelpMarker("Currently all this does is to lift the 0..1 limits on dragging widgets.");
             int misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
 
             ImGui::Text("Color widget:");
@@ -971,13 +971,13 @@ void ImGui::ShowDemoWindow(bool* p_open)
             static ImVec4 ref_color_v(1.0f,0.0f,1.0f,0.5f);
             static int inputs_mode = 2;
             static int picker_mode = 0;
-            ImGui::Checkbox("With Alpha", &alpha);
-            ImGui::Checkbox("With Alpha Bar", &alpha_bar);
-            ImGui::Checkbox("With Side Preview", &side_preview);
+            ImGui::Checkbox("With Alpha", &alpha, 2.0f);
+            ImGui::Checkbox("With Alpha Bar", &alpha_bar, 2.0f);
+            ImGui::Checkbox("With Side Preview", &side_preview, 2.0f);
             if (side_preview)
             {
                 ImGui::SameLine();
-                ImGui::Checkbox("With Ref Color", &ref_color);
+                ImGui::Checkbox("With Ref Color", &ref_color, 2.0f);
                 if (ref_color)
                 {
                     ImGui::SameLine();
@@ -1046,7 +1046,7 @@ void ImGui::ShowDemoWindow(bool* p_open)
             const float drag_speed = 0.2f;
             static bool drag_clamp = false;
             ImGui::Text("Drags:");
-            ImGui::Checkbox("Clamp integers to 0..50", &drag_clamp); ImGui::SameLine(); ShowHelpMarker("As with every widgets in dear imgui, we never modify values unless there is a user interaction.\nYou can override the clamping limits by using CTRL+Click to input a value.");
+            ImGui::Checkbox("Clamp integers to 0..50", &drag_clamp, 2.0f); ImGui::SameLine(); ShowHelpMarker("As with every widgets in dear imgui, we never modify values unless there is a user interaction.\nYou can override the clamping limits by using CTRL+Click to input a value.");
             ImGui::DragScalar("drag s32",       ImGuiDataType_S32,    &s32_v, drag_speed, drag_clamp ? &s32_zero : NULL, drag_clamp ? &s32_fifty : NULL);
             ImGui::DragScalar("drag u32",       ImGuiDataType_U32,    &u32_v, drag_speed, drag_clamp ? &u32_zero : NULL, drag_clamp ? &u32_fifty : NULL, "%u ms");
             ImGui::DragScalar("drag s64",       ImGuiDataType_S64,    &s64_v, drag_speed, drag_clamp ? &s64_zero : NULL, drag_clamp ? &s64_fifty : NULL);
@@ -1078,7 +1078,7 @@ void ImGui::ShowDemoWindow(bool* p_open)
 
             static bool inputs_step = true;
             ImGui::Text("Inputs");
-            ImGui::Checkbox("Show step buttons", &inputs_step);
+            ImGui::Checkbox("Show step buttons", &inputs_step, 2.0f);
             ImGui::InputScalar("input s32",     ImGuiDataType_S32,    &s32_v, inputs_step ? &s32_one : NULL, NULL, "%d");
             ImGui::InputScalar("input s32 hex", ImGuiDataType_S32,    &s32_v, inputs_step ? &s32_one : NULL, NULL, "%08X", ImGuiInputTextFlags_CharsHexadecimal);
             ImGui::InputScalar("input u32",     ImGuiDataType_U32,    &u32_v, inputs_step ? &u32_one : NULL, NULL, "%u");
@@ -1279,7 +1279,7 @@ void ImGui::ShowDemoWindow(bool* p_open)
             bool ret = false;
             if (item_type == 0) { ImGui::Text("ITEM: Text"); }                                              // Testing text items with no identifier/interaction
             if (item_type == 1) { ret = ImGui::Button("ITEM: Button"); }                                    // Testing button
-            if (item_type == 2) { ret = ImGui::Checkbox("ITEM: CheckBox", &b); }                            // Testing checkbox
+            if (item_type == 2) { ret = ImGui::Checkbox("ITEM: CheckBox", &b, 2.0f); }                            // Testing checkbox
             if (item_type == 3) { ret = ImGui::SliderFloat("ITEM: SliderFloat", &col4f[0], 0.0f, 1.0f); }   // Testing basic item
             if (item_type == 4) { ret = ImGui::ColorEdit4("ITEM: ColorEdit4", col4f); }                     // Testing multi-component items (IsItemXXX flags are reported merged)
             if (item_type == 5) { const char* items[] = { "Apple", "Banana", "Cherry", "Kiwi" }; static int current = 1; ret = ImGui::ListBox("ITEM: ListBox", &current, items, IM_ARRAYSIZE(items), IM_ARRAYSIZE(items)); }
@@ -1309,7 +1309,7 @@ void ImGui::ShowDemoWindow(bool* p_open)
             );
 
             static bool embed_all_inside_a_child_window = false;
-            ImGui::Checkbox("Embed everything inside a child window (for additional testing)", &embed_all_inside_a_child_window);
+            ImGui::Checkbox("Embed everything inside a child window (for additional testing)", &embed_all_inside_a_child_window, 2.0f);
             if (embed_all_inside_a_child_window)
                 ImGui::BeginChild("outer_child", ImVec2(0, ImGui::GetFontSize() * 20), true);
 
@@ -1359,8 +1359,8 @@ void ImGui::ShowDemoWindow(bool* p_open)
         {
             static bool disable_mouse_wheel = false;
             static bool disable_menu = false;
-            ImGui::Checkbox("Disable Mouse Wheel", &disable_mouse_wheel);
-            ImGui::Checkbox("Disable Menu", &disable_menu);
+            ImGui::Checkbox("Disable Mouse Wheel", &disable_mouse_wheel, 2.0f);
+            ImGui::Checkbox("Disable Menu", &disable_menu, 2.0f);
 
             static int line = 50;
             bool goto_line = ImGui::Button("Goto");
@@ -1483,10 +1483,10 @@ void ImGui::ShowDemoWindow(bool* p_open)
 
             // Checkbox
             static bool c1=false,c2=false,c3=false,c4=false;
-            ImGui::Checkbox("My", &c1); ImGui::SameLine();
-            ImGui::Checkbox("Tailor", &c2); ImGui::SameLine();
-            ImGui::Checkbox("Is", &c3); ImGui::SameLine();
-            ImGui::Checkbox("Rich", &c4);
+            ImGui::Checkbox("My", &c1, 2.0f); ImGui::SameLine();
+            ImGui::Checkbox("Tailor", &c2, 2.0f); ImGui::SameLine();
+            ImGui::Checkbox("Is", &c3, 2.0f); ImGui::SameLine();
+            ImGui::Checkbox("Rich", &c4, 2.0f);
 
             // Various
             static float f0=1.0f, f1=2.0f, f2=3.0f;
@@ -1625,7 +1625,7 @@ void ImGui::ShowDemoWindow(bool* p_open)
             ImGui::TextWrapped("(Use SetScrollHere() or SetScrollFromPosY() to scroll to a given position.)");
             static bool track = true;
             static int track_line = 50, scroll_to_px = 200;
-            ImGui::Checkbox("Track", &track);
+            ImGui::Checkbox("Track", &track, 2.0f);
             ImGui::PushItemWidth(100);
             ImGui::SameLine(130); track |= ImGui::DragInt("##line", &track_line, 0.25f, 0, 99, "Line = %d");
             bool scroll_to = ImGui::Button("Scroll To Pos");
@@ -1846,7 +1846,7 @@ void ImGui::ShowDemoWindow(bool* p_open)
 
                 static bool dont_ask_me_next_time = false;
                 ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0,0));
-                ImGui::Checkbox("Don't ask me next time", &dont_ask_me_next_time);
+                ImGui::Checkbox("Don't ask me next time", &dont_ask_me_next_time, 2.0f);
                 ImGui::PopStyleVar();
 
                 if (ImGui::Button("OK", ImVec2(120,0))) { ImGui::CloseCurrentPopup(); }
@@ -2004,9 +2004,9 @@ void ImGui::ShowDemoWindow(bool* p_open)
             // NB: Future columns API should allow automatic horizontal borders.
             static bool h_borders = true;
             static bool v_borders = true;
-            ImGui::Checkbox("horizontal", &h_borders);
+            ImGui::Checkbox("horizontal", &h_borders, 2.0f);
             ImGui::SameLine();
-            ImGui::Checkbox("vertical", &v_borders);
+            ImGui::Checkbox("vertical", &v_borders, 2.0f);
             ImGui::Columns(4, NULL, v_borders);
             for (int i = 0; i < 4*3; i++)
             {
@@ -2109,7 +2109,7 @@ void ImGui::ShowDemoWindow(bool* p_open)
         ImGui::Text("WantSetMousePos: %d", io.WantSetMousePos);
         ImGui::Text("NavActive: %d, NavVisible: %d", io.NavActive, io.NavVisible);
 
-        ImGui::Checkbox("io.MouseDrawCursor", &io.MouseDrawCursor);
+        ImGui::Checkbox("io.MouseDrawCursor", &io.MouseDrawCursor, 2.0f);
         ImGui::SameLine(); ShowHelpMarker("Instruct ImGui to render a mouse cursor for you in software. Note that a mouse cursor rendered via your application GPU rendering path will feel more laggy than hardware cursor, but will be more in sync with your other visuals.\n\nSome desktop applications may use both kinds of cursors (e.g. enable software cursor only when resizing/dragging something).");
 
         ImGui::CheckboxFlags("io.ConfigFlags: NavEnableGamepad [beta]", (unsigned int *)&io.ConfigFlags, ImGuiConfigFlags_NavEnableGamepad);
@@ -2334,8 +2334,8 @@ void ImGui::ShowStyleEditor(ImGuiStyle* ref)
 
     if (ImGui::TreeNode("Rendering"))
     {
-        ImGui::Checkbox("Anti-aliased lines", &style.AntiAliasedLines); ImGui::SameLine(); ShowHelpMarker("When disabling anti-aliasing lines, you'll probably want to disable borders in your style as well.");
-        ImGui::Checkbox("Anti-aliased fill", &style.AntiAliasedFill);
+        ImGui::Checkbox("Anti-aliased lines", &style.AntiAliasedLines, 2.0f); ImGui::SameLine(); ShowHelpMarker("When disabling anti-aliasing lines, you'll probably want to disable borders in your style as well.");
+        ImGui::Checkbox("Anti-aliased fill", &style.AntiAliasedFill, 2.0f);
         ImGui::PushItemWidth(100);
         ImGui::DragFloat("Curve Tessellation Tolerance", &style.CurveTessellationTol, 0.02f, 0.10f, FLT_MAX, NULL, 2.0f);
         if (style.CurveTessellationTol < 0.0f) style.CurveTessellationTol = 0.10f;
@@ -2395,7 +2395,7 @@ void ImGui::ShowStyleEditor(ImGuiStyle* ref)
             ImGui::LogFinish();
         }
         ImGui::SameLine(); ImGui::PushItemWidth(120); ImGui::Combo("##output_type", &output_dest, "To Clipboard\0To TTY\0"); ImGui::PopItemWidth();
-        ImGui::SameLine(); ImGui::Checkbox("Only Modified Colors", &output_only_modified);
+        ImGui::SameLine(); ImGui::Checkbox("Only Modified Colors", &output_only_modified, 2.0f);
 
         ImGui::Text("Tip: Left-click on colored square to open color picker,\nRight-click to open edit options menu.");
 
@@ -2581,7 +2581,7 @@ static void ShowExampleMenuFile()
         ImGui::SliderFloat("Value", &f, 0.0f, 1.0f);
         ImGui::InputFloat("Input", &f, 0.1f);
         ImGui::Combo("Combo", &n, "Yes\0No\0Maybe\0\0");
-        ImGui::Checkbox("Check", &b);
+        ImGui::Checkbox("Check", &b, 2.0f);
         ImGui::EndMenu();
     }
     if (ImGui::BeginMenu("Colors"))
@@ -2663,7 +2663,7 @@ static void ShowExampleAppConstrainedResize(bool* p_open)
         ImGui::Combo("Constraint", &type, desc, IM_ARRAYSIZE(desc));
         ImGui::DragInt("Lines", &display_lines, 0.2f, 1, 100);
         ImGui::PopItemWidth();
-        ImGui::Checkbox("Auto-resize", &auto_resize);
+        ImGui::Checkbox("Auto-resize", &auto_resize, 2.0f);
         for (int i = 0; i < display_lines; i++)
             ImGui::Text("%*sHello, sailor! Making this line long enough for the example.", i * 4, "");
     }

@@ -306,7 +306,7 @@ namespace EGUI
 			return clicked;
 		}
 
-		bool CheckBox(const char * _label, bool* _outputBool, bool _showLabel, const char* _tooltip)
+		bool CheckBox(const char * _label, bool* _outputBool, bool _showLabel, const char* _tooltip, float _szMod)
 		{
 			if (_showLabel)
 			{
@@ -328,7 +328,7 @@ namespace EGUI
 			}
 		    //HashString invi{ "##checkBox" };
 			//invi += _label;
-			return ImGui::Checkbox(_label, _outputBool);
+			return ImGui::Checkbox(_label, _outputBool, _szMod);
 		}
 
 		bool RadioBtn(const char * _label, int* _pValueStorage, int _btnValue, bool _showLabel)
@@ -1170,7 +1170,6 @@ namespace EGUI
 			return clicked;
 		}
 
-
 		bool ComboFilter(const char *id, char *buffer, const int bufferlen, const char **hints, const int num_hints, ComboFilterState &s) {
 			struct fuzzy {
 				static int score(const char *str1, const char *str2)
@@ -1218,7 +1217,7 @@ namespace EGUI
 			ImGui::PushItemWidth(220.f);
 			bool done = InputText(id, buffer, bufferlen, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue);
 			ImGui::PopItemWidth();
-			const bool hot = s.activeIdx >= 0 && strcmp(buffer, hints[s.activeIdx]);
+			const bool hot = s.activeIdx >= 0 && strcmp(buffer, hints[s.activeIdx]) != 0;
 			if (hot) {
 				int new_idx = fuzzy::search(buffer, num_hints, hints);
 				const int idx = new_idx >= 0 ? new_idx : s.activeIdx;
@@ -1239,22 +1238,20 @@ namespace EGUI
 		{
 			ImFont *font = GImGui->Font;
 			char c;
-			bool ret;
 			ImGuiContext& g = *GImGui;
 			const ImGuiStyle& style = g.Style;
-			float pad = style.FramePadding.x;
-			ImVec4 color;
-			ImVec2 text_size = ImGui::CalcTextSize(text);
+			const float pad = style.FramePadding.x;
+			const ImVec2 text_size = ImGui::CalcTextSize(text);
 			ImGuiWindow* window = ImGui::GetCurrentWindow();
 			ImVec2 pos = window->DC.CursorPos + ImVec2(pad, text_size.x + pad);
 
 			const  ImU32 text_color = ImGui::ColorConvertFloat4ToU32(style.Colors[ImGuiCol_Text]);
-			color = style.Colors[ImGuiCol_Button];
+			ImVec4 color = style.Colors[ImGuiCol_Button];
 			if (*v) color = style.Colors[ImGuiCol_ButtonActive];
 			ImGui::PushStyleColor(ImGuiCol_Button, color);
 			ImGui::PushID(text);
-			ret = ImGui::Button("", ImVec2(text_size.y + pad * 2,
-				text_size.x + pad * 2));
+			const bool ret = ImGui::Button("", ImVec2(text_size.y + pad * 2,
+			                                    text_size.x + pad * 2));
 			ImGui::PopStyleColor();
 			while ((c = *text++)) {
 				const ImFont::Glyph *glyph = font->FindGlyph(c);

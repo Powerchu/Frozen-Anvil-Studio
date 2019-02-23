@@ -254,7 +254,7 @@ namespace EGUI
 		// The checkbox is clicked (toggleMe if its true or false does not matter). Do something here:
 		}
 		======================================================================================================================= */
-		bool CheckBox(const char * _label, bool *_pOutBool, bool _showLabel = true, const char* _tooltip = nullptr);
+		bool CheckBox(const char * _label, bool *_pOutBool, bool _showLabel = true, const char* _tooltip = nullptr, float _szMod = 2.0f);
 		/* =======================================================================================================================
 		Brief:
 		Creates a radio button for a boolean variable. Returns true when the radiois clicked, toggles the _pOutBool

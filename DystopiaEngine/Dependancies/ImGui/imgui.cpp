@@ -10180,7 +10180,7 @@ void ImGui::ProgressBar(float fraction, const ImVec2& size_arg, const char* over
         RenderTextClipped(ImVec2(ImClamp(fill_br.x + style.ItemSpacing.x, bb.Min.x, bb.Max.x - overlay_size.x - style.ItemInnerSpacing.x), bb.Min.y), bb.Max, overlay, NULL, &overlay_size, ImVec2(0.0f,0.5f), &bb);
 }
 
-bool ImGui::Checkbox(const char* label, bool* v)
+bool ImGui::Checkbox(const char* label, bool* v, float szModifier)
 {
     ImGuiWindow* window = GetCurrentWindow();
     if (window->SkipItems)
@@ -10192,7 +10192,7 @@ bool ImGui::Checkbox(const char* label, bool* v)
     ImVec2 label_size = CalcTextSize(label, NULL, true);
 	label_size.x = 0;
 
-    const ImRect check_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(label_size.y + style.FramePadding.y*2.f, label_size.y + style.FramePadding.y*2.f)); // We want a square shape to we use Y twice
+    const ImRect check_bb(window->DC.CursorPos, window->DC.CursorPos + ImVec2(label_size.y + style.FramePadding.y*szModifier, label_size.y + style.FramePadding.y*szModifier)); // We want a square shape to we use Y twice
     ItemSize(check_bb, style.FramePadding.y);
 
     ImRect total_bb = check_bb;
@@ -10237,7 +10237,7 @@ bool ImGui::Checkbox(const char* label, bool* v)
 bool ImGui::CheckboxFlags(const char* label, unsigned int* flags, unsigned int flags_value)
 {
     bool v = ((*flags & flags_value) == flags_value);
-    bool pressed = Checkbox(label, &v);
+    bool pressed = Checkbox(label, &v, 2.0f);
     if (pressed)
     {
         if (v)
@@ -13954,8 +13954,8 @@ void ImGui::ShowMetricsWindow(bool* p_open)
         ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
         ImGui::Text("%d vertices, %d indices (%d triangles)", ImGui::GetIO().MetricsRenderVertices, ImGui::GetIO().MetricsRenderIndices, ImGui::GetIO().MetricsRenderIndices / 3);
         ImGui::Text("%d allocations", (int)GImAllocatorActiveAllocationsCount);
-        ImGui::Checkbox("Show clipping rectangles when hovering draw commands", &show_draw_cmd_clip_rects);
-        ImGui::Checkbox("Ctrl shows window begin order", &show_window_begin_order);
+        ImGui::Checkbox("Show clipping rectangles when hovering draw commands", &show_draw_cmd_clip_rects, 2.0f);
+        ImGui::Checkbox("Ctrl shows window begin order", &show_window_begin_order, 2.0f);
 
         ImGui::Separator();
 

@@ -637,15 +637,18 @@ namespace Dystopia
 				case Node::eStatus::RUNNING: _eStatus = "RUNNING"; break;
 				case Node::eStatus::SUCCESS: _eStatus = "SUCCESS"; break;
 				case Node::eStatus::FAIL: _eStatus = "FAIL"; break;
-				default:;
+				default: break;
 				}
-				EGUI::Display::EmptyBox("Current eStatus:", 128.f, _eStatus.c_str());
+				EGUI::PushLeftAlign(135.f);
+				EGUI::Display::EmptyBox("Current Node:", 128.f, mCurrentTask ? mCurrentTask->GetEditorName().c_str() : "None");
+				EGUI::Display::EmptyBox("Current Status:", 128.f, _eStatus.c_str());
+				EGUI::PopLeftAlign();
 				EGUI::Display::Dummy(0, 15);
 			}
 		}
 	}
 
-	void AiController::RecursiveTree(Node::Ptr _node) const
+	void AiController::RecursiveTree(Node::Ptr _node)
 	{
 		if (_node) // if node is valid
 		{
@@ -703,7 +706,6 @@ namespace Dystopia
 					EGUI::Indent();
 					if (EGUI::Display::CollapsingHeader(DecoratorName.c_str()))
 					{
-					
 						if (const auto child = tempD->GetChild())
 						{
 							RecursiveTree(child);
@@ -717,13 +719,22 @@ namespace Dystopia
 
 			else // Is Task Node
 			{
-				const Task* tempT = dynamic_cast<Task*>(_node.GetRaw());
+				Task* tempT = dynamic_cast<Task*>(_node.GetRaw());
 				if (tempT)
 				{
 					HashString TaskName = { "Task: " + tempT->GetEditorName() };
 					EGUI::PushID(static_cast<int>(tempT->GetID()));
 					EGUI::Indent();
-					ImGui::CollapsingHeader(TaskName.c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet);
+					if (!tempT->IsRunning())
+						ImGui::TreeNodeEx(TaskName.c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet);
+					else
+					{
+						ImGui::PushStyleColor(ImGuiCol_Header, ImGui::GetColorU32(ImGuiCol_HeaderHovered));
+						ImGui::TreeNodeEx(TaskName.c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_Selected);
+						ImGui::PopStyleColor();
+						mCurrentTask = tempT;
+					}
+					ImGui::TreePop();
 					EGUI::UnIndent();
 					EGUI::PopID();
 				}

@@ -55,6 +55,7 @@ namespace Dystopia
 			virtual ~Node() = default;
 
 			virtual void Init() {}
+
 			virtual eStatus Update(float _deltaTime) = 0;
 			
 			virtual void Exit(eStatus) {}
