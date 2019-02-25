@@ -125,14 +125,15 @@ namespace Editor
 			break;
 		}
 
-		//UpdateSearch();
+		if (strlen(mSearchText) != 0)
+			UpdateSearch();
 	}
 
 	void ProjectResource::EditorUI(void)
 	{
 		const float h = Size().y - 55;
 		static float splitterSz = 425.f;
-		float sz1 = Size().x/2 - splitterSz - 5.f;
+		static float sz1 = 200.0f;
 		const float sz3 = Size().x/2 + splitterSz;
 
 		const Math::Vec2 folderWindowSize = Math::Vec2{ sz1, h };
@@ -149,9 +150,10 @@ namespace Editor
 
 		EGUI::Display::OpenTreeNode();
 
+		ImGui::BeginGroup();
 		EGUI::Display::Splitter(true, 4.0f, &sz1, &splitterSz, 200.f, 100.f, h);
 		EGUI::StartChild("##FolderWindow", folderWindowSize, true);
-		FolderWindow();
+			FolderWindow();
 		EGUI::EndChild();
 
 		EGUI::SameLine();
@@ -196,6 +198,8 @@ namespace Editor
 		}
 		EGUI::EndChild();
 		ImGui::PopStyleColor();
+		ImGui::EndGroup();
+
 	}
 
 	void ProjectResource::Shutdown(void)
@@ -225,8 +229,8 @@ namespace Editor
 
 	void ProjectResource::UpdateSearch(void)
 	{
-		HashString currentSearch = mSearchText;
-		HashString previousSearch = mSearchTextLastFrame;
+		HashString currentSearch{ mSearchText };
+		HashString previousSearch{ mSearchTextLastFrame };
 		if (currentSearch.length() && currentSearch != previousSearch)
 		{
 			mArrFilesSearchedThisFrame.clear();
@@ -252,15 +256,17 @@ namespace Editor
 
 	void ProjectResource::SearchWindow(void)
 	{
-		static char buffer[256];
+		//static char buffer[256];
 		float width = Size().x - 60;
 		width = (width < 20) ? 20 : width;
 		EGUI::Indent(4);
 		EGUI::ChangeLabelSpacing(10);
-		EGUI::Display::TextField("Search", buffer/*mSearchText*/, MAX_SEARCH, true, width);
+		EGUI::Display::TextField("Search", /*buffer*/mSearchText, MAX_SEARCH, true, width, false);
 		EGUI::ChangeLabelSpacing();
 		EGUI::UnIndent(4);
 		EGUI::Display::HorizontalSeparator();
+
+		//if (!strlen(buffer)) strcpy_s(mSearchText, 256, buffer);
 	}
 
 	void ProjectResource::FolderWindow(void)
@@ -411,12 +417,17 @@ namespace Editor
 
 	void ProjectResource::FindFile(AutoArray<Editor::File*>& _outResult, HashString& _item, const AutoArray<Editor::File*>& _fromArr)
 	{
+		AutoArray<HashString> temp;
 		MakeStringLower(_item);
 		for (auto& e : _fromArr)
 		{
-			if (!e->mLowerCaseName.find(_item))
-				_outResult.push_back(e);
+			temp.push_back(e->mLowerCaseName);
 		}
+		int previousIndex = -1;
+		auto index = EGUI::Display::fuzzy::searchString(_item, int(temp.size()), temp);
+		if (previousIndex == index) return;
+		previousIndex = index;
+		_outResult.push_back(_fromArr[index]);
 	}
 
 	bool ProjectResource::FindFirstOne(AutoArray<Editor::File*>& _outResult, const HashString& _item)

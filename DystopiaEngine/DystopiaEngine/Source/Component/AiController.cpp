@@ -139,7 +139,7 @@ namespace Dystopia
 		{
 			AddKeyToMap();
 			EGUI::SameLine();
-			if (EGUI::Display::Button("Clear All", { ImGui::GetContentRegionAvailWidth()/2,24 }))
+			if (EGUI::Display::Button("Clear All", { 80,24 }))
 				mpBlackboard->ClearAll();
 
 			EGUI::Indent(10);
@@ -222,8 +222,12 @@ namespace Dystopia
 			{
 				EGUI::PushID(i + static_cast<unsigned>(map_size));
 				const auto str = values[i];
-				std::string _nName{ std::to_string(i) + ".K" };
+				std::string _nName{ "K:" };
 				EGUI::Display::EmptyBox(_nName.c_str(), 80.f, ( keys[i].c_str()));
+				if (ImGui::IsItemHovered())
+				{
+					ImGui::SetTooltip(keys[i].c_str());
+				}
 				if (ImGui::BeginPopupContextItem())
 				{
 					std::string _removeKey{ "Remove [" };
@@ -238,7 +242,10 @@ namespace Dystopia
 				EGUI::SameLine(AI::DEFAULT_ALIGN);
 				EGUI::ChangeAlignmentYOffset(0);
 				EGUI::Display::EmptyBox("V", AI::BTN_SZ, values[i].c_str());
-				//EGUI::Display::EmptyBox("V", AI::BTN_SZ, str.c_str());
+				if (ImGui::IsItemHovered())
+				{
+					ImGui::SetTooltip(values[i].c_str());
+				}
 				EGUI::ChangeAlignmentYOffset();
 				EGUI::PopID();
 			}
@@ -279,8 +286,12 @@ namespace Dystopia
 			{
 				EGUI::PushID(i + static_cast<unsigned>(map_size));
 				const auto val = values[i];
-				std::string _nName{ std::to_string(i) + ".K" };
+				std::string _nName{ "K:" };
 				EGUI::Display::EmptyBox(_nName.c_str(), 80.f, (keys[i].c_str()));
+				if (ImGui::IsItemHovered())
+				{
+					ImGui::SetTooltip(keys[i].c_str());
+				}
 				if (ImGui::BeginPopupContextItem())
 				{
 					std::string _removeKey{ "Remove [" };
@@ -303,7 +314,10 @@ namespace Dystopia
 					gObjName = "Invalid Obj";
 				}
 				EGUI::Display::EmptyBox("V", AI::BTN_SZ, gObjName.c_str());
-
+				if (ImGui::IsItemHovered())
+				{
+					ImGui::SetTooltip(gObjName.c_str());
+				}
 				EGUI::ChangeAlignmentYOffset();
 				EGUI::PopID();
 			}
@@ -344,13 +358,17 @@ namespace Dystopia
 			{
 				EGUI::PushID(i + static_cast<unsigned>(map_size));
 				const auto val = values[i];
-				std::string _nName{ std::to_string(i) + ".K" };
+				std::string _nName{ "K:" };
 				std::string _nVal{ "X:" + std::to_string(static_cast<int>(val.x)) +
 					" Y:" + std::to_string(static_cast<int>(val.y)) +
 					" Z:" + std::to_string(static_cast<int>(val.z)) +
 					" W:" + std::to_string(static_cast<int>(val.w))
 				};
 				EGUI::Display::EmptyBox(_nName.c_str(), 80.f, (keys[i].c_str()));
+				if (ImGui::IsItemHovered())
+				{
+					ImGui::SetTooltip(keys[i].c_str());
+				}
 				if (ImGui::BeginPopupContextItem())
 				{
 					std::string _removeKey{ "Remove [" };
@@ -365,6 +383,10 @@ namespace Dystopia
 				EGUI::SameLine(AI::DEFAULT_ALIGN);
 				EGUI::ChangeAlignmentYOffset(0);
 				EGUI::Display::EmptyBox("V", AI::BTN_SZ, _nVal.c_str());
+				if (ImGui::IsItemHovered())
+				{
+					ImGui::SetTooltip(_nVal.c_str());
+				}
 				EGUI::ChangeAlignmentYOffset();
 				EGUI::PopID();
 			}
@@ -403,7 +425,7 @@ namespace Dystopia
 			{
 				EGUI::PushID(i + static_cast<unsigned>(map_size));
 				const auto val = values[i];
-				std::string _nName{ std::to_string(i) + ".K" };
+				std::string _nName{ "K:" };
 				EGUI::Display::EmptyBox(_nName.c_str(), 80.f, (keys[i].c_str()));
 				if (ImGui::BeginPopupContextItem())
 				{
@@ -459,8 +481,12 @@ namespace Dystopia
 			{
 				EGUI::PushID(i + static_cast<unsigned>(map_size));
 				const auto val = values[i];
-				std::string _nName{ std::to_string(i) + ".K" };
+				std::string _nName{ "K:" };
 				EGUI::Display::EmptyBox(_nName.c_str(), 80.f, (keys[i].c_str()));
+				if (ImGui::IsItemHovered())
+				{
+					ImGui::SetTooltip(keys[i].c_str());
+				}
 				if (ImGui::BeginPopupContextItem())
 				{
 					std::string _removeKey{ "Remove [" };
@@ -512,8 +538,12 @@ namespace Dystopia
 			{
 				EGUI::PushID(i + static_cast<unsigned>(map_size));
 				const auto val = values[i];
-				std::string _nName{ std::to_string(i) + ".K" };
+				std::string _nName{ "K:" };
 				EGUI::Display::EmptyBox(_nName.c_str(), 80.f, (keys[i].c_str()));
+				if (ImGui::IsItemHovered())
+				{
+					ImGui::SetTooltip(keys[i].c_str());
+				}
 				if (ImGui::BeginPopupContextItem())
 				{
 					std::string _removeKey{ "Remove [" };
@@ -565,8 +595,12 @@ namespace Dystopia
 			{
 				EGUI::PushID(i + static_cast<unsigned>(map_size));
 				const bool b = values[i];
-				std::string _nName{ std::to_string(i) + ".K" };
+				std::string _nName{ "K:" };
 				EGUI::Display::EmptyBox(_nName.c_str(), 80.f, (keys[i].c_str()));
+				if (ImGui::IsItemHovered())
+				{
+					ImGui::SetTooltip(keys[i].c_str());
+				}
 				if (ImGui::BeginPopupContextItem())
 				{
 					std::string _removeKey{ "Remove [" };

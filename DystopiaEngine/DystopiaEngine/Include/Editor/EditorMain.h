@@ -43,22 +43,22 @@ namespace Editor
 		>::result;
 
 		using EPanels = typename Ut::MetaAutoIndexer<
-			class Inspector,
-			class ConsoleLog,
-			class HierarchyView,
-			class ColorScheme,
-			class StyleScheme,
-			class ProjectResource,
-			class PerformanceLog,
-			class SceneView,
-			class SpritePreviewer,
-			class SpriteEditor,
-			class ProjectSettings,
 			class BehaviourTreeEditor,
-			class GameView,
-			class FlowChart,
+			class ColorScheme,
+			class ConsoleLog,
 			class DataSheetEditor,
-			class ParticleEditor
+			class FlowChart,
+			class GameView,
+			class HierarchyView,
+			class ParticleEditor,
+			class PerformanceLog,
+			class ProjectResource,
+			class ProjectSettings,
+			class SceneView,
+			class SpriteEditor,
+			class SpritePreviewer,
+			class StyleScheme,
+			class Inspector
 		>::result;
 
 		static EditorMain* GetInstance(void);
