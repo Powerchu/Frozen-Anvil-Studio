@@ -635,7 +635,7 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 		EGUI::Display::EndPayloadReceiver();
 	}
 
-	EGUI::SameLine();
+	ImGui::SameLine();
 	if (EGUI::Display::IconCross("Clear", 8.f))
 	{
 		SetTexture(nullptr);

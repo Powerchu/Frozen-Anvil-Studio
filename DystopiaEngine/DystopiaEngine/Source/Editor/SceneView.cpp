@@ -209,7 +209,7 @@ namespace Editor
 	void SceneView::LoadSettings(Dystopia::TextSerialiser&)
 	{}
 
-	HashString SceneView::GetLabel(void) const
+	const HashString& SceneView::GetLabel(void) const
 	{
 		return mLabel;
 	}

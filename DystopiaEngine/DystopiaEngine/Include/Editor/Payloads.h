@@ -44,6 +44,7 @@ namespace EGUI
 		ALL_AUDIO,
 
 		SHADER,
+		SHADER_PROGRAM,
 
 		ePAY_LOAD_LAST
 	};

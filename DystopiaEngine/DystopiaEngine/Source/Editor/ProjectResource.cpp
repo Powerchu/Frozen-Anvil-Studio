@@ -219,7 +219,7 @@ namespace Editor
 	void ProjectResource::LoadSettings(Dystopia::TextSerialiser&)
 	{}
 
-	HashString ProjectResource::GetLabel(void) const
+	const HashString& ProjectResource::GetLabel(void) const
 	{
 		return mLabel;
 	}

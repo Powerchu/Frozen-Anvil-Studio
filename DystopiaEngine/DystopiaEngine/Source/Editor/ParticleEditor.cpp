@@ -137,7 +137,7 @@ void Editor::ParticleEditor::LoadSettings(Dystopia::TextSerialiser&)
 {
 }
 
-HashString Editor::ParticleEditor::GetLabel(void) const
+const HashString& Editor::ParticleEditor::GetLabel(void) const
 {
 	return mLabel;
 }

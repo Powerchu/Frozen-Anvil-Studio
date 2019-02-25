@@ -112,7 +112,7 @@ namespace Editor //Dystopia
 	void ConsoleLog::LoadSettings(Dystopia::TextSerialiser&)
 	{}
 
-	HashString ConsoleLog::GetLabel(void) const
+	const HashString& ConsoleLog::GetLabel(void) const
 	{
 		return mLabel;
 	}

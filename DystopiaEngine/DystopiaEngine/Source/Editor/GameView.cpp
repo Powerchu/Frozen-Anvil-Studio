@@ -142,7 +142,7 @@ namespace Editor
 	void GameView::LoadSettings(Dystopia::TextSerialiser&)
 	{}
 
-	HashString GameView::GetLabel(void) const
+	const HashString& GameView::GetLabel(void) const
 	{
 		return mLabel;
 	}

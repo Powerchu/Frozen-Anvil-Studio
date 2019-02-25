@@ -43,7 +43,7 @@ namespace Editor //Dystopia
 		void Message(eEMessage);
 		void SaveSettings(Dystopia::TextSerialiser& _out) const;
 		void LoadSettings(Dystopia::TextSerialiser& _in);
-		HashString GetLabel(void) const;
+		const HashString& GetLabel(void) const;
 
 	private:
 
