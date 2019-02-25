@@ -1742,6 +1742,9 @@
     <Filter Include="Game Engine\Systems\Particle\Emitter\Trail">
       <UniqueIdentifier>{aa78bf0c-7015-4c32-bbe6-76377b3f317e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game Engine\Systems\Particle\Affectors\Rotation">
+      <UniqueIdentifier>{41077c61-3d25-46f1-a97a-d78fbd048fbf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Game Engine\SubSystems\Shader\Shader">

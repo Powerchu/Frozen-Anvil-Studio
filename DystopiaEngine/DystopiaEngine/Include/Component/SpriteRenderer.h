@@ -112,6 +112,7 @@ namespace Dystopia
 		float mfFrameTime, mfAccTime;
 		Math::Vec2 mNextSectionPos;
 		bool mbPlayOnStart, mbSimulate;
+		Math::Vec4 mvTintCol;
 
 		bool mbPlay;	// dont need serialise
 
@@ -125,7 +126,7 @@ namespace Dystopia
 		void ResetFrames(void);
 
 		void TintColorPicker();
-		Math::Vec4 mvTintCol;
+		void UpdateAtlas(void);
 	};
 }
 

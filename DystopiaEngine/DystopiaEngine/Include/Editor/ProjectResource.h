@@ -78,6 +78,8 @@ namespace Editor
 		void				MakeStringLower(HashString& _transformMe);
 		void				UpdateSearch();
 		void				RefreshResourceFolder();
+
+		void				ShaderFolderUI(unsigned, const Math::Vec2&);
 	};
 }
 

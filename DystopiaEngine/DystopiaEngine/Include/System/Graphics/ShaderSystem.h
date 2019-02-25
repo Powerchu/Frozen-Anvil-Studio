@@ -50,6 +50,8 @@ namespace Dystopia
 
 		inline Shader* operator[] (char const* _strName) const noexcept;
 
+		MagicArray<Shader> const & GetAllShaders(void) const noexcept;
+
 	private:
 
 		void SaveCustomShaders(void) noexcept;
@@ -73,6 +75,11 @@ namespace Dystopia
 inline Dystopia::Shader* Dystopia::ShaderSystem::operator[](char const * _str) const noexcept
 {
 	return GetShader(_str);
+}
+
+inline MagicArray<Dystopia::Shader> const & Dystopia::ShaderSystem::GetAllShaders(void) const noexcept
+{
+	return mShaders;
 }
 
 

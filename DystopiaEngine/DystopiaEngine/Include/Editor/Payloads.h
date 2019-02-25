@@ -43,6 +43,8 @@ namespace EGUI
 		ALL_IMG,
 		ALL_AUDIO,
 
+		SHADER,
+
 		ePAY_LOAD_LAST
 	};
 	
