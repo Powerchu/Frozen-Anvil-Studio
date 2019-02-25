@@ -22,6 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Driver/Driver.h"
 
 #define STAGE_RESERVES 48
+#define MAX_BUFFER_SIZE 255
 
 Editor::ShaderView::ShaderView(void)
 	: mLabel{ "Shader View" }, mpShaderSystem{ nullptr },
@@ -191,35 +192,65 @@ void Editor::ShaderView::StageGeo(void)
 
 void Editor::ShaderView::Prompt(void)
 {
+	static char buffer[MAX_BUFFER_SIZE] = "";
 	EGUI::PushID(199);
 	if (EGUI::Display::StartPopupModal("Make Vert Program", "Creating Vertex Shader"))
 	{
-		if (EGUI::Display::Button("Close"))
+		EGUI::Display::TextField("File Name :", buffer, MAX_BUFFER_SIZE);
+
+		if (buffer[0] != '\0' && EGUI::Display::Button("Create"))
 		{
+			MakeShaderProgram(::Gfx::ShaderStage::VERTEX, buffer);
 			EGUI::Display::CloseCurrentPopup();
 		}
+
+		if (EGUI::Display::Button("Close"))
+			EGUI::Display::CloseCurrentPopup();
 		EGUI::Display::EndPopup();
 	}
 	else if (EGUI::Display::StartPopupModal("Make Frag Program", "Creating Fragment Shader"))
 	{
-		if (EGUI::Display::Button("Close"))
+		EGUI::Display::TextField("File Name :", buffer, MAX_BUFFER_SIZE);
+
+		if (EGUI::Display::Button("Create"))
 		{
+			MakeShaderProgram(::Gfx::ShaderStage::FRAGMENT, buffer);
 			EGUI::Display::CloseCurrentPopup();
 		}
+
+		if (EGUI::Display::Button("Close"))
+			EGUI::Display::CloseCurrentPopup();
 		EGUI::Display::EndPopup();
 	}
 	else if (EGUI::Display::StartPopupModal("Make Geo Program", "Creating Geometry Shader"))
 	{
-		if (EGUI::Display::Button("Close"))
+		EGUI::Display::TextField("File Name :", buffer, MAX_BUFFER_SIZE);
+
+		if (EGUI::Display::Button("Create"))
 		{
+			MakeShaderProgram(::Gfx::ShaderStage::GEOMETRY, buffer);
 			EGUI::Display::CloseCurrentPopup();
 		}
+
+		if (EGUI::Display::Button("Close"))
+			EGUI::Display::CloseCurrentPopup();
 		EGUI::Display::EndPopup();
 	}
 	EGUI::PopID();
 }
 
-
+void Editor::ShaderView::MakeShaderProgram(::Gfx::ShaderStage _stage, const HashString& _name)
+{
+	switch (_stage)
+	{
+	case ::Gfx::ShaderStage::VERTEX:
+		break;
+	case ::Gfx::ShaderStage::FRAGMENT:
+		break;
+	case ::Gfx::ShaderStage::GEOMETRY:
+		break;
+	}
+}
 
 
 

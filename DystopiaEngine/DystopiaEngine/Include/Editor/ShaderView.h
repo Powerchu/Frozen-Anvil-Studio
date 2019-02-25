@@ -18,6 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/Array.h"
 #include "Math/Vectors.h"
 #include "Editor/EditorPanel.h"
+#include "Lib/Gfx/Shaders.h"
 
 namespace Dystopia
 {
@@ -61,6 +62,7 @@ namespace Editor
 		void StageGeo(void);
 
 		void Prompt(void);
+		void MakeShaderProgram(::Gfx::ShaderStage _stage, const HashString& _name);
 	};
 }
 
