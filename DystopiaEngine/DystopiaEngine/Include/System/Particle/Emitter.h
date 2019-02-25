@@ -60,6 +60,7 @@ namespace Dystopia
 		template <typename Ty>
 		auto AddAffector(Ty&&) noexcept -> Ut::EnableIf_t<std::is_base_of_v<ParticleAffector, Ty>>;
 
+		void SetShader(Shader*) noexcept;
 		Shader& GetShader(void) noexcept;
 		Transform const& GetOwnerTransform(void) const noexcept;
 

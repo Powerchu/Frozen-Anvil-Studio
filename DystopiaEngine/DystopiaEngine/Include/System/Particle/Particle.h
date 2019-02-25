@@ -29,12 +29,12 @@ namespace Dystopia
 		Math::Vec2 mSize = { 100.f, 100.f };
 		Math::Vec4 mUV   = { 0, 0, 1, 1 };
 
-		float mRotation;
-		float mRotVel;
-		float mRotAccel;
+		float mRotation  = .0f;
+		float mRotVel    = .0f;
+		float mRotAccel  = .0f;
 		Math::Vec3 mVelocity;
 		Math::Vec3 mAccel;
-		float mfLifeDur;
+		float mfLifeDur = -1.f;
 
 		size_t mnLimit = 10000;
 	};

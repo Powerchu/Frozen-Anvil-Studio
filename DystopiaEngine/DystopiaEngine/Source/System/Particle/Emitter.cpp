@@ -213,9 +213,12 @@ void Dystopia::Emitter::FixedUpdate(float _fDT) noexcept
 	{
 		mPosition[n] += mVelocity[n].xyz * _fDT;
 	}
+
 #else
 	auto pAcc = mAccel.begin();
 	auto pVel = mVelocity.begin();
+	auto pRotAcc = mRotAcc.begin();
+	auto pRotVel = mRotVel.begin();
 
 	for (auto& e : mVelocity)
 	{
@@ -227,6 +230,33 @@ void Dystopia::Emitter::FixedUpdate(float _fDT) noexcept
 	{
 		e += *pVel * _fDT;
 		++pVel;
+	}
+
+	auto ptr = reinterpret_cast<Math::Vec4*>(mRotVel.begin());
+	auto sz = mRotVel.size() >> 2;
+	size_t n;
+	for (n = 0; n < sz; ++n)
+	{
+		*ptr = *reinterpret_cast<Math::Vec4*&>(pRotAcc)++ * _fDT;
+	}
+	auto ptr2 = reinterpret_cast<float*>(ptr);
+	for (n <<= 2; n < mRotVel.size(); ++n)
+	{
+		*ptr2 = *pRotAcc * _fDT;
+		++pRotAcc;
+	}
+
+	ptr = reinterpret_cast<Math::Vec4*>(mRotation.begin());
+	sz = mRotation.size() >> 2;
+	for (n = 0; n < sz; ++n)
+	{
+		*ptr = *reinterpret_cast<Math::Vec4*&>(pRotVel)++ * _fDT;
+	}
+	ptr2 = reinterpret_cast<float*>(ptr);
+	for (n <<= 2; n < mRotation.size(); ++n)
+	{
+		*ptr2 = *pRotVel * _fDT;
+		++pRotVel;
 	}
 #endif
 
@@ -279,8 +309,11 @@ void Dystopia::Emitter::UploadBuffers(void) const noexcept
 	if (mbUVChanged)
 		UploadBufferAux(mUVBuffer, mUV);
 
-	if (mbUpdatedPositions) 
-		UploadBufferAux(mPosBuffer, mPosition); 
+	if (mbUpdatedPositions)
+	{
+		UploadBufferAux(mPosBuffer, mPosition);
+		UploadBufferAux(mRotBuffer, mRotation);
+	}
 
 	const_cast<bool&>(mbUVChanged)        = false;
 	const_cast<bool&>(mbUpdatedPositions) = false;
@@ -371,6 +404,11 @@ void Dystopia::Emitter::NotifyUVChanged(void) noexcept
 Dystopia::Transform const& Dystopia::Emitter::GetOwnerTransform(void) const noexcept
 {
 	return *mpTransform;
+}
+
+void Dystopia::Emitter::SetShader(Shader* _p) noexcept
+{
+	mpShader = _p;
 }
 
 Dystopia::Shader& Dystopia::Emitter::GetShader(void) noexcept
