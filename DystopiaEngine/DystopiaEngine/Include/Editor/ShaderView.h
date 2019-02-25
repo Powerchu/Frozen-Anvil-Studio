@@ -54,6 +54,8 @@ namespace Editor
 		AutoArray<unsigned> mArrStageGeo;
 		Array<unsigned, 3> mArrIndexTracker;
 
+		Array<bool, 3> mArrShowPopup;
+
 		void ShaderUI(void);
 		void ProgramUI(void);
 
@@ -63,6 +65,7 @@ namespace Editor
 
 		void Prompt(void);
 		void MakeShaderProgram(::Gfx::ShaderStage _stage, const HashString& _name);
+		void MakeShader(const HashString&);
 	};
 }
 
