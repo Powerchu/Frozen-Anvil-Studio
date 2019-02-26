@@ -25,6 +25,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Globals.h"
 
+#include "Lib/Gfx/OpenGLAPI.h"
+
 #include <fstream>
 
 #define STAGE_RESERVES 48
@@ -38,7 +40,7 @@ static const std::string g_GeoPopup = "Make Geo Program";
 Editor::ShaderView::ShaderView(void)
 	: mLabel{ "Shader View" }, mpShaderSystem{ nullptr },
 	mArrStageVert{}, mArrStageFrag{}, mArrStageGeo{}, mArrIndexTracker{},
-	mArrShowPopup{}
+	mArrShowPopup{}, mArrProgramChosen{}
 {
 }
 
@@ -48,11 +50,15 @@ Editor::ShaderView::~ShaderView(void)
 
 void Editor::ShaderView::Load(void)
 {
-	mArrIndexTracker[0] = mArrIndexTracker[1] = mArrIndexTracker[2] = 0;
-	mArrShowPopup[0] = mArrShowPopup[1] = mArrShowPopup[2] = false;
-	mArrStageVert.reserve(STAGE_RESERVES);
-	mArrStageFrag.reserve(STAGE_RESERVES);
-	mArrStageGeo.reserve(STAGE_RESERVES);
+	for (int i = 0; i < 3; i++)
+	{
+		mArrIndexTracker[i] = 0;
+		mArrShowPopup[i] = false;
+		mArrProgramChosen[i] = "";
+	}
+	mArrStageVert.resize(STAGE_RESERVES);
+	mArrStageFrag.resize(STAGE_RESERVES);
+	mArrStageGeo.resize(STAGE_RESERVES);
 }
 
 bool Editor::ShaderView::Init(void)
@@ -110,7 +116,46 @@ const HashString& Editor::ShaderView::GetLabel(void) const
 
 void Editor::ShaderView::ShaderUI(void)
 {
-	//auto& allShaders = mpShaderSystem->GetAllShaders();
+	static char buffer[MAX_BUFFER_SIZE] = "";
+	static constexpr float halfY = 0.7f;
+	static constexpr float sides = 5;
+	static constexpr float tops = 3;
+	auto size = Size();
+	size.y -= EGUI::TabsImageOffsetY;
+
+	EGUI::PushLeftAlign(150);
+	EGUI::Display::EmptyBox("Vert Shader Program", 150, mArrProgramChosen[0].c_str());
+	if (unsigned *n = EGUI::Display::StartPayloadReceiver<unsigned>(EGUI::ePayloadTags::SHADER_VERT))
+	{
+		auto& allPrograms = mpShaderSystem->GetAllShaderPrograms();
+		mArrProgramChosen[0] = allPrograms[*n].GetName();
+		EGUI::Display::EndPayloadReceiver();
+	}
+	EGUI::Display::EmptyBox("Frag Shader Program", 150, mArrProgramChosen[1].c_str());
+	if (unsigned *n = EGUI::Display::StartPayloadReceiver<unsigned>(EGUI::ePayloadTags::SHADER_FRAG))
+	{
+		auto& allPrograms = mpShaderSystem->GetAllShaderPrograms();
+		mArrProgramChosen[1] = allPrograms[*n].GetName();
+		EGUI::Display::EndPayloadReceiver();
+	}
+	EGUI::Display::EmptyBox("Geo Shader Program", 150, mArrProgramChosen[2].c_str());
+	if (unsigned *n = EGUI::Display::StartPayloadReceiver<unsigned>(EGUI::ePayloadTags::SHADER_GEO))
+	{
+		auto& allPrograms = mpShaderSystem->GetAllShaderPrograms();
+		mArrProgramChosen[2] = allPrograms[*n].GetName();
+		EGUI::Display::EndPayloadReceiver();
+	}
+	EGUI::Display::TextField("Shader Name", buffer, MAX_BUFFER_SIZE, false);
+	if (strlen(buffer))
+	{
+		ImGui::SameLine();
+		if (EGUI::Display::Button("Make Shader", { 100, 24 }))
+		{
+			if (MakeShader(buffer))
+				buffer[0] = '\0';
+		}
+	}
+	EGUI::PopLeftAlign();
 }
 
 void Editor::ShaderView::ProgramUI(void)
@@ -135,7 +180,8 @@ void Editor::ShaderView::ProgramUI(void)
 
 void Editor::ShaderView::StageVert(void)
 {
-	if (EGUI::Display::Button("Create Vert Prog", { 100, 24 }))
+	static char buffer[MAX_BUFFER_SIZE] = "";
+	if (EGUI::Display::Button("Create Vert Prog", { 200, 24 }))
 		mArrShowPopup[0] = true;
 
 	if (EGUI::Display::StartTreeNode("Vertex Programs"))
@@ -146,7 +192,12 @@ void Editor::ShaderView::StageVert(void)
 		for (unsigned i = 0; i < mArrIndexTracker[0]; ++i)
 		{
 			auto& prog = allPrograms[mArrStageVert[i]];
-			EGUI::Display::Label("Program ID [%03d] = %s", prog.GetID(), prog.GetName().c_str());
+			sprintf_s(buffer, "Program ID [%03d] = %s", prog.GetID(), prog.GetName().c_str());
+			EGUI::Display::SelectableTxt(buffer);
+
+			unsigned progIndex = mArrStageVert[i];
+			if (EGUI::Display::StartPayload(EGUI::ePayloadTags::SHADER_VERT, &progIndex, sizeof(unsigned), buffer))
+				EGUI::Display::EndPayload();
 		}
 
 		EGUI::UnIndent();
@@ -156,7 +207,8 @@ void Editor::ShaderView::StageVert(void)
 
 void Editor::ShaderView::StageFrag(void)
 {
-	if (EGUI::Display::Button("Create Frag Prog", { 100, 24 }))
+	static char buffer[MAX_BUFFER_SIZE] = "";
+	if (EGUI::Display::Button("Create Frag Prog", { 200, 24 }))
 		mArrShowPopup[1] = true;
 
 	if (EGUI::Display::StartTreeNode("Fragment Programs"))
@@ -167,7 +219,12 @@ void Editor::ShaderView::StageFrag(void)
 		for (unsigned i = 0; i < mArrIndexTracker[1]; ++i)
 		{
 			auto& prog = allPrograms[mArrStageFrag[i]];
-			EGUI::Display::Label("Program ID [%03d] = %s", prog.GetID() , prog.GetName().c_str());
+			sprintf_s(buffer, "Program ID [%03d] = %s", prog.GetID(), prog.GetName().c_str());
+			EGUI::Display::SelectableTxt(buffer);
+
+			unsigned progIndex = mArrStageFrag[i];
+			if (EGUI::Display::StartPayload(EGUI::ePayloadTags::SHADER_FRAG, &progIndex, sizeof(unsigned), buffer))
+				EGUI::Display::EndPayload();
 		}
 
 		EGUI::UnIndent();
@@ -177,7 +234,8 @@ void Editor::ShaderView::StageFrag(void)
 
 void Editor::ShaderView::StageGeo(void)
 {
-	if (EGUI::Display::Button("Create Geo Prog", { 100, 24 }))
+	static char buffer[MAX_BUFFER_SIZE] = "";
+	if (EGUI::Display::Button("Create Geo Prog", { 200, 24 }))
 		mArrShowPopup[2] = true;
 
 	if (EGUI::Display::StartTreeNode("Geometry Programs"))
@@ -188,7 +246,12 @@ void Editor::ShaderView::StageGeo(void)
 		for (unsigned i = 0; i < mArrIndexTracker[2]; ++i)
 		{
 			auto& prog = allPrograms[mArrStageGeo[i]];
-			EGUI::Display::Label("Program ID [%03d] = %s", prog.GetID(), prog.GetName().c_str());
+			sprintf_s(buffer, "Program ID [%03d] = %s", prog.GetID(), prog.GetName().c_str());
+			EGUI::Display::SelectableTxt(buffer);
+
+			unsigned progIndex = mArrStageGeo[i];
+			if (EGUI::Display::StartPayload(EGUI::ePayloadTags::SHADER_GEO, &progIndex, sizeof(unsigned), buffer))
+				EGUI::Display::EndPayload();
 		}
 
 		EGUI::UnIndent();
@@ -217,6 +280,7 @@ void Editor::ShaderView::Prompt(void)
 			{
 				MakeShaderProgram(::Gfx::ShaderStage::VERTEX, buffer);
 				mArrShowPopup[0] = false;
+				buffer[0] = '\0';
 				EGUI::Display::CloseCurrentPopup();
 			}
 
@@ -240,6 +304,7 @@ void Editor::ShaderView::Prompt(void)
 			{
 				MakeShaderProgram(::Gfx::ShaderStage::FRAGMENT, buffer);
 				mArrShowPopup[1] = false;
+				buffer[0] = '\0';
 				EGUI::Display::CloseCurrentPopup();
 			}
 
@@ -263,6 +328,7 @@ void Editor::ShaderView::Prompt(void)
 			{
 				MakeShaderProgram(::Gfx::ShaderStage::GEOMETRY, buffer);
 				mArrShowPopup[2] = false;
+				buffer[0] = '\0';
 				EGUI::Display::CloseCurrentPopup();
 			}
 
@@ -277,7 +343,7 @@ void Editor::ShaderView::MakeShaderProgram(::Gfx::ShaderStage _stage, const Hash
 	auto fs = Dystopia::CORE::Get<Dystopia::FileSystem>();
 	HashString defaultsPath{ "" };
 	HashString path{ fs->Normalize(fs->GetProjectFolders<std::string>(Dystopia::eFileDir::eResource)).c_str() };
-	HashString name{ "/Shader/" };
+	HashString name{ "\\Shader\\" };
 	name += _name;
 	name += '.';
 
@@ -286,19 +352,16 @@ void Editor::ShaderView::MakeShaderProgram(::Gfx::ShaderStage _stage, const Hash
 	case ::Gfx::ShaderStage::VERTEX:
 		name += Gbl::VERTSHADER_EXT;
 		path += name;
-		mpShaderSystem->CreateShaderProgram(::Gfx::ShaderStage::VERTEX, path.c_str());
 		defaultsPath = fs->GetFullPath("DefaultVert.dvert", Dystopia::eFileDir::eSolution).c_str();
 		break;
 	case ::Gfx::ShaderStage::FRAGMENT:
 		name += Gbl::FRAGSHADER_EXT;
 		path += name;
-		mpShaderSystem->CreateShaderProgram(::Gfx::ShaderStage::FRAGMENT, path.c_str());
 		defaultsPath = fs->GetFullPath("DefaultFrag.dfrag", Dystopia::eFileDir::eSolution).c_str();
 		break;
 	case ::Gfx::ShaderStage::GEOMETRY:
 		name += Gbl::GEOGSHADER_EXT;
 		path += name;
-		mpShaderSystem->CreateShaderProgram(::Gfx::ShaderStage::GEOMETRY, path.c_str());
 		defaultsPath = fs->GetFullPath("Particle.dgeog", Dystopia::eFileDir::eSolution).c_str();
 		break;
 	}
@@ -309,12 +372,38 @@ void Editor::ShaderView::MakeShaderProgram(::Gfx::ShaderStage _stage, const Hash
 	{
 		std::filesystem::copy_file(defaultsPath.c_str(), path.c_str());
 		PrintToConsoleLog("Shader file created!");
+		switch (_stage)
+		{
+		case ::Gfx::ShaderStage::VERTEX:
+			mpShaderSystem->CreateShaderProgram(::Gfx::ShaderStage::VERTEX, path.c_str());
+			break;
+		case ::Gfx::ShaderStage::FRAGMENT:
+			mpShaderSystem->CreateShaderProgram(::Gfx::ShaderStage::FRAGMENT, path.c_str());
+			break;
+		case ::Gfx::ShaderStage::GEOMETRY:
+			mpShaderSystem->CreateShaderProgram(::Gfx::ShaderStage::GEOMETRY, path.c_str());
+			break;
+		}
 	}
+
 }
 
-void Editor::ShaderView::MakeShader(const HashString& _name)
+bool Editor::ShaderView::MakeShader(const HashString& _name)
 {
+	if (!mArrProgramChosen[0].length() || !mArrProgramChosen[1].length())
+	{
+		PrintToConsoleLog("Vert and Frag must not be empty!");
+		return false;
+	}
 
+	if (auto s = mpShaderSystem->CreateShader(_name.c_str(), true))
+	{
+		for (int i = 0; i < 3; ++i)
+			if (auto program = mpShaderSystem->GetShaderProgram(mArrProgramChosen[i].c_str()))
+				s->AttachProgram(program);
+	}
+	mArrProgramChosen[0] = mArrProgramChosen[1] = mArrProgramChosen[2] = "";
+	return true;
 }
 
 

@@ -44,7 +44,9 @@ namespace EGUI
 		ALL_AUDIO,
 
 		SHADER,
-		SHADER_PROGRAM,
+		SHADER_VERT,
+		SHADER_FRAG,
+		SHADER_GEO,
 
 		ePAY_LOAD_LAST
 	};
@@ -68,6 +70,10 @@ namespace EGUI
 		case DATA_SHEET: 	return "DATA_SHEET";
 		case ALL_IMG:		return "A_IMG";
 		case ALL_AUDIO:		return "A_AUDIO";
+		case SHADER:		return "SHADER";
+		case SHADER_VERT:	return "SHADER_VERT";
+		case SHADER_FRAG:	return "SHADER_FRAG";
+		case SHADER_GEO:	return "SHADER_GEO";
 		default:			return "UNKNOWN";
 		}
 	}
