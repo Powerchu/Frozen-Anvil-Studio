@@ -256,17 +256,19 @@ namespace Editor
 
 	void ProjectResource::SearchWindow(void)
 	{
-		//static char buffer[256];
+		static char buffer[256];
 		float width = Size().x - 60;
 		width = (width < 20) ? 20 : width;
 		EGUI::Indent(4);
 		EGUI::ChangeLabelSpacing(10);
-		EGUI::Display::TextField("Search", /*buffer*/mSearchText, MAX_SEARCH, true, width, false);
+		if (EGUI::Display::TextField("Search", buffer, MAX_SEARCH, true, width, true))
+		{
+			strcpy_s(mSearchText, 256, buffer);
+		}
 		EGUI::ChangeLabelSpacing();
 		EGUI::UnIndent(4);
 		EGUI::Display::HorizontalSeparator();
 
-		//if (!strlen(buffer)) strcpy_s(mSearchText, 256, buffer);
 	}
 
 	void ProjectResource::FolderWindow(void)
@@ -417,17 +419,12 @@ namespace Editor
 
 	void ProjectResource::FindFile(AutoArray<Editor::File*>& _outResult, HashString& _item, const AutoArray<Editor::File*>& _fromArr)
 	{
-		AutoArray<HashString> temp;
 		MakeStringLower(_item);
 		for (auto& e : _fromArr)
 		{
-			temp.push_back(e->mLowerCaseName);
+			if (e->mLowerCaseName.find(_item) != std::string::npos)
+				_outResult.push_back(e);
 		}
-		int previousIndex = -1;
-		auto index = EGUI::Display::fuzzy::searchString(_item, int(temp.size()), temp);
-		if (previousIndex == index) return;
-		previousIndex = index;
-		_outResult.push_back(_fromArr[index]);
 	}
 
 	bool ProjectResource::FindFirstOne(AutoArray<Editor::File*>& _outResult, const HashString& _item)

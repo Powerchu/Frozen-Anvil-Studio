@@ -135,7 +135,7 @@ namespace Dystopia
 	{
 		EditorCurrentStatus();
 		// Blackboard
-		if (ImGui::CollapsingHeader("Blackboard Map", ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_DefaultOpen))
+		if (ImGui::CollapsingHeader("Blackboard Map", ImGuiTreeNodeFlags_Bullet))
 		{
 			AddKeyToMap();
 			EGUI::SameLine();

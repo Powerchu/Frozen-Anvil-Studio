@@ -590,16 +590,20 @@ namespace Dystopia
 		return Ut::Move(ToRet);
 	}
 
-	bool CollisionSystem::RaycastFirstHit(Math::Vec3D const & _Dir, Math::Point3D const & _mPos,CollisionEvent * _Output, float _MaxLength) const
+	bool CollisionSystem::RaycastFirstHit(Math::Vec3D const & _Dir, Math::Point3D const & _mPos,CollisionEvent * _Output, float _MaxLength, eColLayer layer) const
 	{
 		bool isColliding = false;
 		for (auto & elem : ComponentDonor<Convex>::mComponents)
 		{
 #if EDITOR
 			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+			
 #endif 
 			if (elem.GetOwner())
 			{
+				if (this->ToIgnore(elem.GetColLayer(), layer))
+					continue;
+
 				isColliding |= RayCollider::Raycast(_Dir, _mPos, &elem, _Output, _MaxLength);
 			}
 		}
@@ -621,8 +625,13 @@ namespace Dystopia
 #if EDITOR
 			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
 #endif 
+			
+
 			if (elem.GetOwner())
 			{
+				if (this->ToIgnore(elem.GetColLayer(), layer))
+					continue;
+
 				isColliding |= RayCollider::Raycast(_Dir, _mPos, &elem, _Output, _MaxLength);
 			}
 		}
@@ -630,7 +639,7 @@ namespace Dystopia
 		return isColliding;
 	}
 
-	bool CollisionSystem::RaycastAllHits(Math::Vec3D const & _Dir, Math::Point3D const & _mPos, AutoArray<CollisionEvent>& _Output, float _MaxLength) const
+	bool CollisionSystem::RaycastAllHits(Math::Vec3D const & _Dir, Math::Point3D const & _mPos, AutoArray<CollisionEvent>& _Output, float _MaxLength, eColLayer layer) const
 	{
 		bool isColliding = false;
 		for (auto & elem : ComponentDonor<Convex>::mComponents)
@@ -638,10 +647,15 @@ namespace Dystopia
 #if EDITOR
 			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
 #endif 
+			
+
 			if (elem.GetOwner())
 			{
+				if (this->ToIgnore(elem.GetColLayer(), layer))
+					continue;
+
 				CollisionEvent ColEvent{ nullptr, elem.GetOwner() };
-				bool result = RayCollider::Raycast(_Dir, _mPos, &elem, &ColEvent, _MaxLength);
+				const bool result = RayCollider::Raycast(_Dir, _mPos, &elem, &ColEvent, _MaxLength);
 				if (result)
 					_Output.push_back(Ut::Move(ColEvent));
 				isColliding |= result;
@@ -665,10 +679,15 @@ namespace Dystopia
 #if EDITOR
 			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
 #endif 
+			
+
 			if (elem.GetOwner())
 			{
+				if (this->ToIgnore(elem.GetColLayer(), layer))
+					continue;
+
 				CollisionEvent ColEvent{ nullptr, elem.GetOwner() };
-				bool result = RayCollider::Raycast(_Dir, _mPos, &elem, &ColEvent, _MaxLength);
+				const bool result = RayCollider::Raycast(_Dir, _mPos, &elem, &ColEvent, _MaxLength);
 				if (result)
 					_Output.push_back(Ut::Move(ColEvent));
 				isColliding |= result;
@@ -683,7 +702,7 @@ namespace Dystopia
 		mIgnoreTable[_layer] = static_cast<eColLayer>(mIgnoreTable[_layer] | _toIgnore);
 	}
 
-	bool CollisionSystem::ToIgnore(eColLayer _Layer1, eColLayer _Layer2)
+	bool CollisionSystem::ToIgnore(eColLayer _Layer1, eColLayer _Layer2) const
 	{
 		if ((!_Layer1 || !_Layer2)) return true;
 
