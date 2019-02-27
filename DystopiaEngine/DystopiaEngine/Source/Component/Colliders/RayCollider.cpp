@@ -326,8 +326,9 @@ namespace Dystopia
 			if (elem.mNorm3.Dot(_RayDir) >= 0.f || (_Pos - elem.mPos).Dot(_RayDir) > 0.f)
 				continue;
 			/*Check if the ray lies within the edge*/
-			auto  v1_copy = (_Pos - elem.mPos);
-			auto && v1 = v1_copy.Normalise();
+			auto && v1 = (_Pos - elem.mPos);
+			auto  v1_copy = v1;
+			v1.Normalise();
 			auto && v2 = (_Pos - (elem.mPos + elem.mVec3)).Normalise();
 
 
