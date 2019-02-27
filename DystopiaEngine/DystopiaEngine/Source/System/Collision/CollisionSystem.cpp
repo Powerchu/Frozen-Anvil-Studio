@@ -373,7 +373,7 @@ namespace Dystopia
 				continue;
 			}
 			EGUI::Display::Label("%02d", i);
-			ImGui::SameLine();
+			ImGui::SameLine(0, 9);
 			ImGui::NextColumn();
 		}
 		EGUI::PopLeftAlign();
@@ -399,7 +399,7 @@ namespace Dystopia
 				ImGui::PopItemWidth();
 				EGUI::PopID();
 				
-				ImGui::SameLine();
+				ImGui::SameLine(0, 5);
 			}
 			
 			EGUI::PushLeftAlign(1500.f);
