@@ -341,7 +341,7 @@ namespace Editor
 			{
 				EGUI::PushID(i);
 				Editor::File* pFile = mArrFilesSearchedThisFrame[i];
-				if (i % columns) EGUI::SameLine();
+				if (i % columns) ImGui::SameLine(0,5);
 				if (ImGui::BeginChild(pFile->mName.c_str(), buffedSize, false, ImGuiWindowFlags_NoScrollWithMouse))
 				{
 					EGUI::Indent(10);
