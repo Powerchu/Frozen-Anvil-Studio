@@ -84,6 +84,9 @@ public:
 	// Minimises the memory used by the array
 	inline void shrink(void);
 
+	// Shrinks or inserts elements into the array
+	inline void resize(Sz_t _nSize, T&& = T{});
+
 	// Ensures that there are the specified amount of unused slots
 	inline void reserve(Sz_t _nSize);
 
@@ -286,6 +289,26 @@ inline void AutoArray<T, A>::shrink(void)
 	}
 
 	GrowArray(sz);
+}
+
+template<class T, class A>
+inline void AutoArray<T, A>::resize(Sz_t _nSize, T&& _obj)
+{
+	Sz_t const sz = size();
+
+	if (sz < _nSize)
+	{
+		_nSize = _nSize - sz;
+		reserve(_nSize);
+
+		while (--_nSize) EmplaceBack(_obj);
+		EmplaceBack(Ut::Fwd<T>(_obj));
+	}
+	else if (sz > _nSize)
+	{
+		_nSize = sz - _nSize;
+		while (_nSize--) Remove();
+	}
 }
 
 // Ensures that there are _nSize amounts of empty slots

@@ -202,10 +202,10 @@ namespace Ut
 
 	// ======================================= EXTRACT TYPE FROM TYPE LIST ===================================== // 
 
-		template <unsigned N, typename T>
+		template <size_t N, typename T>
 		struct MetaExtractor;
 
-		template <unsigned N, template <typename...> typename Set, typename Ty, typename ... R>
+		template <size_t N, template <typename...> typename Set, typename Ty, typename ... R>
 		struct MetaExtractor <N, Set<Ty, R...>>
 		{
 			using result = typename MetaExtractor <N - 1, Set<R...>>::result;
@@ -217,7 +217,7 @@ namespace Ut
 			using result = Ty;
 		};
 
-		template <unsigned N, template <auto ...> typename Set, auto val, auto ... rest>
+		template <size_t N, template <auto ...> typename Set, auto val, auto ... rest>
 		struct MetaExtractor <N, Set<val, rest...>>
 		{
 			using result = typename MetaExtractor <N - 1, Set<rest...>>::result;
@@ -229,7 +229,7 @@ namespace Ut
 			using result = Set<val>;
 		};
 
-		template <unsigned N, typename T, template <typename, T...> typename Set, T val, T ... rest>
+		template <size_t N, typename T, template <typename, T...> typename Set, T val, T ... rest>
 		struct MetaExtractor <N, Set<T, val, rest...>>
 		{
 			using result = typename MetaExtractor <N - 1, Set<T, rest...>>::result;
@@ -247,10 +247,10 @@ namespace Ut
 			using result = Ty;
 		};
 
-		template <unsigned N, typename T>
+		template <size_t N, typename T>
 		struct MetaExtractorV;
 
-		template <unsigned N, typename T, T val, T ... rest,
+		template <size_t N, typename T, T val, T ... rest,
 			template <typename, T...> class Set>
 		struct MetaExtractorV<N, Set<T, val, rest...>>
 		{

@@ -124,7 +124,7 @@ namespace Editor //Dystopia
 	void PerformanceLog::LoadSettings(Dystopia::TextSerialiser&)
 	{}
 
-	HashString PerformanceLog::GetLabel(void) const
+	const HashString& PerformanceLog::GetLabel(void) const
 	{
 		return mLabel;
 	}

@@ -19,12 +19,13 @@ namespace Dystopia
 	/*
 		bytes and bits:
 
-		data[0,1,2,3] for delta
-		data[4,5,6,7] for inital size min 
-		data[8,9,10,11] for inital size max
+		data[0,1,2,3] for min x
+		data[4,5,6,7] for min y
+		data[8,9,10,11] for max x
+		data[12,13,14,15] for max y
 
 		reserved[0]
-			- 1 << 1 for bounce to target 2
+			- 1 << 0 for random
 	*/
 	
 	struct InitialSizeAffector : ParticleAffector
@@ -35,11 +36,16 @@ namespace Dystopia
 		~InitialSizeAffector(void);
 
 		/* sizes */
-		void SetInitialSizeMin(float _val);
-		void SetInitialSizeMax(float _val);
-		float GetInitialSizeMin(void) const;
-		float GetInitialSizeMax(void) const;
-		void EnableRandomInitial(bool _enable);
+		void SetMinX(float _val);
+		void SetMinY(float _val);
+		void SetMaxX(float _val);
+		void SetMaxY(float _val);
+		float GetMinX(void) const;
+		float GetMinY(void) const;
+		float GetMaxX(void) const;
+		float GetMaxY(void) const;
+		void ToggleRandom(void);
+		bool IsRandom(void) const;
 
 		void AffectorSpawn(Emitter&, float);
 
@@ -50,8 +56,8 @@ namespace Dystopia
 	/*
 		bytes and bits:
 
-		data[0,1,2,3] linear size change per second
-
+		data[0,1,2,3] linear X size change per second
+		data[4,5,6,7] linear Y size change per second
 
 	*/
 
@@ -61,8 +67,10 @@ namespace Dystopia
 		~SizeOverLifeAffector(void);
 
 		/* sizes */
-		void SetSizeChangePerSecond(float);
-		float GetSizeChangePerSecond(void) const;
+		void SetDeltaX(float);
+		void SetDeltaY(float);
+		float GetDeltaX(void) const;
+		float GetDeltaY(void) const;
 
 		void AffectorUpdate(Emitter&, float);
 

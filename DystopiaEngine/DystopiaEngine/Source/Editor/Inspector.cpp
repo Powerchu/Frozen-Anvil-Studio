@@ -118,7 +118,7 @@ namespace Editor
 	void Inspector::LoadSettings(Dystopia::TextSerialiser&)
 	{}
 
-	HashString Inspector::GetLabel(void) const
+	const HashString& Inspector::GetLabel(void) const
 	{
 		return mLabel;
 	}

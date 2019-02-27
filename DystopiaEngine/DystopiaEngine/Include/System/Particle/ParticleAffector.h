@@ -43,7 +43,9 @@ namespace Dystopia
 		struct InitialSizeAffector,
 		struct SizeOverLifeAffector,
 		struct InitialAccelerationAffector,
-		struct PointAffector
+		struct PointAffector,
+		struct InitialRotationAffector,
+		struct RotationRateAffector
 	>;
 
 	class Emitter;
@@ -62,7 +64,7 @@ namespace Dystopia
 			return mID;
 		}
 
-		inline void Serialise(TextSerialiser& _out) const
+		inline void Serialise(TextSerialiser& _out) const noexcept
 		{
 			_out.InsertStartBlock("Affector");
 
@@ -81,7 +83,7 @@ namespace Dystopia
 			_out.InsertEndBlock("Affector");
 		}
 
-		inline void UnSerialise(TextSerialiser& _in)
+		inline void UnSerialise(TextSerialiser& _in) noexcept
 		{
 			_in.ConsumeStartBlock();
 

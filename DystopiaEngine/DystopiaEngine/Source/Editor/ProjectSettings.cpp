@@ -186,12 +186,11 @@ void Editor::ProjectSettings::RightPanel(bool(&enabled)[4]) const
 		EGUI::Display::HorizontalSeparator();
 	}
 	ImGui::EndChild();
+}
 
-	//if (EGUI::Display::StartTreeNode("Tag Manager", nullptr, false, false, true, true))
-	//{
-	//	//mpTagSystem->EditorUI();
-	//	EGUI::Display::EndTreeNode();
-	//}
+const HashString& Editor::ProjectSettings::GetLabel(void) const
+{
+	return mLabel;
 }
 
 #endif

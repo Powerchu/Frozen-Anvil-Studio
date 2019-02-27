@@ -1,25 +1,25 @@
 #version 410 core
 
-out gl_PerVertex
-{
-  vec4 gl_Position;
-};
-
 uniform mat4 ModelViewMat;
 uniform mat4 ProjectMat;
 
-layout(location = 0) in vec4 vertexPos;
+layout(location = 0) in vec3 vertexPos;
 layout(location = 1) in vec4 vertexCol;
+layout(location = 2) in vec2 Size;
+layout(location = 3) in float Rotation;
+layout(location = 4) in vec4 UVBuf;
 
-layout(location = 0) out vec4 vPosition;
-layout(location = 1) out vec4 vColor;
+layout(location = 0) flat out vec3 vPosition;
+layout(location = 1) flat out vec4 vColor;
+layout(location = 2) flat out vec3 vParams;
+layout(location = 3) flat out vec4 vUV;
 
 void main()
 {
   vec4 temp = ModelViewMat * vec4(vertexPos.xyz, 1.f);
-  vPosition = vec4(temp.xyz, vertexPos.w);
+  vPosition = temp.xyz;
   vColor    = vertexCol;
-  
-  gl_Position = ProjectMat * temp;
+  vParams   = vec3(Size, Rotation);
+  vUV       = UVBuf;
 }
  

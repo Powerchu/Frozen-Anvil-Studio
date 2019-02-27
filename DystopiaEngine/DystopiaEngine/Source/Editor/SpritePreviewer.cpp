@@ -121,7 +121,7 @@ void Editor::SpritePreviewer::SaveSettings(Dystopia::TextSerialiser&) const
 void Editor::SpritePreviewer::LoadSettings(Dystopia::TextSerialiser&)
 {}
 
-HashString Editor::SpritePreviewer::GetLabel(void) const
+const HashString& Editor::SpritePreviewer::GetLabel(void) const
 {
 	return mLabel;
 }

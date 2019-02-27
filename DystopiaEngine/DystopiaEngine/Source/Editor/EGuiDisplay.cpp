@@ -157,6 +157,8 @@ namespace EGUI
 
 	void SameLine(float _customOffset, float _leftOff)
 	{
+		if (!_leftOff)
+			_leftOff = g_StackLeftAlign.IsEmpty() ? _leftOff : g_StackLeftAlign.Peek();
 		ImGui::SameLine(_leftOff, _customOffset);
 	}
 
@@ -465,16 +467,16 @@ namespace EGUI
 			Label(_label);
 			SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 
-			Label("X:"); SameLine();
+			Label("X:"); ImGui::SameLine();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			eDragStatus statX = EGUI::Display::DragFloat(field1.c_str(), &x, _dragSpeed, _min, _max, true, _width);
 			if (statX != eDragStatus::eNO_CHANGE) _outputVec->x = x;
 
-			SameLine(); Label("Y:"); SameLine();
+			ImGui::SameLine(); Label("Y:"); ImGui::SameLine();
 			eDragStatus statY = EGUI::Display::DragFloat(field2.c_str(), &y, _dragSpeed, _min, _max, true, _width);
 			if (statY != eDragStatus::eNO_CHANGE) _outputVec->y = y;
 
-			SameLine(); Label("Z:"); SameLine();
+			ImGui::SameLine(); Label("Z:"); ImGui::SameLine();
 			eDragStatus statZ = EGUI::Display::DragFloat(field3.c_str(), &z, _dragSpeed, _min, _max, true, _width);
 			if (statZ != eDragStatus::eNO_CHANGE) _outputVec->z = z;
 
@@ -483,7 +485,7 @@ namespace EGUI
 				float w = _outputVec->w;
 				std::string field4 = "##VecW";
 				field4 += _label;
-				SameLine(); Label("W:"); SameLine();
+				ImGui::SameLine(); Label("W:"); ImGui::SameLine();
 				eDragStatus statW = EGUI::Display::DragFloat(field4.c_str(), &w, _dragSpeed, _min, _max, true, _width);
 				if (statW != eDragStatus::eNO_CHANGE) _outputVec->w = w;
 			}
@@ -505,12 +507,12 @@ namespace EGUI
 			Label(_label);
 			SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 
-			Label("X:"); SameLine();
+			Label("X:"); ImGui::SameLine();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			eDragStatus statX = EGUI::Display::DragFloat(field1.c_str(), &x, _dragSpeed, _min, _max, true, _width);
 			if (statX != eDragStatus::eNO_CHANGE) _outputVec->x = x;
 
-			SameLine(); Label("Y:"); SameLine();
+			ImGui::SameLine(); Label("Y:"); ImGui::SameLine();
 			eDragStatus statY = EGUI::Display::DragFloat(field2.c_str(), &y, _dragSpeed, _min, _max, true, _width);
 			if (statY != eDragStatus::eNO_CHANGE) _outputVec->y = y;
 
@@ -533,12 +535,12 @@ namespace EGUI
 			Label(_label);
 			SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 
-			Label("X:"); SameLine();
+			Label("X:"); ImGui::SameLine();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
 			eDragStatus statX = EGUI::Display::DragInt(field1.c_str(), &x, static_cast<float>(_dragSpeed), _min, _max, true, _width);
 			if (statX != eDragStatus::eNO_CHANGE) _outputVec->x = static_cast<float>(x);
 
-			SameLine(); Label("Y:"); SameLine();
+			ImGui::SameLine(); Label("Y:"); ImGui::SameLine();
 			eDragStatus statY = EGUI::Display::DragInt(field2.c_str(), &y, static_cast<float>(_dragSpeed), _min, _max, true, _width);
 			if (statY != eDragStatus::eNO_CHANGE) _outputVec->y = static_cast<float>(y);
 
@@ -1093,6 +1095,23 @@ namespace EGUI
 				ImVec4{ 1,1,1,1 });
 			ImGui::PopStyleColor();
 			return ret;
+		}
+
+		void ImageEmpty(const char* _str, const Math::Vec2 & _imgSize)
+		{
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + DefaultAlighnmentOffsetY);
+			Label(_str);
+			SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
+
+			ImGui::PushStyleColor(ImGuiCol_Border , ImVec4{ 1,1,1,1 });
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4{ 0,0,0,0 });
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4{ 0,0,0,0 });
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4{ 0,0,0,0 });
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 1);
+			ImGui::Button(_str, _imgSize, true);
+			ImGui::PopStyleVar();
+			ImGui::PopStyleColor(4);
 		}
 
 		bool ComboFilter_DrawPopup(ComboFilterState& state, int START, const char** ENTRIES, const int ENTRY_COUNT)

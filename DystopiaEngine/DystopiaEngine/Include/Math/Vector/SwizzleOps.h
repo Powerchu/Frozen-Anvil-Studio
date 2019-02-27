@@ -84,7 +84,7 @@ namespace Math
 	Vector4::Swizzle<X, Y>::operator Vector2 (void) const noexcept
 	{
 		alignas(16) float out[4];
-		_mm_store_ps(out, GetRaw());
+		_mm_store_ps(out, mData);
 
 		return Math::Vector2{ out[X], out[Y] };
 	}
@@ -103,7 +103,7 @@ namespace Math
 	Vector4::Swizzle<X, Y, Z>::operator Vector3 (void) const noexcept
 	{
 		alignas(16) float out[4];
-		_mm_store_ps(out, GetRaw());
+		_mm_store_ps(out, mData);
 
 		return Math::Vec3{ out[X], out[Y], out[Z] };
 	}

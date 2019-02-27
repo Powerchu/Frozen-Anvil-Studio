@@ -126,7 +126,7 @@ namespace Editor
 	void HierarchyView::LoadSettings(Dystopia::TextSerialiser&)
 	{}
 
-	HashString HierarchyView::GetLabel() const
+	const HashString& HierarchyView::GetLabel() const
 	{
 		return mLabel;
 	}

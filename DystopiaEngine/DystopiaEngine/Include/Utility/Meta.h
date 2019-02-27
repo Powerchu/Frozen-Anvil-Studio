@@ -69,13 +69,13 @@ namespace Ut
 		using type = T;
 	};
 
-	template<typename T>
+	template <typename T>
 	struct RemoveRef<T&>
 	{
 		using type = T;
 	};
 
-	template<typename T>
+	template <typename T>
 	struct RemoveRef<T&&>
 	{
 		using type = T;
@@ -83,6 +83,25 @@ namespace Ut
 
 	template <typename T>
 	using RemoveRef_t = typename RemoveRef<T>::type;
+
+
+	// RemovePtr
+	// ========== ==========================================================
+
+	template <typename T>
+	struct RemovePtr
+	{
+		using type = T;
+	};
+
+	template <typename T>
+	struct RemovePtr<T*>
+	{
+		using type = T;
+	};
+
+	template <typename T>
+	using RemovePtr_t = typename RemovePtr<T>::type;
 
 
 	// RemoveConst
@@ -94,7 +113,7 @@ namespace Ut
 		using type = T;
 	};
 
-	template<typename T>
+	template <typename T>
 	struct RemoveConst<const T>
 	{
 		using type = T;
@@ -113,25 +132,25 @@ namespace Ut
 		using type = T;
 	};
 
-	template<typename T>
+	template <typename T>
 	struct RemoveLowConst<const T>
 	{
 		using type = const typename RemoveLowConst<T>::type;
 	};
 
-	template<typename T>
+	template <typename T>
 	struct RemoveLowConst<T const*>
 	{
 		using type = T*;
 	};
 
-	template<typename T>
+	template <typename T>
 	struct RemoveLowConst<T const&>
 	{
 		using type = T&;
 	};
 
-	template<typename T>
+	template <typename T>
 	struct RemoveLowConst<T const &&>
 	{
 		using type = T&&;
@@ -150,25 +169,25 @@ namespace Ut
 		using type = T;
 	};
 
-	template<typename T>
+	template <typename T>
 	struct AddLowConst<const T>
 	{
 		using type = const typename AddLowConst<T>::type;
 	};
 
-	template<typename T>
+	template <typename T>
 	struct AddLowConst<T*>
 	{
 		using type = T const*;
 	};
 
-	template<typename T>
+	template <typename T>
 	struct AddLowConst<T&>
 	{
 		using type = T const&;
 	};
 
-	template<typename T>
+	template <typename T>
 	struct AddLowConst<T&&>
 	{
 		using type = T const &&;
@@ -313,6 +332,9 @@ namespace Ut
 		IsSame<unsigned long long, T> ::value
 	> {};
 
+	template <typename Ty>
+	constexpr inline auto IsIntegral_v = IsIntegral<Ty>::value;
+
 
 	// Is Float
 	// =========== =========================================================
@@ -323,6 +345,9 @@ namespace Ut
 		IsSame<double, T>	   ::value ||
 		IsSame<long double, T> ::value
 	> {};
+
+	template <typename T>
+	inline constexpr auto IsFloatType_v = IsFloatType<T>::value;
 
 
 	// Is Numeral
@@ -340,6 +365,49 @@ namespace Ut
 
 	template <typename T>
 	struct IsSigned : Constant<bool, T( -1 ) < T( 0 )> {};
+
+
+	// RemoveSigned
+	// ============== ======================================================
+
+	template <typename T>
+	struct MakeUnsigned
+	{
+		using type = T;
+	};
+
+	template<>
+	struct MakeUnsigned<char>
+	{
+		using type = unsigned char;
+	};
+
+	template<>
+	struct MakeUnsigned<short>
+	{
+		using type = unsigned short;
+	};
+
+	template<>
+	struct MakeUnsigned<int>
+	{
+		using type = unsigned int;
+	};
+
+	template<>
+	struct MakeUnsigned<long>
+	{
+		using type = unsigned long;
+	};
+
+	template<>
+	struct MakeUnsigned<long long>
+	{
+		using type = unsigned long long;
+	};
+
+	template <typename T>
+	using MakeUnsigned_t = typename MakeUnsigned<T>::type;
 
 
 	// Has Members

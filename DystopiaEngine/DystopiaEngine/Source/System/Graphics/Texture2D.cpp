@@ -56,8 +56,8 @@ void Dystopia::Texture2D::Load(void)
 	auto id = CORE::Get<FileSystem>()->TrackFile(GetPath());
 	CORE::Get<FileSystem>()->BindFileTrackEvent(id, &Texture2D::ReloadImageTrigger, this);
 #endif
-	ResolveLoad();
 
+	ResolveLoad();
 }
 
 void Dystopia::Texture2D::ResolveLoad(void)

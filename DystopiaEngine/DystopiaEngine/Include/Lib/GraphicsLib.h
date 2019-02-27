@@ -19,6 +19,14 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/OString.h"
 #include "DataStructure/AutoArray.h"
 
+#if defined(RUNTIME_GFXAPI) && RUNTIME_GFXAPI
+#define VIRTUAL_ virtual
+#define ABSTRACT_ = 0
+#else
+#define VIRTUAL_
+#define ABSTRACT_
+#endif
+
 
 namespace Gfx
 {
@@ -30,60 +38,64 @@ namespace Gfx
 		DEFAULT = OPENGL,
 	};
 
+	class OpenGL_API;
+
 	class GraphicsAPI
 	{
 	public:
 
 		// Generics
 		
-		virtual void PrintEnvironment(void) const noexcept = 0;
+		VIRTUAL_ bool BindContext(void* _hdc) const noexcept ABSTRACT_;
 
-		virtual void ToggleVSync(bool) const noexcept = 0;
+		VIRTUAL_ void ToggleVSync(bool) const noexcept ABSTRACT_;
+
+		VIRTUAL_ void PrintEnvironment(void) const noexcept ABSTRACT_;
 
 		template <typename T>
 		inline void Free(T&) noexcept;
 
 		// ====== SHADER
 
-		virtual ShaderProg CreateShaderProgram(void) noexcept = 0;
-		virtual ShaderPipeline CreateShaderPipeline(void) noexcept = 0;
-		virtual Shader CompileGLSL(Gfx::ShaderStage const&, void const* _pData) noexcept = 0;
-		//virtual unsigned CompilSPRIV(void* _pData) noexcept = 0;
+		VIRTUAL_ ShaderProg CreateShaderProgram(void) noexcept ABSTRACT_;
+		VIRTUAL_ ShaderPipeline CreateShaderPipeline(void) noexcept ABSTRACT_;
+		VIRTUAL_ Shader CompileGLSL(Gfx::ShaderStage const&, void const* _pData) noexcept ABSTRACT_;
+		//virtual unsigned CompilSPRIV(void* _pData) noexcept ABSTRACT_;
 
-		virtual void UseShaderPipeline(ShaderPipeline const&) noexcept = 0;
-		virtual void AttachShaderProgram(ShaderPipeline const&, ShaderProg const&, ShaderStage const&) noexcept = 0;
+		VIRTUAL_ void UseShaderPipeline(ShaderPipeline const&) noexcept ABSTRACT_;
+		VIRTUAL_ void AttachShaderProgram(ShaderPipeline const&, ShaderProg const&, ShaderStage const&) noexcept ABSTRACT_;
 
 		template <typename ... T>
 		inline bool LinkShader(ShaderProg const& _nProgram, T&& ... _nArgs) noexcept;
 
-		virtual AutoArray<std::pair<OString, eUniform_t>> QueryVariables(ShaderProg const&) = 0;
+		VIRTUAL_ void QueryVariables(ShaderProg const&, AutoArray<std::pair<OString, eUniform_t>>&, AutoArray<std::pair<OString, unsigned>>&) ABSTRACT_;
 
-		virtual int GetUniformLocation(ShaderProg const&, char const*) noexcept = 0;
-		virtual void UploadUniform1f(ShaderProg const&, int _nLoc, unsigned _nCount, float    const*) noexcept = 0;
-		virtual void UploadUniform2f(ShaderProg const&, int _nLoc, unsigned _nCount, float    const*) noexcept = 0;
-		virtual void UploadUniform3f(ShaderProg const&, int _nLoc, unsigned _nCount, float    const*) noexcept = 0;
-		virtual void UploadUniform4f(ShaderProg const&, int _nLoc, unsigned _nCount, float    const*) noexcept = 0;
-		virtual void UploadUniform1i(ShaderProg const&, int _nLoc, unsigned _nCount, int      const*) noexcept = 0;
-		virtual void UploadUniform2i(ShaderProg const&, int _nLoc, unsigned _nCount, int      const*) noexcept = 0;
-		virtual void UploadUniform3i(ShaderProg const&, int _nLoc, unsigned _nCount, int      const*) noexcept = 0;
-		virtual void UploadUniform4i(ShaderProg const&, int _nLoc, unsigned _nCount, int      const*) noexcept = 0;
-		virtual void UploadUniform1u(ShaderProg const&, int _nLoc, unsigned _nCount, unsigned const*) noexcept = 0;
-		virtual void UploadUniform2u(ShaderProg const&, int _nLoc, unsigned _nCount, unsigned const*) noexcept = 0;
-		virtual void UploadUniform3u(ShaderProg const&, int _nLoc, unsigned _nCount, unsigned const*) noexcept = 0;
-		virtual void UploadUniform4u(ShaderProg const&, int _nLoc, unsigned _nCount, unsigned const*) noexcept = 0;
+		VIRTUAL_ int GetUniformLocation(ShaderProg const&, char const*) noexcept ABSTRACT_;
+		VIRTUAL_ void UploadUniform1f(ShaderProg const&, int _nLoc, unsigned _nCount, float    const*) noexcept ABSTRACT_;
+		VIRTUAL_ void UploadUniform2f(ShaderProg const&, int _nLoc, unsigned _nCount, float    const*) noexcept ABSTRACT_;
+		VIRTUAL_ void UploadUniform3f(ShaderProg const&, int _nLoc, unsigned _nCount, float    const*) noexcept ABSTRACT_;
+		VIRTUAL_ void UploadUniform4f(ShaderProg const&, int _nLoc, unsigned _nCount, float    const*) noexcept ABSTRACT_;
+		VIRTUAL_ void UploadUniform1i(ShaderProg const&, int _nLoc, unsigned _nCount, int      const*) noexcept ABSTRACT_;
+		VIRTUAL_ void UploadUniform2i(ShaderProg const&, int _nLoc, unsigned _nCount, int      const*) noexcept ABSTRACT_;
+		VIRTUAL_ void UploadUniform3i(ShaderProg const&, int _nLoc, unsigned _nCount, int      const*) noexcept ABSTRACT_;
+		VIRTUAL_ void UploadUniform4i(ShaderProg const&, int _nLoc, unsigned _nCount, int      const*) noexcept ABSTRACT_;
+		VIRTUAL_ void UploadUniform1u(ShaderProg const&, int _nLoc, unsigned _nCount, unsigned const*) noexcept ABSTRACT_;
+		VIRTUAL_ void UploadUniform2u(ShaderProg const&, int _nLoc, unsigned _nCount, unsigned const*) noexcept ABSTRACT_;
+		VIRTUAL_ void UploadUniform3u(ShaderProg const&, int _nLoc, unsigned _nCount, unsigned const*) noexcept ABSTRACT_;
+		VIRTUAL_ void UploadUniform4u(ShaderProg const&, int _nLoc, unsigned _nCount, unsigned const*) noexcept ABSTRACT_;
 
-		virtual void UploadMatrix2(ShaderProg const&, int _nLoc, unsigned _nCount, float const*, bool _bTranspose = true) noexcept = 0;
-		virtual void UploadMatrix4(ShaderProg const&, int _nLoc, unsigned _nCount, float const*, bool _bTranspose = true) noexcept = 0;
+		VIRTUAL_ void UploadMatrix2(ShaderProg const&, int _nLoc, unsigned _nCount, float const*, bool _bTranspose = true) noexcept ABSTRACT_;
+		VIRTUAL_ void UploadMatrix4(ShaderProg const&, int _nLoc, unsigned _nCount, float const*, bool _bTranspose = true) noexcept ABSTRACT_;
 
 
 	protected:
 		GraphicsAPI(void) {};
 
-		virtual bool LinkShaderImpl(ShaderProg const&, Shader const*, size_t) noexcept = 0;
+		VIRTUAL_ bool LinkShaderImpl(ShaderProg const&, Shader const*, size_t) noexcept ABSTRACT_;
 
-		virtual void FreeShader(Shader&) noexcept = 0;
-		virtual void FreeShaderProgram(ShaderProg&) noexcept = 0;
-		virtual void FreeShaderPipeline(ShaderPipeline&) noexcept = 0;
+		VIRTUAL_ void FreeShader(Shader&) noexcept ABSTRACT_;
+		VIRTUAL_ void FreeShaderProgram(ShaderProg&) noexcept ABSTRACT_;
+		VIRTUAL_ void FreeShaderPipeline(ShaderPipeline&) noexcept ABSTRACT_;
 
 	private:
 		GraphicsAPI(GraphicsAPI&&)                   = delete;
@@ -94,7 +106,7 @@ namespace Gfx
 
 	using GfxAPI = GraphicsAPI;
 
-	GfxAPI* const& GetInstance(void) noexcept;
+	GfxAPI* GetInstance(void) noexcept;
 	GfxMode GetActiveMode(void) noexcept;
 
 	bool InitGraphicsAPI(void const* phwnd, GfxMode = GfxMode::DEFAULT);
@@ -146,6 +158,8 @@ inline void Gfx::GraphicsAPI::Free<Gfx::ShaderPipeline>(ShaderPipeline& _arg) no
 }
 
 
-
+#undef VIRTUAL_
+#undef ABSTRACT_
+#undef API_PTR
 #endif
 

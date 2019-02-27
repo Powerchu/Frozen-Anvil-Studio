@@ -41,6 +41,11 @@ Dystopia::TextRenderer::TextRenderer(void) noexcept
 	: Renderer{}, mPrevState(mCurrState), mpData{ nullptr },
 	mText {}, mnAnchorX{ 0 }, mnAnchorY{ 0 }, mColor{ 1.f, 1.f, 1.f, 1.f }, mVerts{}
 {
+	auto pMeshSys = CORE::Get<MeshSystem>();
+	auto pBaseMesh = pMeshSys->GetRaw(pMeshSys->GenerateRaw());
+	mpMesh = pMeshSys->CreateMesh(pBaseMesh, 0);
+
+	pBaseMesh->BuildEmpty<VertexBuffer, UVBuffer, IndexBuffer>();
 }
 
 Dystopia::TextRenderer::TextRenderer(const TextRenderer& _rhs) noexcept
@@ -49,28 +54,15 @@ Dystopia::TextRenderer::TextRenderer(const TextRenderer& _rhs) noexcept
 	,mColor{ _rhs.mColor },mDefaultCol(_rhs.mDefaultCol),mHoverCol(_rhs.mHoverCol),mClickColor(_rhs.mClickColor),mDisabledColor(_rhs.mDisabledColor)
 	,mfTintPerc(_rhs.mfTintPerc), mVerts{ _rhs.mVerts}
 {
-	mpTexture = _rhs.mpTexture;
+	mTextureFields = Ut::Move(_rhs.mTextureFields);
 }
 
 void Dystopia::TextRenderer::Awake(void)
 {
 	mpShader = CORE::Get<ShaderSystem>()->GetShader("Font Shader");
 
-	if (!mpMesh)
-	{
-		auto pMeshSys = EngineCore::GetInstance()->Get<MeshSystem>();
-		auto pBaseMesh = pMeshSys->GetRaw(pMeshSys->GenerateRaw());
-		mpMesh = EngineCore::GetInstance()->Get<MeshSystem>()->CreateMesh(
-			pBaseMesh, 0
-		);
-
-		pBaseMesh->BuildEmpty<VertexBuffer, UVBuffer, IndexBuffer>();
-	}
-
-	if (!mpData)
-		SetFont("Times New Roman.ttf");
-
-	RegenMesh();
+	if (mpData)
+		RegenMesh();
 }
 
 void Dystopia::TextRenderer::Draw(void) const noexcept
@@ -99,15 +91,23 @@ void Dystopia::TextRenderer::SetFont(const char* _strPath)
 
 void Dystopia::TextRenderer::SetFont(const std::string& _strPath)
 {
-	mpData = EngineCore::GetInstance()->Get<FontSystem>()->LoadFont(_strPath);
-	mpTexture = mpData->mpAtlas->GetInternal();
+	if (_strPath != "")
+	{
+		mpData = CORE::Get<FontSystem>()->LoadFont(_strPath);
+		Renderer::SetTexture(mpData->mpAtlas->GetInternal());
+		RegenMesh();
+	}
+	else
+	{
+		mpData    = nullptr;
+		Renderer::SetTexture(nullptr);
+	}
 }
 
 void Dystopia::TextRenderer::SetFontSize(float _sz)
 {
 	float z = GetOwner()->GetComponent<Transform>()->GetGlobalScale().z;
 	GetOwner()->GetComponent<Transform>()->SetGlobalScale(_sz, _sz, z);
-
 }
 
 void Dystopia::TextRenderer::SetColor(const Math::Vec3D& _rgb)
@@ -156,7 +156,7 @@ void Dystopia::TextRenderer::RegenMesh(void)
 	short index = 0;
 
 	float x = .0f, y =-1.0f, mx = .0f;
-	constexpr float scale = 1.f / 100.f;
+	constexpr float scale = 1.f / 70.f;
 	for (auto b = mText.begin(), e = mText.end(); b != e; ++b)
 	{
 		if (*b == '\\')
@@ -350,7 +350,7 @@ void Dystopia::TextRenderer::EditorUI(void) noexcept
 
 	*(Ut::Copy(mText, &buf[0])) = '\0';
 
-	if (EGUI::Display::TextField("Text ", buf, 512, true, 225, true))
+	if (EGUI::Display::TextField("Text ", buf, 512, true, 225, false))
 	{
 		mText.clear();
 		mText = static_cast<const char *>(buf);
@@ -390,12 +390,17 @@ void Dystopia::TextRenderer::EditorUI(void) noexcept
 
 	if (t)
 	{
-		cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand<TextRenderer, const char*>(&TextRenderer::SetFont, mpData->mpAtlas->GetName().c_str()),
+		char const* strName = "";
+
+		if (mpData)
+			strName = mpData->mpAtlas->GetName().c_str();
+
+		cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand<TextRenderer, const char*>(&TextRenderer::SetFont, strName),
 										   cmd->MakeFnCommand<TextRenderer, const char*>(&TextRenderer::SetFont, t->mName.c_str()));
 	}
 
 	EGUI::SameLine();
-	if (EGUI::Display::IconCross("Clear", 8.f))
+	if (EGUI::Display::IconCross("Clear", 8.f) && mpData)
 	{
 		cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand<TextRenderer, const char*>(&TextRenderer::SetFont, mpData->mpAtlas->GetName().c_str()),
 										   cmd->MakeFnCommand<TextRenderer, const char*>(&TextRenderer::SetFont, ""));
@@ -429,7 +434,7 @@ void Dystopia::TextRenderer::EditorUI(void) noexcept
 		ApplyChanges();
 	}
 
-	if (bRegenMesh)
+	if (bRegenMesh && mpData)
 		RegenMesh();
 }
 #endif

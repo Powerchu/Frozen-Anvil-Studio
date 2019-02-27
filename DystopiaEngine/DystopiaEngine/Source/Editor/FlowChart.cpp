@@ -138,7 +138,7 @@ void Editor::FlowChart::SaveSettings(Dystopia::TextSerialiser&) const
 void Editor::FlowChart::LoadSettings(Dystopia::TextSerialiser&)
 {}
 
-HashString Editor::FlowChart::GetLabel(void) const
+const HashString& Editor::FlowChart::GetLabel(void) const
 {
 	return mLabel;
 }

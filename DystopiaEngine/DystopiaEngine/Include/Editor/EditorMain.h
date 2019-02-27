@@ -55,6 +55,7 @@ namespace Editor
 			class ProjectResource,
 			class ProjectSettings,
 			class SceneView,
+			class ShaderView,
 			class SpriteEditor,
 			class SpritePreviewer,
 			class StyleScheme,

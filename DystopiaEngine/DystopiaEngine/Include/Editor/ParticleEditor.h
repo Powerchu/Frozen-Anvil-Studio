@@ -21,6 +21,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace Dystopia
 {
 	class GameObject;
+	class Emitter;
+	class ParticleEmitter;
 }
 
 namespace Editor
@@ -39,14 +41,20 @@ namespace Editor
 		void Message(eEMessage);
 		void SaveSettings(Dystopia::TextSerialiser& _out) const;
 		void LoadSettings(Dystopia::TextSerialiser& _in);
-		HashString GetLabel(void) const;
+		const HashString& GetLabel(void) const;
+
+		void SetParticleEmitter(Dystopia::ParticleEmitter*, int);
 
 	private:
+
+		Dystopia::ParticleEmitter* mpTargetEmitter;
+		int mnTargetIndex;
+		uint64_t mnTargetID;
 
 		HashString mLabel;
 		uint64_t mnObjectID;
 
-		Dystopia::GameObject *mpObject;
+		//Dystopia::GameObject *mpObject;
 		AutoArray<int> mArrUsedAffectors;
 
 		bool ValidateEmitter(void);

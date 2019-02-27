@@ -23,9 +23,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Scene/Scene.h"
 #include "System/Scene/SceneSystem.h"
 #include "System/Graphics/GraphicsSystem.h"
+#include "System/Graphics/ShaderSystem.h"
+#include "System/Graphics/Shader.h"
 #include "System/Window/Window.h"
 #include "System/Window/WindowManager.h"
-//#include "System/Graphics/Texture2D.h"
 #include "System/File/FileSystem.h"
 #include "System/Input/InputSystem.h"
 #include "System/Time/ScopedTimer.h"
@@ -222,7 +223,7 @@ namespace Editor
 	void ProjectResource::LoadSettings(Dystopia::TextSerialiser&)
 	{}
 
-	HashString ProjectResource::GetLabel(void) const
+	const HashString& ProjectResource::GetLabel(void) const
 	{
 		return mLabel;
 	}
@@ -287,12 +288,17 @@ namespace Editor
 		EGUI::Display::Label(mpCurrentFolder->mPath.c_str());
 		EGUI::Display::HorizontalSeparator();
 
-		ImGui::BeginChild("fileWindowFolder", ImGui::GetContentRegionAvail(), false);
-		const auto size = mpCurrentFolder->mArrPtrFiles.size();
-		for (unsigned int i = 0; i < size; ++i)
+		if (mpCurrentFolder->mName == StringHasher("Shader"))
 		{
-
-			EGUI::PushID(i);
+			ShaderFolderUI(columns, buffedSize);
+		}
+		else
+		{
+			ImGui::BeginChild("fileWindowFolder", ImGui::GetContentRegionAvail(), false);
+			const auto size = mpCurrentFolder->mArrPtrFiles.size();
+			for (unsigned int i = 0; i < size; ++i)
+			{
+				EGUI::PushID(i);
 
 			Editor::File* pFile = mpCurrentFolder->mArrPtrFiles[i];
 			if (i % columns)
@@ -380,6 +386,36 @@ namespace Editor
 				if (!EditorMain::GetInstance()->GetSystem<EditorFactory>()->FindMasterPrefab(f->mName, pOut))
 					EditorMain::GetInstance()->GetSystem<EditorFactory>()->LoadAsPrefab(f->mName);
 			}
+		}
+	}
+
+	void ProjectResource::ShaderFolderUI(unsigned _cols, const Math::Vec2& _size)
+	{
+		auto const & allShaders = Dystopia::CORE::Get<Dystopia::ShaderSystem>()->GetAllShaders();
+		for (unsigned int i = 0; i < allShaders.size(); ++i)
+		{
+			EGUI::PushID(i);
+
+			//Editor::File* pFile = mpCurrentFolder->mArrPtrFiles[i];
+			if (i % _cols)
+				ImGui::SameLine(0, 20);
+			
+			const HashString& name = allShaders[i].GetName();
+			if (EGUI::StartChild(name.c_str(), _size, false, true))
+			{
+				EGUI::Indent(10);
+				unsigned n = i;
+				if (EGUI::Display::CustomPayload(("ProjectView" + name).c_str(), name.c_str(),
+					name.c_str(), mPayloadRect, EGUI::ePayloadTags::SHADER, &n, sizeof(unsigned)))
+				{
+
+				}
+
+				EGUI::UnIndent(10);
+			}
+			EGUI::EndChild();
+
+			EGUI::PopID();
 		}
 	}
 

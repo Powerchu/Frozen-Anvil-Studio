@@ -40,7 +40,7 @@ namespace Editor
 		void Message(eEMessage);
 		void SaveSettings(Dystopia::TextSerialiser& _out) const;
 		void LoadSettings(Dystopia::TextSerialiser& _in);
-		HashString GetLabel(void) const;
+		const HashString& GetLabel(void) const;
 
 		void FocusOnFile(const HashString& _fileName);
 		void RemoveFocusOnFile();
@@ -78,6 +78,8 @@ namespace Editor
 		void				MakeStringLower(HashString& _transformMe);
 		void				UpdateSearch();
 		void				RefreshResourceFolder();
+
+		void				ShaderFolderUI(unsigned, const Math::Vec2&);
 	};
 }
 

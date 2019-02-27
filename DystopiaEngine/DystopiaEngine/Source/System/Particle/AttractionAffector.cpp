@@ -11,7 +11,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System/Particle/AttractionAffector.h"
-#include "Component/Emitter.h"
+#include "System/Particle/Emitter.h"
 
 #include "Math/MathLib.h"
 
@@ -174,7 +174,7 @@ void Dystopia::PointAffector::AffectorUpdate(Emitter& _emitter, float _dt)
 
 void Dystopia::PointAffector::PointAttract(Emitter& _emitter, float)
 {
-	Math::Point3D emitterPos = _emitter.GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
+	Math::Point3D emitterPos = _emitter.GetOwnerTransform().GetGlobalPosition();
 	auto& allPos = _emitter.GetPosition();
 	auto& allAccel = _emitter.GetAcceleration();
 	for (unsigned i = 0; i < allAccel.size(); ++i)
@@ -182,7 +182,7 @@ void Dystopia::PointAffector::PointAttract(Emitter& _emitter, float)
 		Math::Vec3 direction{ GetOffsetX() + emitterPos.x - allPos[i].x, 
 							  GetOffsetY() + emitterPos.y - allPos[i].y, 
 							  emitterPos.z - allPos[i].z };
-
+	
 		if (direction.MagnitudeSqr() > Math::epsilon && direction.MagnitudeSqr() < (GetRange()*GetRange()))
 			allAccel[i] = direction.Normalise() * static_cast<float>(GetStrength());
 	}
@@ -190,7 +190,7 @@ void Dystopia::PointAffector::PointAttract(Emitter& _emitter, float)
 
 void Dystopia::PointAffector::PointRepulse(Emitter& _emitter, float)
 {
-	Math::Point3D emitterPos = _emitter.GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
+	Math::Point3D emitterPos = _emitter.GetOwnerTransform().GetGlobalPosition();
 	auto& allPos = _emitter.GetPosition();
 	auto& allAccel = _emitter.GetAcceleration();
 	for (unsigned i = 0; i < allAccel.size(); ++i)
@@ -198,7 +198,7 @@ void Dystopia::PointAffector::PointRepulse(Emitter& _emitter, float)
 		Math::Vec3 direction{ allPos[i].x - (GetOffsetX() + emitterPos.x),
 							  allPos[i].y - (GetOffsetY() + emitterPos.y),
 							  allPos[i].z - emitterPos.z };
-
+	
 		if (direction.MagnitudeSqr() > Math::epsilon && direction.MagnitudeSqr() < (GetRange()*GetRange()))
 			allAccel[i] = direction.Normalise() * static_cast<float>(GetStrength());
 	}

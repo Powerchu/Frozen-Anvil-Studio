@@ -28,7 +28,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace
 {
-	static auto const& pGfxAPI = ::Gfx::GetInstance();
+	static auto const pGfxAPI = ::Gfx::GetInstance();
 }
 
 
@@ -43,11 +43,14 @@ Dystopia::ShaderSystem::~ShaderSystem(void) noexcept
 
 void Dystopia::ShaderSystem::Shutdown(void) noexcept
 {
+#if EDITOR
 	SaveCustomShaders();
+#endif
 }
 
 void Dystopia::ShaderSystem::EditorUpdate(void)
 {
+#if EDITOR
 	auto pFileSys = CORE::Get<FileSystem>();
 	for (auto& e : mChanges)
 	{
@@ -55,25 +58,20 @@ void Dystopia::ShaderSystem::EditorUpdate(void)
 
 		if (temp.LoadProgram(e->GetStage(), pFileSys->GetFullPath(e->GetName().c_str(), eFileDir::eResource).c_str(), e->GetName().c_str()))
 			Ut::Swap(*e, temp);
-#		if defined(_DEBUG) | defined(DEBUG)
-		if (auto err = glGetError())
-			__debugbreak();
-#		endif 
 
 		for (auto& s : mShaders)
 			s.ReattachProgram(e);
-#		if defined(_DEBUG) | defined(DEBUG)
-		if (auto err = glGetError())
-			__debugbreak();
-#		endif 
 	}
 
 	mChanges.clear();
+
 #	if defined(_DEBUG) | defined(DEBUG)
 	if (auto err = glGetError())
 		__debugbreak();
-#	endif 
+#	endif
+#endif
 }
+
 
 Dystopia::Shader* Dystopia::ShaderSystem::GetShader(char const* _strName) const noexcept
 {

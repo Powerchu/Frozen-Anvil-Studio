@@ -21,9 +21,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace Dystopia
 {
-	class Emitter;
+	class ParticleEmitter;
 
-	class ParticleSystem : public Systems, public ComponentDonor<Emitter>
+	class ParticleSystem : public Systems, public ComponentDonor<ParticleEmitter>
 	{
 	public:
 
@@ -36,8 +36,8 @@ namespace Dystopia
 		void PostUpdate(void) override;
 		void Shutdown(void) override;
 
-
 	private:
+
 
 	};
 }

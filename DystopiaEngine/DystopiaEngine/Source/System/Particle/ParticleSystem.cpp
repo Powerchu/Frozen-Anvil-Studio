@@ -13,6 +13,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System/Particle/ParticleSystem.h"
 #include "System/Particle/ParticleAffector.h"
+#include "System/Particle/Emitter.h"
 #include "System/Graphics/Shader.h"
 #include "System/Graphics/Framebuffer.h"
 #include "System/Camera/CameraSystem.h"
@@ -21,11 +22,12 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Time/ScopedTimer.h"
 #include "System/Profiler/ProfilerAction.h"
 
-#include "Component/Emitter.h"
+#include "Component/ParticleEmitter.h"
 #include "Component/Camera.h"
 #include "Object/GameObject.h"
 
 #include "Math/Vectors.h"
+#include "DataStructure/AutoArray.h"
 
 #include <GL/glew.h>
 
@@ -52,27 +54,25 @@ void Dystopia::ParticleSystem::Update(float _dt)
 		{
 			if constexpr (EDITOR)
 				if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
-
+		
 			if ((e.GetFlags() & eObjFlag::FLAG_ACTIVE))
 			{
-				for (auto& worker : e.GetUpdateAffectors())
-					worker.Update(e, _dt);
-
-				unsigned int idx = static_cast<unsigned int>(e.GetLifetime().size());
-
-				for (auto& life : Ut::Range(e.GetLifetime()).Reverse())
+				for (auto& emit : e.GetEmitters())
 				{
-					--idx;
+					for (auto& worker : emit.GetUpdateAffectors())
+						worker.Update(emit, _dt);
 
-					life -= _dt;
-					if (e.GetInitialLifetime()[idx] > .0f && life <= .0f)
-						e.KillParticle(idx);
-				}
+					auto idx = emit.GetLifetime().size();
 
-				if (e.GetSpawnCount())
-				{
-					e.UploadColourBuffer();
-					e.UploadPositionBuffer();
+					for (auto& life : Ut::Range(emit.GetLifetime()).Reverse())
+					{
+						life -= _dt;
+						if (emit.GetInitialLifetime()[--idx] > .0f && life <= .0f)
+							emit.KillParticle(idx);
+					}
+
+					if (emit.GetSpawnCount())
+						emit.UploadBuffers();
 				}
 			}
 		}
@@ -90,19 +90,14 @@ void Dystopia::ParticleSystem::Update(float _dt)
 		{
 			if constexpr (EDITOR)
 				if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
-
+		
 			if (e.GetFlags() & eObjFlag::FLAG_ACTIVE)
 			{
-				auto& shader = e.GetShader();
-
-				e.Bind();
-				shader.Bind();
-
 				for (auto& cam : CORE::Get<CameraSystem>()->GetAllCameras())
 				{
 					if constexpr (EDITOR)
 						if (cam.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
-
+		
 					// Check valid Camera
 					auto ActiveFlags = cam.GetOwner()->GetFlags();
 					if ( cam.GetOwner() && 
@@ -111,20 +106,28 @@ void Dystopia::ParticleSystem::Update(float _dt)
 					{
 						cam.GetSurface()->Bind();
 						const auto vp = cam.GetViewport();
-
+		
 						glViewport(static_cast<int>(vp.mnX), static_cast<int>(vp.mnY),
 							static_cast<int>(vp.mnWidth), static_cast<int>(vp.mnHeight));
-
+		
 						auto const& M = cam.GetViewMatrix();
 						auto const& P = cam.GetProjectionMatrix();
+		
+						for (auto& emitter : e.GetEmitters())
+						{
+							auto& shader = emitter.GetShader();
 
-						shader.UploadUniform("ProjectMat", P);
-						shader.UploadUniform("ModelViewMat", M);
+							shader.Bind();
+							shader.UploadUniform("ProjectMat", P);
+							shader.UploadUniform("ModelViewMat", M);
 
-						e.Render();
+							emitter.Bind();
+							emitter.Render();
+						}
+		
 						cam.GetSurface()->Unbind();
 					}
-
+		
 				}
 			}
 
@@ -146,13 +149,16 @@ void Dystopia::ParticleSystem::FixedUpdate(float _dt)
 	{
 		if constexpr (EDITOR)
 			if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
-
-		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE &&	e.GetOwner())
+	
+		if ((e.GetFlags() & eObjFlag::FLAG_ACTIVE) && e.GetOwner())
 		{
-			for (auto& worker : e.GetFixedUpdateAffectors())
-				worker.Update(e, _dt);
-			
-			e.FixedUpdate(_dt);
+			for (auto& emitter : e.GetEmitters())
+			{
+				for (auto& worker : emitter.GetFixedUpdateAffectors())
+					worker.Update(emitter, _dt);
+
+				emitter.FixedUpdate(_dt);
+			}
 		}
 	}
 }

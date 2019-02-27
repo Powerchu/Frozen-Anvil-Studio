@@ -116,7 +116,7 @@ void Editor::SpriteEditor::SaveSettings(Dystopia::TextSerialiser&) const
 void Editor::SpriteEditor::LoadSettings(Dystopia::TextSerialiser&)
 {}
 
-HashString Editor::SpriteEditor::GetLabel(void) const
+const HashString& Editor::SpriteEditor::GetLabel(void) const
 {
 	return mLabel;
 }

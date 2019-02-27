@@ -16,6 +16,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/GraphicsSystem.h"	// File header
 #include "System/Graphics/GraphicsDefs.h"	// eGraphicSettings
 #include "System/Graphics/CharSpace.h"
+#include "System/Graphics/Framebuffer.h"
 #include "System/Driver/Driver.h"			// EngineCore
 #include "Lib/GraphicsLib.h"
 
@@ -84,7 +85,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 namespace
 {
-	static auto const& pGfxAPI = ::Gfx::GetInstance();
+	static ::Gfx::GfxAPI* pGfxAPI = nullptr;
 }
 
 
@@ -101,8 +102,8 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 
 
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
-	mvDebugColour{.0f, 1.f, .0f, .1f}, mvClearCol{0, 0, 0, 0}, mfGamma{2.0f}, mfDebugLineThreshold{0.958f}, mOpenGL{nullptr},
-	mPixelFormat{0}, mAvailable{0}, mSettings(0), mbVsync{false}, mvResolution{Gbl::WINDOW_WIDTH, Gbl::WINDOW_HEIGHT}
+	mvDebugColour{.0f, 1.f, .0f, .1f}, mvClearCol{0, 0, 0, 0}, mfGamma{2.0f}, mfDebugLineThreshold{0.958f},
+	mPixelFormat{0}, mAvailable{0}, mSettings(0), mbVSync{false}, mvResolution{Gbl::WINDOW_WIDTH, Gbl::WINDOW_HEIGHT}
 {
 }
 
@@ -123,14 +124,20 @@ float Dystopia::GraphicsSystem::GetGamma(void) noexcept
 
 void Dystopia::GraphicsSystem::ToggleVsync(bool _b) noexcept
 {
-	mSettings &= _b ? eGfxSettings::GRAPHICS_ALL : ~eGfxSettings::GRAPHICS_VSYNC;
-	mbVsync = _b;
+	mSettings = _b ? 
+		mSettings | eGfxSettings::GRAPHICS_VSYNC : 
+		mSettings & ~eGfxSettings::GRAPHICS_VSYNC;
+
+#   if EDITOR
+	mbVSync = _b;
+#   endif
+
 	pGfxAPI->ToggleVSync(_b);
 }
 
 _DLL_EXPORT bool Dystopia::GraphicsSystem::GetVsync(void) noexcept
 {
-	return mbVsync;
+	return (eGfxSettings::GRAPHICS_VSYNC & mSettings);
 }
 
 void Dystopia::GraphicsSystem::ToggleDebugDraw(bool _bDebugDraw) const
@@ -168,6 +175,8 @@ void Dystopia::GraphicsSystem::PreInit(void)
 {
 	Window& window = CORE::Get<WindowManager>()->GetMainWindow();
 	::Gfx::InitGraphicsAPI(reinterpret_cast<void const*>(&window.GetWindowHandle()), ::Gfx::GfxMode::OPENGL);
+
+	const_cast<::Gfx::GfxAPI*&>(pGfxAPI) = ::Gfx::GetInstance();
 
 	CORE::Get<ShaderSystem>()->LoadShaderList("Shader/DefaultShaderList.txt", eFileDir::eResource, false);
 	auto file = Serialiser::OpenFile<TextSerialiser>("Resource/Meshes/DefaultMeshList.txt", Serialiser::MODE_READ);
@@ -245,15 +254,24 @@ Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetView(int _n) const
 
 void Dystopia::GraphicsSystem::DrawSplash(void)
 {
-	auto pCore = EngineCore::GetInstance();
-	MeshSystem    *pMeshSys   = pCore->GetSubSystem <MeshSystem   >();
-	TextureSystem *pTexSys    = pCore->GetSubSystem <TextureSystem>();
-	ShaderSystem  *pShaderSys = pCore->GetSubSystem <ShaderSystem >();
-	WindowManager *pWinSys    = pCore->GetSystem    <WindowManager>();
+	MeshSystem    *pMeshSys   = CORE::Get<MeshSystem   >();
+	TextureSystem *pTexSys    = CORE::Get<TextureSystem>();
+	ShaderSystem  *pShaderSys = CORE::Get<ShaderSystem >();
+	WindowManager *pWinSys    = CORE::Get<WindowManager>();
+
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif
 
 	Mesh*      mesh    = pMeshSys->GetMesh("Quad");
 	Shader*    shader  = (*pShaderSys)["Logo Shader"];
 	Texture2D* texture = pTexSys->LoadTexture<Texture2D>("Resource/Editor/EditorStartup.png");
+
+#   if defined(_DEBUG) | defined(DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#   endif
 
 	unsigned w = texture->GetWidth(), h = texture->GetHeight();
 
@@ -270,6 +288,7 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	glViewport(0, 0, w, h);
 	glClearColor(.0f, .0f, .0f, .0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 
 	shader->Bind();
 	texture->Bind();
@@ -307,7 +326,7 @@ namespace
 		}
 
 		template <>
-		void operator() < int > (int&& value)
+		void operator() <int> (int&& value)
 		{
 			s->UploadUniformi(strName.c_str(), value);
 		}
@@ -316,22 +335,16 @@ namespace
 		{
 			s->UploadUniformi(strName.c_str(), value);
 		}
-
-		template <>
-		void operator() < std::pair<Dystopia::Texture*, int>&> (std::pair<Dystopia::Texture*, int>& value)
-		{
-			if (value.first)
-				value.first->Bind(value.second);
-		}
 	};
 
 	template <typename T>
 	inline void DrawRenderer(T& _renderer, Dystopia::Shader* s, float _fGamma)
 	{
-		auto t = _renderer->GetTexture();
 		auto m = _renderer->GetOwner()->GetComponent<Dystopia::Transform>()->GetTransformMatrix();
 
-		if (t) t->Bind();
+		for(auto& [n, t] : _renderer->GetTextures())
+			_EDITOR_CODE(if (t))
+				t->Bind(n);
 
 		s->UploadUniform("ModelMat", m);
 		s->UploadUniform("Gamma", _fGamma);
@@ -342,8 +355,6 @@ namespace
 		}
 
 		_renderer->Draw();
-
-		if (t) t->Unbind();
 	}
 }
 
@@ -408,7 +419,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 		}
 		else
 		{
-			s = CORE::Get<ShaderSystem>()->GetShader("No Texture");
+			s = CORE::Get<ShaderSystem>()->GetShader("Error Shader");
 			s->Bind();
 		}
 
@@ -429,7 +440,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 		if (r->GetOwner()->GetFlags() & ActiveFlags)
 		{
 			auto s = r->GetShader();
-			s = r->GetTexture() ? s : CORE::Get<ShaderSystem>()->GetShader("No Texture");
+			s = r->GetTexture() ? s : CORE::Get<ShaderSystem>()->GetShader("Error Shader");
 			s->Bind();
 			s->UploadUniform("ProjectMat", _Proj);
 			s->UploadUniform("ViewMat", _View);
@@ -495,10 +506,9 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _View, Math::
 			else
 			{
 				auto pos = pOwner->GetComponent<Transform>()->GetGlobalPosition();
-				auto scaleV = pOwner->GetComponent<Transform>()->GetGlobalScale();
-				//auto LocalScale = Math::Scale(scaleV.x, scaleV.y);
-				auto scale = Math::Abs(scaleV[0]) > Math::Abs(scaleV[1]) ? Math::Abs(scaleV[0]) : Math::Abs(scaleV[1]);
-				auto scaleM = Math::Scale(scale, scale);
+				auto scaleV = Math::Abs(pOwner->GetComponent<Transform>()->GetGlobalScale());
+				auto scale = Math::Max(scaleV, scaleV.yxwz);
+				auto scaleM = Math::Scale(scale);
 				auto Translation = Math::Translate(pos.x, pos.y);
 				s->UploadUniform("ModelMat", Translation * pOwner->GetComponent<Transform>()->GetGlobalRotation().Matrix() * Math::Translate(scaleV*Obj->GetOffSet()) * scaleM * Obj->GetTransformationMatrix());
 			}
@@ -561,7 +571,7 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 	auto& AllCam = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetAllCameras();
 
 	/*
-	// Do batching, depth sorting and grouping of translucent elements.
+	// Do batching?
 	for (auto& e : ComponentDonor<Renderer>::mComponents)
 	{
 	auto flags = e.GetFlags();
@@ -621,21 +631,15 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 			glViewport(static_cast<int>(vp.mnX), static_cast<int>(vp.mnY),
 				static_cast<int>(vp.mnWidth), static_cast<int>(vp.mnHeight));
 
-			// Temporary code
 			surface->Bind();
-			//Cam.GetSurface().SetBlendMode();
-			//glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-
-
 			DrawScene(Cam, View, Proj);
 
 			if (Cam.DrawDebug())
 				DrawDebug(Cam, View, Proj);
-
-			surface->Unbind();
 		}
 	}
 
+	static_cast<Dystopia::Framebuffer const*>(nullptr)->Unbind();
 #  if defined(_DEBUG) | defined(DEBUG)
 		if (auto err = glGetError())
 			__debugbreak();
@@ -679,13 +683,10 @@ void Dystopia::GraphicsSystem::PostUpdate(void)
 
 void Dystopia::GraphicsSystem::StartFrame(void)
 {
-	//SetAllCameraAspect(mvResolution.x, mvResolution.y);
 }
 
 void Dystopia::GraphicsSystem::EndFrame(void)
 {
-	// TODO: Final draw to combine layers & draw to screen
-	// TODO: Draw a fullscreen quad fusing the GameView and UIView
 	static Mesh* quad = EngineCore::GetInstance()->Get<MeshSystem>()->GetMesh("Quad");
 	auto& fb = GetFrameBuffer();
 
@@ -710,11 +711,14 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 	Shader* shader = CORE::Get<ShaderSystem>()->GetShader("FinalStage");
 	shader->Bind();
 	shader->UploadUniform("ModelMat", model);
-	//shader->UploadUniform("Gamma", mfGamma);
+	shader->UploadUniform("Gamma", mfGamma);
 
 	quad->DrawMesh(GL_TRIANGLES);
+
+#   if defined(_DEBUG) | defined(DEBUG)
 	if (auto err = glGetError())
 		__debugbreak();
+#   endif 
 
 #if (EDITOR)
 	fb.Unbind();
@@ -787,14 +791,15 @@ void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
 
 		mViews.Emplace(w, h, alpha, src, dst);
 	}
+
 	_in >> mbDebugDrawCheckBox;
 	_in >> mfDebugLineThreshold;
 	_in >> mvDebugColour;
-	_in >> mbVsync;
+	_in >> alpha;
 	_in >> mvClearCol;
 	_in >> mvResolution;
 
-	ToggleVsync(mbVsync);
+	ToggleVsync(alpha);
 }
 
 void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
@@ -814,7 +819,7 @@ void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
 	_out << mbDebugDrawCheckBox;
 	_out << mfDebugLineThreshold;
 	_out << mvDebugColour;
-	_out << mbVsync;
+	_out << (mSettings & eGfxSettings::GRAPHICS_VSYNC);
 	_out << mvClearCol;
 	_out << mvResolution;
 }
@@ -849,29 +854,22 @@ _DLL_EXPORT void Dystopia::GraphicsSystem::LoadAllTexture()
 	auto && allTex = CORE::Get<FileSystem>()->GetAllFiles_Full((CORE::Get<FileSystem>()->GetProjectFolders<std::string>(eFileDir::eResource) + "/Asset/").c_str());
 	for (auto && tex : allTex)
 	{
-		if (tex.find(".dmap") != HashString::nPos || tex.find(".dmeta") != HashString::nPos)
+		if (tex.rfind(".dmap") != HashString::nPos || tex.rfind(".dmeta") != HashString::nPos)
 			continue;
 
 		if (tex.rfind(".png") != HashString::nPos || tex.rfind(".dds") != HashString::nPos)
 			LoadTexture(tex.c_str());
 	}
-
 }
 
-Dystopia::Texture* Dystopia::GraphicsSystem::LoadFont(const std::string &)
+Dystopia::Font* Dystopia::GraphicsSystem::LoadFont(std::string const& _strPath)
 {
-	return nullptr;
+	return CORE::Get<FontSystem>()->LoadFont(_strPath);
 }
 
-void Dystopia::GraphicsSystem::BindOpenGL(Window& _window) noexcept
+void Dystopia::GraphicsSystem::MakeActiveWindow(Window& _window) noexcept
 {
-	wglMakeCurrent(_window.GetDeviceContext(), static_cast<HGLRC>(mOpenGL));
-}
-
-bool Dystopia::GraphicsSystem::InitOpenGL(Window&)
-{
-	// Return true to indicate success
-	return true;
+	pGfxAPI->BindContext(_window.GetDeviceContext());
 }
 
 
@@ -899,9 +897,9 @@ void Dystopia::GraphicsSystem::EditorUI(void)
 	}
 
 	//const auto& sceneCam = pCamSys->GetMasterCamera();
-	if (EGUI::Display::CheckBox("V Sync", &mbVsync))
+	if (EGUI::Display::CheckBox("V Sync", &mbVSync))
 	{
-		ToggleVsync(mbVsync);
+		ToggleVsync(mbVSync);
 	}
 
 	EditorAspectRatio();
