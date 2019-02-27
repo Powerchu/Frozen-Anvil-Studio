@@ -33,7 +33,7 @@ namespace Dystopia
 	class ParticleEmitter;
 	struct ParticleAffector;
 
-	class Emitter
+	class _DLL_EXPORT Emitter
 	{
 	public:
 		explicit Emitter(ParticleEmitter* _owner = nullptr) noexcept;

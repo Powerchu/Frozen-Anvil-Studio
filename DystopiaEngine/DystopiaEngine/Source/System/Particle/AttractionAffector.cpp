@@ -138,14 +138,14 @@ unsigned short Dystopia::PointAffector::GetSineRange(void) const
 	return *reinterpret_cast<const unsigned short*>(reserved + 1);
 }
 
-void Dystopia::PointAffector::SetSineSpeedScale(unsigned short _s)
+void Dystopia::PointAffector::SetSineSpeedScale(unsigned char _s)
 {
-	*reinterpret_cast<unsigned short*>(reserved + 3) = _s;
+	*reinterpret_cast<unsigned char*>(reserved + 3) = _s;
 }
 
-unsigned short Dystopia::PointAffector::GetSineSpeedScale(void) const
+unsigned char Dystopia::PointAffector::GetSineSpeedScale(void) const
 {
-	return *reinterpret_cast<const unsigned short*>(reserved + 3);
+	return *reinterpret_cast<const unsigned char*>(reserved + 3);
 }
 
 //void Dystopia::PointAffector::ToggleHelix(bool _enabled)
@@ -313,8 +313,8 @@ void Dystopia::PointAffector::EditorUI(void)
 		SetSineRange(static_cast<short>(s));
 
 	s = static_cast<int>(GetSineSpeedScale());
-	if (EGUI::Display::DragInt("Sine Speed", &s, 1.f, 0, USHRT_MAX))
-		SetSineSpeedScale(static_cast<short>(s));
+	if (EGUI::Display::DragInt("Sine Speed", &s, 1.f, 0, 255))
+		SetSineSpeedScale(static_cast<unsigned char>(s));
 
 	bool useX = GetSineX();
 	if (EGUI::Display::CheckBox("Use Sine X", &useX))

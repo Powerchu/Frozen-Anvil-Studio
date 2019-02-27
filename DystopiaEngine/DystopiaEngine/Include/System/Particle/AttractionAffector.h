@@ -71,8 +71,8 @@ namespace Dystopia
 		bool GetSineY(void) const;
 		void SetSineRange(unsigned short);
 		unsigned short GetSineRange(void) const;
-		void SetSineSpeedScale(unsigned short);
-		unsigned short GetSineSpeedScale(void) const;
+		void SetSineSpeedScale(unsigned char);
+		unsigned char GetSineSpeedScale(void) const;
 
 		/* requirement for affector */
 		void AffectorUpdate(Emitter&, float);

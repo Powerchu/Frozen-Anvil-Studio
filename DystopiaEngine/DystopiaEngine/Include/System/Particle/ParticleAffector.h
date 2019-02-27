@@ -18,6 +18,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/MetaAlgorithms.h"
 #include "IO/TextSerialiser.h"
 
+#include "Globals.h"
+
 namespace Dystopia
 {
 	namespace AffectorTag
@@ -51,7 +53,7 @@ namespace Dystopia
 
 	class Emitter;
 
-	struct alignas(16) ParticleAffector
+	struct alignas(16) _DLL_EXPORT ParticleAffector
 	{
 		using UPDATE = AffectorTag::OnUpdate;
 
@@ -63,6 +65,16 @@ namespace Dystopia
 		inline int GetID(void) const noexcept
 		{
 			return mID;
+		}
+
+		inline char* GetData(void) noexcept
+		{
+			return data;
+		}
+
+		inline char* GetDataReserves(void) noexcept
+		{
+			return reserved;
 		}
 
 		inline void Serialise(TextSerialiser& _out) const noexcept
