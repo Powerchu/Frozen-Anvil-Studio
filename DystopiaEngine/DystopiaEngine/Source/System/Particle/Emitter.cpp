@@ -373,6 +373,31 @@ void Dystopia::Emitter::SpawnParticle(void) noexcept
 		mbUpdatedPositions = true;
 	}
 }
+void Dystopia::Emitter::SpawnParticleGlobal(void) noexcept
+{
+	if (mParticle.mnLimit > mSpawnCount)
+	{
+		++mSpawnCount;
+
+		for (auto& e : mSpawn)
+			e.Update(*this, 0);
+
+		mInitialLife.EmplaceBackUnsafe(mParticle.mfLifeDur);
+		mLifetime.EmplaceBackUnsafe(mParticle.mfLifeDur);
+		mRotVel.EmplaceBackUnsafe(mParticle.mRotVel);
+		mRotAcc.EmplaceBackUnsafe(mParticle.mRotAccel);
+		mUV.EmplaceBackUnsafe(mParticle.mUV);
+		mSize.EmplaceBackUnsafe(mParticle.mSize);
+		mColour.EmplaceBackUnsafe(mParticle.mColour);
+		mAccel.EmplaceBackUnsafe(mParticle.mAccel);
+		mVelocity.EmplaceBackUnsafe(mParticle.mVelocity);
+		mPosition.EmplaceBackUnsafe(mParticle.mPos);
+		mRotation.EmplaceBackUnsafe(mParticle.mRotation);
+
+		mbUVChanged = true;
+		mbUpdatedPositions = true;
+	}
+}
 
 void Dystopia::Emitter::SetTexture(Texture* _texture) noexcept
 {

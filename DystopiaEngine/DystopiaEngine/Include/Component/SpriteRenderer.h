@@ -94,6 +94,8 @@ namespace Dystopia
 		void SetSpeed(float);
 		unsigned GetFrameSize(unsigned) const;
 
+		size_t GetAnimationsSize(void) const;
+
 		Math::Vec2 Resized(float _xMult = 1.f, float _yMult = 1.f) const;
 		void ResizeToFit(float _xMult = 1.f, float _yMult = 1.f) const;
 
@@ -105,7 +107,6 @@ namespace Dystopia
 			int mnCol, mnRow, mnStart, mnEnd;
 			bool mbLoop;
 		};
-
 		TextureAtlas* mpAtlas;
 		AutoArray<SpriteSheet> mAnimations;
 		int mnID, mnCol, mnRow;
