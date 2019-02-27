@@ -326,11 +326,11 @@ namespace Dystopia
 			if (elem.mNorm3.Dot(_RayDir) >= 0.f || (_Pos - elem.mPos).Dot(_RayDir) > 0.f)
 				continue;
 			/*Check if the ray lies within the edge*/
-			auto && v1 = _Pos - elem.mPos;
+			auto && v1 = (_Pos - elem.mPos).Normalise();
 			auto  v1_copy = v1;
-			auto && v2 = _Pos - (elem.mPos + elem.mVec3);
-			if (v1.Dot(elem.mVec3) < 0.f)
-			{
+			auto && v2 = (_Pos - (elem.mPos + elem.mVec3)).Normalise();
+
+
 #if CLOCKWISE
 
 #else
@@ -340,31 +340,8 @@ namespace Dystopia
 				v2.Negate<Math::NegateFlag::X>();
 #endif
 
-			}
-			else if (v1.Dot(elem.mVec3) > elem.mVec3.Dot(elem.mVec3))
-			{
-#if CLOCKWISE
-
-#else
-				v1.xyzw = v1.yxzw;
-				v2.xyzw = v2.yxzw;
-				v1.Negate<Math::NegateFlag::Y>();
-				v2.Negate<Math::NegateFlag::X>();
-#endif
-			}
-			else
-			{
-#if CLOCKWISE
-
-#else
-				v1.xyzw = v1.yxzw;
-				v2.xyzw = v2.yxzw;
-				v1.Negate<Math::NegateFlag::Y>();
-				v2.Negate<Math::NegateFlag::X>();
-#endif
-			}
 			if (v1.Dot(_RayDir) > 0.f || v2.Dot(_RayDir) > 0.f)
-				return false;
+				continue;
 			/*Get the intersection time*/
 			float cosTheta = _RayDir.Dot(-elem.mNorm3);
 			float adj = Math::Abs(v1_copy.Dot(elem.mNorm3));
@@ -376,13 +353,6 @@ namespace Dystopia
 				if (_MaxLength)
 					if ((time * _RayDir).MagnitudeSqr() > _MaxLength * _MaxLength)
 						continue;
-				//TODO 
-				/*DEBUG_PRINT(eLog::ERROR, "My Pos      %f %f %f \n", static_cast<float>(_Pos.x), static_cast<float>(_Pos.y), static_cast<float>(_Pos.z));
-				DEBUG_PRINT(eLog::ERROR, "Edge origin %f %f %f \n", static_cast<float>(elem.mPos.x), static_cast<float>(elem.mPos.y), static_cast<float>(elem.mPos.z));
-				DEBUG_PRINT(eLog::ERROR, "Edge Normal %f %f %f \n", static_cast<float>(elem.mNorm3.x), static_cast<float>(elem.mNorm3.y), static_cast<float>(elem.mNorm3.z));
-				DEBUG_PRINT(eLog::ERROR, "CosTheta    %f", cosTheta);
-				DEBUG_PRINT(eLog::ERROR, "Adj         %f", adj);
-				DEBUG_PRINT(eLog::ERROR, "Time         %f", time);*/
 				if (_OutputResult != nullptr)
 				{
 					_OutputResult->mTimeIntersection = rayEvent.mTimeIntersection > time ? time : rayEvent.mTimeIntersection;
