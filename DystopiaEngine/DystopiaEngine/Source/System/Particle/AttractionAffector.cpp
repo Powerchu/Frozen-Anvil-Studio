@@ -56,6 +56,26 @@ unsigned short Dystopia::PointAffector::GetRange(void) const
 	return *reinterpret_cast<const unsigned short*>(data + 2);
 }
 
+void Dystopia::PointAffector::ToggleSineX(void)
+{
+	reserved[0] ^= (1 << 3);
+}
+
+void Dystopia::PointAffector::ToggleSineY(void)
+{
+	reserved[0] ^= (1 << 4);
+}
+
+bool Dystopia::PointAffector::GetSineX(void) const
+{
+	return reserved[0] & (1 << 3);
+}
+
+bool Dystopia::PointAffector::GetSineY(void) const
+{
+	return reserved[0] & (1 << 4);
+}
+
 void Dystopia::PointAffector::TogglePoint(bool _enabled)
 {
 	if (_enabled)
@@ -106,6 +126,26 @@ void Dystopia::PointAffector::ToggleRepulse(bool _enabled)
 bool Dystopia::PointAffector::IsRepulse(void) const
 {
 	return reserved[0] & (1 << 2);
+}
+
+void Dystopia::PointAffector::SetSineRange(unsigned short _s)
+{
+	*reinterpret_cast<unsigned short*>(reserved + 1) = _s;
+}
+
+unsigned short Dystopia::PointAffector::GetSineRange(void) const
+{
+	return *reinterpret_cast<const unsigned short*>(reserved + 1);
+}
+
+void Dystopia::PointAffector::SetSineSpeedScale(unsigned short _s)
+{
+	*reinterpret_cast<unsigned short*>(reserved + 3) = _s;
+}
+
+unsigned short Dystopia::PointAffector::GetSineSpeedScale(void) const
+{
+	return *reinterpret_cast<const unsigned short*>(reserved + 3);
 }
 
 //void Dystopia::PointAffector::ToggleHelix(bool _enabled)
@@ -172,15 +212,26 @@ void Dystopia::PointAffector::AffectorUpdate(Emitter& _emitter, float _dt)
 //	}
 //}
 
-void Dystopia::PointAffector::PointAttract(Emitter& _emitter, float)
+void Dystopia::PointAffector::PointAttract(Emitter& _emitter, float _dt)
 {
+	*reinterpret_cast<float*>(data + 12) += _dt;
+
 	Math::Point3D emitterPos = _emitter.GetOwnerTransform().GetGlobalPosition();
 	auto& allPos = _emitter.GetPosition();
 	auto& allAccel = _emitter.GetAcceleration();
+	float accdt = *reinterpret_cast<const float*>(data + 12);
+
+	float funX = 0.f;
+	float funY = 0.f;
+	if (GetSineX())
+		funX = std::sin(GetSineSpeedScale()*accdt) * GetSineRange();
+	if (GetSineY())
+		funY = std::sin(GetSineSpeedScale()*accdt) * GetSineRange();
+
 	for (unsigned i = 0; i < allAccel.size(); ++i)
 	{
-		Math::Vec3 direction{ GetOffsetX() + emitterPos.x - allPos[i].x, 
-							  GetOffsetY() + emitterPos.y - allPos[i].y, 
+		Math::Vec3 direction{ GetOffsetX() + funX + emitterPos.x - allPos[i].x,
+							  GetOffsetY() + funY + emitterPos.y - allPos[i].y, 
 							  emitterPos.z - allPos[i].z };
 	
 		if (direction.MagnitudeSqr() > Math::epsilon && direction.MagnitudeSqr() < (GetRange()*GetRange()))
@@ -188,15 +239,29 @@ void Dystopia::PointAffector::PointAttract(Emitter& _emitter, float)
 	}
 }
 
-void Dystopia::PointAffector::PointRepulse(Emitter& _emitter, float)
+void Dystopia::PointAffector::PointRepulse(Emitter& _emitter, float _dt)
 {
+	*reinterpret_cast<float*>(data + 12) += _dt;
+
 	Math::Point3D emitterPos = _emitter.GetOwnerTransform().GetGlobalPosition();
 	auto& allPos = _emitter.GetPosition();
 	auto& allAccel = _emitter.GetAcceleration();
+
+	float accdt = *reinterpret_cast<const float*>(data + 12);
+	float funX = 0.f;
+	float funY = 0.f;
+	if (GetSineX())
+		funX = std::sin(GetSineSpeedScale()*accdt) * GetSineRange();
+	if (GetSineY())
+		funY = std::sin(GetSineSpeedScale()*accdt) * GetSineRange();
+
+	if (accdt > Math::tau)
+		*reinterpret_cast<float*>(data + 12) -= Math::tau;
+
 	for (unsigned i = 0; i < allAccel.size(); ++i)
 	{
-		Math::Vec3 direction{ allPos[i].x - (GetOffsetX() + emitterPos.x),
-							  allPos[i].y - (GetOffsetY() + emitterPos.y),
+		Math::Vec3 direction{ allPos[i].x - (GetOffsetX() + emitterPos.x + funX),
+							  allPos[i].y - (GetOffsetY() + emitterPos.y + funY),
 							  allPos[i].z - emitterPos.z };
 	
 		if (direction.MagnitudeSqr() > Math::epsilon && direction.MagnitudeSqr() < (GetRange()*GetRange()))
@@ -228,11 +293,11 @@ void Dystopia::PointAffector::EditorUI(void)
 	//	ToggleHelix(mode);
 
 	int s = static_cast<int>(GetStrength());
-	if (EGUI::Display::DragInt("Strength", &s, 1.f, 0, 65534))
+	if (EGUI::Display::DragInt("Strength", &s, 1.f, 0, USHRT_MAX))
 		SetStrength(static_cast<short>(s));
 
 	s = static_cast<int>(GetRange());
-	if (EGUI::Display::DragInt("Range", &s, 1.f, 0, 65534))
+	if (EGUI::Display::DragInt("Range", &s, 1.f, 0, USHRT_MAX))
 		SetRange(static_cast<short>(s));
 
 	float f = GetOffsetX();
@@ -242,6 +307,22 @@ void Dystopia::PointAffector::EditorUI(void)
 	f = GetOffsetY();
 	if (EGUI::Display::DragFloat("Offset Y", &f, 1.f, -FLT_MAX, FLT_MAX))
 		SetOffsetY(f);
+
+	s = static_cast<int>(GetSineRange());
+	if (EGUI::Display::DragInt("Sine Range", &s, 1.f, 0, USHRT_MAX))
+		SetSineRange(static_cast<short>(s));
+
+	s = static_cast<int>(GetSineSpeedScale());
+	if (EGUI::Display::DragInt("Sine Speed", &s, 1.f, 0, USHRT_MAX))
+		SetSineSpeedScale(static_cast<short>(s));
+
+	bool useX = GetSineX();
+	if (EGUI::Display::CheckBox("Use Sine X", &useX))
+		ToggleSineX();
+
+	bool useY = GetSineY();
+	if (EGUI::Display::CheckBox("Use Sine Y", &useY))
+		ToggleSineY();
 
 	EGUI::PopID();
 	EGUI::PopLeftAlign();

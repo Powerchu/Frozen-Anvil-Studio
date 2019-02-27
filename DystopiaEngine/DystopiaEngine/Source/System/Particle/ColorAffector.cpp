@@ -338,7 +338,7 @@ void Dystopia::ColorOverLifeAffector::AffectorUpdate(Emitter& _emitter, float _d
 		}
 		else// if (ratioLeft > 0.f)
 		{
-			Math::Vec4 delta = (targetCol - allCol[i]) * _dt / ratioLeft;
+			Math::Vec4 delta = (targetCol - allCol[i]) * _dt * ratioLeft;
 
 			allCol[i] += delta;
 			//float r = ratioLeft * _dt;
