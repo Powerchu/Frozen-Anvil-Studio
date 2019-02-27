@@ -283,7 +283,7 @@ namespace Editor
 	{
 		const Math::Vec2 buffedSize{ mPayloadRect.x * 1.25f, mPayloadRect.y * 1.25f };
 		auto columns = static_cast<unsigned int>(_mySize.x / (buffedSize.x + 20));
-		columns = columns ? columns : 1 ;
+		columns = columns ? columns : 1;
 
 		EGUI::Display::Label(mpCurrentFolder->mPath.c_str());
 		EGUI::Display::HorizontalSeparator();
@@ -300,29 +300,30 @@ namespace Editor
 			{
 				EGUI::PushID(i);
 
-			Editor::File* pFile = mpCurrentFolder->mArrPtrFiles[i];
-			if (i % columns)
-				ImGui::SameLine(0, 20);
-			/*if (EGUI::StartChild(pFile->mName.c_str(), buffedSize, false, true))
-			{
-			EGUI::Indent(10);
-			FileUI(pFile);
-			EGUI::UnIndent(10);
-			}
-			EGUI::EndChild();
-			*/
-
-			if (ImGui::BeginChild(pFile->mName.c_str(), buffedSize, false, ImGuiWindowFlags_NoScrollWithMouse))
-			{
+				Editor::File* pFile = mpCurrentFolder->mArrPtrFiles[i];
+				if (i % columns)
+					ImGui::SameLine(0, 20);
+				/*if (EGUI::StartChild(pFile->mName.c_str(), buffedSize, false, true))
+				{
 				EGUI::Indent(10);
 				FileUI(pFile);
 				EGUI::UnIndent(10);
+				}
+				EGUI::EndChild();
+				*/
+
+				if (ImGui::BeginChild(pFile->mName.c_str(), buffedSize, false, ImGuiWindowFlags_NoScrollWithMouse))
+				{
+					EGUI::Indent(10);
+					FileUI(pFile);
+					EGUI::UnIndent(10);
+				}
+				ImGui::EndChild();
+
+				EGUI::PopID();
 			}
 			ImGui::EndChild();
-
-			EGUI::PopID();
 		}
-		ImGui::EndChild();
 	}
 	
 	void ProjectResource::SearchResultWindow(const Math::Vec2& _mySize)
@@ -389,7 +390,7 @@ namespace Editor
 		}
 	}
 
-	void ProjectResource::ShaderFolderUI(unsigned _cols, const Math::Vec2& _size)
+	void ProjectResource::ShaderFolderUI(unsigned _cols, const Math::Vec2& _size) const
 	{
 		auto const & allShaders = Dystopia::CORE::Get<Dystopia::ShaderSystem>()->GetAllShaders();
 		for (unsigned int i = 0; i < allShaders.size(); ++i)

@@ -89,10 +89,10 @@ void Editor::ProjectSettings::SaveSettings(Dystopia::TextSerialiser&) const
 void Editor::ProjectSettings::LoadSettings(Dystopia::TextSerialiser&)
 {}
 
-HashString Editor::ProjectSettings::GetLabel(void) const
-{
-	return mLabel;
-}
+//HashString Editor::ProjectSettings::GetLabel(void) const
+//{
+//	return mLabel;
+//}
 
 void Editor::ProjectSettings::VerticalTabs(bool(&enabled)[EGUISYSCOUNT])
 {

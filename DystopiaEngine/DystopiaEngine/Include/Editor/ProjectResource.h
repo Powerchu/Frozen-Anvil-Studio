@@ -79,7 +79,7 @@ namespace Editor
 		void				UpdateSearch();
 		void				RefreshResourceFolder();
 
-		void				ShaderFolderUI(unsigned, const Math::Vec2&);
+		void				ShaderFolderUI(unsigned, const Math::Vec2&) const;
 	};
 }
 
