@@ -53,12 +53,12 @@ namespace Dystopia
 				iter = mparrChildren.begin();
 			}
 
-			eStatus Update() override
+			eStatus Update(float _deltaTime) override
 			{
 				assert(HasChildren() && "Composite has no children");
 
 				while (iter != mparrChildren.end()) {
-					const auto status = (*iter)->Tick();
+					const auto status = (*iter)->Tick(_deltaTime);
 
 					if (status != eStatus::FAIL) {
 						return status;
@@ -85,12 +85,12 @@ namespace Dystopia
 				iter = mparrChildren.begin();
 			}
 
-			eStatus Update() override
+			eStatus Update(float _deltaTime) override
 			{
 				assert(HasChildren() && "Composite has no children");
 
 				while (iter != mparrChildren.end()) {
-					const auto status = (*iter)->Tick();
+					const auto status = (*iter)->Tick(_deltaTime);
 
 					if (status != eStatus::SUCCESS) {
 						return status;
@@ -114,12 +114,12 @@ namespace Dystopia
 		class StatefulSelector : public Composite
 		{
 		public:
-			eStatus Update() override
+			eStatus Update(float _deltaTime) override
 			{
 				assert(HasChildren() && "Composite has no children");
 
 				while (iter != mparrChildren.end()) {
-					const auto status = (*iter)->Tick();
+					const auto status = (*iter)->Tick(_deltaTime);
 
 					if (status != eStatus::FAIL) {
 						return status;
@@ -145,12 +145,12 @@ namespace Dystopia
 		class StatefulSequence : public Composite
 		{
 		public:
-			eStatus Update() override
+			eStatus Update(float _deltaTime) override
 			{
 				assert(HasChildren() && "Composite has no children");
 
 				while (iter != mparrChildren.end()) {
-					const auto status = (*iter)->Tick();
+					const auto status = (*iter)->Tick(_deltaTime);
 
 					if (status != eStatus::SUCCESS) {
 						return status;
@@ -184,11 +184,11 @@ namespace Dystopia
 				mpChild = mparrChildren[dist(engine)];
 			}
 
-			eStatus Update() override
+			eStatus Update(float _deltaTime) override
 			{
 				assert(HasChildren() && "Composite has no children");
 
-				const auto status = mpChild->Tick();
+				const auto status = mpChild->Tick(_deltaTime);
 
 				if (status != eStatus::FAIL) 
 				{
@@ -215,11 +215,11 @@ namespace Dystopia
 				mpChild = mparrChildren[dist(engine)];
 			}
 
-			eStatus Update() override
+			eStatus Update(float _deltaTime) override
 			{
 				assert(HasChildren() && "Composite has no children");
 
-				const auto status = mpChild->Tick();
+				const auto status = mpChild->Tick(_deltaTime);
 
 				if (status != eStatus::SUCCESS)
 				{

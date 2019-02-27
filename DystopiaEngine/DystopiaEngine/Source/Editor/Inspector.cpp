@@ -292,8 +292,13 @@ namespace Editor
 			EGUI::Display::Dummy(235, 2);
 			for (unsigned int i = 0; i < numComponents; ++i)
 			{
+				if (i == 0 && mpFocus->GetComponent<Camera>() != nullptr) continue;
 				// If Renderer, skip
 				if (i == 1) continue;
+				if (i == 2 && mpFocus->GetComponent<RigidBody>() != nullptr) continue;
+				if (i == 7 && mpFocus->GetComponent<SpriteRenderer>() != nullptr) continue;
+				if (i == 8 && mpFocus->GetComponent<TextRenderer>() != nullptr) continue;
+				if (i == 9 && mpFocus->GetComponent<AiController>() != nullptr) continue;
 
 				const auto& e = arr[i];
 				if (EGUI::Display::SelectableTxt(e.c_str(), false))

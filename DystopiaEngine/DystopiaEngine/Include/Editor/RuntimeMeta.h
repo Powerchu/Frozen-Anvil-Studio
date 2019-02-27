@@ -504,7 +504,7 @@ namespace Dystopia
 		{
 
 			float Temp;
-			switch (EGUI::Display::DragFloat("Test", &Temp, 0.01f, 0.0f, 2.0f))
+			switch (EGUI::Display::DragFloat("Test", &Temp, 0.01f, 0.0f))
 			{
 			case EGUI::eDragStatus::eEND_DRAG:
 				//EGUI::GetCommandHND()->EndRecording();

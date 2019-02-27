@@ -358,22 +358,12 @@ namespace Dystopia
 	void CollisionSystem::EditorUI(void)
 	{
 		static char buffer[256];
-		EGUI::StartChild("make unique", ImVec2{ 980.f, 940.f }, false, true);
+		//EGUI::StartChild("make unique", ImVec2{ 800.f, 760.f }, false, true);
+		ImGui::BeginChild("makeUnique", ImVec2{ 800.f, 720.f }, false, ImGuiWindowFlags_NoScrollWithMouse);
+		//ImGui::BeginGroup();
 		EGUI::PushLeftAlign(150.f);
 
 		EGUI::PushLeftAlign(300.f);
-
-		//for (unsigned i = 0; i <= 32; ++i)
-		//{
-
-		//	EGUI::PushID(i);
-		//	EGUI::StartChild(arrColLayer[i].c_str(), ImVec2{ 13.f, 200.f });
-		//	EGUI::Display::LabelWrapped(arrColLayer[i].c_str());
-		//	EGUI::EndChild();
-		//	//ImGui::NextColumn();
-		//	EGUI::SameLine();
-		//	EGUI::PopID();
-		//}
 		for (unsigned i = 32; i >= 1; --i)
 		{
 			//EGUI::Display::LabelWrapped(std::to_string(i).c_str());
@@ -382,7 +372,7 @@ namespace Dystopia
 				EGUI::Display::LabelWrapped("  ");
 				continue;
 			}
-			EGUI::Display::LabelWrapped("%2d", i);
+			EGUI::Display::Label("%02d", i);
 			ImGui::SameLine();
 			ImGui::NextColumn();
 		}
@@ -397,7 +387,7 @@ namespace Dystopia
 			{
 				EGUI::PushID(unique++);
 				ImGui::PushItemWidth(10.f);
-				if (EGUI::Display::CheckBox(std::to_string(u * i).c_str(), &mIgnoreBoolTable[i-1][u-1], false))
+				if (EGUI::Display::CheckBox(std::to_string(u * i).c_str(), &mIgnoreBoolTable[i-1][u-1], false, nullptr, 0.5f))
 				{
 					eColLayer curr  = mIgnoreTable[static_cast<eColLayer>(0x01u << (i - 1))];
 					eColLayer curr2 = mIgnoreTable[static_cast<eColLayer>(0x01u << (u - 1))];
@@ -420,7 +410,8 @@ namespace Dystopia
 			ImGui::NextColumn();
 		}
 		EGUI::PopLeftAlign();
-		EGUI::EndChild();
+		ImGui::EndChild();
+		//EGUI::EndChild();
 
 
 	}
@@ -600,16 +591,20 @@ namespace Dystopia
 		return Ut::Move(ToRet);
 	}
 
-	bool CollisionSystem::RaycastFirstHit(Math::Vec3D const & _Dir, Math::Point3D const & _mPos,CollisionEvent * _Output, float _MaxLength) const
+	bool CollisionSystem::RaycastFirstHit(Math::Vec3D const & _Dir, Math::Point3D const & _mPos,CollisionEvent * _Output, float _MaxLength, eColLayer layer) const
 	{
 		bool isColliding = false;
 		for (auto & elem : ComponentDonor<Convex>::mComponents)
 		{
 #if EDITOR
 			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
+			
 #endif 
 			if (elem.GetOwner())
 			{
+				if (this->ToIgnore(elem.GetColLayer(), layer))
+					continue;
+
 				isColliding |= RayCollider::Raycast(_Dir, _mPos, &elem, _Output, _MaxLength);
 			}
 		}
@@ -631,8 +626,13 @@ namespace Dystopia
 #if EDITOR
 			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
 #endif 
+			
+
 			if (elem.GetOwner())
 			{
+				if (this->ToIgnore(elem.GetColLayer(), layer))
+					continue;
+
 				isColliding |= RayCollider::Raycast(_Dir, _mPos, &elem, _Output, _MaxLength);
 			}
 		}
@@ -640,7 +640,7 @@ namespace Dystopia
 		return isColliding;
 	}
 
-	bool CollisionSystem::RaycastAllHits(Math::Vec3D const & _Dir, Math::Point3D const & _mPos, AutoArray<CollisionEvent>& _Output, float _MaxLength) const
+	bool CollisionSystem::RaycastAllHits(Math::Vec3D const & _Dir, Math::Point3D const & _mPos, AutoArray<CollisionEvent>& _Output, float _MaxLength, eColLayer layer) const
 	{
 		bool isColliding = false;
 		for (auto & elem : ComponentDonor<Convex>::mComponents)
@@ -648,10 +648,15 @@ namespace Dystopia
 #if EDITOR
 			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
 #endif 
+			
+
 			if (elem.GetOwner())
 			{
+				if (this->ToIgnore(elem.GetColLayer(), layer))
+					continue;
+
 				CollisionEvent ColEvent{ nullptr, elem.GetOwner() };
-				bool result = RayCollider::Raycast(_Dir, _mPos, &elem, &ColEvent, _MaxLength);
+				const bool result = RayCollider::Raycast(_Dir, _mPos, &elem, &ColEvent, _MaxLength);
 				if (result)
 					_Output.push_back(Ut::Move(ColEvent));
 				isColliding |= result;
@@ -675,10 +680,15 @@ namespace Dystopia
 #if EDITOR
 			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
 #endif 
+			
+
 			if (elem.GetOwner())
 			{
+				if (this->ToIgnore(elem.GetColLayer(), layer))
+					continue;
+
 				CollisionEvent ColEvent{ nullptr, elem.GetOwner() };
-				bool result = RayCollider::Raycast(_Dir, _mPos, &elem, &ColEvent, _MaxLength);
+				const bool result = RayCollider::Raycast(_Dir, _mPos, &elem, &ColEvent, _MaxLength);
 				if (result)
 					_Output.push_back(Ut::Move(ColEvent));
 				isColliding |= result;
@@ -693,7 +703,7 @@ namespace Dystopia
 		mIgnoreTable[_layer] = static_cast<eColLayer>(mIgnoreTable[_layer] | _toIgnore);
 	}
 
-	bool CollisionSystem::ToIgnore(eColLayer _Layer1, eColLayer _Layer2)
+	bool CollisionSystem::ToIgnore(eColLayer _Layer1, eColLayer _Layer2) const
 	{
 		if ((!_Layer1 || !_Layer2)) return true;
 

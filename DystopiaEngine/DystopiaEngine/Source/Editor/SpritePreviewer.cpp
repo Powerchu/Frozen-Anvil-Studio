@@ -59,53 +59,54 @@ void Editor::SpritePreviewer::Update(float)
 
 void Editor::SpritePreviewer::EditorUI(void)
 {
-	if (EGUI::Display::EmptyBox("Previewing  ", 150, (mpTargetTexture) ? mTextureName.c_str() : "-empty-", true))
-	{
-	}
+	ImGui::BeginGroup();
+		EGUI::Display::EmptyBox("Previewing: ", 150, (mpTargetTexture) ? mTextureName.c_str() : "-empty-", true);
+		
+		if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PNG))
+		{
+			mpTargetTexture = mpGfxSys->LoadTexture(t->mPath.c_str());
+			mTextureName = GetTextureName(mpTargetTexture);
+			mImageW = static_cast<float>(mpTargetTexture->GetWidth());
+			mImageH = static_cast<float>(mpTargetTexture->GetHeight());
+			mImageRatio = mImageW / mImageH;
+			EGUI::Display::EndPayloadReceiver();
+		}
+		if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::BMP))
+		{
+			mpTargetTexture = mpGfxSys->LoadTexture(t->mPath.c_str());
+			mTextureName = GetTextureName(mpTargetTexture);
+			mImageW = static_cast<float>(mpTargetTexture->GetWidth());
+			mImageH = static_cast<float>(mpTargetTexture->GetHeight());
+			mImageRatio = mImageW / mImageH;
+			EGUI::Display::EndPayloadReceiver();
+		}
+		if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::DDS))
+		{
+			mpTargetTexture = mpGfxSys->LoadTexture(t->mPath.c_str());
+			mTextureName = GetTextureName(mpTargetTexture);
+			mImageW = static_cast<float>(mpTargetTexture->GetWidth());
+			mImageH = static_cast<float>(mpTargetTexture->GetHeight());
+			mImageRatio = mImageW / mImageH;
+			EGUI::Display::EndPayloadReceiver();
+		}
 
-	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PNG))
-	{
-		mpTargetTexture = mpGfxSys->LoadTexture(t->mPath.c_str());
-		mTextureName = GetTextureName();
-		mImageW = static_cast<float>(mpTargetTexture->GetWidth());
-		mImageH = static_cast<float>(mpTargetTexture->GetHeight());
-		mImageRatio = mImageW / mImageH;
-		EGUI::Display::EndPayloadReceiver();
-	}
-	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::BMP))
-	{
-		mpTargetTexture = mpGfxSys->LoadTexture(t->mPath.c_str());
-		mTextureName = GetTextureName();
-		mImageW = static_cast<float>(mpTargetTexture->GetWidth());
-		mImageH = static_cast<float>(mpTargetTexture->GetHeight());
-		mImageRatio = mImageW / mImageH;
-		EGUI::Display::EndPayloadReceiver();
-	}
-	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::DDS))
-	{
-		mpTargetTexture = mpGfxSys->LoadTexture(t->mPath.c_str());
-		mTextureName = GetTextureName();
-		mImageW = static_cast<float>(mpTargetTexture->GetWidth());
-		mImageH = static_cast<float>(mpTargetTexture->GetHeight());
-		mImageRatio = mImageW / mImageH;
-		EGUI::Display::EndPayloadReceiver();
-	}
+		
+		EGUI::Display::Label("Resolution: [X: %d, Y: %d]", mpTargetTexture ? mpTargetTexture->GetWidth() : 0,
+														   mpTargetTexture ? mpTargetTexture->GetHeight() : 0);
 
-	EGUI::SameLine();
-	EGUI::Display::Label("Resolution:   < %d x >   < %d  y>", mpTargetTexture ? mpTargetTexture->GetWidth() : 0,
-		mpTargetTexture ? mpTargetTexture->GetHeight() : 0);
-
-	EGUI::Display::HorizontalSeparator();
-
-	if (mpTargetTexture)
-	{
-		float sw = Size().x - 6.f;
-		float sh = Size().y - (2 * EGUI::TabsImageOffsetY) - 4.f;
-		float sratio = sw / sh;
-		mDisplaySize = sratio > mImageRatio ? Math::Vec2{ mImageW * (sh / mImageH), sh } :
-											  Math::Vec2{ sw, mImageH * (sw / mImageW) };
-		EGUI::Display::Image(mpTargetTexture->GetID(), mDisplaySize, false, true);
-	}
+		EGUI::Display::HorizontalSeparator();
+		if (mpTargetTexture)
+		{
+			ImGui::BeginChild("imagePreview", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar);
+				const float sw = Size().x - 6.f;
+				const float sh = Size().y - (2 * EGUI::TabsImageOffsetY) - 4.f;
+				const float sratio = sw / sh;
+				mDisplaySize = sratio > mImageRatio ? Math::Vec2{ mImageW * (sh / mImageH), sh } :
+													  Math::Vec2{ sw, mImageH * (sw / mImageW) };
+				EGUI::Display::Image(mpTargetTexture->GetID(), mDisplaySize, false, true);
+			ImGui::EndChild();
+		}
+	ImGui::EndGroup();
 }
 
 void Editor::SpritePreviewer::Shutdown(void)
@@ -125,10 +126,11 @@ const HashString& Editor::SpritePreviewer::GetLabel(void) const
 	return mLabel;
 }
 
-HashString Editor::SpritePreviewer::GetTextureName(void)
+HashString Editor::SpritePreviewer::GetTextureName(Dystopia::Texture* _pTex) const
 {
-	HashString path{ mpTargetTexture->GetPath().c_str() };
-	size_t pos = path.find_last_of("/\\") + 1;
+	if (_pTex == nullptr) return "invalid";
+	HashString path{ _pTex->GetPath().c_str() };
+	const size_t pos = path.find_last_of("/\\") + 1;
 	if (pos < path.length())
 		return HashString{ path.begin() + pos, path.end() };
 	return "";

@@ -72,7 +72,7 @@ namespace Dystopia
 #if EDITOR
 		/*=================Editor Stuff=====================*/
 		void EditorCurrentStatus();
-		void RecursiveTree(Node::Ptr) const;
+		void RecursiveTree(Node::Ptr);
 		void EditorTreeView();
 		void AddKeyToMap();
 
@@ -89,8 +89,9 @@ namespace Dystopia
 		void EditorUI(void) noexcept override;
 		
 #endif // EDITOR
-	private:
 		SharedPtr<BehaviourTree> bTree;
+	private:
+		Task * mCurrentTask = nullptr;
 
 	};
 }

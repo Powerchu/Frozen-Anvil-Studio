@@ -1138,7 +1138,7 @@ namespace Dystopia
 	void RigidBody::eRestitutionDragField()
 	{
 		auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
-		switch (EGUI::Display::DragFloat("Bounciness", &mfRestitution, 0.01f, 0.0f, 2.0f))
+		switch (EGUI::Display::DragFloat("Bounciness", &mfRestitution, 0.01f, 0.0f))
 		{
 		case EGUI::eDragStatus::eEND_DRAG:
 		case EGUI::eDragStatus::eTABBED:

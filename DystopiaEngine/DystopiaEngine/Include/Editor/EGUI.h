@@ -254,7 +254,7 @@ namespace EGUI
 		// The checkbox is clicked (toggleMe if its true or false does not matter). Do something here:
 		}
 		======================================================================================================================= */
-		bool CheckBox(const char * _label, bool *_pOutBool, bool _showLabel = true, const char* _tooltip = nullptr);
+		bool CheckBox(const char * _label, bool *_pOutBool, bool _showLabel = true, const char* _tooltip = nullptr, float _szMod = 2.0f);
 		/* =======================================================================================================================
 		Brief:
 		Creates a radio button for a boolean variable. Returns true when the radiois clicked, toggles the _pOutBool
@@ -720,6 +720,64 @@ namespace EGUI
 		Vertical Tabs (todo: will update how to use)
 		======================================================================================================================= */
 		bool GoxTab(const char *text, bool *v);
+
+		struct fuzzy {
+			static int score(const char *str1, const char *str2)
+			{
+				int score = 0, consecutive = 0, maxerrors = 0;
+				while (*str1 && *str2) {
+					const int is_leading = (*str1 & 64) && !(str1[1] & 64);
+					if ((*str1 & ~32) == (*str2 & ~32)) {
+						const int had_separator = (str1[-1] <= 32);
+						const int x = had_separator || is_leading ? 10 : consecutive * 5;
+						consecutive = 1;
+						score += x;
+						++str2;
+					}
+					else {
+						const int x = -1;
+						const int y = is_leading * -3;
+						consecutive = 0;
+						score += x;
+						maxerrors += y;
+					}
+					++str1;
+				}
+				return score + (maxerrors < -9 ? -9 : maxerrors);
+			}
+
+			static int search(const char *str, int num, const char *words[]) {
+				int scoremax = 0;
+				int best = -1;
+				for (int i = 0; i < num; ++i) {
+					const int score = fuzzy::score(words[i], str);
+					const int record = (score >= scoremax);
+					const int draw = (score == scoremax);
+					if (record) {
+						scoremax = score;
+						if (!draw) best = i;
+						else best = best >= 0 && strlen(words[best]) < strlen(words[i]) ? best : i;
+					}
+				}
+				return best;
+			}
+
+			static int searchString(const HashString& str, int num, AutoArray<HashString> words) {
+				int scoremax = 0;
+				int best = -1;
+				for (int i = 0; i < num; ++i) {
+					const int score = fuzzy::score(words[i].c_str(), str.c_str());
+					const int record = (score >= scoremax);
+					const int draw = (score == scoremax);
+					if (record) {
+						scoremax = score;
+						if (!draw) best = i;
+						else best = best >= 0 && words[best] < words[i] ? best : i;
+					}
+				}
+				return best;
+			}
+		};
 
 	}
 }

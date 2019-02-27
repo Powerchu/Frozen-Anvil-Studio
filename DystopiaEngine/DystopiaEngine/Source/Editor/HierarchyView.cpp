@@ -258,7 +258,6 @@ namespace Editor
 		int j = 0;
 		for (auto& obj : arrayOfGameObjects)
 		{
-
 			j++;
 			if (StringHasher(obj.GetNamePtr()) == StringHasher("___Scene_Camera___")) 
 				continue;
@@ -278,7 +277,11 @@ namespace Editor
 			EGUI::PopID();
 		}
 
-		EGUI::Display::Dummy(Size().x, 50.f);
+		if (ImGui::InvisibleButton("PayloadReceiver", { Size().x, ImGui::GetContentRegionAvail().y }))
+		{
+			EditorMain::GetInstance()->GetPanel<ProjectResource>()->RemoveFocusOnFile();
+			EditorMain::GetInstance()->GetSystem<EditorClipboard>()->ClearAll();
+		}
 		if (uint64_t *id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
 		{
 			Dystopia::GameObject *t = ss->GetCurrentScene().FindGameObject(*id);
@@ -327,7 +330,7 @@ namespace Editor
 				break;
 			}
 		}
-		bool tree = EGUI::Display::StartTreeNode(_obj.GetNamePtr(), &clicked, selected, false, true, false);
+		const bool tree = EGUI::Display::StartTreeNode(_obj.GetNamePtr(), &clicked, selected, false, false, false);
 		GameObjectPayload(_obj);
 		GameObjectPopups(_obj);
 		if (tree)
