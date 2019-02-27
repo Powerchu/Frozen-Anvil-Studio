@@ -301,11 +301,11 @@ void Dystopia::PointAffector::EditorUI(void)
 		SetRange(static_cast<short>(s));
 
 	float f = GetOffsetX();
-	if (EGUI::Display::DragFloat("Offset X", &f, 1.f, -FLT_MAX, FLT_MAX))
+	if (EGUI::Display::DragFloat("Offset X", &f, 0.1f, -FLT_MAX, FLT_MAX))
 		SetOffsetX(f);
 
 	f = GetOffsetY();
-	if (EGUI::Display::DragFloat("Offset Y", &f, 1.f, -FLT_MAX, FLT_MAX))
+	if (EGUI::Display::DragFloat("Offset Y", &f, 0.1f, -FLT_MAX, FLT_MAX))
 		SetOffsetY(f);
 
 	s = static_cast<int>(GetSineRange());
