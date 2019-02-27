@@ -148,7 +148,7 @@ void Dystopia::ParticleEmitter::Unserialise(TextSerialiser& _in)
 void Dystopia::ParticleEmitter::EditorUI(void) noexcept
 {
 #if EDITOR
-	EGUI::PushLeftAlign(80);
+	EGUI::PushLeftAlign(130);
 
 	if (EGUI::Display::Button("Add Emitter", { 100, 24 }))
 	{
@@ -164,7 +164,17 @@ void Dystopia::ParticleEmitter::EditorUI(void) noexcept
 		EGUI::PushID(i);
 
 		EGUI::Display::HorizontalSeparator();
-		if (EGUI::Display::StartTreeNode(buffer))
+		bool open = EGUI::Display::StartTreeNode(buffer);
+		if (ImGui::BeginPopupContextItem())
+		{
+			if (EGUI::Display::SelectableTxt("Remove Emitter"))
+			{
+				mEmitters.FastRemove(i--);
+				open = false;
+			}
+			ImGui::EndPopup();
+		}
+		if (open)
 		{
 			if (EGUI::Display::Button("Edit", { 150, 24 }))
 			{

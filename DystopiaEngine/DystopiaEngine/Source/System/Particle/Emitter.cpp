@@ -620,15 +620,17 @@ void Dystopia::Emitter::Unserialise(TextSerialiser& _in) noexcept
 void Dystopia::Emitter::EditorUI(void) noexcept
 {
 #if EDITOR
-	if (GetTexture())
-	{
-		EGUI::Display::EmptyBox("Texture", 150, GetTexture()->GetName().c_str(), true);
-	}
+
+	EGUI::Display::CheckBox("Alive", &mbIsAlive);
+
+	if (!GetTexture())
+		EGUI::Display::ImageEmpty("-empty-", { 100, 100 });
 	else
 	{
-		EGUI::Display::EmptyBox("Texture", 150, "-empty-", true);
+		EGUI::Display::Label(GetTexture()->GetName().c_str());
+		EGUI::SameLine(DefaultAlighnmentSpacing);
+		EGUI::Display::Image(GetTexture()->GetID(), Math::Vec2{ 100, 100 }, false, true);
 	}
-
 	if (auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::ALL_IMG))
 	{
 		SetTexture(CORE::Get<TextureSystem>()->LoadTexture(t->mPath));
@@ -637,19 +639,17 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 
 	ImGui::SameLine();
 	if (EGUI::Display::IconCross("Clear", 8.f))
-	{
 		SetTexture(nullptr);
-	}
 
-	if (auto t = GetTexture())
-	{
-		EGUI::Display::Label("Preview");
-		EGUI::SameLine(DefaultAlighnmentSpacing, 80);
-		float ratio = static_cast<float>(t->GetHeight()) / static_cast<float>(t->GetWidth());
-		EGUI::Display::Image(t->GetID(), Math::Vec2{ 140, 140 * ratio }, false, true);
-	}
+	//if (auto t = GetTexture())
+	//{
+	//	EGUI::Display::Label("Preview");
+	//	EGUI::SameLine(DefaultAlighnmentSpacing, 80);
+	//	float ratio = static_cast<float>(t->GetHeight()) / static_cast<float>(t->GetWidth());
+	//	EGUI::Display::Image(t->GetID(), Math::Vec2{ 140, 140 * ratio }, false, true);
+	//}
 	EGUI::Display::Label("Count : %d", GetSpawnCount()); 
-	EGUI::Display::DragInt("Maximum Limit", &mnParticleLimit, 1.f, 0, INT_MAX);
+	EGUI::Display::DragInt("Maximum", &mnParticleLimit, 1.f, 0, INT_MAX);
 	
 #endif 
 }
