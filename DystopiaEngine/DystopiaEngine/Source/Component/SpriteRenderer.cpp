@@ -435,6 +435,11 @@ void Dystopia::SpriteRenderer::ResizeToFit(float _xMult, float _yMult) const
 	}
 }
 
+size_t Dystopia::SpriteRenderer::GetAnimationsSize(void) const
+{
+	return mAnimations.size();
+}
+
 void Dystopia::SpriteRenderer::TextureFields(void)
 {
 #if EDITOR

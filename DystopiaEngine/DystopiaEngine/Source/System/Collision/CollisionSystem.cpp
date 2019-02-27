@@ -409,7 +409,7 @@ namespace Dystopia
 				ImGui::PopItemWidth();
 				EGUI::PopID();
 				
-				EGUI::SameLine();
+				ImGui::SameLine();
 			}
 			
 			EGUI::PushLeftAlign(1500.f);
