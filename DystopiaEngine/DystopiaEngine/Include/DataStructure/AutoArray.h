@@ -132,6 +132,9 @@ public:
 	// Remove an element pointed by the iterator to the array
 	inline void FastRemove(const Itor_t& _pObj);
 
+	inline void FastRemoveRange(const Sz_t _nFirst, const Sz_t _nCount);
+	inline void FastRemoveRange(Itor_t const& _first, Itor_t const& _last);
+
 	inline bool IsEmpty(void) const noexcept;
 
 	inline Sz_t Cap(void) const noexcept;
@@ -478,6 +481,33 @@ inline void AutoArray<T, A>::FastRemove(const Itor_t& _pObj)
 	Ut::Swap(*_pObj, *mpLast);
 	Destroy(*mpLast);
 }
+
+template<class T, class A>
+inline void AutoArray<T, A>::FastRemoveRange(Sz_t _nFirst, Sz_t _nCount)
+{
+	FastRemoveRange(mpArray + _nFirst, mpArray + _nFirst + _nCount);
+}
+
+template<class T, class A>
+inline void AutoArray<T, A>::FastRemoveRange(Itor_t const& _first, Itor_t const& _last)
+{
+	auto range = _last - _first;
+	auto e = end();
+	auto b = e - range;
+	auto first = _first;
+
+	b = _last - b > 0 ? _last : b;
+
+	while (b != e)
+	{
+		Ut::Swap(*first, *b);
+		++b; ++first;
+	}
+
+	while(range--)
+		Destroy(*--mpLast);
+}
+
 
 template <class T, class A>
 inline bool AutoArray<T, A>::IsEmpty(void) const noexcept

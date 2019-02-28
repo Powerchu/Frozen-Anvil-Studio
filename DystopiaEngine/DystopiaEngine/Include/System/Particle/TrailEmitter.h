@@ -37,11 +37,11 @@ namespace Dystopia
 		TrailEmitter(TrailEmitter const&) noexcept;
 		~TrailEmitter(void) noexcept;
 
-		void Init(void) override;
+		//void Init(void) override;
 		void FixedUpdate(float _dt) noexcept override;
 
-		void KillParticle(size_t _nIdx) noexcept;
-		void SpawnParticle(void) noexcept;
+		//void KillParticle(size_t _nIdx) noexcept;
+		//void SpawnParticle(void) noexcept;
 	};
 }
 
