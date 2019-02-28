@@ -22,15 +22,19 @@ namespace Dystopia
 
 		data[0,1] = strength
 		data[2,3] = range
-		data[4,5,6,7] = dt acc
 		data[4,5,6,7] = offsetX
 		data[8,9,10,11] = offsetY
+		data[12,13,14,15] = dt acc
 
 		reserved[0] flags
 			- 1 << 0 attract
 			//- 1 << 1 hexlix
 			- 1 << 2 repulse
+			- 1 << 3 use sine wave X
+			- 1 << 4 use sine wave Y
 
+		reserved[1,2] range
+		reserved[3] scaler
 	*/
 
 	struct PointAffector : ParticleAffector
@@ -59,6 +63,16 @@ namespace Dystopia
 		//* line attraction */
 		//void ToggleHelix(bool _enabled);
 		//bool IsHelix(void) const;
+
+		/* sine wave */
+		void ToggleSineX(void);
+		void ToggleSineY(void);
+		bool GetSineX(void) const;
+		bool GetSineY(void) const;
+		void SetSineRange(unsigned short);
+		unsigned short GetSineRange(void) const;
+		void SetSineSpeedScale(unsigned char);
+		unsigned char GetSineSpeedScale(void) const;
 
 		/* requirement for affector */
 		void AffectorUpdate(Emitter&, float);

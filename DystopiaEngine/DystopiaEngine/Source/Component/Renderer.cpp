@@ -33,6 +33,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Object/ObjectFlags.h"
 #include "Object/GameObject.h"
 #include "IO/TextSerialiser.h"
+
 #if EDITOR
 #include "Editor/ProjectResource.h"
 #include "Editor/EditorMain.h"
@@ -345,7 +346,7 @@ void Dystopia::Renderer::EditorUI(void) noexcept
 	EGUI::PushLeftAlign(80);
 
 	TextureField();
-	MeshField();
+	//MeshField();
 	ShaderField();
 
 	EGUI::PopLeftAlign();
@@ -355,57 +356,48 @@ void Dystopia::Renderer::EditorUI(void) noexcept
 #if EDITOR
 void Dystopia::Renderer::TextureField()
 {
-	::Editor::File *t;
+	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
 
 	for (auto& [idx, mpTexture] : mTextureFields)
 	{
 		EGUI::PushID(idx);
 
-		EGUI::Display::EmptyBox("Texture", 150, (mpTexture) ? mpTexture->GetName().c_str() : "-empty-", true);
-		auto cmd = ::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorCommands>();
-		t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::PNG);
-		if (t)  EGUI::Display::EndPayloadReceiver();
-		
-		if (!t)
+		HashString displayName{"Texture"};
+		if (mpShader)
 		{
-			t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::DDS);
-			if (t) EGUI::Display::EndPayloadReceiver();
-		}
-		if (!t)
-		{
-			t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::BMP);
-			if (t) EGUI::Display::EndPayloadReceiver();
-		}
-		if (t)
-		{
-			Texture *pTex = CORE::Get<TextureSystem>()->LoadTexture(t->mPath);
-			cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand(&Renderer::SetTexture, mpTexture, idx),
-			                                   cmd->MakeFnCommand(&Renderer::SetTexture, pTex, idx));
-		}
-		
-		EGUI::SameLine();
-		if (EGUI::Display::IconCross("Clear", 8.f))
-		{
-			cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand(&Renderer::SetTexture, mpTexture, idx),
-			                                   cmd->MakeFnCommand(&Renderer::SetTexture, nullptr, idx));
-		}
-		
-		if (mpTexture)
-		{
-			EGUI::Display::Label("Preview");
-			EGUI::SameLine(DefaultAlighnmentSpacing, 80);
-			float ratio = static_cast<float>(mpTexture->GetHeight()) / static_cast<float>(mpTexture->GetWidth());
-			EGUI::Display::Image(mpTexture->GetID(), Math::Vec2{ 140, 140 * ratio }, false, true);
-		
-			EGUI::SameLine();
-			if (EGUI::Display::Button("Auto", Math::Vec2{ 35, 20 }))
+			const auto& texList = mpShader->GetTextureList();
+			for (auto& tp : texList)
 			{
-				auto w = static_cast<float>(mpTexture->GetWidth())  * .1f;
-				auto h = static_cast<float>(mpTexture->GetHeight()) * .1f;
-
-				cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand<Transform, const Math::Vec4&>(&Transform::SetScale, GetOwner()->GetComponent<Transform>()->GetScale()),
-												   cmd->MakeFnCommand<Transform, const Math::Vec4&>(&Transform::SetScale, Math::Vec4{ w, h, 1.f }));
+				if (tp.second == idx)
+				{
+					displayName = tp.first;
+				}
 			}
+		}
+
+		if (!mpTexture)
+			EGUI::Display::ImageEmpty(displayName.c_str(), { 100, 100 });
+		else
+		{
+			EGUI::Display::Label(displayName.c_str());
+			EGUI::SameLine(DefaultAlighnmentSpacing);
+			//const float ratio = static_cast<float>(mpTexture->GetHeight()) / static_cast<float>(mpTexture->GetWidth());
+			EGUI::Display::Image(mpTexture->GetID(), Math::Vec2{ 100, 100 }, false, true);
+		}
+
+		if (const auto t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::ALL_IMG))
+		{
+			cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand(&Renderer::SetTexture, mpTexture, idx),
+											   cmd->MakeFnCommand(&Renderer::SetTexture, 
+																  CORE::Get<GraphicsSystem>()->LoadTexture(t->mPath), idx));
+			EGUI::Display::EndPayloadReceiver();
+		}
+
+		ImGui::SameLine();
+		if (EGUI::Display::IconCross("ClearTexture", 8.f))
+		{
+			cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand(&Renderer::SetTexture, mpTexture, idx),
+											   cmd->MakeFnCommand(&Renderer::SetTexture, nullptr, idx));
 		}
 
 		EGUI::PopID();
@@ -414,14 +406,14 @@ void Dystopia::Renderer::TextureField()
 
 void Dystopia::Renderer::MeshField()
 {
-	if (EGUI::Display::EmptyBox("Mesh", 150, (mpMesh) ? mpMesh->GetName().c_str() : "", true))
-	{
-
-	}
-	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::FILE))
-	{
-		EGUI::Display::EndPayloadReceiver();
-	}
+	//if (EGUI::Display::EmptyBox("Mesh", 150, (mpMesh) ? mpMesh->GetName().c_str() : "", true))
+	//{
+	//
+	//}
+	//if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::FILE))
+	//{
+	//	EGUI::Display::EndPayloadReceiver();
+	//}
 }
 
 
@@ -473,32 +465,44 @@ namespace
 
 void Dystopia::Renderer::ShaderField()
 {
-	static bool debug = false;
-	EGUI::PushLeftAlign(80);
+	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
+	//static bool debug = false;
 
-	char const* str = "No Shader";
-	if (mpShader)
+	if (EGUI::Display::EmptyBox("Shader", 150, (mpShader) ? mpShader->GetName().c_str() : "", true))
 	{
-		str = mpShader->GetName().c_str();
-	}
-	if (EGUI::Display::EmptyBox("Shader", 150, str, true))
-	{
-		debug = !debug;
-	}
 
-	OString buffer{ str };
-	buffer += "                               ";
-	if (debug && EGUI::Display::TextField("Manual", buffer, true, 150))
-	{
-		if (auto pShader = CORE::Get<ShaderSystem>()->GetShader(buffer.c_str()))
-		{
-			SetShader(pShader);
-		}
 	}
-	if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::FILE))
+	if (unsigned *t = EGUI::Display::StartPayloadReceiver<unsigned>(EGUI::SHADER))
 	{
+		auto const & allShaders = Dystopia::CORE::Get<Dystopia::ShaderSystem>()->GetAllShaders();
+		cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand<Renderer, Shader*>(&Renderer::SetShader, mpShader),
+										   cmd->MakeFnCommand<Renderer, Shader*>(&Renderer::SetShader, &allShaders[*t]));
 		EGUI::Display::EndPayloadReceiver();
 	}
+
+	//char const* str = "No Shader";
+	//if (mpShader)
+	//{
+	//	str = mpShader->GetName().c_str();
+	//}
+	//if (EGUI::Display::EmptyBox("Shader", 150, str, true))
+	//{
+	//	debug = !debug;
+	//}
+
+	//OString buffer{ str };
+	//buffer += "                               ";
+	//if (debug && EGUI::Display::TextField("Manual", buffer, true, 150))
+	//{
+	//	if (auto pShader = CORE::Get<ShaderSystem>()->GetShader(buffer.c_str()))
+	//	{
+	//		SetShader(pShader);
+	//	}
+	//}
+	//if (::Editor::File *t = EGUI::Display::StartPayloadReceiver<::Editor::File>(EGUI::FILE))
+	//{
+	//	EGUI::Display::EndPayloadReceiver();
+	//}
 
 	auto& vars = mpShader->GetVariables();
 	mOverrideNames.clear();
@@ -508,7 +512,7 @@ void Dystopia::Renderer::ShaderField()
 	for (auto& e : vars)
 		mOverrideNames.EmplaceBack(e.first.c_str());
 
-	static int sele = 0;
+	int sele = 0;
 	if (EGUI::Display::DropDownSelection("Overrides", sele, mOverrideNames) && sele)
 	{
 		::Gfx::eUniform_t type;
@@ -531,7 +535,6 @@ void Dystopia::Renderer::ShaderField()
 
 			mOverride.EmplaceBack(mOverrideNames[sele], type, Ut::Move(myVariant));
 		}
-		sele = 0;
 	}
 
 	int n = 0;
@@ -540,14 +543,12 @@ void Dystopia::Renderer::ShaderField()
 		EGUI::PushID(++n);
 
 		e.Get<2>().Visit(UIVisitor{ e.Get<0>() });
-		EGUI::SameLine();
-		if (EGUI::Display::IconCross("Clear", 9.f))
+		ImGui::SameLine();
+		if (EGUI::Display::IconCross("ClearOverrides", 9.f))
 			mOverride.FastRemove(&e);
 
 		EGUI::PopID();
 	}
-
-	EGUI::PopLeftAlign();
 }
 
 template<>

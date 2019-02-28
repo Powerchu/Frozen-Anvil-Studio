@@ -34,7 +34,7 @@ namespace Editor
 		virtual void Message(eEMessage) = 0;
 		virtual void SaveSettings(Dystopia::TextSerialiser& _out) const = 0;
 		virtual void LoadSettings(Dystopia::TextSerialiser& _in) = 0;
-		virtual HashString GetLabel(void) const = 0;
+		virtual const HashString& GetLabel(void) const = 0;
 		virtual ~EditorPanel(void) {}
 		virtual void PanelClosing(void) {}
 

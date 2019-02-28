@@ -1,6 +1,6 @@
 /* HEADER *********************************************************************************/
 /*!
-\file	SpritePreviewer.h
+\file	ShaderView.h
 \author Shannon Tan (100%)
 \par    email: t.shannon\@digipen.edu
 \brief
@@ -11,26 +11,27 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #if EDITOR
-#ifndef _SPRITE_PREVEIWER_H_
-#define _SPRITE_PREVEIWER_H_
-#include "Math/Vectors.h"
+#ifndef _SHADER_VIEW_H_
+#define _SHADER_VIEW_H_
 #include "DataStructure/HashString.h"
-//#include "Editor/EditorTab.h"
+#include "DataStructure/AutoArray.h"
+#include "DataStructure/Array.h"
+#include "Math/Vectors.h"
 #include "Editor/EditorPanel.h"
+#include "Lib/Gfx/Shaders.h"
+
 namespace Dystopia
 {
-	class Texture;
-	class TextSerialiser;
-	class GraphicsSystem;
+	class ShaderSystem;
 }
+
 namespace Editor
 {
-	class SpritePreviewer : public EditorPanel//EditorTab
+	class ShaderView : public EditorPanel
 	{
 	public:
-		//static SpritePreviewer* GetInstance(void);
-		SpritePreviewer(void);
-		~SpritePreviewer(void);
+		ShaderView(void);
+		~ShaderView(void);
 
 		void Load(void);
 		bool Init(void);
@@ -43,21 +44,40 @@ namespace Editor
 		const HashString& GetLabel(void) const;
 
 	private:
-		Dystopia::Texture* mpTargetTexture;
-		Dystopia::GraphicsSystem* mpGfxSys;
 
-		float		mImageRatio;
-		float		mImageH;
-		float		mImageW;
-		Math::Vec2  mDisplaySize;
-		HashString  mTextureName;
-		HashString  mLabel;
+		HashString mLabel;
 
-		HashString  GetTextureName(Dystopia::Texture* _pTex) const;
+		Dystopia::ShaderSystem *mpShaderSystem;
+
+		AutoArray<unsigned> mArrStageVert;
+		AutoArray<unsigned> mArrStageFrag;
+		AutoArray<unsigned> mArrStageGeo;
+		Array<unsigned, 3> mArrIndexTracker;
+		Array<bool, 3> mArrShowPopup;
+		Array<HashString, 3> mArrProgramChosen;
+
+		void ShaderUI(void);
+		void ProgramUI(void);
+
+		void StageVert(void);
+		void StageFrag(void);
+		void StageGeo(void);
+
+		void Prompt(void);
+		void MakeShaderProgram(::Gfx::ShaderStage _stage, const HashString& _name);
+		bool MakeShader(const HashString&);
 	};
 }
 
 
-#endif // _SPRITE_PREVEIWER_H_
+#endif 
 #endif // EDITOR
+
+
+
+
+
+
+
+
 

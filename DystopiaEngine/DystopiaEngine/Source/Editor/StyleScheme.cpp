@@ -154,7 +154,7 @@ void Editor::StyleScheme::LoadSettings(Dystopia::TextSerialiser& _in)
 	Apply();
 }
 
-HashString Editor::StyleScheme::GetLabel(void) const
+const HashString& Editor::StyleScheme::GetLabel(void) const
 {
 	return mLabel;
 }

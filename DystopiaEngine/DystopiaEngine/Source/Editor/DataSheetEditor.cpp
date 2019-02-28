@@ -111,7 +111,7 @@ void Editor::DataSheetEditor::SaveSettings(Dystopia::TextSerialiser&) const
 void Editor::DataSheetEditor::LoadSettings(Dystopia::TextSerialiser&)
 {}
 
-HashString Editor::DataSheetEditor::GetLabel(void) const
+const HashString& Editor::DataSheetEditor::GetLabel(void) const
 {
 	return mLabel;
 }

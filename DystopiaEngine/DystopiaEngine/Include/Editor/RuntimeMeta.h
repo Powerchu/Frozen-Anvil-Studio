@@ -79,6 +79,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Particle/SizeAffector.h"
 #include "System/Particle/AccelerationAffector.h"
 #include "System/Particle/AttractionAffector.h"
+#include "System/Particle/RotationAffector.h"
+#include "System/Particle/BubbleAffector.h"
 
 namespace Dystopia
 {
@@ -503,7 +505,7 @@ namespace Dystopia
 		{
 
 			float Temp;
-			switch (EGUI::Display::DragFloat("Test", &Temp, 0.01f, 0.0f, 2.0f))
+			switch (EGUI::Display::DragFloat("Test", &Temp, 0.01f, 0.0f))
 			{
 			case EGUI::eDragStatus::eEND_DRAG:
 				//EGUI::GetCommandHND()->EndRecording();

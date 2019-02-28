@@ -41,7 +41,7 @@ namespace Editor
 		void Message(eEMessage);
 		void SaveSettings(Dystopia::TextSerialiser& _out) const;
 		void LoadSettings(Dystopia::TextSerialiser& _in);
-		HashString GetLabel(void) const;
+		const HashString& GetLabel(void) const;
 
 		void SetParticleEmitter(Dystopia::ParticleEmitter*, int);
 
@@ -49,6 +49,7 @@ namespace Editor
 
 		Dystopia::ParticleEmitter* mpTargetEmitter;
 		int mnTargetIndex;
+		uint64_t mnTargetID;
 
 		HashString mLabel;
 		uint64_t mnObjectID;

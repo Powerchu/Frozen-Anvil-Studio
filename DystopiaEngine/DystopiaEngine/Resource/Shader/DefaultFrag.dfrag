@@ -15,7 +15,10 @@ void main()
 {
   vec4 color = texture(texSampler, vUV) * vColor;
   
+  if (color.a < 0.003f)
+    discard;
+	
   fragColor = color;
-  fragColor.a *= int(!(color.a < 0.003f));
+  //fragColor.a *= int(!(color.a < 0.003f));
 }
 

@@ -33,7 +33,7 @@ namespace Dystopia
 	class ParticleEmitter;
 	struct ParticleAffector;
 
-	class Emitter
+	class _DLL_EXPORT Emitter
 	{
 	public:
 		explicit Emitter(ParticleEmitter* _owner = nullptr) noexcept;
@@ -53,6 +53,7 @@ namespace Dystopia
 
 		virtual void KillParticle(size_t _nIdx) noexcept;
 		virtual void SpawnParticle(void) noexcept;
+		virtual void SpawnParticleGlobal(void) noexcept;
 		void SetTexture(Texture*) noexcept;
 		void SetOwner(ParticleEmitter*) noexcept;
 		void NotifyUVChanged(void) noexcept;

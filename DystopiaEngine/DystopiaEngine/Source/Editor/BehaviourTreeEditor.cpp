@@ -121,7 +121,7 @@ void Editor::BehaviourTreeEditor::SaveSettings(Dystopia::TextSerialiser&) const
 void Editor::BehaviourTreeEditor::LoadSettings(Dystopia::TextSerialiser&)
 {}
 
-HashString Editor::BehaviourTreeEditor::GetLabel(void) const
+const HashString& Editor::BehaviourTreeEditor::GetLabel(void) const
 {
 	return mLabel;
 }

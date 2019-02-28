@@ -862,10 +862,10 @@ void Dystopia::InputManager::EditorUI()
 
 				// Snapping Checkbox
 				EGUI::Display::CheckBox("Snap", &val.mbSnapping,true
-										, "if we have input in opposite direction of current, \ndo we jump to neutral and continue from there?");
+				                        , "if we have input in opposite direction of current, \ndo we jump to neutral and continue from there?", 2.0f);
 	
 				// Invert Checkbox
-				EGUI::Display::CheckBox("Invert", &val.mbInvert, true, "flip positive and negative?");
+				EGUI::Display::CheckBox("Invert", &val.mbInvert, true, "flip positive and negative?", 2.0f);
 
 				static std::string textStates[3]{ "Key or Mouse Button", "Mouse Movement", "Joystick Axis" };
 				if (EGUI::Display::DropDownSelection("Type", marrCombos[mapCount].TypeSelectedInd, textStates, 220.f))

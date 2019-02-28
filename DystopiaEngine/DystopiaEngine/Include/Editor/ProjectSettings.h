@@ -10,10 +10,16 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
+#ifndef PROJECTSETTINGS_H
+#define PROJECTSETTINGS_H
+
+#include "DataStructure/AutoArray.h"
 #if EDITOR
 #ifndef _PROJ_SETTINGS_H_
 #define _PROJ_SETTINGS_H_
 #include "Editor/EditorPanel.h"
+
+constexpr unsigned EGUISYSCOUNT = 4;
 
 namespace Dystopia
 {
@@ -42,10 +48,11 @@ namespace Editor
 		void Message(eEMessage);
 		void SaveSettings(Dystopia::TextSerialiser&) const;
 		void LoadSettings(Dystopia::TextSerialiser&);
-		HashString GetLabel(void) const;
+		const HashString& GetLabel(void) const;
 
 	private:
-		HashString		mLabel;
+		HashString				   mLabel;
+		AutoArray<HashString>      marrSysName;
 
 		Dystopia::GraphicsSystem  *mpGfxSys;
 		Dystopia::PhysicsSystem	  *mpPhySys;
@@ -53,6 +60,8 @@ namespace Editor
 		Dystopia::TagSystem       *mpTagSystem;
 		Dystopia::CollisionSystem *mpColSystem;
 
+		void VerticalTabs(bool(&enabled)[EGUISYSCOUNT]);
+		void RightPanel(bool(&enabled)[EGUISYSCOUNT]) const;
 	};
 
 }
@@ -61,15 +70,4 @@ namespace Editor
 #endif //EDITOR
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+#endif // PROJECTSETTINGS_H
