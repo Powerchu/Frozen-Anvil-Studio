@@ -594,6 +594,8 @@ namespace Dystopia
 
 	bool CollisionSystem::RaycastFirstHit(Math::Vec3D const & _Dir, Math::Point3D const & _mPos,CollisionEvent * _Output, float _MaxLength, eColLayer layer) const
 	{
+		CollisionEvent ray;
+		ray.mTimeIntersection = 999999.9f;
 		bool isColliding = false;
 		for (auto & elem : ComponentDonor<Convex>::mComponents)
 		{
@@ -606,7 +608,7 @@ namespace Dystopia
 				if (this->ToIgnore(elem.GetColLayer(), layer))
 					continue;
 
-				isColliding |= RayCollider::Raycast(_Dir, _mPos, &elem, _Output, _MaxLength);
+				isColliding |= RayCollider::Raycast(_Dir, _mPos, &elem, &ray, _MaxLength);
 			}
 		}
 
@@ -617,7 +619,7 @@ namespace Dystopia
 #endif 
 			if (elem.GetOwner())
 			{
-				//isColliding = RayCollider::Raycast(_Dir, _mPos, &elem, _Output, _MaxLength);
+				//isColliding = RayCollider::Raycast(_Dir, _mPos, &elem, &ray, _MaxLength);
 			}
 
 		}
@@ -634,10 +636,10 @@ namespace Dystopia
 				if (this->ToIgnore(elem.GetColLayer(), layer))
 					continue;
 
-				isColliding |= RayCollider::Raycast(_Dir, _mPos, &elem, _Output, _MaxLength);
+				isColliding |= RayCollider::Raycast(_Dir, _mPos, &elem, &ray, _MaxLength);
 			}
 		}
-
+		if (isColliding && _Output) *_Output = ray;
 		return isColliding;
 	}
 

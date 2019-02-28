@@ -312,14 +312,14 @@ namespace Dystopia
 	}
 	bool RayCollider::Raycast_Convex(Math::Vec3D const & _RayDir, Math::Point3D const & _Pos, Convex * _Collider, CollisionEvent * _OutputResult, float _MaxLength)
 	{
-		CollisionEvent rayEvent;
+		//CollisionEvent rayEvent;
 		/*Check if ray is travelling toward object*/
 		Math::Vec3D && v = _Collider->GetGlobalPosition() - _Pos;
 		if (v.Dot(_RayDir) < 0.f)
 			return false;
 		auto && ListOfEdge = _Collider->GetConvexEdges();
 		bool    isColliding = false;
-		rayEvent.mTimeIntersection = 99999.f;
+		//rayEvent.mTimeIntersection = 99999.f;
 		for (auto const & elem : ListOfEdge)
 		{
 			/*Check if the edge normal is facing the ray*/
@@ -349,21 +349,21 @@ namespace Dystopia
 			float time = adj / cosTheta;
 			/*If the time of intersection to the edge is less than the current time of intersection, update it*/
 
-			if (time < rayEvent.mTimeIntersection)
+			if (time < _OutputResult->mTimeIntersection)
 			{
 				if (_MaxLength)
 					if ((time * _RayDir).MagnitudeSqr() > _MaxLength * _MaxLength)
 						continue;
 
-				rayEvent.mTimeIntersection = time;
+				
 
 				if (_OutputResult != nullptr)
 				{
-					_OutputResult->mTimeIntersection = rayEvent.mTimeIntersection;
-					_OutputResult->mEdgeNormal = elem.mNorm3;
-					_OutputResult->mfPeneDepth = 0;
-					_OutputResult->mCollisionPoint = _Pos + rayEvent.mTimeIntersection * _RayDir;
-					_OutputResult->mCollidedWith = _Collider->GetOwner();
+					_OutputResult->mTimeIntersection = time;
+					_OutputResult->mEdgeNormal       = elem.mNorm3;
+					_OutputResult->mfPeneDepth       = 0;
+					_OutputResult->mCollisionPoint   = _Pos + time * _RayDir;
+					_OutputResult->mCollidedWith     = _Collider->GetOwner();
 				}
 				
 				isColliding = true;
