@@ -23,7 +23,7 @@ const mat3 Idnty = mat3(1,0,0,0,1,0,0,0,1);
 
 void main()
 {
-  vec3 axis  = ModelViewMat[2].xyz;
+  vec3 axis  = vec3(0,0,1);
   
   float cosA = cos(Params[0].z);
   float sinA = sin(Params[0].z);
@@ -31,10 +31,9 @@ void main()
   mat3 cross = mat3(0, axis.z, -axis.y, -axis.z, 0, axis.x, axis.y, -axis.x, 0);
   mat3 rot   = cosA * Idnty + sinA * cross + (1 - cosA) * outerProduct(axis, axis);
   
-  vec3 right = rot * (ModelViewMat[0].xyz * Params[0].x);
-  vec3 up    = rot * (ModelViewMat[1].xyz * Params[0].y);
+  vec3 right = rot * vec3(1,0,0) * Params[0].x;
+  vec3 up    = rot * vec3(0,1,0) * Params[0].y;
   vec3 pos   = vPosition[0];
-  
   
   vUV = UVBuf[0].zw;
   vColor = vertCol[0];
@@ -55,8 +54,7 @@ void main()
   vColor = vertCol[0];
   gl_Position = ProjectMat * vec4(pos - right + up, 1);
   EmitVertex();
- 
- 
-	EndPrimitive();
+  
+  EndPrimitive();
 }
 
