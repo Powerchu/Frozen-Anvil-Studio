@@ -236,13 +236,15 @@ namespace Dystopia
 				/*Check if there is a common collision layer*/
 				if (this->ToIgnore(bodyA->GetColLayer(), bodyB->GetColLayer()))
 					continue;
+
+				// If the colliders belong to the same owner, continue
+				if (ownerA == ownerB)
+					continue;
+
 				if (rigidA && rigidB)
 				{
 					// if both bodies are static, continue
 					if (rigidA->Get_IsStaticState() && rigidB->Get_IsStaticState()) 
-						continue;
-					// If the colliders belong to the same owner, continue
-					if (ownerA == ownerB) 
 						continue;
 				}
 

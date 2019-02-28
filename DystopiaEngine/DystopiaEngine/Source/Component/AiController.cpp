@@ -860,6 +860,7 @@ namespace Dystopia
 
 	void AiController::EditorTreeView()
 	{
+		if (bTree == nullptr) return;
 		if (bTree->IsValidTree())
 		{
 			ImGui::Separator();
