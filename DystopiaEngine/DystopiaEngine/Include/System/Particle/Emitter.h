@@ -94,17 +94,16 @@ namespace Dystopia
 		void StartEmission(void) noexcept;
 		bool IsAlive(void) const noexcept;
 
+		int GetStride(void) const noexcept;
 		Texture* GetTexture(void) const noexcept;
 
 	protected:
 
-		explicit Emitter(ParticleEmitter* _owner, int, int) noexcept;
+		explicit Emitter(ParticleEmitter* _owner, int, int, char const*) noexcept;
 
 		void BaseInit(void);
 		void InitArrays(void);
 		void InitBuffers(void) const noexcept;
-
-		int GetStride(void) const noexcept;
 
 		AutoArray<float>      mInitialLife;
 		AutoArray<float>      mLifetime;

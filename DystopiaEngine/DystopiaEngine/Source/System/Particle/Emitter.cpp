@@ -44,15 +44,15 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::Emitter::Emitter(ParticleEmitter* _owner) noexcept
-	: Emitter{ _owner, GL_POINTS, 1 }
+	: Emitter{ _owner, GL_POINTS, 1, "Default Particle" }
 {
 }
 
-Dystopia::Emitter::Emitter(ParticleEmitter * _owner, int _drawMode, int _div) noexcept
+Dystopia::Emitter::Emitter(ParticleEmitter * _owner, int _drawMode, int _div, char const* _shader) noexcept
 	: mColour{}, mPosition{}, mVelocity{}, mAccel{}, mLifetime{}, mSpawnCount{},
 	mSpawn{}, mUpdate{}, mFixedUpdate{}, mpShader{ nullptr }, mpTexture{ nullptr },
 	mInitialLife{}, mbUpdatedPositions{ false }, mTextureName{ "EditorStartup.png" },
-	mShaderName{ "Default Particle" }, mnParticleLimit{ 1000 }, mbIsAlive{ true }, mbUVChanged{ false },
+	mShaderName{ _shader }, mnParticleLimit{ 1000 }, mbIsAlive{ true }, mbUVChanged{ false },
 	mpOwner{ _owner }, mpTransform{ nullptr }, mDrawMode{ _drawMode }, mDiv{ _div }
 {
 	glGenVertexArrays(1, &mVAO);
@@ -682,6 +682,13 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 	ImGui::SameLine();
 	if (EGUI::Display::IconCross("Clear", 8.f))
 		SetTexture(nullptr);
+	
+	static char buf[512]{};
+	if (EGUI::Display::TextField("Test", buf, 512))
+	{
+		SetShader(CORE::Get<ShaderSystem>()->GetShader(buf));
+		std::memset(buf, 0, sizeof(buf));
+	}
 
 	//if (auto t = GetTexture())
 	//{

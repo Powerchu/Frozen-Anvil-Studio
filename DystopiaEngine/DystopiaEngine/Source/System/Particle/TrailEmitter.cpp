@@ -18,7 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::TrailEmitter::TrailEmitter(ParticleEmitter* _owner) noexcept
-	: Emitter{ _owner, GL_LINE_STRIP, 16 }
+	: Emitter{ _owner, GL_LINE_STRIP, 16, "Def Trail Particle" }
 {
 }
 

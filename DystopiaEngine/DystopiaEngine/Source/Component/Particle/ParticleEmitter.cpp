@@ -18,11 +18,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "System/Driver/Driver.h"
 #include "System/Particle/ParticleAffector.h"
+#include "System/Particle/SpawnAffector.h"
+#include "System/Particle/Emitter.h"
+#include "System/Particle/TrailEmitter.h"
 #include "System/Graphics/Shader.h"
 #include "System/Graphics/ShaderSystem.h"
 #include "System/Graphics/Texture.h"
 #include "System/Graphics/TextureSystem.h"
-#include "System/Particle/SpawnAffector.h"
 #include "System/Time/ScopedTimer.h"
 #include "System/Profiler/ProfilerAction.h"
 
@@ -153,6 +155,11 @@ void Dystopia::ParticleEmitter::EditorUI(void) noexcept
 	if (EGUI::Display::Button("Add Emitter", { 100, 24 }))
 	{
 		mEmitters.EmplaceBack(this);
+		mEmitters.back().Awake();
+	}
+	if (EGUI::Display::Button("Add Trail Emitter", { 100, 24 }))
+	{
+		mEmitters.EmplaceBackAs<TrailEmitter>(this);
 		mEmitters.back().Awake();
 	}
 
