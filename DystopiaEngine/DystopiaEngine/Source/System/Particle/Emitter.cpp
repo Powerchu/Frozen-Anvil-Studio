@@ -165,7 +165,7 @@ void Dystopia::Emitter::InitBuffers(void) const noexcept
 
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, mPosBuffer);
-	glBufferData(GL_ARRAY_BUFFER, mParticle.mnLimit * sizeof(decltype(mPosition)::Val_t), nullptr, GL_STREAM_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, mDiv * mParticle.mnLimit * sizeof(decltype(mPosition)::Val_t), nullptr, GL_STREAM_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glVertexAttribDivisor(0, mDiv);
 
