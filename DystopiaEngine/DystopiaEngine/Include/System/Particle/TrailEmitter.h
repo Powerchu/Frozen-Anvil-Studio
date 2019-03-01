@@ -42,6 +42,8 @@ namespace Dystopia
 
 		//void KillParticle(size_t _nIdx) noexcept;
 		//void SpawnParticle(void) noexcept;
+
+		static void* GetVTablePtr(void);
 	};
 }
 

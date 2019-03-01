@@ -23,7 +23,7 @@ const mat3 Idnty = mat3(1,0,0,0,1,0,0,0,1);
 
 void main()
 {
-  vec3 const axis = vec3(0,0,1);
+  const vec3 axis = vec3(0,0,1);
   float cosA = cos(Params[0].z);
   float sinA = sin(Params[0].z);
   

@@ -12,6 +12,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System/Particle/Emitter.h"
+#include "System/Particle/TrailEmitter.h"
 
 #include "System/Driver/Driver.h"
 #include "System/Particle/ParticleAffector.h"
@@ -122,13 +123,12 @@ void Dystopia::Emitter::BaseInit(void)
 
 	if (!mpOwner)
 		__debugbreak();
+
+	mParticle.mnLimit = mnParticleLimit;
 #   endif
 
-#if EDITOR
-	mParticle.mnLimit = mnParticleLimit;
-#endif
 	mpTransform = mpOwner->GetOwner()->GetComponent<Transform>();
-
+	mbUVChanged        = false;
 	mbUpdatedPositions = false;
 }
 
@@ -612,6 +612,12 @@ void Dystopia::Emitter::Unserialise(TextSerialiser& _in) noexcept
 	_in >> mDiv;
 
 	_EDITOR_CODE(mDiv += 0 == mDiv);
+
+	if (mDiv > 1)
+	{
+		*reinterpret_cast<void**>(this) = TrailEmitter::GetVTablePtr();
+	}
+
 	_in.ConsumeEndBlock();
 
 	static AffectorGet affectorsList;

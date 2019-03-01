@@ -120,7 +120,7 @@ void Dystopia::ParticleSystem::Update(float _dt)
 							shader.Bind();
 							shader.UploadUniform("ProjectMat", P);
 							shader.UploadUniform("ModelViewMat", M);
-							shader.UploadUniform("SubDivs", emitter.GetStride());
+							shader.UploadUniformi("SubDivs", emitter.GetStride());
 
 							emitter.Bind();
 							emitter.Render();

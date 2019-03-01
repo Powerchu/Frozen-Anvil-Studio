@@ -74,13 +74,25 @@ void Dystopia::TrailEmitter::FixedUpdate(float _dt) noexcept
 
 	auto pVel = mVelocity.begin();
 	int const stride = GetStride();
-	for (auto b = mPosition.begin(), e = mPosition.end(); b != e; b += stride)
+	for (auto b = mPosition.begin(), e = mPosition.end(); b != e; ++b)
 	{
-		*b += *pVel * _dt;
-
 		for (int n = 1; n < stride; ++n)
 			[&b](void) { auto nxt = b + 1; *nxt = *b; b = nxt; }();
+
+		*b += *pVel * _dt;
 	}
+}
+
+void* Dystopia::TrailEmitter::GetVTablePtr(void)
+{
+	static void * const vtable = [](void)
+	{
+		TrailEmitter x;
+		auto x_ptr = reinterpret_cast<void**>(&x);
+		return *x_ptr;
+	}();
+
+	return vtable;
 }
 
 //void Dystopia::TrailEmitter::KillParticle(size_t _nIdx) noexcept
