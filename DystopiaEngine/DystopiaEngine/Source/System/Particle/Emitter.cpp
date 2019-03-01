@@ -146,17 +146,17 @@ void Dystopia::Emitter::InitArrays(void)
 	mPosition   .clear();
 	mRotation   .clear();
 
-	mInitialLife.reserve(mParticle.mnLimit       );
-	mLifetime   .reserve(mParticle.mnLimit       );
-	mRotVel		.reserve(mParticle.mnLimit       );
-	mRotAcc		.reserve(mParticle.mnLimit       );
-	mUV         .reserve(mParticle.mnLimit       );
-	mSize       .reserve(mParticle.mnLimit       );
-	mColour     .reserve(mParticle.mnLimit       );
-	mAccel      .reserve(mParticle.mnLimit       );
-	mVelocity   .reserve(mParticle.mnLimit       );
+	mInitialLife.reserve(mParticle.mnLimit);
+	mLifetime   .reserve(mParticle.mnLimit);
+	mRotVel		.reserve(mParticle.mnLimit);
+	mRotAcc		.reserve(mParticle.mnLimit);
+	mUV         .reserve(mParticle.mnLimit);
+	mSize       .reserve(mParticle.mnLimit);
+	mColour     .reserve(mParticle.mnLimit);
+	mAccel      .reserve(mParticle.mnLimit);
+	mVelocity   .reserve(mParticle.mnLimit);
 	mPosition   .reserve(mParticle.mnLimit * mDiv);
-	mRotation	.reserve(mParticle.mnLimit       );
+	mRotation	.reserve(mParticle.mnLimit);
 }
 
 void Dystopia::Emitter::InitBuffers(void) const noexcept
@@ -167,7 +167,7 @@ void Dystopia::Emitter::InitBuffers(void) const noexcept
 	glBindBuffer(GL_ARRAY_BUFFER, mPosBuffer);
 	glBufferData(GL_ARRAY_BUFFER, mDiv * mParticle.mnLimit * sizeof(decltype(mPosition)::Val_t), nullptr, GL_STREAM_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	glVertexAttribDivisor(0, mDiv);
+	glVertexAttribDivisor(0, 0);
 
 	glEnableVertexAttribArray(1);
 	glBindBuffer(GL_ARRAY_BUFFER, mClrBuffer);
@@ -375,10 +375,7 @@ void Dystopia::Emitter::SpawnParticle(void) noexcept
 		mColour     .EmplaceBackUnsafe(mParticle.mColour  );
 		mAccel      .EmplaceBackUnsafe(mParticle.mAccel   );
 		mVelocity   .EmplaceBackUnsafe(mParticle.mVelocity);
-
-		for(int n = 0; n < mDiv; ++n)
-			mPosition.EmplaceBackUnsafe(vpos);
-
+		mPosition   .EmplaceBackMultiUnsafe(mDiv, vpos);
 		mRotation   .EmplaceBackUnsafe(mParticle.mRotation);
 
 		mbUVChanged        = true;
@@ -403,10 +400,7 @@ void Dystopia::Emitter::SpawnParticleGlobal(void) noexcept
 		mColour     .EmplaceBackUnsafe(mParticle.mColour  );
 		mAccel      .EmplaceBackUnsafe(mParticle.mAccel   );
 		mVelocity   .EmplaceBackUnsafe(mParticle.mVelocity);
-
-		for(int n = 0; n < mDiv; ++n)
-			mPosition.EmplaceBackUnsafe(mParticle.mPos);
-
+		mPosition   .EmplaceBackMultiUnsafe(mDiv, mParticle.mPos);
 		mRotation   .EmplaceBackUnsafe(mParticle.mRotation);
 
 		mbUVChanged        = true;

@@ -116,6 +116,10 @@ public:
 	template <typename ... Args>
 	inline void EmplaceBackUnsafe(Args&& ...args) noexcept;
 
+	// Repeated EmplaceBack of the same element without bounds checking
+	template <typename ... Args>
+	inline void EmplaceBackMultiUnsafe(Sz_t, Args&& ...args) noexcept;
+
 	// Removes the last element of the array
 	inline void Remove(void) noexcept;
 
@@ -408,8 +412,14 @@ inline bool AutoArray<T, A>::TryEmplaceBack(Args&& ...args)
 template <class T, class A> template <typename ... Args>
 inline void AutoArray<T, A>::EmplaceBackUnsafe(Args&& ... args) noexcept
 {
-	new (mpLast) T{ Ut::Forward<Args>(args)... };
+	new (mpLast) T{ Ut::Fwd<Args>(args)... };
 	++mpLast;
+}
+
+template<class T, class A> template <typename ... Args>
+inline void AutoArray<T, A>::EmplaceBackMultiUnsafe(Sz_t _sz, Args&& ... args) noexcept
+{
+	while (_sz--) EmplaceBackUnsafe(Ut::Fwd<Args>(args)...);
 }
 
 
