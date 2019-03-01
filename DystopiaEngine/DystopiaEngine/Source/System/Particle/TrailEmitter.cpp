@@ -18,7 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::TrailEmitter::TrailEmitter(ParticleEmitter* _owner) noexcept
-	: Emitter{ _owner, GL_LINE_LOOP, 16, "Def Trail Particle" }
+	: Emitter{ _owner, GL_LINE_STRIP, 32, "Def Trail Particle" }
 {
 }
 
@@ -33,34 +33,9 @@ Dystopia::TrailEmitter::~TrailEmitter(void) noexcept
 
 //void Dystopia::TrailEmitter::Init(void)
 //{
-//	//Emitter::BaseInit();
-//	
-//	//mInitialLife.clear();
-//	//mLifetime   .clear();
-//	//mRotVel     .clear();
-//	//mRotAcc     .clear();
-//	//mUV         .clear();
-//	//mSize       .clear();
-//	//mColour     .clear();
-//	//mAccel      .clear();
-//	//mVelocity   .clear();
-//	//mPosition   .clear();
-//	//mRotation   .clear();
-//	//
-//	//mInitialLife.reserve(mParticle.mnLimit);
-//	//mLifetime   .reserve(mParticle.mnLimit * mParticle.mRotation);
-//	//mRotVel     .reserve(mParticle.mnLimit);
-//	//mRotAcc     .reserve(mParticle.mnLimit);
-//	//mUV         .reserve(mParticle.mnLimit);
-//	//mSize       .reserve(mParticle.mnLimit);
-//	//mColour     .reserve(mParticle.mnLimit);
-//	//mAccel      .reserve(mParticle.mnLimit);
-//	//mVelocity   .reserve(mParticle.mnLimit);
-//	//mPosition   .reserve(mParticle.mnLimit);
-//	//mRotation   .reserve(mParticle.mnLimit);
-//
-//	//Emitter::InitBuffers();
-//	//glVertexAttribDivisor(0, static_cast<int>(mParticle.mRotation));
+//	Emitter::BaseInit();
+//	Emitter::InitArrays();
+//	Emitter::InitBuffers();
 //}
 
 void Dystopia::TrailEmitter::FixedUpdate(float _dt) noexcept

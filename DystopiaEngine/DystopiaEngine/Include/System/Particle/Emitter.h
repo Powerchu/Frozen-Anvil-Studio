@@ -128,9 +128,18 @@ namespace Dystopia
 		bool mbIsAlive;
 
 	private:
-		unsigned mVAO, mClrBuffer, mPosBuffer, mSzBuffer, mRotBuffer, mUVBuffer;
 
+		void GenBuffers(void) noexcept;
+
+		unsigned mVAO, mClrBuffer, mPosBuffer, mSzBuffer, mRotBuffer, mUVBuffer;
+		unsigned mCmdBuffer;
 		int mDrawMode, mDiv;
+
+		struct Command
+		{
+			unsigned data[4];
+		};
+		AutoArray<Command> mCommand;
 
 		AutoArray<ParticleAffector> mSpawn;
 		AutoArray<ParticleAffector> mUpdate;
