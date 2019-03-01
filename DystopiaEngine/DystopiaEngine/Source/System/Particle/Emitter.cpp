@@ -242,12 +242,12 @@ void Dystopia::Emitter::FixedUpdate(float _fDT) noexcept
 	size_t n;
 	for (n = 0; n < sz; ++n)
 	{
-		*ptr = *reinterpret_cast<Math::Vec4*&>(pRotAcc)++ * _fDT;
+		*ptr += *reinterpret_cast<Math::Vec4*&>(pRotAcc)++ * _fDT;
 	}
 	auto ptr2 = reinterpret_cast<float*>(ptr);
 	for (n <<= 2; n < mRotVel.size(); ++n)
 	{
-		*ptr2 = *pRotAcc * _fDT;
+		*ptr2 += *pRotAcc * _fDT;
 		++pRotAcc;
 	}
 
@@ -255,12 +255,16 @@ void Dystopia::Emitter::FixedUpdate(float _fDT) noexcept
 	sz = mRotation.size() >> 2;
 	for (n = 0; n < sz; ++n)
 	{
-		*ptr = *reinterpret_cast<Math::Vec4*&>(pRotVel)++ * _fDT;
+		*ptr += *reinterpret_cast<Math::Vec4*&>(pRotVel)++ * _fDT;
+		//Math::Wrap(*ptr, Math::Vec4{ -Math::pi }, Math::Vec4{ Math::pi });
+		++ptr;
 	}
 	ptr2 = reinterpret_cast<float*>(ptr);
 	for (n <<= 2; n < mRotation.size(); ++n)
 	{
-		*ptr2 = *pRotVel * _fDT;
+		*ptr2 += *pRotVel * _fDT;
+		//Math::Wrap(*ptr2, -Math::pi, Math::pi);
+
 		++pRotVel;
 	}
 #endif

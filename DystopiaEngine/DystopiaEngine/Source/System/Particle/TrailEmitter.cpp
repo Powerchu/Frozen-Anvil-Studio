@@ -75,16 +75,17 @@ void Dystopia::TrailEmitter::FixedUpdate(float _dt) noexcept
 	auto pVel = mVelocity.begin();
 	auto pDelay = mRotation.begin();
 	int const stride = GetStride();
+	float const fDelayCap = .25f;
 	for (auto b = mPosition.begin(), e = mPosition.end(); b != e; b += stride)
 	{
 		auto t = b + stride - 1;
 
 		*pDelay += _dt;
 
-		while (*pDelay > 0.25f && t != b)
+		while (*pDelay > fDelayCap && t != b)
 			[&t](void) { auto r = t - 1; *t = *r; t = r; }();
 
-		*pDelay = *pDelay > 0.1f ? *pDelay - .1f : *pDelay;
+		*pDelay = *pDelay > fDelayCap ? *pDelay - fDelayCap : *pDelay;
 
 		*b += *pVel * _dt;
 	}

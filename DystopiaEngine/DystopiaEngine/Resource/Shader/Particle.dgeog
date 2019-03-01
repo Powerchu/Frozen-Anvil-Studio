@@ -17,12 +17,15 @@ layout(location = 0) out vec2 vUV;
 layout(location = 1) out vec4 vColor;
 
 uniform mat4 ProjectMat;
+uniform mat4 ModelViewMat;
 
 const mat3 Idnty = mat3(1,0,0,0,1,0,0,0,1);
 
 void main()
 {
   const vec3 axis  = vec3(0,0,1);
+  float scaleX = length(ModelViewMat[0]);
+  float scaleY = length(ModelViewMat[1]);
   
   float cosA = cos(Params[0].z);
   float sinA = sin(Params[0].z);
@@ -30,8 +33,8 @@ void main()
   mat3 cross = mat3(0, axis.z, -axis.y, -axis.z, 0, axis.x, axis.y, -axis.x, 0);
   mat3 rot   = cosA * Idnty + sinA * cross + (1 - cosA) * outerProduct(axis, axis);
   
-  vec3 right = rot * vec3(Params[0].x,0,0);
-  vec3 up    = rot * vec3(0,Params[0].y,0);
+  vec3 right = rot * vec3(scaleX * Params[0].x,0,0);
+  vec3 up    = rot * vec3(0,scaleY * Params[0].y,0);
   vec3 pos   = vPosition[0];
   
   vUV = UVBuf[0].zw;
