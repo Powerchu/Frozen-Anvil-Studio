@@ -11,8 +11,8 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
-#ifndef _PP_UTILITY_H_
-#define _PP_UTILITY_H_
+#ifndef _PP_STRINGIFY_H_
+#define _PP_STRINGIFY_H_
 
 
 #define STRINGIFY(_X_) #_X_

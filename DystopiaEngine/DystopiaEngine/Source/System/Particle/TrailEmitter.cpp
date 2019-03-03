@@ -50,7 +50,7 @@ void Dystopia::TrailEmitter::FixedUpdate(float _dt) noexcept
 	auto pVel = mVelocity.begin();
 	auto pDelay = mRotation.begin();
 	int const stride = GetStride();
-	float const fDelayCap = .125f;
+	float const fDelayCap = .0625f;
 	for (auto b = mPosition.begin(), e = mPosition.end(); b != e; b += stride)
 	{
 		auto t = b + stride - 1;
@@ -63,6 +63,7 @@ void Dystopia::TrailEmitter::FixedUpdate(float _dt) noexcept
 		*pDelay = *pDelay > fDelayCap ? *pDelay - fDelayCap : *pDelay;
 
 		*b += *pVel * _dt;
+		++pVel;
 	}
 
 	mbUpdatedPositions = true;
@@ -72,7 +73,7 @@ void* Dystopia::TrailEmitter::GetVTablePtr(void)
 {
 	static void * const vtable = [](void)
 	{
-		TrailEmitter x;
+		TrailEmitter x{ nullptr };
 		auto x_ptr = reinterpret_cast<void**>(&x);
 		return *x_ptr;
 	}();

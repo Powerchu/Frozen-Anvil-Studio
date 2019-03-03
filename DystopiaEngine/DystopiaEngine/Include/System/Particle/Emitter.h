@@ -103,7 +103,7 @@ namespace Dystopia
 
 		void BaseInit(void);
 		void InitArrays(void);
-		void InitBuffers(void) const noexcept;
+		void InitBuffers(void) noexcept;
 
 		AutoArray<float>      mInitialLife;
 		AutoArray<float>      mLifetime;
@@ -126,6 +126,7 @@ namespace Dystopia
 
 		bool mbUpdatedPositions, mbUVChanged;
 		bool mbIsAlive;
+		_EDITOR_CODE(bool mbBuffers; bool bEditorInit);
 
 	private:
 
