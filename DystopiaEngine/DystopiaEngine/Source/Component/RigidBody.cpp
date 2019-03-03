@@ -162,7 +162,7 @@ namespace Dystopia
 		}
 		else //if mfMass <= 0
 		{
-			if (!mbIsStatic)
+			if (!mbIsStatic && mPhysicsType != eKinematicBody)
 			{
 				mbIsStatic = true;
 				mPhysicsType = eStaticBody;
