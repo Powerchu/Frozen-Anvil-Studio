@@ -448,6 +448,9 @@
     <ClCompile Include="Source\Editor\ShaderView.cpp">
       <Filter>Editor\Main\Panels\Shader View</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Particle\BubbleAffector.cpp">
+      <Filter>Game Engine\Systems\Particle\Affectors\Bubble</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -1221,6 +1224,9 @@
     <ClInclude Include="Include\Editor\ShaderView.h">
       <Filter>Editor\Main\Panels\Shader View</Filter>
     </ClInclude>
+    <ClInclude Include="Include\System\Particle\BubbleAffector.h">
+      <Filter>Game Engine\Systems\Particle\Affectors\Bubble</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1759,6 +1765,9 @@
     </Filter>
     <Filter Include="Editor\Main\Panels\Shader View">
       <UniqueIdentifier>{b62cd722-7b23-4cc8-b482-0b84490c7f50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Particle\Affectors\Bubble">
+      <UniqueIdentifier>{d1689e74-f958-4f4e-a2e4-4403a782b602}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
