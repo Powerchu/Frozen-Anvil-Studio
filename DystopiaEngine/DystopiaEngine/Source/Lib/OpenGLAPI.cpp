@@ -37,8 +37,6 @@ namespace
 		using StackA_t = Dystopia::StackAlloc_t;											\
 		auto buffer = Dystopia::StackAlloc_t::GetBufferAs<char>();					        \
 		_PROC_(_SHADER_, static_cast<GLsizei>(StackA_t::GetUsableSize()), nullptr, buffer); \
-														                                    \
-		DEBUG_PRINT(eLog::ERROR, _ERR_MSG_ " %s", buffer);                                  \
 	} while (false)
 
 	template <typename T, typename U>
@@ -237,16 +235,20 @@ namespace
 	}
 }
 
-AutoArray<std::pair<HashString, Gfx::eUniform_t>> Gfx::OpenGL_API::QueryVariables(ShaderProg const& _nProgram)
+void Gfx::OpenGL_API::QueryVariables(
+	ShaderProg const& _nProgram, 
+	AutoArray<std::pair<HashString, Gfx::eUniform_t>>& vars,
+	AutoArray<std::pair<HashString, unsigned>>& tex
+) noexcept
 {
 	auto nProg = StrongToGLType<GLuint>(_nProgram);
 	GLint count = 0;
 
 	glGetProgramiv(nProg, GL_ACTIVE_UNIFORMS, &count);
 
-	GLint typeBuffer[100];
-	GLuint indices[100];
-	char nameBuffer[256];
+	GLint  typeBuffer[100];
+	GLuint indices   [100];
+	char   nameBuffer[256];
 
 	count = Ut::Min(count, Ut::Constant<GLint, sizeof(indices)/sizeof(GLuint)>::value);
 	for (GLint n = 0; n < count; ++n)
@@ -254,7 +256,8 @@ AutoArray<std::pair<HashString, Gfx::eUniform_t>> Gfx::OpenGL_API::QueryVariable
 
 	glGetActiveUniformsiv(nProg, count, indices, GL_UNIFORM_TYPE, typeBuffer);
 
-	AutoArray<std::pair<HashString, eUniform_t>> ty( count );
+	vars.clear();
+	vars.reserve( count );
 
 	for (GLint n = 0, texCount = 0; n < count; ++n)
 	{
@@ -263,7 +266,9 @@ AutoArray<std::pair<HashString, Gfx::eUniform_t>> Gfx::OpenGL_API::QueryVariable
 		switch (typeBuffer[n])
 		{
 		case GL_SAMPLER_2D:
+			tex.EmplaceBack(static_cast<char const *>(nameBuffer), texCount);
 			glProgramUniform1i(nProg, glGetUniformLocation(nProg, nameBuffer), texCount++);
+			break;
 
 		case GL_INT:
 		case GL_BOOL:
@@ -275,7 +280,7 @@ AutoArray<std::pair<HashString, Gfx::eUniform_t>> Gfx::OpenGL_API::QueryVariable
 		//case GL_FLOAT_MAT3:
 		//case GL_FLOAT_MAT4:
 		case GL_UNSIGNED_INT:
-			ty.EmplaceBack(static_cast<char*>(nameBuffer), ResolveUniformType(typeBuffer[n]));
+			vars.EmplaceBack(static_cast<char const*>(nameBuffer), ResolveUniformType(typeBuffer[n]));
 			break;
 
 		default:
@@ -287,8 +292,6 @@ AutoArray<std::pair<HashString, Gfx::eUniform_t>> Gfx::OpenGL_API::QueryVariable
 	if (auto err = glGetError())
 		__debugbreak();
 #   endif 
-
-	return ty;
 }
 
 

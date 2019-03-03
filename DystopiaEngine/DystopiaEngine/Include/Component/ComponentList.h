@@ -27,7 +27,7 @@ namespace Dystopia
 		class Collider,
 		class AudioSource,
 		class AiController,
-		class Emitter,
+		class ParticleEmitter,
 		class AudioListener
 	>::result;
 
@@ -44,7 +44,7 @@ namespace Dystopia
 		class AiController,
 		class PointCollider,
 		class RayCollider,
-		class Emitter,
+		class ParticleEmitter,
 		class AudioListener
 	>::result;
 

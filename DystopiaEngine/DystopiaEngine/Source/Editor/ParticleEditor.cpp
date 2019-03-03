@@ -23,7 +23,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Scene/SceneSystem.h"
 #include "System/Scene/Scene.h"
 
-#include "Component/Emitter.h"
+#include "System/Particle/Emitter.h"
+
+#include "Component/ParticleEmitter.h"
 
 #include <string>
 
@@ -35,8 +37,10 @@ namespace
 Editor::ParticleEditor::ParticleEditor(void)
 	: mLabel{ "Particle System" },
 	mnObjectID{ 0 },
-	mpObject{ nullptr },
-	mArrUsedAffectors{}
+	//mpObject{ nullptr },
+	mArrUsedAffectors{},
+	mpTargetEmitter{ nullptr },
+	mnTargetIndex{ -1 }
 {
 }
 
@@ -56,28 +60,65 @@ bool Editor::ParticleEditor::Init(void)
 
 void Editor::ParticleEditor::Update(float)
 {
+	auto ss = Dystopia::CORE::Get<Dystopia::SceneSystem>();
+	if (mpTargetEmitter)
+	{
+		if (auto o = ss->FindGameObject(mnTargetID))
+		{
+			if (!o->GetComponent<Dystopia::ParticleEmitter>())
+			{
+				mpTargetEmitter = nullptr;
+				mnTargetID = 0;
+				mnTargetIndex = -1;
+			}
+		}
+		else
+		{
+			mpTargetEmitter = nullptr;
+			mnTargetID = 0;
+			mnTargetIndex = -1;
+		}
+	}
 }
 
 void Editor::ParticleEditor::EditorUI(void)
 {
-	EGUI::Display::EmptyBox("Game Object: ", 200.f, mnObjectID ? std::to_string(mnObjectID).c_str() : "- empty -");
-	if (const auto id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
-	{
-		mnObjectID = Dystopia::CORE::Get<Dystopia::SceneSystem>()->FindGameObject(*id) ? *id : 0;
-		EGUI::Display::EndPayloadReceiver();
-	}
+	//EGUI::Display::EmptyBox("Game Object: ", 200.f, mnObjectID ? std::to_string(mnObjectID).c_str() : "- empty -");
+	//if (const auto id = EGUI::Display::StartPayloadReceiver<uint64_t>(EGUI::GAME_OBJ))
+	//{
+	//	mnObjectID = Dystopia::CORE::Get<Dystopia::SceneSystem>()->FindGameObject(*id) ? *id : 0;
+	//	EGUI::Display::EndPayloadReceiver();
+	//}
+	//
+	//if (!mnObjectID || !ValidateEmitter())
+	//{
+	//	mpObject = nullptr;
+	//	EGUI::Display::HorizontalSeparator();
+	//	return;
+	//}
 
-	if (!mnObjectID || !ValidateEmitter())
+	if (!mpTargetEmitter)
 	{
-		mpObject = nullptr;
+		EGUI::Display::Label("Please an emitter to edit from the Particle Component");
 		EGUI::Display::HorizontalSeparator();
+		mnTargetIndex = -1;
 		return;
 	}
 
+	auto pEmitter = mpTargetEmitter->GetEmitter(mnTargetIndex);
+	if (!pEmitter)
+	{
+		EGUI::Display::Label("Please an emitter to edit from the Particle Component");
+		EGUI::Display::HorizontalSeparator();
+		mnTargetIndex = -1;
+		return;
+	}
+
+	auto& particleTransform = pEmitter->GetOwnerTransform();
+	EGUI::Display::Label("Currently editing emitter from Game Object [%s] id [%d]", particleTransform.GetOwner()->GetNamePtr(), particleTransform.GetOwnerID());
 	EGUI::Display::HorizontalSeparator();
 
 	AddAffectors();
-
 }
 
 void Editor::ParticleEditor::Shutdown(void)
@@ -96,38 +137,57 @@ void Editor::ParticleEditor::LoadSettings(Dystopia::TextSerialiser&)
 {
 }
 
-HashString Editor::ParticleEditor::GetLabel(void) const
+const HashString& Editor::ParticleEditor::GetLabel(void) const
 {
 	return mLabel;
 }
 
+void Editor::ParticleEditor::SetParticleEmitter(Dystopia::ParticleEmitter* _pe, int _n)
+{
+	mnTargetIndex = _n;
+	mpTargetEmitter = _pe;
+
+	if (mpTargetEmitter && mpTargetEmitter->GetEmitter(mnTargetIndex))
+	{
+		EditorPanel::SetOpened(true);
+		mnTargetID = mpTargetEmitter->GetOwnerID();
+	}
+	else
+	{
+		mnTargetID = 0;
+		mnTargetIndex = -1;
+	}
+}
+
 bool Editor::ParticleEditor::ValidateEmitter(void)
 {
-	if (auto object = Dystopia::CORE::Get<Dystopia::SceneSystem>()->FindGameObject(mnObjectID))
-	{
-		if (!object->GetComponent<Dystopia::Emitter>())
-		{
-			EGUI::Display::Label("No Emitter found on Game Object - Please add the component!");
-			return false;
-		}
-		mpObject = object;
-		return true;
-	}
-
-	EGUI::Display::Label("Game Object ID not found");
+	//if (auto object = Dystopia::CORE::Get<Dystopia::SceneSystem>()->FindGameObject(mnObjectID))
+	//{
+	//	if (!object->GetComponent<Dystopia::ParticleEmitter>())
+	//	{
+	//		EGUI::Display::Label("No Emitter found on Game Object - Please add the component!");
+	//		return false;
+	//	}
+	//	mpObject = object;
+	//	return true;
+	//}
+	//
+	//EGUI::Display::Label("Game Object ID not found");
 	return false;
 }
 
 void Editor::ParticleEditor::AddAffectors(void)
 {
-	Dystopia::Emitter* pEmitter = mpObject->GetComponent<Dystopia::Emitter>();
+	Dystopia::Emitter* pEmitter = mpTargetEmitter->GetEmitter(mnTargetIndex);
+	if (!pEmitter)
+		return;
 	
 	const auto& existingSpawnAffectors = pEmitter->GetSpawnAffectors();
 	const auto& existingUpdateAffectors = pEmitter->GetUpdateAffectors();
 	const auto& existingFixedUpdateAffectors = pEmitter->GetFixedUpdateAffectors();
-
+	
 	mArrUsedAffectors.clear();
-
+	
 	for (const auto & elem : existingSpawnAffectors)
 		UpdateAffectorUsed(elem.GetID());
 	for (const auto & elem : existingUpdateAffectors)
@@ -140,7 +200,7 @@ void Editor::ParticleEditor::AddAffectors(void)
 		ListOfAffectors();
 		EGUI::Display::EndTreeNode();
 	}
-
+	
 	if (EGUI::Display::StartTreeNode("Affectors Attached to Emitter"))
 	{
 		EmitterAffectors();
@@ -168,7 +228,7 @@ void Editor::ParticleEditor::ListOfAffectors(void)
 {
 	static Dystopia::AffectorGet affectorGet;
 	static const auto affectorNames = Dystopia::AffectorUI<Dystopia::AffectorList>::GetUIName();
-
+	
 	for (int i = 0; i < static_cast<int>(Dystopia::AffectorGet::size); i++)
 	{
 		EGUI::PushID(i);
@@ -192,23 +252,28 @@ void Editor::ParticleEditor::ListOfAffectors(void)
 
 void Editor::ParticleEditor::AddAffector(int _id)
 {
-	Dystopia::Emitter* pEmitter = mpObject->GetComponent<Dystopia::Emitter>();
+	Dystopia::Emitter* pEmitter = mpTargetEmitter->GetEmitter(mnTargetIndex);
+	if (!pEmitter)
+		return;
+
 	static Dystopia::AffectorGet affectorGet;
 	affectorGet.Get(_id, *pEmitter);
 }
 
 void Editor::ParticleEditor::EmitterAffectors(void)
 {
-	Dystopia::Emitter* pEmitter = mpObject->GetComponent<Dystopia::Emitter>();
-
+	Dystopia::Emitter* pEmitter = mpTargetEmitter->GetEmitter(mnTargetIndex);
+	if (!pEmitter)
+		return;
+	
 	static Dystopia::AffectorGet affectorGet;
 	static const auto affectorNames = Dystopia::AffectorUI<Dystopia::AffectorList>::GetUIName();
 	static const auto affectorUI = Dystopia::AffectorUI<Dystopia::AffectorList>::GetPtrsToUIFunction();
-
+	
 	auto& existingSpawnAffectors = pEmitter->GetSpawnAffectors();
 	auto& existingUpdateAffectors = pEmitter->GetUpdateAffectors();
 	auto& existingFixedUpdateAffectors = pEmitter->GetFixedUpdateAffectors();
-
+	
 	//ImGui::BeginGroup();
 	//ImGui::Columns(3, "Columns Affectors");
 	if (EGUI::Display::StartTreeNode("Spawners"))

@@ -40,7 +40,7 @@ namespace Editor
 		void Message(eEMessage);
 		void SaveSettings(Dystopia::TextSerialiser& _out) const;
 		void LoadSettings(Dystopia::TextSerialiser& _in);
-		HashString GetLabel(void) const;
+		const HashString& GetLabel(void) const;
 
 	private:
 		Dystopia::Texture* mpTargetTexture;
@@ -53,7 +53,7 @@ namespace Editor
 		HashString  mTextureName;
 		HashString  mLabel;
 
-		HashString  GetTextureName(void);
+		HashString  GetTextureName(Dystopia::Texture* _pTex) const;
 	};
 }
 

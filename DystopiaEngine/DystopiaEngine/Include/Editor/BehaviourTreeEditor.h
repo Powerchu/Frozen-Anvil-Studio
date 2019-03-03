@@ -41,7 +41,7 @@ namespace Editor
 		void Message(eEMessage) override;
 		void SaveSettings(Dystopia::TextSerialiser& _out) const override;
 		void LoadSettings(Dystopia::TextSerialiser& _in) override;
-		HashString GetLabel(void) const override;
+		const HashString& GetLabel(void) const override;
 
 	private:
 		Dystopia::Texture* mpTargetTexture;

@@ -23,7 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System/Particle/AccelerationAffector.h"
 
-#include "Component/Emitter.h"
+#include "System/Particle/Emitter.h"
 
 #include "Math/MathLib.h"
 
@@ -124,11 +124,11 @@ void Dystopia::InitialAccelerationAffector::EditorUI(void)
 	EGUI::PushID(59);
 
 	bool rand = reserved[0] & (1 << 1);
-	if (EGUI::Display::CheckBox("Random Vel", &rand))
+	if (EGUI::Display::CheckBox("Random Accel", &rand))
 		EnableRandom(rand);
 
 	Math::Vec2 min{ GetMinX(), GetMinY() };
-	auto arrResult = EGUI::Display::VectorFields("Min Vel", &min, 0.1f, -FLT_MAX, FLT_MAX);
+	auto arrResult = EGUI::Display::VectorFields("Min Accel", &min, 0.1f, -FLT_MAX, FLT_MAX);
 	for (auto &e : arrResult)
 	{
 		switch (e)
@@ -148,7 +148,7 @@ void Dystopia::InitialAccelerationAffector::EditorUI(void)
 	if (rand)
 	{
 		Math::Vec2 max{ GetMaxX(), GetMaxY() };
-		auto arrResult2 = EGUI::Display::VectorFields("Max Vel", &max, 0.1f, -FLT_MAX, FLT_MAX);
+		auto arrResult2 = EGUI::Display::VectorFields("Max Accel", &max, 0.1f, -FLT_MAX, FLT_MAX);
 		for (auto &e : arrResult2)
 		{
 			switch (e)

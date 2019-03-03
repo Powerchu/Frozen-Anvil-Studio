@@ -50,7 +50,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/SpriteRenderer.h"
 #include "Component/Transform.h"
 #include "Component/TextRenderer.h"
-#include "Component/Emitter.h"
+#include "Component/ParticleEmitter.h"
 #include "Component/AudioListener.h"
 
 #include "IO/TextSerialiser.h"
@@ -69,6 +69,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Collision/CollisionSystem.h"
 #include "System/Particle/ParticleSystem.h"
 
+#include "System/Particle/Emitter.h"
 #include "System/Particle/ParticleAffector.h"
 #include "System/Particle/SpawnAffector.h"
 #include "System/Particle/LocationAffector.h"
@@ -78,6 +79,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Particle/SizeAffector.h"
 #include "System/Particle/AccelerationAffector.h"
 #include "System/Particle/AttractionAffector.h"
+#include "System/Particle/RotationAffector.h"
 
 namespace Dystopia
 {
@@ -502,7 +504,7 @@ namespace Dystopia
 		{
 
 			float Temp;
-			switch (EGUI::Display::DragFloat("Test", &Temp, 0.01f, 0.0f, 2.0f))
+			switch (EGUI::Display::DragFloat("Test", &Temp, 0.01f, 0.0f))
 			{
 			case EGUI::eDragStatus::eEND_DRAG:
 				//EGUI::GetCommandHND()->EndRecording();

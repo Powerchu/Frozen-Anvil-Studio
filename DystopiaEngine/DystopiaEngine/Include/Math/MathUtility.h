@@ -27,30 +27,30 @@
 namespace Math
 {
 	template<typename Num>
-	inline constexpr typename Ut::EnableIf<Ut::IsNumeric<Num>::value, Num>::type Abs(const Num _x)
+	inline constexpr typename Ut::EnableIf<Ut::IsNumeric<Num>::value, Num>::type Abs(const Num _x) noexcept
 	{
 		return _x < 0 ? -_x : _x;
 	}
 
 	template<int64_t exponent, class T>
-	inline constexpr T Power(T _x)
+	inline constexpr T Power(T _x) noexcept
 	{
 		return Internal::PowerCalc<T, (exponent < 0), Abs(exponent)>::Power(_x);
 	}
 
-	inline constexpr bool IsZero(float _fScalar)
+	inline constexpr bool IsZero(float _fScalar) noexcept
 	{
 		return _fScalar > -epsilon && _fScalar < epsilon;
 	}
 
 	template <typename T>
-	inline constexpr T Min(T _x, T _y)
+	inline constexpr T Min(T _x, T _y) noexcept
 	{
 		return _y < _x ? _y : _x;
 	}
 
 	template <typename T>
-	inline constexpr T Max(T _x, T _y)
+	inline constexpr T Max(T _x, T _y) noexcept
 	{
 		return _x < _y ? _y : _x;
 	}
@@ -62,7 +62,7 @@ namespace Math
 	}
 
 	template <typename T>
-	inline constexpr auto Zero(void)
+	inline constexpr auto Zero(void) noexcept
 	{
 		return T{ };
 	}
@@ -70,7 +70,7 @@ namespace Math
 	// Checks if two floats are approximately equal
 	// Returns false if one of the numbers is zero
 	template <typename T>
-	inline constexpr auto ApproxEq(T _lhs, T _rhs) -> Ut::EnableIf_t<Ut::IsFloatType<T>::value, bool>
+	inline constexpr auto ApproxEq(T _lhs, T _rhs) noexcept -> Ut::EnableIf_t<Ut::IsFloatType<T>::value, bool>
 	{
 		float diff = Abs(_lhs - _rhs);
 
@@ -81,14 +81,20 @@ namespace Math
 		return diff <= (scale * C::epsilon<T>);
 	}
 
+	template <typename T, typename U>
+	inline constexpr T Round(U _val)
+	{
+		return static_cast<T>(_val + (_val > 0 ? U(.5) : U(-.5)));
+	}
+
 	template <typename T>
-	inline constexpr T Clamp(T _input, Ut::Type_t<T> _min, Ut::Type_t<T> _max)
+	inline constexpr T Clamp(T _input, Ut::Type_t<T> _min, Ut::Type_t<T> _max) noexcept
 	{
 		return Max(_min, Min(_max, _input));
 	}
 
 	template <typename T>
-	inline constexpr T Wrap(T _input, Ut::Type_t<T> _min, Ut::Type_t<T> _max)
+	inline constexpr T Wrap(T _input, Ut::Type_t<T> _min, Ut::Type_t<T> _max) noexcept
 	{
 		auto range = _max - _min;
 		_input -= size_t(_input / range) * range;
@@ -96,7 +102,7 @@ namespace Math
 	}
 
 	template<class T>
-	inline constexpr T Lerp(T _start, T _end, float _fRatio)
+	inline constexpr T Lerp(T _start, T _end, float _fRatio) noexcept
 	{
 		return _start + _fRatio * (_end - _start);
 	}
@@ -126,6 +132,7 @@ namespace Ut
 	using Math::Min;
 	using Math::Max;
 	using Math::Wrap;
+	using Math::Round;
 	using Math::Clamp;
 	using Math::Power;
 	using Math::IsZero;

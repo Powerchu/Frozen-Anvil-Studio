@@ -16,17 +16,27 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define _NODELIST_H_
 
 #include "Utility/MetaAlgorithms.h"
+#include "System/AI/AISystem.h"
 
 namespace Dystopia
 {
 	using AllNode = Ut::MetaAutoIndexer <
-		class Transform,
-		class Camera,
-		class Renderer,
-		class RigidBody,
-		class Collider,
-		class AudioSource,
-		class AiController
+		class Selector,
+		class Sequence,
+		class StatefulSelector,
+		class StatefulSequence,
+		class RandomSelector,
+		class RandomSequence,
+		class Succeeder,
+		class Failer,
+		class Inverter,
+		class Repeater,
+		class UntilSuccess,
+		class UntilFailure,
+		class HardLimiter,
+		class Limiter,
+		class TimeHolder,
+		class Succeeder
 	>::result;
 }
 

@@ -42,6 +42,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/FlowChart.h"
 #include "Editor/DataSheetEditor.h"
 #include "Editor/ParticleEditor.h"
+#include "Editor/ShaderView.h"
 
 #include "Allocator/DefaultAlloc.h"
 

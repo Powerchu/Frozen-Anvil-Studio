@@ -18,6 +18,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Utility/MetaAlgorithms.h"
 #include "IO/TextSerialiser.h"
 
+#include "Globals.h"
+
 namespace Dystopia
 {
 	namespace AffectorTag
@@ -43,12 +45,15 @@ namespace Dystopia
 		struct InitialSizeAffector,
 		struct SizeOverLifeAffector,
 		struct InitialAccelerationAffector,
-		struct PointAffector
+		struct PointAffector,
+		struct InitialRotationAffector,
+		struct RotationRateAffector,
+		struct DistanceSpawnAffector
 	>;
 
 	class Emitter;
 
-	struct alignas(16) ParticleAffector
+	struct alignas(16) _DLL_EXPORT ParticleAffector
 	{
 		using UPDATE = AffectorTag::OnUpdate;
 
@@ -62,7 +67,17 @@ namespace Dystopia
 			return mID;
 		}
 
-		inline void Serialise(TextSerialiser& _out) const
+		inline char* GetData(void) noexcept
+		{
+			return data;
+		}
+
+		inline char* GetDataReserves(void) noexcept
+		{
+			return reserved;
+		}
+
+		inline void Serialise(TextSerialiser& _out) const noexcept
 		{
 			_out.InsertStartBlock("Affector");
 
@@ -81,7 +96,7 @@ namespace Dystopia
 			_out.InsertEndBlock("Affector");
 		}
 
-		inline void UnSerialise(TextSerialiser& _in)
+		inline void UnSerialise(TextSerialiser& _in) noexcept
 		{
 			_in.ConsumeStartBlock();
 

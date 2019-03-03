@@ -1,0 +1,51 @@
+#version 410 core
+
+layout(points) in;
+layout(triangle_strip, max_vertices = 4) out;
+
+out gl_PerVertex
+{
+  vec4 gl_Position;
+};
+
+layout(location = 0) flat in vec4 vPosition[];
+layout(location = 1) flat in vec4 vertCol[];
+
+layout(location = 0) out vec2 vUV;
+layout(location = 1) out vec4 vColor;
+
+uniform mat4 ModelViewMat;
+uniform mat4 ProjectMat;
+
+
+void main()
+{
+  vec3 right = ModelViewMat[0].xyz * vPosition[0].w;
+  vec3 up    = ModelViewMat[1].xyz * vPosition[0].w;
+  vec3 pos   = vPosition[0].xyz;
+  
+  
+  vUV = vec2(1, 1);
+  vColor = vertCol[0];
+  gl_Position = ProjectMat * vec4(pos + right - up, 1);
+  EmitVertex();
+  
+  vUV = vec2(1, 0);
+  vColor = vertCol[0];
+  gl_Position = ProjectMat * vec4(pos + right + up, 1);
+  EmitVertex();
+  
+  vUV = vec2(0, 1);
+  vColor = vertCol[0];
+  gl_Position = ProjectMat * vec4(pos - right - up, 1);
+  EmitVertex();
+  
+  vUV = vec2(0, 0);
+  vColor = vertCol[0];
+  gl_Position = ProjectMat * vec4(pos - right + up, 1);
+  EmitVertex();
+ 
+ 
+	EndPrimitive();
+}
+

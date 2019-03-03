@@ -62,6 +62,43 @@ namespace Dystopia
 		void EditorUI(void);
 	};
 
+	/*
+		Spawn affector bytes and bits:
+			data[0,1] = rate
+			data[2,3,4,5] = unit
+			data[6,7,8,9,10,11,12,13] = prev loc
+
+		reserved[0,1,2,3] = acc Distance; 
+			
+	*/
+
+	struct DistanceSpawnAffector : ParticleAffector
+	{
+		using UPDATE = AffectorTag::OnFixedUpdate;
+
+		DistanceSpawnAffector(void);
+		~DistanceSpawnAffector(void);
+
+		/* spawn by distance */
+		void SetRate(unsigned short);
+		unsigned short GetRate(void) const;
+		void SetUnit(float);
+		float GetUnit(void) const;
+
+		void SetExcess(float);
+		float GetExcess(void) const;
+
+		void SetPrevLoc(Math::Vector2 _prev);
+		Math::Vector2 GetPrevLoc(void) const;
+		
+
+		/* requirement for affector */
+		void AffectorUpdate(Emitter&, float);
+
+		const char * EditorDisplayLabel(void) const;
+		void EditorUI(void);
+	};
+
 }
 
 #endif 

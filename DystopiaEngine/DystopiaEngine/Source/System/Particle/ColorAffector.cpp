@@ -23,7 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System/Particle/ColorAffector.h"
 
-#include "Component/Emitter.h"
+#include "System/Particle/Emitter.h"
 
 #include "Math/MathLib.h"
 
@@ -338,7 +338,7 @@ void Dystopia::ColorOverLifeAffector::AffectorUpdate(Emitter& _emitter, float _d
 		}
 		else// if (ratioLeft > 0.f)
 		{
-			Math::Vec4 delta = (targetCol - allCol[i]) * _dt / ratioLeft;
+			Math::Vec4 delta = (targetCol - allCol[i]) * _dt * ratioLeft;
 
 			allCol[i] += delta;
 			//float r = ratioLeft * _dt;

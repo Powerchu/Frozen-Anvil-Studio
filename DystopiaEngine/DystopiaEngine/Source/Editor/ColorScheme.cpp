@@ -128,7 +128,7 @@ void Editor::ColorScheme::LoadSettings(Dystopia::TextSerialiser& _in)
 	Apply();
 }
 
-HashString Editor::ColorScheme::GetLabel(void) const
+const HashString& Editor::ColorScheme::GetLabel(void) const
 {
 	return mLabel;
 }

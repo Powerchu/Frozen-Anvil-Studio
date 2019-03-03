@@ -23,9 +23,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Scene/Scene.h"
 #include "System/Scene/SceneSystem.h"
 #include "System/Graphics/GraphicsSystem.h"
+#include "System/Graphics/ShaderSystem.h"
+#include "System/Graphics/Shader.h"
 #include "System/Window/Window.h"
 #include "System/Window/WindowManager.h"
-//#include "System/Graphics/Texture2D.h"
 #include "System/File/FileSystem.h"
 #include "System/Input/InputSystem.h"
 #include "System/Time/ScopedTimer.h"
@@ -125,14 +126,15 @@ namespace Editor
 			break;
 		}
 
-		//UpdateSearch();
+		if (strlen(mSearchText) != 0)
+			UpdateSearch();
 	}
 
 	void ProjectResource::EditorUI(void)
 	{
 		const float h = Size().y - 55;
 		static float splitterSz = 425.f;
-		float sz1 = Size().x/2 - splitterSz - 5.f;
+		static float sz1 = 200.0f;
 		const float sz3 = Size().x/2 + splitterSz;
 
 		const Math::Vec2 folderWindowSize = Math::Vec2{ sz1, h };
@@ -149,9 +151,10 @@ namespace Editor
 
 		EGUI::Display::OpenTreeNode();
 
+		ImGui::BeginGroup();
 		EGUI::Display::Splitter(true, 4.0f, &sz1, &splitterSz, 200.f, 100.f, h);
 		EGUI::StartChild("##FolderWindow", folderWindowSize, true);
-		FolderWindow();
+			FolderWindow();
 		EGUI::EndChild();
 
 		EGUI::SameLine();
@@ -196,6 +199,8 @@ namespace Editor
 		}
 		EGUI::EndChild();
 		ImGui::PopStyleColor();
+		ImGui::EndGroup();
+
 	}
 
 	void ProjectResource::Shutdown(void)
@@ -218,15 +223,15 @@ namespace Editor
 	void ProjectResource::LoadSettings(Dystopia::TextSerialiser&)
 	{}
 
-	HashString ProjectResource::GetLabel(void) const
+	const HashString& ProjectResource::GetLabel(void) const
 	{
 		return mLabel;
 	}
 
 	void ProjectResource::UpdateSearch(void)
 	{
-		HashString currentSearch = mSearchText;
-		HashString previousSearch = mSearchTextLastFrame;
+		HashString currentSearch{ mSearchText };
+		HashString previousSearch{ mSearchTextLastFrame };
 		if (currentSearch.length() && currentSearch != previousSearch)
 		{
 			mArrFilesSearchedThisFrame.clear();
@@ -257,10 +262,14 @@ namespace Editor
 		width = (width < 20) ? 20 : width;
 		EGUI::Indent(4);
 		EGUI::ChangeLabelSpacing(10);
-		EGUI::Display::TextField("Search", buffer/*mSearchText*/, MAX_SEARCH, true, width);
+		if (EGUI::Display::TextField("Search", buffer, MAX_SEARCH, true, width, true))
+		{
+			strcpy_s(mSearchText, 256, buffer);
+		}
 		EGUI::ChangeLabelSpacing();
 		EGUI::UnIndent(4);
 		EGUI::Display::HorizontalSeparator();
+
 	}
 
 	void ProjectResource::FolderWindow(void)
@@ -273,30 +282,47 @@ namespace Editor
 	void ProjectResource::FileWindow(const Math::Vec2& _mySize)
 	{
 		const Math::Vec2 buffedSize{ mPayloadRect.x * 1.25f, mPayloadRect.y * 1.25f };
-		unsigned int columns = static_cast<unsigned int>(_mySize.x / (buffedSize.x + 20));
-		columns = columns ? columns : 1 ;
+		auto columns = static_cast<unsigned int>(_mySize.x / (buffedSize.x + 20));
+		columns = columns ? columns : 1;
 
 		EGUI::Display::Label(mpCurrentFolder->mPath.c_str());
 		EGUI::Display::HorizontalSeparator();
 
-		auto size = mpCurrentFolder->mArrPtrFiles.size();
-		for (unsigned int i = 0; i < size; ++i)
+		if (mpCurrentFolder->mName == StringHasher("Shader"))
 		{
-
-			EGUI::PushID(i);
-
-			Editor::File* pFile = mpCurrentFolder->mArrPtrFiles[i];
-			if (i % columns)
-				ImGui::SameLine(0, 20);
-			if (EGUI::StartChild(pFile->mName.c_str(), buffedSize, false, true))
+			ShaderFolderUI(columns, buffedSize);
+		}
+		else
+		{
+			ImGui::BeginChild("fileWindowFolder", ImGui::GetContentRegionAvail(), false);
+			const auto size = mpCurrentFolder->mArrPtrFiles.size();
+			for (unsigned int i = 0; i < size; ++i)
 			{
+				EGUI::PushID(i);
+
+				Editor::File* pFile = mpCurrentFolder->mArrPtrFiles[i];
+				if (i % columns)
+					ImGui::SameLine(0, 20);
+				/*if (EGUI::StartChild(pFile->mName.c_str(), buffedSize, false, true))
+				{
 				EGUI::Indent(10);
 				FileUI(pFile);
 				EGUI::UnIndent(10);
-			}
-			EGUI::EndChild();
+				}
+				EGUI::EndChild();
+				*/
 
-			EGUI::PopID();
+				if (ImGui::BeginChild(pFile->mName.c_str(), buffedSize, false, ImGuiWindowFlags_NoScrollWithMouse))
+				{
+					EGUI::Indent(10);
+					FileUI(pFile);
+					EGUI::UnIndent(10);
+				}
+				ImGui::EndChild();
+
+				EGUI::PopID();
+			}
+			ImGui::EndChild();
 		}
 	}
 	
@@ -315,14 +341,14 @@ namespace Editor
 			{
 				EGUI::PushID(i);
 				Editor::File* pFile = mArrFilesSearchedThisFrame[i];
-				if (i % columns) EGUI::SameLine();
-				if (EGUI::StartChild(pFile->mName.c_str(), buffedSize, false, true))
+				if (i % columns) ImGui::SameLine(0,5);
+				if (ImGui::BeginChild(pFile->mName.c_str(), buffedSize, false, ImGuiWindowFlags_NoScrollWithMouse))
 				{
 					EGUI::Indent(10);
 					FileUI(pFile);
 					EGUI::UnIndent(10);
 				}
-				EGUI::EndChild();
+				ImGui::EndChild();
 				EGUI::PopID();
 			}
 		}
@@ -361,6 +387,36 @@ namespace Editor
 				if (!EditorMain::GetInstance()->GetSystem<EditorFactory>()->FindMasterPrefab(f->mName, pOut))
 					EditorMain::GetInstance()->GetSystem<EditorFactory>()->LoadAsPrefab(f->mName);
 			}
+		}
+	}
+
+	void ProjectResource::ShaderFolderUI(unsigned _cols, const Math::Vec2& _size) const
+	{
+		auto const & allShaders = Dystopia::CORE::Get<Dystopia::ShaderSystem>()->GetAllShaders();
+		for (unsigned int i = 0; i < allShaders.size(); ++i)
+		{
+			EGUI::PushID(i);
+
+			//Editor::File* pFile = mpCurrentFolder->mArrPtrFiles[i];
+			if (i % _cols)
+				ImGui::SameLine(0, 20);
+			
+			const HashString& name = allShaders[i].GetName();
+			if (EGUI::StartChild(name.c_str(), _size, false, true))
+			{
+				EGUI::Indent(10);
+				unsigned n = i;
+				if (EGUI::Display::CustomPayload(("ProjectView" + name).c_str(), name.c_str(),
+					name.c_str(), mPayloadRect, EGUI::ePayloadTags::SHADER, &n, sizeof(unsigned)))
+				{
+
+				}
+
+				EGUI::UnIndent(10);
+			}
+			EGUI::EndChild();
+
+			EGUI::PopID();
 		}
 	}
 
@@ -403,7 +459,7 @@ namespace Editor
 		MakeStringLower(_item);
 		for (auto& e : _fromArr)
 		{
-			if (!e->mLowerCaseName.find(_item))
+			if (e->mLowerCaseName.find(_item) != std::string::npos)
 				_outResult.push_back(e);
 		}
 	}

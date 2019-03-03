@@ -508,6 +508,7 @@ void Dystopia::Camera::EditorOptions(void)
 	 */
 
 	EGUI::Display::LabelWrapped("Viewport Rect");
+	EGUI::Indent();
 	switch (EGUI::Display::DragFloat("X", &mViewport.mnX, 0.01f, 0, 1.f, false, 90.f))
 	{
 	case EGUI::eDragStatus::eSTART_DRAG:
@@ -587,6 +588,7 @@ void Dystopia::Camera::EditorOptions(void)
 		break;
 	}
 	EGUI::ChangeAlignmentYOffset();
+	EGUI::UnIndent();
 
 
 

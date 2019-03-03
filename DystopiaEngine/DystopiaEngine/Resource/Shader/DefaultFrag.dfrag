@@ -17,10 +17,8 @@ void main()
   
   if (color.a < 0.003f)
     discard;
-  
-  // Gamma correction
-  color.rgb = pow(color.rgb, vec3(1.f / Gamma));
-  
+	
   fragColor = color;
+  //fragColor.a *= int(!(color.a < 0.003f));
 }
 

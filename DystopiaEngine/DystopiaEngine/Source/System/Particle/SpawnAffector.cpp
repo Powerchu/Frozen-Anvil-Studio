@@ -24,7 +24,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System/Particle/SpawnAffector.h"
-#include "Component/Emitter.h"
+#include "System/Particle/Emitter.h"
+#include "Component/Transform.h"
 
 #include "Math/MathLib.h"
 
@@ -194,6 +195,7 @@ void Dystopia::SpawnAffector::EditorUI(void)
 {
 #if EDITOR
 	EGUI::PushLeftAlign(100.f);
+	EGUI::PushID(542);
 
 	float mfSpawnDelay = *reinterpret_cast<float*>(data + 10);
 	if (EGUI::Display::DragFloat("Spawn Delay", &mfSpawnDelay, 0.1f, 0.f, FLT_MAX))
@@ -223,11 +225,122 @@ void Dystopia::SpawnAffector::EditorUI(void)
 	if (EGUI::Display::DragInt("Burst Low", &out, 1.f, 0, static_cast<int>(GetBurstCount())))
 		SetBurstLow(static_cast<unsigned short>(out));
 
+	EGUI::PopID();
 	EGUI::PopLeftAlign();
 #endif 
 }
 
+Dystopia::DistanceSpawnAffector::DistanceSpawnAffector(void)
+	: ParticleAffector{ &DistanceSpawnAffector::AffectorUpdate }
+{
+	memset(reinterpret_cast<void*>(data), 0, 16);
+	memset(reinterpret_cast<void*>(reserved), 0, 4);
+}
 
+Dystopia::DistanceSpawnAffector::~DistanceSpawnAffector(void)
+{
+}
+
+void Dystopia::DistanceSpawnAffector::SetRate(unsigned short _f)
+{
+	*reinterpret_cast<unsigned short*>(data) = _f;
+}
+
+unsigned short Dystopia::DistanceSpawnAffector::GetRate(void) const
+{
+	return *reinterpret_cast<const unsigned short*>(data);
+}
+
+void Dystopia::DistanceSpawnAffector::SetUnit(float _f)
+{
+	*reinterpret_cast<float*>(data + 2) = _f;
+}
+
+float Dystopia::DistanceSpawnAffector::GetUnit(void) const
+{
+	return *reinterpret_cast<const float*>(data + 2);
+}
+
+void Dystopia::DistanceSpawnAffector::SetPrevLoc(Math::Vector2 _prev)
+{
+	*reinterpret_cast<Math::Vector2*>(data + 6) = _prev;
+}
+
+Math::Vector2 Dystopia::DistanceSpawnAffector::GetPrevLoc(void) const
+{
+	return *reinterpret_cast<const Math::Vector2*>(data + 6);
+}
+
+void Dystopia::DistanceSpawnAffector::SetExcess(float _f)
+{
+	*reinterpret_cast<float*>(reserved) = _f;
+}
+
+float Dystopia::DistanceSpawnAffector::GetExcess(void) const
+{
+	return *reinterpret_cast<const float*>(reserved);
+}
+
+void Dystopia::DistanceSpawnAffector::AffectorUpdate(Dystopia::Emitter& _e, float)
+{
+	if (GetUnit() <= 0.1f || GetRate() <= 0.f)
+		return;
+
+	if (!_e.IsAlive())
+	{
+		auto curPos = _e.GetOwnerTransform().GetGlobalPosition();
+		SetPrevLoc({ curPos.x, curPos.y });
+		SetExcess(0);
+		return;
+	}
+
+	auto			curPos = _e.GetOwnerTransform().GetGlobalPosition();
+	auto			prevPos = GetPrevLoc();
+	Math::Vector2	vec = Math::Vector2{ curPos.x - prevPos.x, curPos.y - prevPos.y };
+	float			len = vec.Magnitude();
+	float			total = GetExcess() + len;
+	int				repeat = 0;
+	Math::Vector2	unitVec = Math::Vector2{ vec.x / len, vec.y / len };
+	Math::Vec3		savePos = _e.GetSpawnDefaults().mPos;
+
+	while (total > GetUnit())
+	{
+		auto p = prevPos + unitVec * GetUnit() * static_cast<float>(repeat++);
+		_e.GetSpawnDefaults().mPos.x = p.x;
+		_e.GetSpawnDefaults().mPos.y = p.y;
+		_e.GetSpawnDefaults().mPos.z = curPos.z;
+		for (unsigned n = 0; n < GetRate(); n++)
+			_e.SpawnParticleGlobal();
+		total -= GetUnit();
+	}
+	SetExcess(0);
+	SetPrevLoc({curPos.x, curPos.y});
+	_e.GetSpawnDefaults().mPos = savePos;
+}
+
+const char * Dystopia::DistanceSpawnAffector::EditorDisplayLabel(void) const
+{
+	return "Spawn by Distance";
+}
+
+void Dystopia::DistanceSpawnAffector::EditorUI(void)
+{
+#if EDITOR
+	EGUI::PushLeftAlign(100.f);
+	EGUI::PushID(543);
+
+	int rate = static_cast<int>(GetRate());
+	if (EGUI::Display::DragInt("Spawn Rate", &rate, 1.f, 0, USHRT_MAX))
+		SetRate(static_cast<unsigned short>(rate));
+
+	float unit = GetUnit();
+	if (EGUI::Display::DragFloat("Per Unit", &unit, 0.1f, 0.f, FLT_MAX))
+		SetUnit(unit);
+
+	EGUI::PopID();
+	EGUI::PopLeftAlign();
+#endif
+}
 
 
 
