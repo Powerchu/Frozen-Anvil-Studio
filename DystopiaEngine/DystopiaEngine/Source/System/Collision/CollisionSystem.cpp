@@ -762,6 +762,18 @@ namespace Dystopia
 
 	}
 
+	_DLL_EXPORT eColLayer CollisionSystem::GetLayerByName(const char * _s)
+	{
+		if (arrColLayer[0] == _s)
+			return eColLayer::LAYER_NONE;
+
+		for (unsigned n = 1; n < arrColLayer->size(); n++)
+			if (arrColLayer[n] == _s)
+				return static_cast<eColLayer>(0x01u << n);
+		
+		return eColLayer::LAYER_NONE;
+	}
+
 	std::string const* CollisionSystem::GetColLayerNames()
 	{
 		return arrColLayer;

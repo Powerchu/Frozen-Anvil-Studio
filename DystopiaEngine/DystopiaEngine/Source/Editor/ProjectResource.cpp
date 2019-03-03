@@ -135,7 +135,7 @@ namespace Editor
 		const float h = Size().y - 55;
 		static float splitterSz = 425.f;
 		static float sz1 = 200.0f;
-		const float sz3 = Size().x/2 + splitterSz;
+		const float sz3 = Size().x - sz1 + splitterSz;
 
 		const Math::Vec2 folderWindowSize = Math::Vec2{ sz1, h };
 		const Math::Vec2 fileWindowSize = Math::Vec2{ sz3, h };
