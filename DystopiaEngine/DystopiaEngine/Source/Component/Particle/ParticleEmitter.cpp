@@ -100,7 +100,7 @@ void Dystopia::ParticleEmitter::Render(void) const noexcept
 
 Dystopia::Emitter* Dystopia::ParticleEmitter::GetEmitter(unsigned _n) const noexcept
 {
-	if (_n > mEmitters.size() || _n < 0)
+	if (_n >= mEmitters.size() || _n < 0)
 		return nullptr;
 
 	return mEmitters.begin() + _n;
