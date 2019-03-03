@@ -312,86 +312,60 @@ namespace Dystopia
 	}
 	bool RayCollider::Raycast_Convex(Math::Vec3D const & _RayDir, Math::Point3D const & _Pos, Convex * _Collider, CollisionEvent * _OutputResult, float _MaxLength)
 	{
-		CollisionEvent rayEvent;
+		//CollisionEvent rayEvent;
 		/*Check if ray is travelling toward object*/
 		Math::Vec3D && v = _Collider->GetGlobalPosition() - _Pos;
 		if (v.Dot(_RayDir) < 0.f)
 			return false;
 		auto && ListOfEdge = _Collider->GetConvexEdges();
 		bool    isColliding = false;
-		rayEvent.mTimeIntersection = 99999.f;
+		//rayEvent.mTimeIntersection = 99999.f;
 		for (auto const & elem : ListOfEdge)
 		{
 			/*Check if the edge normal is facing the ray*/
 			if (elem.mNorm3.Dot(_RayDir) >= 0.f || (_Pos - elem.mPos).Dot(_RayDir) > 0.f)
 				continue;
 			/*Check if the ray lies within the edge*/
-			auto && v1 = _Pos - elem.mPos;
+			auto && v1 = (_Pos - elem.mPos);
 			auto  v1_copy = v1;
-			auto && v2 = _Pos - (elem.mPos + elem.mVec3);
-			if (v1.Dot(elem.mVec3) < 0.f)
-			{
+			v1.Normalise();
+			auto && v2 = (_Pos - (elem.mPos + elem.mVec3)).Normalise();
+
+
 #if CLOCKWISE
 
 #else
-				v1.xyzw = v1.yxzw;
-				v2.xyzw = v2.yxzw;
-				v1.Negate<Math::NegateFlag::Y>();
-				v2.Negate<Math::NegateFlag::X>();
+			v1.xyzw = v1.yxzw;
+			v2.xyzw = v2.yxzw;
+			v1.Negate<Math::NegateFlag::Y>();
+			v2.Negate<Math::NegateFlag::X>();
 #endif
 
-			}
-			else if (v1.Dot(elem.mVec3) > elem.mVec3.Dot(elem.mVec3))
-			{
-#if CLOCKWISE
-
-#else
-				v1.xyzw = v1.yxzw;
-				v2.xyzw = v2.yxzw;
-				v1.Negate<Math::NegateFlag::Y>();
-				v2.Negate<Math::NegateFlag::X>();
-#endif
-			}
-			else
-			{
-#if CLOCKWISE
-
-#else
-				v1.xyzw = v1.yxzw;
-				v2.xyzw = v2.yxzw;
-				v1.Negate<Math::NegateFlag::Y>();
-				v2.Negate<Math::NegateFlag::X>();
-#endif
-			}
 			if (v1.Dot(_RayDir) > 0.f || v2.Dot(_RayDir) > 0.f)
-				return false;
+				continue;
 			/*Get the intersection time*/
 			float cosTheta = _RayDir.Dot(-elem.mNorm3);
 			float adj = Math::Abs(v1_copy.Dot(elem.mNorm3));
 			float time = adj / cosTheta;
 			/*If the time of intersection to the edge is less than the current time of intersection, update it*/
 
-			if (time < rayEvent.mTimeIntersection)
+			if (time < _OutputResult->mTimeIntersection)
 			{
 				if (_MaxLength)
 					if ((time * _RayDir).MagnitudeSqr() > _MaxLength * _MaxLength)
 						continue;
-				//TODO 
-				/*DEBUG_PRINT(eLog::ERROR, "My Pos      %f %f %f \n", static_cast<float>(_Pos.x), static_cast<float>(_Pos.y), static_cast<float>(_Pos.z));
-				DEBUG_PRINT(eLog::ERROR, "Edge origin %f %f %f \n", static_cast<float>(elem.mPos.x), static_cast<float>(elem.mPos.y), static_cast<float>(elem.mPos.z));
-				DEBUG_PRINT(eLog::ERROR, "Edge Normal %f %f %f \n", static_cast<float>(elem.mNorm3.x), static_cast<float>(elem.mNorm3.y), static_cast<float>(elem.mNorm3.z));
-				DEBUG_PRINT(eLog::ERROR, "CosTheta    %f", cosTheta);
-				DEBUG_PRINT(eLog::ERROR, "Adj         %f", adj);
-				DEBUG_PRINT(eLog::ERROR, "Time         %f", time);*/
+
+
+
 				if (_OutputResult != nullptr)
 				{
-					_OutputResult->mTimeIntersection = rayEvent.mTimeIntersection > time ? time : rayEvent.mTimeIntersection;
+					_OutputResult->mTimeIntersection = time;
 					_OutputResult->mEdgeNormal = elem.mNorm3;
 					_OutputResult->mfPeneDepth = 0;
-					_OutputResult->mCollisionPoint = _Pos + rayEvent.mTimeIntersection * _RayDir;
+					_OutputResult->mCollisionPoint = _Pos + time * _RayDir;
 					_OutputResult->mCollidedWith = _Collider->GetOwner();
 				}
-				
+
 				isColliding = true;
 			}
 		}
