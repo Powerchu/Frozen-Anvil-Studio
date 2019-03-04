@@ -50,6 +50,7 @@ namespace Math
 
 		inline Vector4(void) noexcept;
 		inline Vector4(float x, float y, float z, float w = 0) noexcept;
+		inline explicit Vector4(float) noexcept;
 		inline explicit Vector4(__m128) noexcept;
 
 		Vector4(Vector3 const&, float w) noexcept;
@@ -384,6 +385,11 @@ inline Math::Vector4::Vector4(float x, float y, float z, float w) noexcept
 	: mData( _mm_set_ps(w, z, y, x) )
 {
 
+}
+
+inline Math::Vector4::Vector4(float x) noexcept
+	: mData(_mm_set_ps1(x))
+{
 }
 
 inline Math::Vector4::Vector4(__m128 v) noexcept

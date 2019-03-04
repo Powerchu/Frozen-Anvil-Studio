@@ -9,17 +9,20 @@ layout(location = 2) in vec2 Size;
 layout(location = 3) in float Rotation;
 layout(location = 4) in vec4 UVBuf;
 
-layout(location = 0) flat out vec3 vPosition;
+out gl_PerVertex
+{
+  vec4 gl_Position;
+};
+
 layout(location = 1) flat out vec4 vColor;
 layout(location = 2) flat out vec3 vParams;
 layout(location = 3) flat out vec4 vUV;
 
 void main()
 {
-  vec4 temp = ModelViewMat * vec4(vertexPos, 1.f);
-  vPosition = temp.xyz;
-  vColor    = vertexCol;
-  vParams   = vec3(Size, Rotation);
-  vUV       = UVBuf;
+  gl_Position = ModelViewMat * vec4(vertexPos, 1.f);
+  vColor      = vertexCol;
+  vParams     = vec3(Size, Rotation);
+  vUV         = UVBuf;
 }
  
