@@ -157,14 +157,18 @@ void Dystopia::SpriteRenderer::Update(float _fDT)
 			{
 				if (endIndex && currIndex >= (endIndex-1))
 				{
-					mnRow = endIndex / mAnimations[mnID].mnCol;
-					mnCol = endIndex - (mAnimations[mnID].mnCol * mnRow);
+					//mnRow = endIndex / mAnimations[mnID].mnCol;
+					//mnCol = endIndex - (mAnimations[mnID].mnCol * mnRow);
+					mnCol = startCol;
+					mnRow = startRow;
 					Stop();
 				}
-				else if (currIndex >= ( mAnimations[mnID].mnRow * mAnimations[mnID].mnCol) - 1)
+				else if (currIndex >= (mAnimations[mnID].mnRow * mAnimations[mnID].mnCol) - 1)
 				{
-					mnRow = mAnimations[mnID].mnRow - 1;
-					mnCol = mAnimations[mnID].mnCol - 1;
+					//mnRow = mAnimations[mnID].mnRow - 1;
+					//mnCol = mAnimations[mnID].mnCol - 1;
+					mnCol = startCol;
+					mnRow = startRow;
 					Stop();
 				}
 			}

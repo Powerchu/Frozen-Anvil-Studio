@@ -25,6 +25,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include <Windows.h>
 
+#define RESERVE_CHANNELS 100
+
 static const HashString g_GroupNames[Dystopia::eSOUND_LAST] =
 {
 	"BGM",
@@ -36,7 +38,8 @@ Dystopia::SoundSystem::SoundSystem(void)
 	: mpFMOD{ nullptr }, 
 	mDefaultSoundFolder{ "Resource/Audio/" },
 	mMapOfSounds{}, mArrGroups{ nullptr }, mMasterVol{ 1 },
-	mBGMVol{ 1 }, mFXVol{ 1 }, mbUpdateVol{ true }
+	mBGMVol{ 1 }, mFXVol{ 1 }, mbUpdateVol{ true },
+	mArrActiveChannels{}
 {
 }
 
@@ -52,6 +55,7 @@ void Dystopia::SoundSystem::PreInit(void)
 		exit(-1);
 
 	FMOD::System_Create(&mpFMOD);
+	mArrActiveChannels.reserve(RESERVE_CHANNELS);
 }
 
 bool Dystopia::SoundSystem::Init(void)
@@ -86,53 +90,53 @@ void Dystopia::SoundSystem::Update(float _dt)
 	mpFMOD->update();
 
 
-if (mbUpdateVol)
-{
-	mArrGroups[eSOUND_MASTER]->setVolume(mMasterVol);
-	mArrGroups[eSOUND_BGM]->setVolume(mBGMVol);
-	mArrGroups[eSOUND_FX]->setVolume(mFXVol);
-	mbUpdateVol = false;
-}
-for (auto& c : ComponentDonor<AudioListener>::mComponents)
-{
-#if EDITOR
-	if (c.GetFlags() & FLAG_EDITOR_OBJ)
-		continue;
-#endif
-	if (c.GetFlags() & FLAG_ACTIVE)
+	if (mbUpdateVol)
 	{
-
-		if (GameObject* pOwner = c.GetOwner())
+		mArrGroups[eSOUND_MASTER]->setVolume(mMasterVol);
+		mArrGroups[eSOUND_BGM]->setVolume(mBGMVol);
+		mArrGroups[eSOUND_FX]->setVolume(mFXVol);
+		mbUpdateVol = false;
+	}
+	for (auto& c : ComponentDonor<AudioListener>::mComponents)
+	{
+#if EDITOR
+		if (c.GetFlags() & FLAG_EDITOR_OBJ)
+			continue;
+#endif
+		if (c.GetFlags() & FLAG_ACTIVE)
 		{
-			if (Transform* pTrans = pOwner->GetComponent<Transform>())
+	
+			if (GameObject* pOwner = c.GetOwner())
 			{
-				c.UpdateFMODPos(pTrans->GetGlobalPosition());
-				mpFMOD->set3DListenerAttributes(mMapOfListeners[&c], c.GetFMODPos(), NULL, NULL, NULL);
+				if (Transform* pTrans = pOwner->GetComponent<Transform>())
+				{
+					c.UpdateFMODPos(pTrans->GetGlobalPosition());
+					mpFMOD->set3DListenerAttributes(mMapOfListeners[&c], c.GetFMODPos(), NULL, NULL, NULL);
+				}
 			}
 		}
 	}
-}
-for (auto& c : ComponentDonor<AudioSource>::mComponents)
-{
-#if EDITOR
-	if (c.GetFlags() & FLAG_EDITOR_OBJ)
-		continue;
-#endif
-	if (c.GetFlags() & FLAG_ACTIVE)
+	for (auto& c : ComponentDonor<AudioSource>::mComponents)
 	{
-		if (GameObject* pOwner = c.GetOwner())
+#if EDITOR
+		if (c.GetFlags() & FLAG_EDITOR_OBJ)
+			continue;
+#endif
+		if (c.GetFlags() & FLAG_ACTIVE)
 		{
-			if (Transform* pTrans = pOwner->GetComponent<Transform>())
+			if (GameObject* pOwner = c.GetOwner())
 			{
-				auto && pos = pTrans->GetGlobalPosition();
-				c.UpdateFMODPos(pos);
+				if (Transform* pTrans = pOwner->GetComponent<Transform>())
+				{
+					auto && pos = pTrans->GetGlobalPosition();
+					c.UpdateFMODPos(pos);
+				}
 			}
+			c.Update(_dt);
+			if (c.IsReady() && c.GetSound())
+				 PlayAudio(c);
 		}
-		c.Update(_dt);
-		if (c.IsReady() && c.GetSound())
-			 PlayAudio(c);
 	}
-}
 }
 
 void Dystopia::SoundSystem::PostUpdate(void)
@@ -142,7 +146,18 @@ void Dystopia::SoundSystem::PostUpdate(void)
 		if (c.GetFlags() & FLAG_REMOVE)
 		{
 			if (c.GetChannel().mpChannel)
-				c.GetChannel().mpChannel->stop();
+			{
+				//c.GetChannel().mpChannel->stop();
+				for (int i = 0; i < mArrActiveChannels.size(); ++i)
+				{
+					if (mArrActiveChannels[i] == c.GetChannel().mpChannel)
+					{
+						mArrActiveChannels[i]->stop();
+						mArrActiveChannels.FastRemove(i);
+						break;
+					}
+				}
+			}
 			ComponentDonor<AudioSource>::mComponents.Remove(&c);
 		}
 	}
@@ -162,7 +177,7 @@ void Dystopia::SoundSystem::Shutdown(void)
 		elem.second->mpSound->release();
 		delete elem.second;
 	}
-
+	mMapOfSounds.clear();
 	mpFMOD->release();
 	mpFMOD->close();
 	CoUninitialize();
@@ -178,10 +193,25 @@ void Dystopia::SoundSystem::LoadSettings(TextSerialiser&)
 
 void Dystopia::SoundSystem::PlayAudio(Dystopia::AudioSource& _a)
 {
+	if (_a.GetChannel() && _a.GetChannel().mpChannel)
+	{
+		for (int i = 0; i < mArrActiveChannels.size(); ++i)
+		{
+			if (mArrActiveChannels[i] == _a.GetChannel().mpChannel)
+			{
+				mArrActiveChannels[i]->stop();
+				mArrActiveChannels.FastRemove(i);
+				break;
+			}
+		}
+	}
+
 	FMOD::Channel *channel;
 	mpFMOD->playSound(_a.GetSound()->mpSound, mArrGroups[_a.GetSoundType()], false, &channel);
 	_a.SetChannel(Channel{ channel });
 	_a.SetReady(false);
+
+	mArrActiveChannels.push_back(channel);
 }
 
 void Dystopia::SoundSystem::SaveSettings(TextSerialiser&)
