@@ -68,7 +68,7 @@ namespace Editor
 			FILE_NOTIFY_CHANGE_LAST_WRITE;
 
 		auto fs = Dystopia::EngineCore::GetInstance()->Get<Dystopia::FileSystem>();
-		auto resFolder = fs->GetProjectFolders<std::string>(Dystopia::eFileDir::eResource);
+		auto resFolder = fs->Normalize(fs->GetProjectFolders<std::string>(Dystopia::eFileDir::eResource));
 		size_t pos = resFolder.rfind("\\");
 		if (pos == std::string::npos)
 			pos = resFolder.rfind("/");
