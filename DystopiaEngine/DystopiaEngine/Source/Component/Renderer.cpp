@@ -93,6 +93,9 @@ void Dystopia::Renderer::SetMesh(const std::string& _strMesh) noexcept
 
 void Dystopia::Renderer::SetShader(Shader* _p) noexcept
 {
+	if (mpShader == _p)
+		return;
+
 	mpShader = _p ? _p : CORE::Get<ShaderSystem>()->GetShader("Default Shader");
 
 	const auto& texList = mpShader->GetTextureList();
