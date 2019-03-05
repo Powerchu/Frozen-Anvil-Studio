@@ -68,7 +68,7 @@ namespace Editor
 			FILE_NOTIFY_CHANGE_LAST_WRITE;
 
 		auto fs = Dystopia::EngineCore::GetInstance()->Get<Dystopia::FileSystem>();
-		auto resFolder = fs->GetProjectFolders<std::string>(Dystopia::eFileDir::eResource);
+		auto resFolder = fs->Normalize(fs->GetProjectFolders<std::string>(Dystopia::eFileDir::eResource));
 		size_t pos = resFolder.rfind("\\");
 		if (pos == std::string::npos)
 			pos = resFolder.rfind("/");
@@ -135,7 +135,7 @@ namespace Editor
 		const float h = Size().y - 55;
 		static float splitterSz = 425.f;
 		static float sz1 = 200.0f;
-		const float sz3 = Size().x - sz1 + splitterSz;
+		const float sz3 = ((Size().x - sz1) * 0.8f) + splitterSz;
 
 		const Math::Vec2 folderWindowSize = Math::Vec2{ sz1, h };
 		const Math::Vec2 fileWindowSize = Math::Vec2{ sz3, h };

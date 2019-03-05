@@ -12,6 +12,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
 #include "System/Particle/Emitter.h"
+#include "System/Particle/TrailEmitter.h"
 
 #include "System/Driver/Driver.h"
 #include "System/Particle/ParticleAffector.h"
@@ -43,35 +44,47 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #endif 
 
 
-Dystopia::Emitter::Emitter(ParticleEmitter* _owner) noexcept
-	: mColour{}, mPosition{}, mVelocity{}, mAccel{}, mLifetime{}, mSpawnCount{},
-	mSpawn{}, mUpdate{}, mFixedUpdate{}, mpShader{ nullptr }, mpTexture{ nullptr },
-	mInitialLife{}, mbUpdatedPositions{ false }, mTextureName{ "EditorStartup.png" }, 
-	mShaderName{ "Default Particle" }, mnParticleLimit{ 1000 }, mbIsAlive{ true }, mbUVChanged{ false },
-	mpOwner{ _owner }, mpTransform{ nullptr }
+namespace
 {
-	glGenVertexArrays(1, &mVAO);
-	glGenBuffers(5, &mClrBuffer);
-	_EDITOR_CODE(if (_owner)
-		mpTransform = mpOwner->GetOwner()->GetComponent<Transform>();
-	)
+	static const auto DEFAULT_TEXTURE = "EditorStartup.png";
+}
+
+Dystopia::Emitter::Emitter(ParticleEmitter* _owner) noexcept
+	: Emitter{ _owner, GL_POINTS, 1, "Default Particle" }
+{
+}
+
+#define COMMA ,
+Dystopia::Emitter::Emitter(ParticleEmitter * _owner, int _drawMode, int _div, char const* _shader) noexcept
+	: mColour{}, mPosition{}, mVelocity{}, mAccel{}, mLifetime{}, mInitialLife{}, mCommand{},
+	mnParticleLimit{ 1000 }, mSpawnCount{}, mSpawn{}, mUpdate{}, mFixedUpdate{}, 
+	mbUpdatedPositions{ false }, mbUVChanged{ false }, mbIsAlive{ true }, _EDITOR_CODE(mbBuffers{ false } COMMA bEditorInit{ false } COMMA)
+	mpShader{ nullptr }, mShaderName{ _shader }, mpTexture{ nullptr }, mTextureName{ DEFAULT_TEXTURE },
+	mpOwner{ _owner }, mpTransform{ nullptr }, mDrawMode{ _drawMode }, mDiv{ _div }
+{
+	if (_owner)
+	{
+		GenBuffers();
+		_EDITOR_CODE(mpTransform = mpOwner->GetOwner()->GetComponent<Transform>());
+	}
 }
 
 Dystopia::Emitter::Emitter(Dystopia::Emitter const& _rhs) noexcept
-	: mColour{ _rhs.mColour }, mPosition{ _rhs.mPosition }, mVelocity{ _rhs.mVelocity }, mAccel{ _rhs.mAccel },
-	mLifetime{ _rhs.mLifetime }, mSpawnCount{ _rhs.mSpawnCount }, mbUVChanged{ _rhs.mbUVChanged },
+	: mColour{}, mPosition{}, mVelocity{}, mAccel{}, mLifetime{}, mInitialLife{}, mCommand{},
+	mnParticleLimit{ _rhs.mnParticleLimit }, mSpawnCount{ _rhs.mSpawnCount }, 
 	mSpawn{ _rhs.mSpawn }, mUpdate{ _rhs.mUpdate }, mFixedUpdate{ _rhs.mFixedUpdate },
-	mpShader{ _rhs.mpShader }, mpTexture{ _rhs.mpTexture },
-	mInitialLife{ _rhs.mInitialLife }, mTextureName{ _rhs.mTextureName }, 
-	mShaderName{ _rhs.mTextureName }, mnParticleLimit{ _rhs.mnParticleLimit }, mbIsAlive{ _rhs.mbIsAlive },
-	mpOwner{ nullptr }, mpTransform{ nullptr }
+	mbUpdatedPositions{ false }, mbUVChanged{ false }, mbIsAlive{ _rhs.mbIsAlive }, _EDITOR_CODE(mbBuffers{ false } COMMA bEditorInit{ false } COMMA)
+	mpShader{ _rhs.mpShader }, mShaderName{ _rhs.mTextureName }, mpTexture{ _rhs.mpTexture }, mTextureName{ _rhs.mTextureName },
+	mpOwner{ nullptr }, mpTransform{ nullptr }, mDrawMode{ _rhs.mDrawMode }, mDiv{ _rhs.mDiv }
 {
-	glGenVertexArrays(1, &mVAO);
-	glGenBuffers(5, &mClrBuffer);
+	GenBuffers();
 }
+#undef COMMA
 
 Dystopia::Emitter::~Emitter(void) noexcept
 {
+	_EDITOR_CODE(if (mbBuffers) {)
+
 	Bind();
 
 	glDisableVertexAttribArray(0);
@@ -80,11 +93,21 @@ Dystopia::Emitter::~Emitter(void) noexcept
 	glDisableVertexAttribArray(3);
 	glDisableVertexAttribArray(4);
 
-	glDeleteBuffers(5, &mClrBuffer);
+	Unbind();
+
+	glDeleteBuffers(6, &mClrBuffer);
 	glDeleteVertexArrays(1, &mVAO);
 
-	Unbind();
+	_EDITOR_CODE(})
 }
+
+void Dystopia::Emitter::GenBuffers(void) noexcept
+{
+	glGenVertexArrays(1, &mVAO);
+	glGenBuffers(6, &mClrBuffer);
+	_EDITOR_CODE(mbBuffers = true);
+}
+
 
 void Dystopia::Emitter::Awake(void)
 {
@@ -100,6 +123,7 @@ void Dystopia::Emitter::Init(void)
 	BaseInit();
 	InitArrays();
 	InitBuffers();
+	mCommand.clear();
 }
 
 void Dystopia::Emitter::BaseInit(void)
@@ -115,15 +139,13 @@ void Dystopia::Emitter::BaseInit(void)
 		mpTexture = CORE::Get<TextureSystem>()->LoadTexture(path.c_str());
 	}
 
-	if (!mpOwner)
-		__debugbreak();
+	if (!mpOwner) __debugbreak();
+
+	mParticle.mnLimit = mnParticleLimit;
 #   endif
 
-#if EDITOR
-	mParticle.mnLimit = mnParticleLimit;
-#endif
 	mpTransform = mpOwner->GetOwner()->GetComponent<Transform>();
-
+	mbUVChanged        = false;
 	mbUpdatedPositions = false;
 }
 
@@ -140,6 +162,7 @@ void Dystopia::Emitter::InitArrays(void)
 	mVelocity   .clear();
 	mPosition   .clear();
 	mRotation   .clear();
+	mCommand    .clear();
 
 	mInitialLife.reserve(mParticle.mnLimit);
 	mLifetime   .reserve(mParticle.mnLimit);
@@ -150,19 +173,28 @@ void Dystopia::Emitter::InitArrays(void)
 	mColour     .reserve(mParticle.mnLimit);
 	mAccel      .reserve(mParticle.mnLimit);
 	mVelocity   .reserve(mParticle.mnLimit);
-	mPosition   .reserve(mParticle.mnLimit);
+	mPosition   .reserve(mParticle.mnLimit * mDiv);
 	mRotation	.reserve(mParticle.mnLimit);
+	mCommand    .reserve(mParticle.mnLimit);
+
+	for (unsigned n = 0; n < mParticle.mnLimit; ++n)
+		mCommand.EmplaceBackUnsafe(static_cast<unsigned>(mDiv), 1u, n * mDiv, n);
 }
 
-void Dystopia::Emitter::InitBuffers(void) const noexcept
+void Dystopia::Emitter::InitBuffers(void) noexcept
 {
+	_EDITOR_CODE(if (bEditorInit) return static_cast<void>(bEditorInit = !bEditorInit);)
+
+	glBindBuffer(GL_DRAW_INDIRECT_BUFFER, mCmdBuffer);
+	glBufferData(GL_DRAW_INDIRECT_BUFFER, mParticle.mnLimit * sizeof(decltype(mCommand)::Val_t), mCommand.begin(), GL_STATIC_DRAW);
+
 	Bind();
 
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, mPosBuffer);
-	glBufferData(GL_ARRAY_BUFFER, mParticle.mnLimit * sizeof(decltype(mPosition)::Val_t), nullptr, GL_STREAM_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, mDiv * mParticle.mnLimit * sizeof(decltype(mPosition)::Val_t), nullptr, GL_STREAM_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-	glVertexAttribDivisor(0, 1);
+	glVertexAttribDivisor(0, 0);
 
 	glEnableVertexAttribArray(1);
 	glBindBuffer(GL_ARRAY_BUFFER, mClrBuffer);
@@ -237,12 +269,12 @@ void Dystopia::Emitter::FixedUpdate(float _fDT) noexcept
 	size_t n;
 	for (n = 0; n < sz; ++n)
 	{
-		*ptr = *reinterpret_cast<Math::Vec4*&>(pRotAcc)++ * _fDT;
+		*ptr += *reinterpret_cast<Math::Vec4*&>(pRotAcc)++ * _fDT;
 	}
 	auto ptr2 = reinterpret_cast<float*>(ptr);
 	for (n <<= 2; n < mRotVel.size(); ++n)
 	{
-		*ptr2 = *pRotAcc * _fDT;
+		*ptr2 += *pRotAcc * _fDT;
 		++pRotAcc;
 	}
 
@@ -250,12 +282,16 @@ void Dystopia::Emitter::FixedUpdate(float _fDT) noexcept
 	sz = mRotation.size() >> 2;
 	for (n = 0; n < sz; ++n)
 	{
-		*ptr = *reinterpret_cast<Math::Vec4*&>(pRotVel)++ * _fDT;
+		*ptr += *reinterpret_cast<Math::Vec4*&>(pRotVel)++ * _fDT;
+		//Math::Wrap(*ptr, Math::Vec4{ -Math::pi }, Math::Vec4{ Math::pi });
+		++ptr;
 	}
 	ptr2 = reinterpret_cast<float*>(ptr);
 	for (n <<= 2; n < mRotation.size(); ++n)
 	{
-		*ptr2 = *pRotVel * _fDT;
+		*ptr2 += *pRotVel * _fDT;
+		//Math::Wrap(*ptr2, -Math::pi, Math::pi);
+
 		++pRotVel;
 	}
 #endif
@@ -265,6 +301,7 @@ void Dystopia::Emitter::FixedUpdate(float _fDT) noexcept
 
 void Dystopia::Emitter::Bind(void) const noexcept
 {
+	glBindBuffer(GL_DRAW_INDIRECT_BUFFER, mCmdBuffer);
 	glBindVertexArray(mVAO);
 	_EDITOR_CODE(if (mpTexture))
 	mpTexture->Bind();
@@ -272,8 +309,10 @@ void Dystopia::Emitter::Bind(void) const noexcept
 
 void Dystopia::Emitter::Unbind(void) const noexcept
 {
-	//mpTexture->Unbind();
-	//glBindVertexArray(0);
+	_EDITOR_CODE(if (mpTexture))
+	mpTexture->Unbind();
+	glBindVertexArray(0);
+	glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
 }
 
 namespace
@@ -321,13 +360,23 @@ void Dystopia::Emitter::UploadBuffers(void) const noexcept
 
 void Dystopia::Emitter::Render(void) const noexcept
 {
-	glDrawArraysInstanced(GL_POINTS, 0, 1, static_cast<GLsizei>(mPosition.size()));
+	glMultiDrawArraysIndirect(mDrawMode, 0, static_cast<GLsizei>(mPosition.size()) / mDiv, 0);
+	//glDrawArraysInstanced(mDrawMode, 0, mDiv, static_cast<GLsizei>(mPosition.size()) / mDiv);
+	//glDrawArraysInstancedBaseInstance(mDrawMode, 0, mDiv, static_cast<GLsizei>(mPosition.size()) / mDiv, 0);
+	//glMultiDrawArrays(mDrawMode, first.begin(), count.begin(), static_cast<GLsizei>(mPosition.size()) / mDiv);
+
+	// TODO: REMOVE
+	if (auto err = glGetError())
+		__debugbreak();
 }
 
 void Dystopia::Emitter::KillParticle(size_t _nIdx) noexcept
 {
 	DEBUG_ASSERT(!mSpawnCount, "Particle System Error: No particles to kill!");
 	--mSpawnCount;
+
+	for (auto& e : mDeath)
+		e.Update(*this, 0);
 
 	mInitialLife.FastRemove(_nIdx);
 	mLifetime   .FastRemove(_nIdx);
@@ -338,7 +387,7 @@ void Dystopia::Emitter::KillParticle(size_t _nIdx) noexcept
 	mColour     .FastRemove(_nIdx);
 	mAccel      .FastRemove(_nIdx);
 	mVelocity   .FastRemove(_nIdx);
-	mPosition   .FastRemove(_nIdx);
+	mPosition   .FastRemoveRange(_nIdx * mDiv, mDiv);
 	mRotation   .FastRemove(_nIdx);
 
 	mbUVChanged        = true;
@@ -354,8 +403,8 @@ void Dystopia::Emitter::SpawnParticle(void) noexcept
 		for (auto& e : mSpawn)
 			e.Update(*this, 0);
 
-		Math::Vec4 vpos = mParticle.mPos.xyz1;
 		auto&& trs = mpTransform->GetTransformMatrix();
+		auto vpos = (trs * mParticle.mPos.xyz1).xyz;
 
 		mInitialLife.EmplaceBackUnsafe(mParticle.mfLifeDur);
 		mLifetime   .EmplaceBackUnsafe(mParticle.mfLifeDur);
@@ -366,7 +415,7 @@ void Dystopia::Emitter::SpawnParticle(void) noexcept
 		mColour     .EmplaceBackUnsafe(mParticle.mColour  );
 		mAccel      .EmplaceBackUnsafe(mParticle.mAccel   );
 		mVelocity   .EmplaceBackUnsafe(mParticle.mVelocity);
-		mPosition   .EmplaceBackUnsafe((trs * vpos).xyz   );
+		mPosition   .EmplaceBackMultiUnsafe(mDiv, vpos);
 		mRotation   .EmplaceBackUnsafe(mParticle.mRotation);
 
 		mbUVChanged        = true;
@@ -383,18 +432,18 @@ void Dystopia::Emitter::SpawnParticleGlobal(void) noexcept
 			e.Update(*this, 0);
 
 		mInitialLife.EmplaceBackUnsafe(mParticle.mfLifeDur);
-		mLifetime.EmplaceBackUnsafe(mParticle.mfLifeDur);
-		mRotVel.EmplaceBackUnsafe(mParticle.mRotVel);
-		mRotAcc.EmplaceBackUnsafe(mParticle.mRotAccel);
-		mUV.EmplaceBackUnsafe(mParticle.mUV);
-		mSize.EmplaceBackUnsafe(mParticle.mSize);
-		mColour.EmplaceBackUnsafe(mParticle.mColour);
-		mAccel.EmplaceBackUnsafe(mParticle.mAccel);
-		mVelocity.EmplaceBackUnsafe(mParticle.mVelocity);
-		mPosition.EmplaceBackUnsafe(mParticle.mPos);
-		mRotation.EmplaceBackUnsafe(mParticle.mRotation);
+		mLifetime   .EmplaceBackUnsafe(mParticle.mfLifeDur);
+		mRotVel     .EmplaceBackUnsafe(mParticle.mRotVel  );
+		mRotAcc     .EmplaceBackUnsafe(mParticle.mRotAccel);
+		mUV         .EmplaceBackUnsafe(mParticle.mUV      );
+		mSize       .EmplaceBackUnsafe(mParticle.mSize    );
+		mColour     .EmplaceBackUnsafe(mParticle.mColour  );
+		mAccel      .EmplaceBackUnsafe(mParticle.mAccel   );
+		mVelocity   .EmplaceBackUnsafe(mParticle.mVelocity);
+		mPosition   .EmplaceBackMultiUnsafe(mDiv, mParticle.mPos);
+		mRotation   .EmplaceBackUnsafe(mParticle.mRotation);
 
-		mbUVChanged = true;
+		mbUVChanged        = true;
 		mbUpdatedPositions = true;
 	}
 }
@@ -406,7 +455,7 @@ void Dystopia::Emitter::SetTexture(Texture* _texture) noexcept
 		mTextureName = mpTexture->GetName();
 	else
 	{
-		mTextureName = "EditorStartup.png";
+		mTextureName = DEFAULT_TEXTURE;
 		mpTexture = CORE::Get<TextureSystem>()->GetTexture(mTextureName.c_str());
 	}
 }
@@ -532,9 +581,11 @@ void Dystopia::Emitter::Serialise(TextSerialiser& _out) const noexcept
 	if (mpTexture)
 		_out << mpTexture->GetName();
 	else
-		_out << "EditorStartup.png";
+		_out << DEFAULT_TEXTURE;
 	_out << mnParticleLimit;
 	_out << mbIsAlive;
+	_out << mDrawMode;
+	_out << mDiv;
 	_out.InsertEndBlock("Emitter");
 
 
@@ -575,6 +626,8 @@ void Dystopia::Emitter::Unserialise(TextSerialiser& _in) noexcept
 {
 	_in.ConsumeStartBlock();
 
+	_EDITOR_CODE(bEditorInit = true);
+
 	std::string buf;
 	buf.reserve(128);
 
@@ -585,7 +638,7 @@ void Dystopia::Emitter::Unserialise(TextSerialiser& _in) noexcept
 	mTextureName = CORE::Get<FileSystem>()->GetFullPath(buf.c_str(), eFileDir::eResource).c_str();
 	if (!mTextureName.length())
 	{
-		mTextureName = "EditorStartup.png";
+		mTextureName = DEFAULT_TEXTURE;
 		mpTexture = CORE::Get<TextureSystem>()->GetTexture(mTextureName);
 	}
 	else
@@ -595,6 +648,16 @@ void Dystopia::Emitter::Unserialise(TextSerialiser& _in) noexcept
 	mnParticleLimit = n;
 	mParticle.mnLimit = static_cast<size_t>(mnParticleLimit);
 	_in >> mbIsAlive;
+	_in >> mDrawMode;
+	_in >> mDiv;
+
+	_EDITOR_CODE(mDiv += 0 == mDiv);
+
+	if (mDiv > 1)
+	{
+		*reinterpret_cast<void**>(this) = TrailEmitter::GetVTablePtr();
+	}
+
 	_in.ConsumeEndBlock();
 
 	static AffectorGet affectorsList;
@@ -665,6 +728,13 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 	ImGui::SameLine();
 	if (EGUI::Display::IconCross("Clear", 8.f))
 		SetTexture(nullptr);
+	
+	static char buf[512]{};
+	if (EGUI::Display::TextField("Test", buf, 512))
+	{
+		SetShader(CORE::Get<ShaderSystem>()->GetShader(buf));
+		std::memset(buf, 0, sizeof(buf));
+	}
 
 	//if (auto t = GetTexture())
 	//{
@@ -697,6 +767,11 @@ bool Dystopia::Emitter::IsAlive(void) const noexcept
 Dystopia::Texture * Dystopia::Emitter::GetTexture(void) const noexcept
 {
 	return mpTexture;
+}
+
+int Dystopia::Emitter::GetStride(void) const noexcept
+{
+	return mDiv;
 }
 
 

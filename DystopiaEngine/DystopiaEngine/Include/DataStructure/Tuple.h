@@ -21,16 +21,16 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 namespace
 {
 	template <typename T, typename U>
-	struct _DLL_EXPORT TupleBase;
+	struct TupleBase;
 
 	template <size_t, typename T>
-	struct _DLL_EXPORT TupleLeaf
+	struct TupleLeaf
 	{
 		T value;
 	};
 
 	template <template <unsigned ...> class R, unsigned ... Ns, template <typename ...> class T, typename ... Ty>
-	struct _DLL_EXPORT TupleBase <R<Ns...>, T<Ty...>> : public TupleLeaf<Ns, Ty> ...
+	struct TupleBase <R<Ns...>, T<Ty...>> : public TupleLeaf<Ns, Ty> ...
 	{};
 }
 

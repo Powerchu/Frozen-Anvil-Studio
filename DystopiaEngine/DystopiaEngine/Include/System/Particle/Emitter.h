@@ -41,7 +41,7 @@ namespace Dystopia
 		~Emitter(void) noexcept;
 
 		void Awake(void);
-		virtual void Init(void);
+		/*virtual*/ void Init(void);
 
 		// Update "physics"!
 		virtual void FixedUpdate(float _dt) noexcept;
@@ -51,9 +51,9 @@ namespace Dystopia
 		void UploadBuffers(void) const noexcept;
 		void Render(void) const noexcept;
 
-		virtual void KillParticle(size_t _nIdx) noexcept;
-		virtual void SpawnParticle(void) noexcept;
-		virtual void SpawnParticleGlobal(void) noexcept;
+		/*virtual*/ void KillParticle(size_t _nIdx) noexcept;
+		/*virtual*/ void SpawnParticle(void) noexcept;
+		/*virtual*/ void SpawnParticleGlobal(void) noexcept;
 		void SetTexture(Texture*) noexcept;
 		void SetOwner(ParticleEmitter*) noexcept;
 		void NotifyUVChanged(void) noexcept;
@@ -94,13 +94,16 @@ namespace Dystopia
 		void StartEmission(void) noexcept;
 		bool IsAlive(void) const noexcept;
 
+		int GetStride(void) const noexcept;
 		Texture* GetTexture(void) const noexcept;
 
 	protected:
 
+		explicit Emitter(ParticleEmitter* _owner, int, int, char const*) noexcept;
+
 		void BaseInit(void);
 		void InitArrays(void);
-		void InitBuffers(void) const noexcept;
+		void InitBuffers(void) noexcept;
 
 		AutoArray<float>      mInitialLife;
 		AutoArray<float>      mLifetime;
@@ -123,9 +126,21 @@ namespace Dystopia
 
 		bool mbUpdatedPositions, mbUVChanged;
 		bool mbIsAlive;
+		_EDITOR_CODE(bool mbBuffers; bool bEditorInit);
 
 	private:
+
+		void GenBuffers(void) noexcept;
+
 		unsigned mVAO, mClrBuffer, mPosBuffer, mSzBuffer, mRotBuffer, mUVBuffer;
+		unsigned mCmdBuffer;
+		int mDrawMode, mDiv;
+
+		struct Command
+		{
+			unsigned data[4];
+		};
+		AutoArray<Command> mCommand;
 
 		AutoArray<ParticleAffector> mSpawn;
 		AutoArray<ParticleAffector> mUpdate;
