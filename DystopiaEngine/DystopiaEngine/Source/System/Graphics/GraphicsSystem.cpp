@@ -510,7 +510,7 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _View, Math::
 				auto scale = Math::Max(scaleV, scaleV.yxwz);
 				auto scaleM = Math::Scale(scale);
 				auto Translation = Math::Translate(pos.x, pos.y);
-				s->UploadUniform("ModelMat", Translation * pOwner->GetComponent<Transform>()->GetGlobalRotation().Matrix() * Math::Translate(scaleV*Obj->GetOffSet()) * scaleM * Obj->GetTransformationMatrix());
+				s->UploadUniform("ModelMat", Translation * pOwner->GetComponent<Transform>()->GetGlobalRotation().Matrix() * Math::Translate(pOwner->GetComponent<Transform>()->GetGlobalScale()*Obj->GetOffSet()) * scaleM * Obj->GetTransformationMatrix());
 			}
 			
 			if (Obj->IsSleeping())

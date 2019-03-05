@@ -210,20 +210,34 @@ namespace Dystopia
 		public:
 			explicit TimeHolder(float _timeLimit = 1.0f) : mCurrTime(_timeLimit), mTimeLimit(_timeLimit) {}
 
-			eStatus Update(float _deltaTime) override
+			void Init() override
 			{
-				if (mCurrTime > 0.0f)
-				{
-					mCurrTime -= _deltaTime;
-					return eStatus::RUNNING;
-				}
-
-				return mpChild->Tick(_deltaTime);
+				mCurrTime = mTimeLimit;
 			}
 
-			void Exit (eStatus) override
+			eStatus Update(float _deltaTime) override
 			{
-				if (mCurrTime <= 0.0f) mCurrTime = mTimeLimit;
+				mCurrTime -= _deltaTime;
+
+				if (mCurrTime <= 0.0f)
+				{
+					mCurrTime = 0.0f;
+					return mpChild->Tick(_deltaTime);
+				}
+				return eStatus::RUNNING;
+			}
+
+			void Exit (eStatus _s) override
+			{
+				switch(_s)
+				{
+					case eStatus::SUCCESS:
+						mCurrTime = mTimeLimit;
+						break;
+					case eStatus::FAIL:
+						mCurrTime = mTimeLimit;
+						break;
+				}
 			}
 
 			HashString GetEditorName(void) const override { return "Time Holder"; }

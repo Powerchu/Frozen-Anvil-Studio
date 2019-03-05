@@ -11,6 +11,7 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
+#include "Editor/DataSheetEditor.h"
 #if EDITOR
 #include "Editor/EGUI.h"
 #include "Editor/HierarchyView.h"
@@ -67,16 +68,22 @@ namespace Editor
 
 	void HierarchyView::Update(float)
 	{
-		//UpdateSearch();
+		//if (strlen(mSearchText) != 0)
+			//UpdateSearch();
 	}
 
 	void HierarchyView::EditorUI()
 	{
+		const auto ss = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
+		auto& arrayOfGameObjects = ss->GetCurrentScene().GetAllGameObjects();
+		std::string objNoLabel = "# of gObjs: ";
+		objNoLabel += (std::to_string(arrayOfGameObjects.size()));
 		CreateButton();
 		EGUI::ChangeAlignmentYOffset(0);
-		EGUI::SameLine();
+		EGUI::SameLine(10);
 		EGUI::ChangeAlignmentYOffset();
-		SearchBar();
+		EGUI::Display::Label(objNoLabel.c_str());
+		//SearchBar();
 
 		if (EGUI::StartChild("ItemsInScene", Math::Vec2{ Size().x - 5, Size().y - 55 }))
 		{
@@ -144,18 +151,21 @@ namespace Editor
 
 	void HierarchyView::SearchBar()
 	{
-		static char buffer[256];
+		static char buffer[MAX_SEARCH];
 		float width = Size().x - 70;
 		width = (width < 20) ? 20 : width;
 		EGUI::ChangeLabelSpacing(10);
-		EGUI::Display::TextField("Search", buffer /*mSearchText*/, MAX_SEARCH, false, width);
+		if (EGUI::Display::TextField("Search", buffer, MAX_SEARCH, false, width))
+		{
+			strcpy_s(mSearchText, MAX_SEARCH, buffer);
+		}
 		EGUI::ChangeLabelSpacing();
 		EGUI::Display::HorizontalSeparator();
 	}
 
 	void HierarchyView::UpdateSearch()
 	{
-		auto ss = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
+		const auto ss = Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>();
 		std::string toBeSearched{ mSearchText };
 		if (toBeSearched != std::string{ mSearchTextPrevFrame })
 		{
@@ -264,6 +274,12 @@ namespace Editor
 
 			if (obj.GetComponent<Dystopia::Transform>()->GetParent())
 				continue;
+
+			if (strlen(mSearchText) != 0)
+			{
+				if (obj.GetID() != mArrSearchID[j])
+					continue;
+			}
 
 			EGUI::PushID(j);
 			if (obj.GetComponent<Dystopia::Transform>()->GetAllChild().size())

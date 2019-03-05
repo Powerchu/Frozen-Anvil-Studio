@@ -135,7 +135,7 @@ namespace Editor
 		const float h = Size().y - 55;
 		static float splitterSz = 425.f;
 		static float sz1 = 200.0f;
-		const float sz3 = Size().x/2 + splitterSz;
+		const float sz3 = ((Size().x - sz1) * 0.8f) + splitterSz;
 
 		const Math::Vec2 folderWindowSize = Math::Vec2{ sz1, h };
 		const Math::Vec2 fileWindowSize = Math::Vec2{ sz3, h };
@@ -341,7 +341,7 @@ namespace Editor
 			{
 				EGUI::PushID(i);
 				Editor::File* pFile = mArrFilesSearchedThisFrame[i];
-				if (i % columns) EGUI::SameLine();
+				if (i % columns) ImGui::SameLine(0,5);
 				if (ImGui::BeginChild(pFile->mName.c_str(), buffedSize, false, ImGuiWindowFlags_NoScrollWithMouse))
 				{
 					EGUI::Indent(10);

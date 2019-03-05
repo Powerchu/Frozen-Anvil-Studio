@@ -100,17 +100,25 @@ public:
 	void Insert(const T& _obj, const Sz_t _nIndex);
 
 	// In-place insert an element to the back of the array
-	template<typename ... Args>
+	template <typename ... Args>
 	inline void EmplaceBack(Args&&...args);
+
+	// In-place insert an element to the back of the array
+	template <typename Ty, typename ... Args>
+	inline void EmplaceBackAs(Args&&...args);
 
 	// Attempts to in-place insert to the back of the array
 	// without causing the array to grow
-	template<typename ... Args>
+	template <typename ... Args>
 	inline bool TryEmplaceBack(Args&& ...args);
 
 	// EmplaceBack without bounds checking
-	template<typename ... Args>
+	template <typename ... Args>
 	inline void EmplaceBackUnsafe(Args&& ...args) noexcept;
+
+	// Repeated EmplaceBack of the same element without bounds checking
+	template <typename ... Args>
+	inline void EmplaceBackMultiUnsafe(Sz_t, Args&& ...args) noexcept;
 
 	// Removes the last element of the array
 	inline void Remove(void) noexcept;
@@ -131,6 +139,9 @@ public:
 
 	// Remove an element pointed by the iterator to the array
 	inline void FastRemove(const Itor_t& _pObj);
+
+	inline void FastRemoveRange(const Sz_t _nFirst, const Sz_t _nCount);
+	inline void FastRemoveRange(Itor_t const& _first, Itor_t const& _last);
 
 	inline bool IsEmpty(void) const noexcept;
 
@@ -371,13 +382,19 @@ void AutoArray<T, A>::Insert(const T& _obj, const Sz_t _nIndex)
 
 
 // In-place insert an element to the back of the array
-template <class T, class A> template <typename ...Args>
-void AutoArray<T, A>::EmplaceBack(Args &&...args)
+template <class T, class A> template <typename ... Args>
+void AutoArray<T, A>::EmplaceBack(Args&& ... args)
+{
+	return EmplaceBackAs<T>(Ut::Fwd<Args>(args)...);
+}
+
+template <class T, class A> template <typename Ty, typename ... Args>
+void AutoArray<T, A>::EmplaceBackAs(Args&& ...args)
 {
 	if (mpLast == mpEnd)
 		GrowArray();
 
-	new (mpLast) T{ Ut::Forward<Args>(args)... };
+	new (mpLast) Ty { Ut::Fwd<Args>(args)... };
 	++mpLast;
 }
 
@@ -395,8 +412,14 @@ inline bool AutoArray<T, A>::TryEmplaceBack(Args&& ...args)
 template <class T, class A> template <typename ... Args>
 inline void AutoArray<T, A>::EmplaceBackUnsafe(Args&& ... args) noexcept
 {
-	new (mpLast) T{ Ut::Forward<Args>(args)... };
+	new (mpLast) T{ Ut::Fwd<Args>(args)... };
 	++mpLast;
+}
+
+template<class T, class A> template <typename ... Args>
+inline void AutoArray<T, A>::EmplaceBackMultiUnsafe(Sz_t _sz, Args&& ... args) noexcept
+{
+	while (_sz--) EmplaceBackUnsafe(Ut::Fwd<Args>(args)...);
 }
 
 
@@ -478,6 +501,33 @@ inline void AutoArray<T, A>::FastRemove(const Itor_t& _pObj)
 	Ut::Swap(*_pObj, *mpLast);
 	Destroy(*mpLast);
 }
+
+template<class T, class A>
+inline void AutoArray<T, A>::FastRemoveRange(Sz_t _nFirst, Sz_t _nCount)
+{
+	FastRemoveRange(mpArray + _nFirst, mpArray + _nFirst + _nCount);
+}
+
+template<class T, class A>
+inline void AutoArray<T, A>::FastRemoveRange(Itor_t const& _first, Itor_t const& _last)
+{
+	auto range = _last - _first;
+	auto e = end();
+	auto b = e - range;
+	auto first = _first;
+
+	b = _last - b > 0 ? _last : b;
+
+	while (b != e)
+	{
+		Ut::Swap(*first, *b);
+		++b; ++first;
+	}
+
+	while(range--)
+		Destroy(*--mpLast);
+}
+
 
 template <class T, class A>
 inline bool AutoArray<T, A>::IsEmpty(void) const noexcept
