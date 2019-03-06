@@ -272,6 +272,11 @@ Editor::eState Editor::EditorMain::GetCurState(void) const
 	return mCurState;
 }
 
+Editor::eState Editor::EditorMain::GetNextState(void) const
+{
+	return mNextState;
+}
+
 bool Editor::EditorMain::IsClosing(void)
 {
 	return mCurState == eState::EXIT;
