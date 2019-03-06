@@ -592,7 +592,7 @@ namespace Dystopia
 		return Ut::Move(ToRet);
 	}
 
-	bool CollisionSystem::RaycastFirstHit(Math::Vec3D const & _Dir, Math::Point3D const & _mPos, CollisionEvent * _Output, float _MaxLength, eColLayer layer) const
+	bool CollisionSystem::RaycastFirstHit(Math::Vec3D const & _Dir, Math::Point3D const & _mPos, CollisionEvent * _Output, float _MaxLength, eColLayer layer, bool ignore_global) const
 	{
 		CollisionEvent ray;
 		ray.mTimeIntersection = 999999.9f;
@@ -605,7 +605,7 @@ namespace Dystopia
 #endif 
 			if (elem.GetOwner())
 			{
-				if (this->ToIgnore(elem.GetColLayer(), layer))
+				if (this->ToIgnore(elem.GetColLayer(), layer) || (ignore_global && (elem.GetColLayer() == LAYER_GLOBAL)))
 					continue;
 
 				isColliding |= RayCollider::Raycast(_Dir, _mPos, &elem, &ray, _MaxLength);
@@ -633,7 +633,7 @@ namespace Dystopia
 
 			if (elem.GetOwner())
 			{
-				if (this->ToIgnore(elem.GetColLayer(), layer))
+				if (this->ToIgnore(elem.GetColLayer(), layer) || (ignore_global && (elem.GetColLayer() == LAYER_GLOBAL)))
 					continue;
 
 				isColliding |= RayCollider::Raycast(_Dir, _mPos, &elem, &ray, _MaxLength);

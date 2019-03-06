@@ -171,7 +171,7 @@ void Dystopia::SpriteRenderer::Update(float _fDT)
 				}
 				else if (currIndex >= (mAnimations[mnID].mnRow * mAnimations[mnID].mnCol) - 1)
 				{
-					if (mAnimations[mnID].mnEnd == mAnimations[mnID].mnStart)
+					if (!mAnimations[mnID].mnEnd && !mAnimations[mnID].mnStart)
 					{
 						mnCol = startCol;
 						mnRow = startRow;
