@@ -38,6 +38,7 @@ namespace Dystopia
 			CompositeBuilder<Parent> task(Args... args)
 			{
 				auto child = Ctor::CreateShared<NodeType>((args)...);
+				child->SetIndex(mpNode->GetCount());
 				mpNode->AddChild(child);
 				child->SetParentId(mpNode->GetID());
 				return *this;
@@ -47,6 +48,7 @@ namespace Dystopia
 			CompositeBuilder<CompositeBuilder<Parent>> composite(Args... args)
 			{
 				auto child = Ctor::CreateShared<CompositeType>((args)...);
+				child->SetIndex(mpNode->GetCount());
 				mpNode->AddChild(child);
 				child->SetParentId(mpNode->GetID());
 				return CompositeBuilder<CompositeBuilder<Parent>>(this, reinterpret_cast<CompositeType*>(child.GetRaw()));
@@ -56,6 +58,7 @@ namespace Dystopia
 			DecoratorBuilder<CompositeBuilder<Parent>> decorator(Args... args)
 			{
 				auto child = Ctor::CreateShared<DecoratorType>((args)...);
+				child->SetIndex(mpNode->GetCount());
 				mpNode->AddChild(child);
 				child->SetParentId(mpNode->GetID());
 				return DecoratorBuilder<CompositeBuilder<Parent>>(this, reinterpret_cast<DecoratorType*>(child.GetRaw()));

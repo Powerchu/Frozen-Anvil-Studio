@@ -48,9 +48,11 @@ namespace Dystopia
 
 			uint64_t GetID(void) const { return mnID; }
 			uint64_t GetParentID(void) const { return mnParentID; }
-			
+			unsigned GetIndex(void) const { return mnIndex; }
+
 			void SetID(const uint64_t& _id) { mnID = _id; }
 			void SetParentId(const uint64_t& _id) { mnParentID = _id; }
+			void SetIndex(const unsigned ind) { mnIndex = ind; }
 
 			virtual ~Node() = default;
 
@@ -92,7 +94,7 @@ namespace Dystopia
 			eStatus mStatus = eStatus::INVALID;
 			uint64_t mnID{ GUIDGenerator::GetUniqueID() };
 			uint64_t mnParentID{unsigned(-1)};
-
+			unsigned mnIndex = 0;
 			SharedPtr<Node> mAssignedTree;
 		};
 
@@ -115,7 +117,13 @@ namespace Dystopia
 			Composite() : iter(mparrChildren.begin()) {}
 			virtual ~Composite() = default;
 
-			void AddChild(const Node::Ptr& child) { mparrChildren.Insert(child); }
+			unsigned GetCount() const { return count; }
+
+			void AddChild(const Node::Ptr& child)
+			{
+				mparrChildren.Insert(child); 
+				count++;
+			}
 			bool HasChildren() const { return !mparrChildren.IsEmpty(); }
 
 			auto GetAllChildren(void) const
@@ -134,6 +142,7 @@ namespace Dystopia
 			MagicArray<Node::Ptr> mparrChildren;
 			MagicArray<Node::Ptr>::Itor_t iter;
 			Node::Ptr mpChild;
+			unsigned count = 0;
 		};
 
 /*
