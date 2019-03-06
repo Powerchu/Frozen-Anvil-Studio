@@ -77,6 +77,7 @@ namespace Dystopia
 		std::unordered_map<AudioListener*, char> mMapOfListeners;
 		Array<FMOD::ChannelGroup*, eSOUND_LAST>  mArrGroups;
 
+		AutoArray<FMOD::Channel *> mArrActiveChannels;
 
 		void PlayAudio(AudioSource&);
 	};
