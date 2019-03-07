@@ -81,6 +81,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Particle/AttractionAffector.h"
 #include "System/Particle/RotationAffector.h"
 #include "System/Particle/BubbleAffector.h"
+#include "System/Particle/FloorAffector.h"
 
 namespace Dystopia
 {
