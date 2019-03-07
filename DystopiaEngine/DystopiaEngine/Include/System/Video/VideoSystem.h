@@ -5,11 +5,30 @@
 #include "System/Base/Systems.h"
 #include "System/Base/ComponentDonor.h"
 
+class vpx_image;
 namespace Dystopia
 {
 	class VideoRenderer;
 	class VideoSystem : public Systems, public ComponentDonor<VideoRenderer>
 	{
+		struct RGB_BUFFER
+		{
+			unsigned height;
+			unsigned width;
+			unsigned stride;
+			unsigned count;
+			uint8_t * rgb_buff;
+
+			RGB_BUFFER();
+
+			RGB_BUFFER(unsigned h, unsigned w);
+
+			~RGB_BUFFER();
+
+			void Resize(unsigned h, unsigned w);
+
+			void insert(int r, int g, int b);
+		};
 	public:
 
 		VideoSystem();
@@ -40,7 +59,10 @@ namespace Dystopia
 
 
 	private:
+		RGB_BUFFER  mBuffer;
 
+		void Convert_YUV_RGB(RGB_BUFFER * buffer, vpx_image const * yuv_image);
+		int  Clamp(int v) const;
 	};
 
 }

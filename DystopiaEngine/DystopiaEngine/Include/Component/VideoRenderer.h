@@ -14,7 +14,7 @@ struct VpxInterface;
 struct WebmInputContext;
 struct VpxInputContext;
 struct vpx_codec_ctx;
-
+struct vpx_image;
 
 namespace Dystopia
 {
@@ -27,8 +27,25 @@ namespace Dystopia
 		VIDEO_FILE_NOT_FOUND,
 		VIDEO_FILE_FAIL_TO_OPEN,
 		VIDEO_FILE_NOT_WEBM,
+
+		DECODDER_FAIL_INIT,
+
+		WEBM_EOF,
+		UNKNOWN_ERROR,
 		
 	}vid_error_c_t;
+
+	typedef enum class VideoState : unsigned
+	{
+		NEUTRAL,
+		PLAYING,
+		PAUSE,
+		STOP,
+
+		FRAME_END,
+		
+
+	}vid_status_t;
 	class _DLL_EXPORT VideoRenderer : public Component
 	{
 		public:
@@ -73,6 +90,14 @@ namespace Dystopia
 			_DLL_EXPORT_ONLY vid_error_c_t LoadVideo(HashString const & VidName);
 
 			void CloseCurrentVideo();
+			void Play();
+
+			vid_error_c_t ReadNextFrame();
+			vpx_image *   GetFrameImage();
+
+#if EDITOR
+			void EditorUI(void) noexcept override;
+#endif
 
 		protected:
 
@@ -85,8 +110,16 @@ namespace Dystopia
 			WebmInputContext   *  mWebmHdl;          /*Handle for webm         */
 			VpxInputContext    *  mVidHdl;
 			vpx_codec_ctx      *  mDecodec;
+			uint8_t            *  buffer;
+			size_t                mBufferSize;
+			const void *          mCodecIterator;
 
+			VideoState            mState;
+			unsigned              mRecentFlags;
 			/*Functions*/
+
+
+			friend VideoSystem;
 	};
 }
 
