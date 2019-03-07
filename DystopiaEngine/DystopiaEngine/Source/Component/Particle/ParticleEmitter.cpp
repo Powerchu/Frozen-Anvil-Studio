@@ -163,6 +163,7 @@ void Dystopia::ParticleEmitter::EditorUI(void) noexcept
 		mEmitters.back().Awake();
 	}
 
+	int toRemove = -1;
 	for (int i = 0; i < mEmitters.size(); ++i)
 	{
 		char buffer[50]{ "Emitter" };
@@ -175,10 +176,7 @@ void Dystopia::ParticleEmitter::EditorUI(void) noexcept
 		if (ImGui::BeginPopupContextItem())
 		{
 			if (EGUI::Display::SelectableTxt("Remove Emitter"))
-			{
-				mEmitters.FastRemove(i--);
-				open = false;
-			}
+				toRemove = i;
 			ImGui::EndPopup();
 		}
 		if (open)
@@ -193,6 +191,9 @@ void Dystopia::ParticleEmitter::EditorUI(void) noexcept
 
 		EGUI::PopID();
 	}
+
+	if (toRemove >= 0)
+		mEmitters.FastRemove(toRemove);
 
 	EGUI::PopLeftAlign();
 #endif
