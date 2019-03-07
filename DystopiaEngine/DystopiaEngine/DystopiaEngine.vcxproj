@@ -32,6 +32,7 @@
     <ClCompile Include="Source\Editor\ShaderView.cpp" />
     <ClCompile Include="Source\System\Particle\AccelerationAffector.cpp" />
     <ClCompile Include="Source\System\Particle\AttractionAffector.cpp" />
+    <ClCompile Include="Source\System\Particle\BubbleAffector.cpp" />
     <ClCompile Include="Source\System\Particle\ColorAffector.cpp" />
     <ClCompile Include="Source\System\Particle\Emitter.cpp" />
     <ClCompile Include="Source\System\Particle\LifetimeAffector.cpp" />
@@ -294,6 +295,7 @@
     <ClInclude Include="Include\Component\ParticleEmitter.h" />
     <ClInclude Include="Include\System\Particle\AccelerationAffector.h" />
     <ClInclude Include="Include\System\Particle\AttractionAffector.h" />
+    <ClInclude Include="Include\System\Particle\BubbleAffector.h" />
     <ClInclude Include="Include\System\Particle\ColorAffector.h" />
     <ClInclude Include="Include\System\Particle\Emitter.h" />
     <ClInclude Include="Include\System\Particle\LifetimeAffector.h" />

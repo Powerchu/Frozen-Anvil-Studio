@@ -93,9 +93,16 @@ void Dystopia::Renderer::SetMesh(const std::string& _strMesh) noexcept
 
 void Dystopia::Renderer::SetShader(Shader* _p) noexcept
 {
+	if (mpShader == _p)
+		return;
+
 	mpShader = _p ? _p : CORE::Get<ShaderSystem>()->GetShader("Default Shader");
 
 	const auto& texList = mpShader->GetTextureList();
+
+	Texture* pMainTex = nullptr;
+	if (mTextureFields.size())
+		pMainTex = mTextureFields[0].Get<1>();
 
 	mTextureFields.clear();
 	mTextureFields.reserve(texList.size());
@@ -105,6 +112,8 @@ void Dystopia::Renderer::SetShader(Shader* _p) noexcept
 
 	for (const auto & e : texList)
 		mTextureFields.EmplaceBack(e.second, nullptr);
+
+	SetTexture(pMainTex, 0);
 }
 
 void Dystopia::Renderer::SetShader(const std::string& _strName) noexcept

@@ -46,11 +46,11 @@ namespace Dystopia
 {
 	CollisionSystem::Map_t CollisionSystem::mIgnoreTable
 	{
-		_COL_LAYER_(32), std::make_pair(LAYER_NONE, static_cast < eColLayer>(0xFFFFFFFFu))
+		_COL_LAYER_(32), std::make_pair(LAYER_NONE, static_cast <eColLayer>(0xFFFFFFFFu))
 	};
 	bool  CollisionSystem::mIgnoreBoolTable[32][32]
 	{
-		
+
 	};
 	std::string CollisionSystem::arrColLayer[33] =
 	{
@@ -244,7 +244,7 @@ namespace Dystopia
 				if (rigidA && rigidB)
 				{
 					// if both bodies are static, continue
-					if (rigidA->Get_IsStaticState() && rigidB->Get_IsStaticState()) 
+					if (rigidA->Get_IsStaticState() && rigidB->Get_IsStaticState())
 						continue;
 				}
 
@@ -350,7 +350,7 @@ namespace Dystopia
 
 	void CollisionSystem::SaveSettings(DysSerialiser_t & _out)
 	{
-		for(unsigned u = 0;u<32;++u)
+		for (unsigned u = 0; u < 32; ++u)
 			for (unsigned i = 0; i < 32; ++i)
 			{
 				_out << mIgnoreBoolTable[u][i];
@@ -375,7 +375,7 @@ namespace Dystopia
 				continue;
 			}
 			EGUI::Display::Label("%02d", i);
-			ImGui::SameLine(0,9.0f);
+			ImGui::SameLine(0, 9.0f);
 			ImGui::NextColumn();
 		}
 		EGUI::PopLeftAlign();
@@ -389,23 +389,23 @@ namespace Dystopia
 			{
 				EGUI::PushID(unique++);
 				ImGui::PushItemWidth(10.f);
-				if (EGUI::Display::CheckBox(std::to_string(u * i).c_str(), &mIgnoreBoolTable[i-1][u-1], false, nullptr, 0.5f))
+				if (EGUI::Display::CheckBox(std::to_string(u * i).c_str(), &mIgnoreBoolTable[i - 1][u - 1], false, nullptr, 0.5f))
 				{
-					eColLayer curr  = mIgnoreTable[static_cast<eColLayer>(0x01u << (i - 1))];
+					eColLayer curr = mIgnoreTable[static_cast<eColLayer>(0x01u << (i - 1))];
 					eColLayer curr2 = mIgnoreTable[static_cast<eColLayer>(0x01u << (u - 1))];
 					mIgnoreBoolTable[u - 1][i - 1] = mIgnoreBoolTable[i - 1][u - 1];
-					bool isClick   = mIgnoreBoolTable[i - 1][u - 1];
-					mIgnoreTable[static_cast<eColLayer>(0x01u << (i - 1))] = static_cast<eColLayer>(!isClick ? curr | ((0x00000001u) << (u-1))  : curr & (~(0x00000001u << (u - 1))));
-					mIgnoreTable[static_cast<eColLayer>(0x01u << (u - 1))] = static_cast<eColLayer>(!isClick ? curr2 | ((0x00000001u) << (i-1)) : curr2 & (~(0x00000001u << (i - 1))));
+					bool isClick = mIgnoreBoolTable[i - 1][u - 1];
+					mIgnoreTable[static_cast<eColLayer>(0x01u << (i - 1))] = static_cast<eColLayer>(!isClick ? curr | ((0x00000001u) << (u - 1)) : curr & (~(0x00000001u << (u - 1))));
+					mIgnoreTable[static_cast<eColLayer>(0x01u << (u - 1))] = static_cast<eColLayer>(!isClick ? curr2 | ((0x00000001u) << (i - 1)) : curr2 & (~(0x00000001u << (i - 1))));
 				}
 				ImGui::PopItemWidth();
 				EGUI::PopID();
 				ImGui::SameLine(0, 5.0f);
 			}
-			
+
 			EGUI::PushLeftAlign(1500.f);
 			ImGui::PushItemWidth(30.f);
-			EGUI::Display::LabelWrapped(arrColLayer[i-1].c_str());
+			EGUI::Display::LabelWrapped(arrColLayer[i - 1].c_str());
 			ImGui::PopItemWidth();
 			EGUI::PopLeftAlign();
 			ImGui::NextColumn();
@@ -421,7 +421,7 @@ namespace Dystopia
 	{
 		static size_t Max = 0;
 		static bool     hasChange = false;
-		for(auto & elem : arrColLayer)
+		for (auto & elem : arrColLayer)
 		{
 			if (elem.size() > Max)
 			{
@@ -513,10 +513,10 @@ namespace Dystopia
 
 	bool CollisionSystem::PointVsPoint(Collider * const & _ColA, Collider * const & _ColB) const
 	{
-		PointCollider * a, * b;
+		PointCollider * a, *b;
 		a = dynamic_cast<PointCollider *>(_ColA);
 		b = dynamic_cast<PointCollider *>(_ColB);
-		
+
 		return (a && b) || a->isColliding(b);
 	}
 
@@ -536,7 +536,7 @@ namespace Dystopia
 		Convex *a;
 		a = dynamic_cast<Convex * const>(_ColA);
 		b = dynamic_cast<PointCollider * const>(_ColB);
-		
+
 		return (!a && !b) && a->isColliding(b);
 	}
 
@@ -592,7 +592,7 @@ namespace Dystopia
 		return Ut::Move(ToRet);
 	}
 
-	bool CollisionSystem::RaycastFirstHit(Math::Vec3D const & _Dir, Math::Point3D const & _mPos,CollisionEvent * _Output, float _MaxLength, eColLayer layer) const
+	bool CollisionSystem::RaycastFirstHit(Math::Vec3D const & _Dir, Math::Point3D const & _mPos, CollisionEvent * _Output, float _MaxLength, eColLayer layer) const
 	{
 		CollisionEvent ray;
 		ray.mTimeIntersection = 999999.9f;
@@ -601,7 +601,7 @@ namespace Dystopia
 		{
 #if EDITOR
 			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
-			
+
 #endif 
 			if (elem.GetOwner())
 			{
@@ -629,7 +629,7 @@ namespace Dystopia
 #if EDITOR
 			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
 #endif 
-			
+
 
 			if (elem.GetOwner())
 			{
@@ -651,7 +651,7 @@ namespace Dystopia
 #if EDITOR
 			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
 #endif 
-			
+
 
 			if (elem.GetOwner())
 			{
@@ -683,7 +683,7 @@ namespace Dystopia
 #if EDITOR
 			if (elem.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ || !elem.GetFlags() & eObjFlag::FLAG_ACTIVE) continue;
 #endif 
-			
+
 
 			if (elem.GetOwner())
 			{
@@ -740,7 +740,7 @@ namespace Dystopia
 			count++;
 		}
 
-		while(_Layer2)
+		while (_Layer2)
 		{
 			_Layer2 >>= 1;
 			count2++;

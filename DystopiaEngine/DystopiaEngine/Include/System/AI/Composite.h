@@ -167,7 +167,7 @@ namespace Dystopia
 		};
 
 		/*
-		 *  RandomSelector does exactly what a Selector does: Runs till SUCCEED
+		 *  RandomSelector does exactly what a Selector does.
 		 *  However, this runs in a random order.
 		 */
 		class RandomSelector : public Composite
@@ -175,61 +175,85 @@ namespace Dystopia
 		public:
 			void Init() override
 			{
-				iter = mparrChildren.begin();
-
-				std::random_device random_device;
-				std::mt19937 engine{ random_device() };
-				const std::uniform_int_distribution<size_t> dist(0, mparrChildren.size() - 1);
-
-				mpChild = mparrChildren[dist(engine)];
+				index = 0;
+				if (mparrIndex.size() <= 0)
+				{
+					for (unsigned i = 0; i < mparrChildren.size(); ++i)
+						mparrIndex.Insert(i);
+				}
+				const auto seed = static_cast<unsigned>(std::chrono::system_clock::now().time_since_epoch().count());
+				shuffle(mparrIndex.begin(), mparrIndex.end(), std::default_random_engine(seed));
 			}
 
 			eStatus Update(float _deltaTime) override
 			{
 				assert(HasChildren() && "Composite has no children");
 
-				const auto status = mpChild->Tick(_deltaTime);
-
-				if (status != eStatus::FAIL) 
+				while (index < mparrIndex.size())
 				{
-					return status;
+					const auto status = mparrChildren[mparrIndex[index]]->Tick(_deltaTime);
+					if (status != eStatus::FAIL)
+					{
+						return status;
+					}
+					++index;
 				}
-				
 				return eStatus::FAIL;
 			}
 
+			void Exit(eStatus) override
+			{
+			}
+
 			HashString GetEditorName(void) const override { return "Random Selector"; }
+		private:
+			AutoArray<unsigned> mparrIndex;
+			unsigned index = 0;
 		};
 
+		/*
+		 *  RandomSequence does exactly what a Sequence does.
+		 *  However, this runs in a random order.
+		 */
 		class RandomSequence : public Composite
 		{
 		public:
 			void Init() override
 			{
-				iter = mparrChildren.begin();
-
-				std::random_device random_device;
-				std::mt19937 engine{ random_device() };
-				const std::uniform_int_distribution<size_t> dist(0, mparrChildren.size() - 1);
-
-				mpChild = mparrChildren[dist(engine)];
+				index = 0;
+				if (mparrIndex.size() <= 0)
+				{
+					for (unsigned i = 0; i < mparrChildren.size(); ++i)
+						mparrIndex.Insert(i);
+				}
+				const auto seed = static_cast<unsigned>(std::chrono::system_clock::now().time_since_epoch().count());
+				shuffle(mparrIndex.begin(), mparrIndex.end(), std::default_random_engine(seed));
 			}
 
 			eStatus Update(float _deltaTime) override
 			{
 				assert(HasChildren() && "Composite has no children");
 
-				const auto status = mpChild->Tick(_deltaTime);
-
-				if (status != eStatus::SUCCESS)
+				while (index < mparrIndex.size())
 				{
-					return status;
+					const auto status = mparrChildren[mparrIndex[index]]->Tick(_deltaTime);
+					if (status != eStatus::SUCCESS)
+					{
+						return status;
+					}
+					++index;
 				}
-
 				return eStatus::SUCCESS;
 			}
 
+			void Exit(eStatus) override
+			{
+			}
+
 			HashString GetEditorName(void) const override { return "Random Sequence"; }
+		private:
+			AutoArray<unsigned> mparrIndex;
+			unsigned index = 0;
 		};
 
 	}  // NeuralTree

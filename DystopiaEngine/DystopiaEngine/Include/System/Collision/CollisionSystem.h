@@ -103,6 +103,7 @@ namespace Dystopia
 		void MapIgnoreLayer(eColLayer _layer, eColLayer _toIgnore);
 		_DLL_EXPORT bool ToIgnore      (eColLayer _Layer1, eColLayer _Layer2) const;
 		_DLL_EXPORT void SetIgnore	   (unsigned _Layer1, unsigned _Layer2, bool _toignore);
+		_DLL_EXPORT eColLayer GetLayerByName(const char*);
 
 		static std::string const * GetColLayerNames();
 		static unsigned            GetColLayerSize();

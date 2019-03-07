@@ -301,7 +301,7 @@ namespace Dystopia
 			if (_OutputResult != nullptr)
 			{
 				/*Insert Collision Info*/
-				_OutputResult->mEdgeNormal = _Collider->GetGlobalPosition() - _Pos + (_RayDir*t);
+				_OutputResult->mEdgeNormal =  (_Pos + (_RayDir*t) - _Collider->GetGlobalPosition()).Normalise();
 				_OutputResult->mTimeIntersection = t;
 				_OutputResult->mCollisionPoint = _Pos + (_RayDir*t);
 				_OutputResult->mCollidedWith = _Collider->GetOwner();
@@ -335,10 +335,10 @@ namespace Dystopia
 #if CLOCKWISE
 
 #else
-				v1.xyzw = v1.yxzw;
-				v2.xyzw = v2.yxzw;
-				v1.Negate<Math::NegateFlag::Y>();
-				v2.Negate<Math::NegateFlag::X>();
+			v1.xyzw = v1.yxzw;
+			v2.xyzw = v2.yxzw;
+			v1.Negate<Math::NegateFlag::Y>();
+			v2.Negate<Math::NegateFlag::X>();
 #endif
 
 			if (v1.Dot(_RayDir) > 0.f || v2.Dot(_RayDir) > 0.f)
@@ -355,17 +355,17 @@ namespace Dystopia
 					if ((time * _RayDir).MagnitudeSqr() > _MaxLength * _MaxLength)
 						continue;
 
-				
+
 
 				if (_OutputResult != nullptr)
 				{
 					_OutputResult->mTimeIntersection = time;
-					_OutputResult->mEdgeNormal       = elem.mNorm3;
-					_OutputResult->mfPeneDepth       = 0;
-					_OutputResult->mCollisionPoint   = _Pos + time * _RayDir;
-					_OutputResult->mCollidedWith     = _Collider->GetOwner();
+					_OutputResult->mEdgeNormal = elem.mNorm3;
+					_OutputResult->mfPeneDepth = 0;
+					_OutputResult->mCollisionPoint = _Pos + time * _RayDir;
+					_OutputResult->mCollidedWith = _Collider->GetOwner();
 				}
-				
+
 				isColliding = true;
 			}
 		}

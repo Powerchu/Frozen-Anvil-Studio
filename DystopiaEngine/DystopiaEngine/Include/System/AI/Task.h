@@ -42,16 +42,13 @@ namespace Dystopia
 				{
 					mWaitTime -= _deltaTime;
 
-					if (mWaitTime <= 0.f)
+					if (mWaitTime < 0.f)
 					{
 						mWaitTime = 0.0f;
 						return eStatus::SUCCESS;
 					}
-
-					return eStatus::RUNNING;
 				}
-				
-				return eStatus::FAIL;
+				return eStatus::RUNNING;
 
 			}
 
@@ -80,16 +77,13 @@ namespace Dystopia
 				{
 					mWaitTime -= _deltaTime;
 
-					if (mWaitTime <= 0.f)
+					if (mWaitTime < 0.f)
 					{
 						mWaitTime = 0.0f;
 						return eStatus::SUCCESS;
 					}
-
-					return eStatus::RUNNING;
 				}
-
-				return eStatus::FAIL;
+				return eStatus::RUNNING;
 			}
 
 		private:

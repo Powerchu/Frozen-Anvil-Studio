@@ -143,7 +143,7 @@ void Dystopia::AudioSource::EditorUI(void) noexcept
 										   cmd->MakeFnCommand(&AudioSource::SetSound, pSound));
 		EGUI::Display::EndPayloadReceiver();
 	}
-	EGUI::SameLine();
+	ImGui::SameLine();
 	if (EGUI::Display::IconCross("Clear", 8.f))
 	{
 		cmd->FunctionCommand(GetOwnerID(), cmd->MakeFnCommand(&AudioSource::SetSound, mpSound),
