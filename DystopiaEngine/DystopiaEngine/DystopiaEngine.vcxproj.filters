@@ -451,6 +451,12 @@
     <ClCompile Include="Source\System\Particle\BubbleAffector.cpp">
       <Filter>Game Engine\Systems\Particle\Affectors\Bubble</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Component\VideoRenderer.cpp">
+      <Filter>Game Engine\Components\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Video\VideoSystem.cpp">
+      <Filter>Game Engine\Systems\Video</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -1227,6 +1233,12 @@
     <ClInclude Include="Include\System\Particle\BubbleAffector.h">
       <Filter>Game Engine\Systems\Particle\Affectors\Bubble</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Component\VideoRenderer.h">
+      <Filter>Game Engine\Components\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Video\VideoSystem.h">
+      <Filter>Game Engine\Systems\Video</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1768,6 +1780,12 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Particle\Affectors\Bubble">
       <UniqueIdentifier>{d1689e74-f958-4f4e-a2e4-4403a782b602}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Video">
+      <UniqueIdentifier>{3c22fab1-4010-4b5b-861e-49fe1ed6d4b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Video">
+      <UniqueIdentifier>{7cae69ad-45f2-4ac5-b2a2-7798e9bc1c38}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -41,6 +41,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Editor/EditorIntermediary.h"
 #include "System/Database/DatabaseSystem.h"
 #include "System/Particle/ParticleSystem.h"
+#include "System/Video/VideoSystem.h"
 
 // SubSystems
 #include "System/Graphics/MeshSystem.h"

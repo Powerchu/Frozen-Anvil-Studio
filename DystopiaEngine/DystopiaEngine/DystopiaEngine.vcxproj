@@ -168,10 +168,12 @@
     <ClCompile Include="Source\System\Time\ScopedTimer.cpp" />
     <ClCompile Include="Source\System\Time\Timer.cpp" />
     <ClCompile Include="Source\System\Time\TimeSystem.cpp" />
+    <ClCompile Include="Source\System\Video\VideoSystem.cpp" />
     <ClCompile Include="Source\System\Window\Window.cpp" />
     <ClCompile Include="Source\System\Window\WindowManager.cpp" />
     <ClCompile Include="Source\Utility\GUID.cpp" />
     <ClCompile Include="Source\System\Input\XGamePad.cpp" />
+    <ClCompile Include="Source\Component\VideoRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
@@ -399,6 +401,7 @@
     <ClInclude Include="Include\System\SystemTypes.h" />
     <ClInclude Include="Include\System\Time\Timer.h" />
     <ClInclude Include="Include\System\Time\TimeSystem.h" />
+    <ClInclude Include="Include\System\Video\VideoSystem.h" />
     <ClInclude Include="Include\System\Window\Window.h" />
     <ClInclude Include="Include\System\Window\WindowManager.h" />
     <ClInclude Include="Include\Utility\DebugAssert.h" />
@@ -423,6 +426,7 @@
     <ClInclude Include="Include\System\Input\XGamePad.h" />
     <ClInclude Include="Include\IO\XMLParser.h" />
     <ClInclude Include="Include\Editor\RuntimeMeta.h" />
+    <ClInclude Include="Include\Component\VideoRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DystopiaEngine1.rc" />
