@@ -18,7 +18,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::TrailEmitter::TrailEmitter(ParticleEmitter* _owner) noexcept
-	: Emitter{ _owner, GL_LINE_STRIP, 32, "Def Trail Particle" }
+	: Emitter{ _owner, GL_LINE_STRIP_ADJACENCY, 32, "Def Trail Particle" }
 {
 }
 
@@ -50,7 +50,7 @@ void Dystopia::TrailEmitter::FixedUpdate(float _dt) noexcept
 	auto pVel = mVelocity.begin();
 	auto pDelay = mRotation.begin();
 	int const stride = GetStride();
-	float const fDelayCap = .0625f;
+	float const fDelayCap = .03125f;
 	for (auto b = mPosition.begin(), e = mPosition.end(); b != e; b += stride)
 	{
 		auto t = b + stride - 1;
@@ -63,6 +63,7 @@ void Dystopia::TrailEmitter::FixedUpdate(float _dt) noexcept
 		*pDelay = *pDelay > fDelayCap ? *pDelay - fDelayCap : *pDelay;
 
 		*b += *pVel * _dt;
+		*(b + 1) = *b;
 		++pVel;
 	}
 
