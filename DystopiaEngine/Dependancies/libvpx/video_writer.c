@@ -14,6 +14,8 @@
 #include "./video_writer.h"
 #include "vpx/vpx_encoder.h"
 
+#pragma warning (push)
+#pragma warning (disable : 4996 )
 struct VpxVideoWriterStruct {
   VpxVideoInfo info;
   FILE *file;
@@ -74,3 +76,5 @@ int vpx_video_writer_write_frame(VpxVideoWriter *writer, const uint8_t *buffer,
 
   return 1;
 }
+
+#pragma warning (pop)

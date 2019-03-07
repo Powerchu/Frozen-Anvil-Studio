@@ -12,7 +12,6 @@
 #include <string.h>
 #include <limits.h>
 #include "args.h"
-#include "../TestingLib/pch.h"
 #include "vpx/vpx_integer.h"
 #include "vpx_ports/msvc.h"
 

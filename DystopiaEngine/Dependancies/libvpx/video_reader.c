@@ -16,6 +16,8 @@
 
 #include "vpx_ports/mem_ops.h"
 
+#pragma warning (push)
+#pragma warning (disable : 4996 )
 static const char *const kIVFSignature = "DKIF";
 
 struct VpxVideoReaderStruct {
@@ -95,3 +97,7 @@ const uint8_t *vpx_video_reader_get_frame(VpxVideoReader *reader,
 const VpxVideoInfo *vpx_video_reader_get_info(VpxVideoReader *reader) {
   return &reader->info;
 }
+
+
+#pragma warning (pop)
+

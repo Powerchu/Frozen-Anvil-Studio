@@ -26,6 +26,8 @@
 #include "mkvmuxer/mkvwriter.h"
 #include "mkvparser/mkvparser.h"
 
+#pragma warning (push)
+#pragma warning ( disable : 4996 )
 namespace mkvmuxer {
 
 const float PrimaryChromaticity::kChromaticityMin = 0.0f;
@@ -4219,3 +4221,7 @@ bool Segment::DocTypeIsWebm() const {
 }
 
 }  // namespace mkvmuxer
+
+#pragma warning (pop)
+
+

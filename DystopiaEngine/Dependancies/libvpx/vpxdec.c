@@ -40,6 +40,8 @@
 #endif
 #include "./y4menc.h"
 
+#pragma warning (push)
+#pragma warning (disable : 4996)
 static const char *exec_name;
 
 struct VpxDecInputContext {
@@ -1122,3 +1124,6 @@ int main(int argc, const char **argv_) {
   for (i = 0; !error && i < loops; i++) error = main_loop(argc, argv_);
   return error;
 }
+
+#pragma warning (pop)
+

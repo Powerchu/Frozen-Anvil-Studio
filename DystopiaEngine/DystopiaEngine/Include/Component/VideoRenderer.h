@@ -6,9 +6,29 @@
 
 #include "Component/ComponentList.h"           /*Component List*/
 #include "Component/Component.h"
+#include "DataStructure/HashString.h"
+
+
+/*Webm predeclaration*/
+struct VpxInterface;
+struct WebmInputContext;
+struct VpxInputContext;
+struct vpx_codec_ctx;
+
+
 namespace Dystopia
 {
 	class VideoSystem;
+
+
+	typedef enum class VideoErrorCode : unsigned
+	{
+		OK = 0,
+		VIDEO_FILE_NOT_FOUND,
+		VIDEO_FILE_FAIL_TO_OPEN,
+		VIDEO_FILE_NOT_WEBM,
+		
+	}vid_error_c_t;
 	class _DLL_EXPORT VideoRenderer : public Component
 	{
 		public:
@@ -50,12 +70,23 @@ namespace Dystopia
 			virtual void Serialise(TextSerialiser&) const override;
 			virtual void Unserialise(TextSerialiser&)     override;
 
+			_DLL_EXPORT_ONLY vid_error_c_t LoadVideo(HashString const & VidName);
+
+			void CloseCurrentVideo();
+
 		protected:
 
 
-
-
 		private:
+
+			HashString            mVid;              /*Name of video           */
+			FILE *                mVidFileHandle;    /*Handle to video file    */
+			const VpxInterface *  decoder;           /*Decoder for Video       */
+			WebmInputContext   *  mWebmHdl;          /*Handle for webm         */
+			VpxInputContext    *  mVidHdl;
+			vpx_codec_ctx      *  mDecodec;
+
+			/*Functions*/
 	};
 }
 

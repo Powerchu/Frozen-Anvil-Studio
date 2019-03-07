@@ -16,6 +16,9 @@
 
 #include "./tools_common.h"
 
+#pragma warning( push )
+#pragma warning( disable : 4996 )
+
 #if CONFIG_VP8_ENCODER || CONFIG_VP9_ENCODER
 #include "vpx/vp8cx.h"
 #endif
@@ -769,3 +772,5 @@ void find_mismatch(const vpx_image_t *const img1, const vpx_image_t *const img2,
     }
   }
 }
+
+#pragma warning( pop )

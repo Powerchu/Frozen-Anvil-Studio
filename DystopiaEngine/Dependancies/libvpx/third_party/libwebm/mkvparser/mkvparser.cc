@@ -22,6 +22,8 @@
 
 #include "common/webmids.h"
 
+#pragma warning (push)
+#pragma warning (disable : 4996)
 namespace mkvparser {
 const long long kStringElementSizeLimit = 20 * 1000 * 1000;
 const float MasteringMetadata::kValueNotPresent = FLT_MAX;
@@ -8056,3 +8058,8 @@ long Block::Frame::Read(IMkvReader* pReader, unsigned char* buf) const {
 long long Block::GetDiscardPadding() const { return m_discard_padding; }
 
 }  // namespace mkvparser
+
+
+#pragma warning (pop)
+
+

@@ -17,6 +17,9 @@
 #include "vpx/vpx_integer.h"
 #include "y4minput.h"
 
+#pragma warning (push)
+#pragma warning (disable : 4996)
+
 // Reads 'size' bytes from 'file' into 'buf' with some fault tolerance.
 // Returns true on success.
 static int file_read(void *buf, size_t size, FILE *file) {
@@ -1125,3 +1128,6 @@ int y4m_input_fetch_frame(y4m_input *_y4m, FILE *_fin, vpx_image_t *_img) {
   _img->planes[VPX_PLANE_ALPHA] = _y4m->dst_buf + pic_sz + 2 * c_sz;
   return 1;
 }
+
+#pragma warning (pop)
+
