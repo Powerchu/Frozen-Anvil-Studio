@@ -156,7 +156,6 @@ namespace Dystopia
 			mfInvMass = 1.0F / mfMass;
 			mfInertia = mfMass;
 			mfInvInertia = mfInvMass;
-
 			mbIsStatic = false;
 			//mPhysicsType = eDynamicBody;
 		}
