@@ -30,6 +30,7 @@ namespace Dystopia
 			HashString GetEditorName(void) const override { return "Wait Task"; }
 
 			explicit Wait(float _waitTime) : mWaitTime(_waitTime), mMaxWaitTime(_waitTime) {}
+			Wait(NeuralTree::Blackboard::Ptr _bb, float _waitTime) : Task(_bb), mWaitTime(_waitTime), mMaxWaitTime(_waitTime) {}
 
 			void Init() override
 			{
@@ -47,10 +48,17 @@ namespace Dystopia
 						mWaitTime = 0.0f;
 						return eStatus::SUCCESS;
 					}
-				}
-				return eStatus::RUNNING;
 
+
+				}
+				return AuxUpdate(_deltaTime);
+
+				return eStatus::RUNNING;
 			}
+
+			virtual eStatus AuxUpdate(float) {
+				return eStatus::RUNNING;
+			};
 
 		private:
 			float mWaitTime;
