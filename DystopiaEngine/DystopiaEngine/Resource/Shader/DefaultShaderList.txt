@@ -17,4 +17,4 @@
 [START_SHADER]
 "Def Trail Particle","Shader\TrailParticle.dvert","Shader\TrailParticle.dgeog","Shader\Particle.dfrag",
 [START_SHADER]
-"Error Shader","Shader\DefaultVert.dvert","Shader\Error.dfrag",
+"Error Shader","Shader\Error.dvert","Shader\Error.dfrag",
