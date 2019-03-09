@@ -26,7 +26,7 @@ namespace Dystopia
 			~RGB_BUFFER();
 
 			void Resize(unsigned h, unsigned w);
-
+			void ResetCount();
 			void insert(int r, int g, int b);
 		};
 	public:

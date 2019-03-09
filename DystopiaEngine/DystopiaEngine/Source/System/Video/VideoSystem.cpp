@@ -60,15 +60,19 @@ namespace Dystopia
  				//auto img = pVid.GetFrameImage();
 				//if (!img)
 				{
-					while (pVid.ReadNextFrame() == VideoErrorCode::OK)
+					if (pVid.ReadNextFrame() == VideoErrorCode::OK)
 					{
 						auto img = pVid.GetFrameImage();
-						while (img)
+						if (img)
 						{
 							Convert_YUV_RGB(&mBuffer, img);
-							ImageParser::WriteBMP("Output/" + std::to_string(count++) + ".bmp", mBuffer.rgb_buff, mBuffer.width, mBuffer.height );
-							img = pVid.GetFrameImage();
-							
+							/*Pass to graphics to render*/
+
+							/*For debugging*/
+							//ImageParser::WriteBMP("Output/" + std::to_string(count++) + ".bmp", mBuffer.rgb_buff, mBuffer.width, mBuffer.height );
+
+							/*Reset buffer count*/
+							mBuffer.ResetCount();
 						}
 						memset(mBuffer.rgb_buff, 0, mBuffer.width * mBuffer.height *  mBuffer.stride);
 					}
@@ -76,7 +80,7 @@ namespace Dystopia
 				//while (img)
 				//{
 				//	Convert_YUV_RGB(&mBuffer, img);
-				//	ImageParser::WriteBMP("Output/" + std::to_string(count++) + ".bmp", mBuffer.rgb_buff, mBuffer.width, mBuffer.height );
+				//	ImageParser::Wr iteBMP("Output/" + std::to_string(count++) + ".bmp", mBuffer.rgb_buff, mBuffer.width, mBuffer.height );
 				//	img = pVid.GetFrameImage();
 				//}
 
@@ -123,7 +127,6 @@ namespace Dystopia
 				int g = Clamp((298 * c - 100 * d - 208 * e + 128) >> 8);
 				int b = Clamp((298 * c + 516 * d + 128) >> 8);
 
-				//buff->insert(0, 0, 0);
 				buff->insert(r, g, b);
 			}
 	}
@@ -163,6 +166,10 @@ namespace Dystopia
 		height = h;
 		width  = w;
 		count  = 0;
+	}
+	void VideoSystem::RGB_BUFFER::ResetCount()
+	{
+		count = 0;
 	}
 	void VideoSystem::RGB_BUFFER::insert(int r, int g, int b)
 	{
