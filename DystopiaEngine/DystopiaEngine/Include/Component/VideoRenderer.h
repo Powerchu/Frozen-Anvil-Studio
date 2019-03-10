@@ -92,6 +92,7 @@ namespace Dystopia
 			void CloseCurrentVideo();
 			void Play();
 			void ResetVideo();
+			void PlayOnStart(bool _b);
 
 			vid_error_c_t ReadNextFrame();
 			vpx_image *   GetFrameImage();
@@ -117,6 +118,7 @@ namespace Dystopia
 
 			VideoState            mState;
 			unsigned              mRecentFlags;
+			bool                  mPlayOnStart;
 			/*Functions*/
 
 

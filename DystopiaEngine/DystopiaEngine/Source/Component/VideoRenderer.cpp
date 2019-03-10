@@ -39,7 +39,8 @@ namespace Dystopia
 		 mState{VideoState::NEUTRAL},
 		 buffer{nullptr},
 		 mCodecIterator{nullptr},
-	     mRecentFlags{0}
+	     mRecentFlags{0},
+		 mPlayOnStart{false}
 	{
 		mWebmHdl->buffer = nullptr;
 	}
@@ -66,6 +67,8 @@ namespace Dystopia
 
 	void Dystopia::VideoRenderer::Init(void)
 	{
+		if (mPlayOnStart)
+			mState = VideoState::PLAYING;
 	}
 
 	void VideoRenderer::Update(float)
@@ -188,7 +191,10 @@ namespace Dystopia
 		buffer      = nullptr;
 		mBufferSize = 0;
 
-		mState = VideoState::NEUTRAL;
+		if (mPlayOnStart)
+			mState = VideoState::PLAYING;
+		else
+			mState = VideoState::NEUTRAL;
 
 		if (file_is_webm(mWebmHdl, mVidHdl))
 		{
@@ -219,6 +225,11 @@ namespace Dystopia
 			}
 #endif
 		}
+	}
+
+	void VideoRenderer::PlayOnStart(bool _b)
+	{
+		mPlayOnStart = _b;
 	}
 
 	vid_error_c_t VideoRenderer::ReadNextFrame()

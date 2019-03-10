@@ -4,6 +4,7 @@
 
 #include "System/Base/Systems.h"
 #include "System/Base/ComponentDonor.h"
+#include "System/Time/Timer.h"
 
 class vpx_image;
 namespace Dystopia
@@ -28,6 +29,7 @@ namespace Dystopia
 			void Resize(unsigned h, unsigned w);
 			void ResetCount();
 			void insert(int r, int g, int b);
+			bool IsComplete() const;
 		};
 	public:
 
@@ -60,7 +62,10 @@ namespace Dystopia
 
 	private:
 		RGB_BUFFER  mBuffer;
+		RGB_BUFFER  mBuffer2;
 
+		vpx_image * mCurrImg;
+		Timer         mTimer;
 		void Convert_YUV_RGB(RGB_BUFFER * buffer, vpx_image const * yuv_image);
 		int  Clamp(int v) const;
 	};
