@@ -91,6 +91,7 @@ namespace Dystopia
 
 			void CloseCurrentVideo();
 			void Play();
+			void ResetVideo();
 
 			vid_error_c_t ReadNextFrame();
 			vpx_image *   GetFrameImage();

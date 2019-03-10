@@ -115,7 +115,15 @@ namespace Dystopia
 			return VideoErrorCode::VIDEO_FILE_FAIL_TO_OPEN;
 
 		/*Pass file handle to Video Handle*/
-		mVidHdl->file = mVidFileHandle;
+		mVidHdl->file   = mVidFileHandle;
+		mVidHdl->length = 0;
+
+		/*Prevent invalid pointer*/
+		mWebmHdl->buffer        = nullptr;
+		mWebmHdl->block         = nullptr;
+		mWebmHdl->block_entry   = nullptr;
+		mWebmHdl->cluster       = nullptr;
+
 		if (file_is_webm(mWebmHdl, mVidHdl))
 		{
 			vpx_codec_dec_cfg_t cfg;
@@ -126,8 +134,10 @@ namespace Dystopia
 			
 			/*Want to guess frame rate???*/
 			webm_guess_framerate(mWebmHdl, mVidHdl);
+
 			/*Get video instance decode*/
-			decoder = get_vpx_decoder_by_fourcc(mVidHdl->fourcc);	
+			decoder = get_vpx_decoder_by_fourcc(mVidHdl->fourcc);
+
 			if (vpx_codec_dec_init(mDecodec, decoder->codec_interface(), &cfg, NULL))
 			{
 				/*Decoder success*/
@@ -164,7 +174,51 @@ namespace Dystopia
 
 	void VideoRenderer::Play()
 	{
+		ResetVideo();
 		mState = VideoState::PLAYING;
+	}
+
+	void VideoRenderer::ResetVideo()
+	{
+		/*Reset EOF flag*/
+		std::clearerr(mVidFileHandle);
+		/*Reset file back to top*/
+		std::fseek(mVidFileHandle, 0, SEEK_SET);
+
+		buffer      = nullptr;
+		mBufferSize = 0;
+
+		if (file_is_webm(mWebmHdl, mVidHdl))
+		{
+			vpx_codec_dec_cfg_t cfg;
+
+#if EDITOR && _DEBUG
+			/*Success file is webm*/
+			//DEBUG_PRINT(eLog::MESSAGE, "%s is a webm file", VidName.c_str());
+
+			/*Want to guess frame rate???*/
+			webm_guess_framerate(mWebmHdl, mVidHdl);
+
+			/*Get video instance decode*/
+			decoder = get_vpx_decoder_by_fourcc(mVidHdl->fourcc);
+
+			if (vpx_codec_dec_init(mDecodec, decoder->codec_interface(), &cfg, NULL))
+			{
+				/*Decoder success*/
+				mState = VideoState::NEUTRAL;
+			}
+			else if (!decoder)
+			{
+#if EDITOR && _DEBUG 
+
+				DEBUG_PRINT(eLog::MESSAGE, "Decoder failed to initialise : line 127 VideoRenderer.cpp");
+				//return VideoErrorCode::DECODDER_FAIL_INIT;
+#endif
+			}
+#endif
+		}
+		//mWebmHdl->video_track_index = 0;
+		//mWebmHdl->block_frame_index = 0;
 	}
 
 	vid_error_c_t VideoRenderer::ReadNextFrame()
@@ -188,10 +242,11 @@ namespace Dystopia
 		{
 			webm_free(mWebmHdl);
 			mState = VideoState::STOP;
-			buffer = nullptr;
-			mCodecIterator = nullptr;
+			buffer           = nullptr;
+			mCodecIterator   = nullptr;
 			mWebmHdl->buffer = NULL;
 			mRecentFlags = 0;
+			mBufferSize  = 0;
 
 			return VideoErrorCode::WEBM_EOF;
 		}
@@ -200,21 +255,21 @@ namespace Dystopia
 
 	vpx_image * VideoRenderer::GetFrameImage()
 	{
-
+		return vpx_codec_get_frame(mDecodec, &mCodecIterator);
 		/*If current frame has not been completely read*/
 		//if (mRecentFlags)
 		//{
-			vpx_image_t * img = nullptr;
-			if (img = vpx_codec_get_frame(mDecodec, &mCodecIterator))
-			{
-				return img;
-			}
-			else
-			{
-				mRecentFlags = 0;
-				//mCodecIterator = nullptr;
-				return nullptr;
-			}
+			//vpx_image_t * img = nullptr;
+			//if (img = vpx_codec_get_frame(mDecodec, &mCodecIterator))
+			//{
+			//	return img;
+			//}
+			//else
+			//{
+			//	mRecentFlags = 0;
+			//	//mCodecIterator = nullptr;
+			//	return nullptr;
+			//}
 		//}
 		/*Get next frame*/
 //		else

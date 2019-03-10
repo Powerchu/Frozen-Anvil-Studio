@@ -1,5 +1,8 @@
 #include "System/Video/VideoSystem.h"
 #include "Component/VideoRenderer.h"
+#include "System/Graphics/TextureSystem.h"
+#include "System/Graphics/Texture.h"
+
 
 /*VPX Library*/
 #include "vpx/vpx_decoder.h"                   /*WebmInputContext, VpxInputContext*/
@@ -57,8 +60,8 @@ namespace Dystopia
 		{
 			if (pVid.mState == VideoState::PLAYING)
 			{
- 				//auto img = pVid.GetFrameImage();
-				//if (!img)
+ 				auto img = pVid.GetFrameImage();
+				if (!img)
 				{
 					if (pVid.ReadNextFrame() == VideoErrorCode::OK)
 					{
@@ -66,24 +69,34 @@ namespace Dystopia
 						if (img)
 						{
 							Convert_YUV_RGB(&mBuffer, img);
+
 							/*Pass to graphics to render*/
-
+							/*TO DO*/
+							
 							/*For debugging*/
-							//ImageParser::WriteBMP("Output/" + std::to_string(count++) + ".bmp", mBuffer.rgb_buff, mBuffer.width, mBuffer.height );
-
-							/*Reset buffer count*/
-							mBuffer.ResetCount();
+							ImageParser::WriteBMP("Output/" + std::to_string(count++) + ".bmp", mBuffer.rgb_buff, mBuffer.width, mBuffer.height );
 						}
 						memset(mBuffer.rgb_buff, 0, mBuffer.width * mBuffer.height *  mBuffer.stride);
 					}
 				}
-				//while (img)
-				//{
-				//	Convert_YUV_RGB(&mBuffer, img);
-				//	ImageParser::Wr iteBMP("Output/" + std::to_string(count++) + ".bmp", mBuffer.rgb_buff, mBuffer.width, mBuffer.height );
-				//	img = pVid.GetFrameImage();
-				//}
+				else
+				{
+					/*Convert to RGB*/
+					Convert_YUV_RGB(&mBuffer, img);
 
+					/*Pass to graphics for rendering*/
+					/*TO DO*/
+
+					ImageParser::WriteBMP("Output/" + std::to_string(count++) + ".bmp", mBuffer.rgb_buff, mBuffer.width, mBuffer.height);
+				}
+				/*Reset Buffer*/
+				mBuffer.ResetCount();
+			}
+			else if (pVid.mState == VideoState::STOP)
+			{
+				/*Test Reset*/
+				count = 0;
+				pVid.Play();
 			}
 		}
 	}
