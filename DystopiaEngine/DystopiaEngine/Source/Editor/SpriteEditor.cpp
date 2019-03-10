@@ -239,13 +239,13 @@ void Editor::SpriteEditor::FieldAtlas(void)
 	EGUI::Display::VectorFields("Size", &mSectionSize, 0.01f, 0.f, 1, itemWidth);
 	EGUI::Display::VectorFieldsInt("Col & Row", &mSectionDime, 1, 1, 100, itemWidth);
 
-	EGUI::SameLine();
+	ImGui::SameLine(0,5);
 	if (EGUI::Display::Button("Grow Col", Math::Vec2{ 100, 24 }))
 	{
 		mSectionSize.x += mSectionSize.x / mSectionDime.x;
 		mSectionDime.x += 1.f;
 	}
-	EGUI::SameLine();
+	ImGui::SameLine(0, 5);
 	if (EGUI::Display::Button("Grow Row", Math::Vec2{ 100, 24 }))
 	{
 		mSectionSize.y += mSectionSize.y / mSectionDime.y;

@@ -118,10 +118,11 @@ namespace Dystopia
 
 	void AiController::ClearTree(void)
 	{
-		if (bTree->IsValidTree())
+		if (bTree != nullptr)
 		{
 			bTree = nullptr;
 		}
+		
 	}
 
 	void AiController::SetTree(const SharedPtr<BehaviourTree>& _root)
@@ -500,7 +501,8 @@ namespace Dystopia
 				}
 				EGUI::SameLine(AI::DEFAULT_ALIGN);
 				EGUI::ChangeAlignmentYOffset(0);
-				EGUI::Display::EmptyBox("V", AI::BTN_SZ, std::to_string(val).c_str());
+				EGUI::Display::DragFloat("V", &values[i], 0, val, val, false, AI::BTN_SZ, 2);
+				//EGUI::Display::EmptyBox("V", AI::BTN_SZ, std::to_string(val).c_str());
 				EGUI::ChangeAlignmentYOffset();
 				EGUI::PopID();
 			}
@@ -675,12 +677,12 @@ namespace Dystopia
 					EGUI::Display::DragInt("Int", &Inter, 1, -INT_MAX, INT_MAX,true);
 					break;
 				case 3:
-					EGUI::Display::DragFloat("Float", &Floater, 0.1f, -FLT_MAX, FLT_MAX, true);
+					EGUI::Display::DragFloat("Float", &Floater, 0.1f, -FLT_MAX, FLT_MAX, true, 100, 2);
 					break;
 				case 4:
 					break;
 				case 5:
-					EGUI::Display::VectorFields("Vector", &Vectorer, 0.1f, -FLT_MAX, FLT_MAX);
+					EGUI::Display::VectorFields("Vector", &Vectorer, 0.1f, -FLT_MAX, FLT_MAX, 50, false, 2);
 					break;
 				case 6:
 					EGUI::Display::TextField("Obj Name", GameObjectBuf, Editor::MAX_SEARCH, false, 100.f, true);
@@ -861,10 +863,18 @@ namespace Dystopia
 	void AiController::EditorTreeView()
 	{
 		if (bTree == nullptr) return;
+		ImGui::Separator();
+		EGUI::Display::Label(bTree->GetEditorName().c_str());
+		ImGui::SameLine(0, 10.0f);
+		if (EGUI::Display::Button("Clear Tree", { 128,24 }))
+		{
+			ClearTree();
+		}
+
+		if (bTree == nullptr) return;
+
 		if (bTree->IsValidTree())
 		{
-			ImGui::Separator();
-			EGUI::Display::Label(bTree->GetEditorName().c_str());
 			RecursiveTree(bTree->GetRoot());
 		}
 	
