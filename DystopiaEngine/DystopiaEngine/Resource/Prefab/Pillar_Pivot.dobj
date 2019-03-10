@@ -1,0 +1,108 @@
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+1539187200,65,"Pillar_Pivot",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,8374,596.538,0.999999,0,0,0,1,18446744072530640896,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+2,[START_RigidBody]
+18446744073474322432,1,1539187200,0,0.5,0.5,0.995,0.5,0.7,0,0,100,0,0,1,0,0,0,
+[END_RigidBody]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_Recursion Counter]
+1,
+[END_Recursion Counter]
+[START_GO_PREFAB]
+3,[START_START_GO_DATA]
+1261664256,65,"Pillar",384,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+992.985,222.067,0.999954,8262.86,1070.03,4.52995e-06,0,0,0.707107,0.707107,1539187200,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+2,[START_RigidBody]
+18446744073553929216,1,1261664256,90,0.5,0.5,0.5,0.5,0.01,0,1,0,1,1,0,1,2,0,
+[END_RigidBody]
+
+[END_Component]
+[START_Component]
+4,[START_Convex_Collider]
+18446744072438308352,1,1261664256,-0.077,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.842,1.2,1,0,0,0,1,0,4294967295,
+[END_Convex_Collider]
+
+[END_Component]
+[START_Component]
+7,[START_Renderer]
+18446744073213803520,1,1261664256,"CheckpointnRocks_SpriteSheet.dds",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,1,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"FallingPillar",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+7,
+[END_Behaviour  Meta Count]
+[START_mfFrequency]
+"mfFrequency",
+[END_mfFrequency]
+[START_Member Variable]
+40,
+[END_Member Variable]
+[START_mfFallDuration]
+"mfFallDuration",
+[END_mfFallDuration]
+[START_Member Variable]
+10,
+[END_Member Variable]
+[START_mfShakeDuration]
+"mfShakeDuration",
+[END_mfShakeDuration]
+[START_Member Variable]
+0.3,
+[END_Member Variable]
+[START_mfShakeIntensity]
+"mfShakeIntensity",
+[END_mfShakeIntensity]
+[START_Member Variable]
+10,
+[END_Member Variable]
+[START_mbShake]
+"mbShake",
+[END_mbShake]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_mbFall]
+"mbFall",
+[END_mbFall]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_mfAccuDt]
+"mfAccuDt",
+[END_mfAccuDt]
+[START_Member Variable]
+0,
+[END_Member Variable]

@@ -1,0 +1,318 @@
+[START_GO_PREFAB]
+0,[START_START_GO_DATA]
+795562496,65,"BossUI",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1,1,1,0,0,0,0,0,0,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Number of Behaviours]
+2,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"BossUI",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+2,
+[END_Behaviour  Meta Count]
+[START_mfSpeed]
+"mfSpeed",
+[END_mfSpeed]
+[START_Member Variable]
+0.66,
+[END_Member Variable]
+[START_mfTargetHealth]
+"mfTargetHealth",
+[END_mfTargetHealth]
+[START_Member Variable]
+-1,
+[END_Member Variable]
+[START_Behaviour Names]
+"CamShake",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+8,
+[END_Behaviour  Meta Count]
+[START_IsStationary]
+"IsStationary",
+[END_IsStationary]
+[START_Member Variable]
+1,
+[END_Member Variable]
+[START_camShakeActive]
+"camShakeActive",
+[END_camShakeActive]
+[START_Member Variable]
+1,
+[END_Member Variable]
+[START_trauma]
+"trauma",
+[END_trauma]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_traumaMult]
+"traumaMult",
+[END_traumaMult]
+[START_Member Variable]
+16,
+[END_Member Variable]
+[START_traumaMag]
+"traumaMag",
+[END_traumaMag]
+[START_Member Variable]
+0.8,
+[END_Member Variable]
+[START_traumaRotMag]
+"traumaRotMag",
+[END_traumaRotMag]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_traumaDepthMag]
+"traumaDepthMag",
+[END_traumaDepthMag]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_traumaDecay]
+"traumaDecay",
+[END_traumaDecay]
+[START_Member Variable]
+1.3,
+[END_Member Variable]
+[START_Recursion Counter]
+3,
+[END_Recursion Counter]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+795563008,33,"B_Health",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1845.09,73.9775,1,0,-455.576,6.1,0,0,0,1,795562496,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+18446744072600144896,1,795563008,"boss_redbar_full.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,0,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"Fader",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+8,
+[END_Behaviour  Meta Count]
+[START_FadeFrom]
+"FadeFrom",
+[END_FadeFrom]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_FadeTowards]
+"FadeTowards",
+[END_FadeTowards]
+[START_Member Variable]
+1,
+[END_Member Variable]
+[START_FadeDuration]
+"FadeDuration",
+[END_FadeDuration]
+[START_Member Variable]
+2,
+[END_Member Variable]
+[START_StartFadeOut]
+"StartFadeOut",
+[END_StartFadeOut]
+[START_Member Variable]
+1,
+[END_Member Variable]
+[START_Bounce]
+"Bounce",
+[END_Bounce]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_mfCounter]
+"mfCounter",
+[END_mfCounter]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_DestroyOnceComplete]
+"DestroyOnceComplete",
+[END_DestroyOnceComplete]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_StartAwake]
+"StartAwake",
+[END_StartAwake]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+795563520,33,"B_UI_BG",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1845.08,73.9774,0.999999,0,-455.576,6,0,0,0,1,795562496,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+18446744072223183360,1,795563520,"bos_blackbar_full.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,0,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"Fader",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+8,
+[END_Behaviour  Meta Count]
+[START_FadeFrom]
+"FadeFrom",
+[END_FadeFrom]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_FadeTowards]
+"FadeTowards",
+[END_FadeTowards]
+[START_Member Variable]
+1,
+[END_Member Variable]
+[START_FadeDuration]
+"FadeDuration",
+[END_FadeDuration]
+[START_Member Variable]
+2,
+[END_Member Variable]
+[START_StartFadeOut]
+"StartFadeOut",
+[END_StartFadeOut]
+[START_Member Variable]
+1,
+[END_Member Variable]
+[START_Bounce]
+"Bounce",
+[END_Bounce]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_mfCounter]
+"mfCounter",
+[END_mfCounter]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_DestroyOnceComplete]
+"DestroyOnceComplete",
+[END_DestroyOnceComplete]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_StartAwake]
+"StartAwake",
+[END_StartAwake]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+795564032,33,"B_Name",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+33,33,1,0,-452.553,6.2,0,0,0,1,795562496,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+8,18446744071594223616,1,795564032,"Times New Roman.ttf","SALAMANDER",1,0.894118,0,0,1,1,0,0,1,0.894118,0,0,0.5,0.1,0.1,1,0.7,0.2,0.2,1,0.5,0.5,0.5,1,1,
+[END_Component]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"Fader",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+8,
+[END_Behaviour  Meta Count]
+[START_FadeFrom]
+"FadeFrom",
+[END_FadeFrom]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_FadeTowards]
+"FadeTowards",
+[END_FadeTowards]
+[START_Member Variable]
+1,
+[END_Member Variable]
+[START_FadeDuration]
+"FadeDuration",
+[END_FadeDuration]
+[START_Member Variable]
+2,
+[END_Member Variable]
+[START_StartFadeOut]
+"StartFadeOut",
+[END_StartFadeOut]
+[START_Member Variable]
+1,
+[END_Member Variable]
+[START_Bounce]
+"Bounce",
+[END_Bounce]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_mfCounter]
+"mfCounter",
+[END_mfCounter]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_DestroyOnceComplete]
+"DestroyOnceComplete",
+[END_DestroyOnceComplete]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_StartAwake]
+"StartAwake",
+[END_StartAwake]
+[START_Member Variable]
+0,
+[END_Member Variable]

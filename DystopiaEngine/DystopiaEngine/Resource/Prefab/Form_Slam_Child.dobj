@@ -1,0 +1,102 @@
+[START_GO_PREFAB]
+5,[START_START_GO_DATA]
+1392300544,65,"Form_Slam_Child",96,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+274.55,193.322,1,5456.34,275.91,-0.4,0,0,-2.61799e-05,1,18446744073709551615,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+2,[START_RigidBody]
+1392301568,1,1392300544,-0.00299999,0,0,0,2,2,0,3.4,1000,1,0,1,1,0,1,
+[END_RigidBody]
+
+[END_Component]
+[START_Component]
+4,[START_Convex_Collider]
+1392302080,1,1392300544,-0.085,0.266,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.777,0.221,1,0,0,0,1,0,1024,
+[END_Convex_Collider]
+
+[END_Component]
+[START_Component]
+5,[START_Circle_Collider2D]
+1392302592,1,1392300544,-0.21,-0.18,0,0,0,0,0.433,0,1024,
+[END_Circle_Collider2D]
+
+[END_Component]
+[START_Component]
+5,[START_Circle_Collider2D]
+1392303104,1,1392300544,0.24,-0.18,0,0,0,0,0.433,0,1024,
+[END_Circle_Collider2D]
+
+[END_Component]
+[START_Component]
+7,[START_Renderer]
+1392303616,1,1392300544,"Form_T2_Rock.png",
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"FormSlamChild",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+0,
+[END_Behaviour  Meta Count]
+[START_Recursion Counter]
+1,
+[END_Recursion Counter]
+[START_GO_PREFAB]
+2,[START_START_GO_DATA]
+1392304640,65,"Slam_HitBox",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+274.72,193.077,1,5456.34,275.906,-0.399999,0,0,0,1,1392300544,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+5,[START_Circle_Collider2D]
+1392305664,1,1392304640,0,0,0,0,0,0,4,1,1024,
+[END_Circle_Collider2D]
+
+[END_Component]
+[START_Component]
+6,[START_Audio]
+1392306176,1,1392304640,1,0,0,"",1.2,1,1,5000,10000,
+[END_Audio]
+
+[END_Component]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"CharacterHitBox",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+2,
+[END_Behaviour  Meta Count]
+[START_mnEnemyCount]
+"mnEnemyCount",
+[END_mnEnemyCount]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_mnInteractCount]
+"mnInteractCount",
+[END_mnInteractCount]
+[START_Member Variable]
+0,
+[END_Member Variable]

@@ -27,6 +27,24 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Dependancies\libvpx\args.c" />
+    <ClCompile Include="..\Dependancies\libvpx\ivfdec.c" />
+    <ClCompile Include="..\Dependancies\libvpx\ivfenc.c" />
+    <ClCompile Include="..\Dependancies\libvpx\md5_utils.c" />
+    <ClCompile Include="..\Dependancies\libvpx\rate_hist.c" />
+    <ClCompile Include="..\Dependancies\libvpx\third_party\libwebm\mkvmuxer\mkvmuxer.cc" />
+    <ClCompile Include="..\Dependancies\libvpx\third_party\libwebm\mkvmuxer\mkvmuxerutil.cc" />
+    <ClCompile Include="..\Dependancies\libvpx\third_party\libwebm\mkvmuxer\mkvwriter.cc" />
+    <ClCompile Include="..\Dependancies\libvpx\third_party\libwebm\mkvparser\mkvparser.cc" />
+    <ClCompile Include="..\Dependancies\libvpx\third_party\libwebm\mkvparser\mkvreader.cc" />
+    <ClCompile Include="..\Dependancies\libvpx\tools_common.c" />
+    <ClCompile Include="..\Dependancies\libvpx\video_reader.c" />
+    <ClCompile Include="..\Dependancies\libvpx\video_writer.c" />
+    <ClCompile Include="..\Dependancies\libvpx\warnings.c" />
+    <ClCompile Include="..\Dependancies\libvpx\webmdec.cc" />
+    <ClCompile Include="..\Dependancies\libvpx\webmenc.cc" />
+    <ClCompile Include="..\Dependancies\libvpx\y4menc.c" />
+    <ClCompile Include="..\Dependancies\libvpx\y4minput.c" />
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
     <ClCompile Include="Include\IO\XMLParser.cpp" />
     <ClCompile Include="Source\Editor\ShaderView.cpp" />
@@ -169,12 +187,40 @@
     <ClCompile Include="Source\System\Time\ScopedTimer.cpp" />
     <ClCompile Include="Source\System\Time\Timer.cpp" />
     <ClCompile Include="Source\System\Time\TimeSystem.cpp" />
+    <ClCompile Include="Source\System\Video\VideoSystem.cpp" />
     <ClCompile Include="Source\System\Window\Window.cpp" />
     <ClCompile Include="Source\System\Window\WindowManager.cpp" />
     <ClCompile Include="Source\Utility\GUID.cpp" />
     <ClCompile Include="Source\System\Input\XGamePad.cpp" />
+    <ClCompile Include="Source\Component\VideoRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Dependancies\libvpx\args.h" />
+    <ClInclude Include="..\Dependancies\libvpx\ivfdec.h" />
+    <ClInclude Include="..\Dependancies\libvpx\ivfenc.h" />
+    <ClInclude Include="..\Dependancies\libvpx\md5_utils.h" />
+    <ClInclude Include="..\Dependancies\libvpx\rate_hist.h" />
+    <ClInclude Include="..\Dependancies\libvpx\third_party\libwebm\mkvmuxer\mkvmuxer.h" />
+    <ClInclude Include="..\Dependancies\libvpx\third_party\libwebm\mkvmuxer\mkvmuxertypes.h" />
+    <ClInclude Include="..\Dependancies\libvpx\third_party\libwebm\mkvmuxer\mkvmuxerutil.h" />
+    <ClInclude Include="..\Dependancies\libvpx\third_party\libwebm\mkvmuxer\mkvwriter.h" />
+    <ClInclude Include="..\Dependancies\libvpx\third_party\libwebm\mkvparser\mkvparser.h" />
+    <ClInclude Include="..\Dependancies\libvpx\third_party\libwebm\mkvparser\mkvreader.h" />
+    <ClInclude Include="..\Dependancies\libvpx\tools_common.h" />
+    <ClInclude Include="..\Dependancies\libvpx\video_common.h" />
+    <ClInclude Include="..\Dependancies\libvpx\video_reader.h" />
+    <ClInclude Include="..\Dependancies\libvpx\video_writer.h" />
+    <ClInclude Include="..\Dependancies\libvpx\vp8_rtcd.h" />
+    <ClInclude Include="..\Dependancies\libvpx\vp9_rtcd.h" />
+    <ClInclude Include="..\Dependancies\libvpx\vpx_config.h" />
+    <ClInclude Include="..\Dependancies\libvpx\vpx_dsp_rtcd.h" />
+    <ClInclude Include="..\Dependancies\libvpx\vpx_scale_rtcd.h" />
+    <ClInclude Include="..\Dependancies\libvpx\vpx_version.h" />
+    <ClInclude Include="..\Dependancies\libvpx\warnings.h" />
+    <ClInclude Include="..\Dependancies\libvpx\webmdec.h" />
+    <ClInclude Include="..\Dependancies\libvpx\webmenc.h" />
+    <ClInclude Include="..\Dependancies\libvpx\y4menc.h" />
+    <ClInclude Include="..\Dependancies\libvpx\y4minput.h" />
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
     <ClInclude Include="Include\Allocator\StackAlloc.h" />
     <ClInclude Include="Include\Allocator\StackAllocImpl.h" />
@@ -400,6 +446,7 @@
     <ClInclude Include="Include\System\SystemTypes.h" />
     <ClInclude Include="Include\System\Time\Timer.h" />
     <ClInclude Include="Include\System\Time\TimeSystem.h" />
+    <ClInclude Include="Include\System\Video\VideoSystem.h" />
     <ClInclude Include="Include\System\Window\Window.h" />
     <ClInclude Include="Include\System\Window\WindowManager.h" />
     <ClInclude Include="Include\Utility\DebugAssert.h" />
@@ -425,6 +472,7 @@
     <ClInclude Include="Include\IO\XMLParser.h" />
     <ClInclude Include="Include\Editor\RuntimeMeta.h" />
     <ClInclude Include="Include\System\Particle\FloorAffector.h" />
+    <ClInclude Include="Include\Component\VideoRenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DystopiaEngine1.rc" />
@@ -571,7 +619,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/DEDITOR /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER  /DEXPORT /DDEBUGALLOC /DCOMMANDPROMPT</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\libvpx\third_party\libyuv\include;$(SolutionDir)Dependancies\libvpx;$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\libvpx\third_party\libwebm\mkvparser;C:\Users\keith.goh\source\repos\Frozen-Anvil-Studio\DystopiaEngine\Dependancies\libvpx\third_party\libwebm;$(SolutionDir)Dependancies\libvpx\third_party\libwebm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExceptionHandling>Sync</ExceptionHandling>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -580,8 +628,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependancies\freetype-2.9.1\lib;$(SolutionDir)Dependancies\glew-2.1.0\lib\Release\x64;$(SolutionDir)Dependancies\FMOD\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freetypeD.lib;opengl32.lib;glew32.lib;fmod64_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependancies\freetype-2.9.1\lib;$(SolutionDir)Dependancies\glew-2.1.0\lib\Release\x64;$(SolutionDir)Dependancies\FMOD\lib;$(SolutionDir)Dependancies\libvpx\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>freetypeD.lib;opengl32.lib;glew32.lib;fmod64_vc.lib;vpxmdd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -670,7 +718,7 @@
       <SDLCheck>
       </SDLCheck>
       <AdditionalOptions>/DEDITOR=0 /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER /DSAFE_PTRS /DEXPORT</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\lodepng\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\lodepng\;$(SolutionDir)Dependancies\libvpx;$(SolutionDir)Dependancies\libvpx\third_party\libyuv\include;$(SolutionDir)Dependancies\libvpx\third_party\libwebm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <DebugInformationFormat>None</DebugInformationFormat>

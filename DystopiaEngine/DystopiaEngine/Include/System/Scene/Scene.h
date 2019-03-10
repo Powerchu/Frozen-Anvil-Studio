@@ -64,8 +64,8 @@ namespace Dystopia
 
 	private:
 
-		uint64_t			  mID;
-		std::string			  mName;
+		uint64_t			   mID;
+		HashString			   mName;
 		MagicArray<GameObject> mGameObjs;
 		AutoArray<GameObject*> mLastSearch;
 

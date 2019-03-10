@@ -451,6 +451,30 @@
     <ClCompile Include="Source\System\Particle\BubbleAffector.cpp">
       <Filter>Game Engine\Systems\Particle\Affectors\Bubble</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Component\VideoRenderer.cpp">
+      <Filter>Game Engine\Components\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Video\VideoSystem.cpp">
+      <Filter>Game Engine\Systems\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependancies\libvpx\args.c" />
+    <ClCompile Include="..\Dependancies\libvpx\ivfdec.c" />
+    <ClCompile Include="..\Dependancies\libvpx\ivfenc.c" />
+    <ClCompile Include="..\Dependancies\libvpx\md5_utils.c" />
+    <ClCompile Include="..\Dependancies\libvpx\rate_hist.c" />
+    <ClCompile Include="..\Dependancies\libvpx\tools_common.c" />
+    <ClCompile Include="..\Dependancies\libvpx\video_reader.c" />
+    <ClCompile Include="..\Dependancies\libvpx\video_writer.c" />
+    <ClCompile Include="..\Dependancies\libvpx\warnings.c" />
+    <ClCompile Include="..\Dependancies\libvpx\webmdec.cc" />
+    <ClCompile Include="..\Dependancies\libvpx\webmenc.cc" />
+    <ClCompile Include="..\Dependancies\libvpx\y4menc.c" />
+    <ClCompile Include="..\Dependancies\libvpx\y4minput.c" />
+    <ClCompile Include="..\Dependancies\libvpx\third_party\libwebm\mkvparser\mkvparser.cc" />
+    <ClCompile Include="..\Dependancies\libvpx\third_party\libwebm\mkvparser\mkvreader.cc" />
+    <ClCompile Include="..\Dependancies\libvpx\third_party\libwebm\mkvmuxer\mkvmuxer.cc" />
+    <ClCompile Include="..\Dependancies\libvpx\third_party\libwebm\mkvmuxer\mkvmuxerutil.cc" />
+    <ClCompile Include="..\Dependancies\libvpx\third_party\libwebm\mkvmuxer\mkvwriter.cc" />
     <ClCompile Include="Source\System\Particle\FloorAffector.cpp">
       <Filter>Game Engine\Systems\Particle\Affectors\Floor</Filter>
     </ClCompile>
@@ -1230,6 +1254,38 @@
     <ClInclude Include="Include\System\Particle\BubbleAffector.h">
       <Filter>Game Engine\Systems\Particle\Affectors\Bubble</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Component\VideoRenderer.h">
+      <Filter>Game Engine\Components\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Video\VideoSystem.h">
+      <Filter>Game Engine\Systems\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\libvpx\args.h" />
+    <ClInclude Include="..\Dependancies\libvpx\ivfdec.h" />
+    <ClInclude Include="..\Dependancies\libvpx\ivfenc.h" />
+    <ClInclude Include="..\Dependancies\libvpx\md5_utils.h" />
+    <ClInclude Include="..\Dependancies\libvpx\rate_hist.h" />
+    <ClInclude Include="..\Dependancies\libvpx\tools_common.h" />
+    <ClInclude Include="..\Dependancies\libvpx\video_common.h" />
+    <ClInclude Include="..\Dependancies\libvpx\video_reader.h" />
+    <ClInclude Include="..\Dependancies\libvpx\video_writer.h" />
+    <ClInclude Include="..\Dependancies\libvpx\vp8_rtcd.h" />
+    <ClInclude Include="..\Dependancies\libvpx\vp9_rtcd.h" />
+    <ClInclude Include="..\Dependancies\libvpx\vpx_config.h" />
+    <ClInclude Include="..\Dependancies\libvpx\vpx_dsp_rtcd.h" />
+    <ClInclude Include="..\Dependancies\libvpx\vpx_scale_rtcd.h" />
+    <ClInclude Include="..\Dependancies\libvpx\vpx_version.h" />
+    <ClInclude Include="..\Dependancies\libvpx\warnings.h" />
+    <ClInclude Include="..\Dependancies\libvpx\webmdec.h" />
+    <ClInclude Include="..\Dependancies\libvpx\webmenc.h" />
+    <ClInclude Include="..\Dependancies\libvpx\y4menc.h" />
+    <ClInclude Include="..\Dependancies\libvpx\y4minput.h" />
+    <ClInclude Include="..\Dependancies\libvpx\third_party\libwebm\mkvparser\mkvparser.h" />
+    <ClInclude Include="..\Dependancies\libvpx\third_party\libwebm\mkvparser\mkvreader.h" />
+    <ClInclude Include="..\Dependancies\libvpx\third_party\libwebm\mkvmuxer\mkvmuxer.h" />
+    <ClInclude Include="..\Dependancies\libvpx\third_party\libwebm\mkvmuxer\mkvmuxertypes.h" />
+    <ClInclude Include="..\Dependancies\libvpx\third_party\libwebm\mkvmuxer\mkvmuxerutil.h" />
+    <ClInclude Include="..\Dependancies\libvpx\third_party\libwebm\mkvmuxer\mkvwriter.h" />
     <ClInclude Include="Include\System\Particle\FloorAffector.h">
       <Filter>Game Engine\Systems\Particle\Affectors\Floor</Filter>
     </ClInclude>
@@ -1774,6 +1830,12 @@
     </Filter>
     <Filter Include="Game Engine\Systems\Particle\Affectors\Bubble">
       <UniqueIdentifier>{d1689e74-f958-4f4e-a2e4-4403a782b602}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Components\Video">
+      <UniqueIdentifier>{3c22fab1-4010-4b5b-861e-49fe1ed6d4b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Video">
+      <UniqueIdentifier>{7cae69ad-45f2-4ac5-b2a2-7798e9bc1c38}</UniqueIdentifier>
     </Filter>
     <Filter Include="Game Engine\Systems\Particle\Affectors\Floor">
       <UniqueIdentifier>{213c85af-3027-45b1-b334-2ef1262015d3}</UniqueIdentifier>
