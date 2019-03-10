@@ -19,7 +19,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorPanel.h"
 #include "DataStructure/Array.h"
 #include "DataStructure/HashString.h"
-#define MAX_CLOG 100
+#define MAX_CLOG 256
 
 void _DLL_EXPORT PrintToConsoleLog(const std::string& _text);
 void _DLL_EXPORT PrintToConsoleLog(const HashString& _text);
@@ -51,8 +51,10 @@ namespace Editor//Dystopia
 		void LoadSettings(Dystopia::TextSerialiser& _in);
 		const HashString& GetLabel(void) const;
 
-		void			Debug(const HashString&);
-		void			Clear(void);
+		void SetIsClearedOnPlay(bool _b);
+		void Debug(const HashString&);
+		void Clear(void);
+		bool GetIsClearedOnPlay(void) const;
 
 	private:
 		void PrintLogs(void);
@@ -63,6 +65,8 @@ namespace Editor//Dystopia
 		HashString						mLabel;
 		char							mAdminCommands[MAX_SEARCH];
 		Array<HashString, MAX_CLOG>		mArrDebugTexts;
+		unsigned int					mnScrollToBottom;
+		bool							mbClearOnPlay;
 	};
 }
 

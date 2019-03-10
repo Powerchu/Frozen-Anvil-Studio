@@ -206,7 +206,7 @@ namespace Editor
 			EGUI::Display::Dummy(4.f, 2.f);
 			EGUI::Display::HorizontalSeparator();
 
-			if (EGUI::Display::CheckBox("comActive", &activeState, false))
+			if (EGUI::Display::CheckBox("comActive", &activeState, false, nullptr, 0.75f))
 			{
 				arrComp[i]->SetActive(activeState);
 			};
@@ -239,7 +239,7 @@ namespace Editor
 			if (!c) continue;
 			auto activeState = c->IsActive();
 
-			if (EGUI::Display::CheckBox("behavActive", &activeState, false))
+			if (EGUI::Display::CheckBox("behavActive", &activeState, false, nullptr, 0.75f))
 			{
 				c->SetActive(activeState);
 			};
