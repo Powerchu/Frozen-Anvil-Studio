@@ -183,7 +183,9 @@ void Dystopia::Emitter::InitArrays(void)
 
 void Dystopia::Emitter::InitBuffers(void) noexcept
 {
-	_EDITOR_CODE(if (bEditorInit) return static_cast<void>(bEditorInit = !bEditorInit);)
+	//_EDITOR_CODE(if (bEditorInit) return static_cast<void>(bEditorInit = !bEditorInit);)
+
+	_EDITOR_CODE(if (::Editor::EditorMain::GetInstance()->GetCurState() != ::Editor::eState::PLAY  && ::Editor::EditorMain::GetInstance()->GetNextState() != ::Editor::eState::PLAY) return;)
 
 	glBindBuffer(GL_DRAW_INDIRECT_BUFFER, mCmdBuffer);
 	glBufferData(GL_DRAW_INDIRECT_BUFFER, mParticle.mnLimit * sizeof(decltype(mCommand)::Val_t), mCommand.begin(), GL_STATIC_DRAW);
@@ -322,8 +324,17 @@ namespace
 	{
 		using val_t = Ut::RemoveRef_t<decltype(arr[0])>;
 
+		auto s = sizeof(val_t);
 		glBindBuffer(GL_ARRAY_BUFFER, buf);
-		auto MapPtr = glMapBufferRange(GL_ARRAY_BUFFER, 0, arr.size() * sizeof(val_t), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT);
+		if (auto err = glGetError())
+		{
+			__debugbreak();
+		}
+		auto MapPtr = glMapBufferRange(GL_ARRAY_BUFFER, 0, arr.size() * s, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT);
+		if (auto err = glGetError())
+		{
+			__debugbreak();
+		}
 
 #if defined(_OPENMP)
 		long long const lim = arr.size();

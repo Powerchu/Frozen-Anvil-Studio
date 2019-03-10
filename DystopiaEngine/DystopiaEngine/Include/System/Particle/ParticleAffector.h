@@ -49,7 +49,8 @@ namespace Dystopia
 		struct InitialRotationAffector,
 		struct RotationRateAffector,
 		struct DistanceSpawnAffector,
-		struct BubbleAffector
+		struct BubbleAffector,
+		struct FloorAffector
 	>;
 
 	class Emitter;

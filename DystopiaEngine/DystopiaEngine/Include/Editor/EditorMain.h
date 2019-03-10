@@ -77,6 +77,7 @@ namespace Editor
 
 		float GetDeltaTime(void) const;
 		eState GetCurState(void) const;
+		eState GetNextState(void) const;
 		bool IsClosing(void);
 		
 		template<typename T>
