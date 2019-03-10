@@ -35,6 +35,7 @@
     <ClCompile Include="Source\System\Particle\BubbleAffector.cpp" />
     <ClCompile Include="Source\System\Particle\ColorAffector.cpp" />
     <ClCompile Include="Source\System\Particle\Emitter.cpp" />
+    <ClCompile Include="Source\System\Particle\FloorAffector.cpp" />
     <ClCompile Include="Source\System\Particle\LifetimeAffector.cpp" />
     <ClCompile Include="Source\System\Particle\LocationAffector.cpp" />
     <ClCompile Include="Source\System\Particle\ParticleAffector.cpp" />
@@ -423,6 +424,7 @@
     <ClInclude Include="Include\System\Input\XGamePad.h" />
     <ClInclude Include="Include\IO\XMLParser.h" />
     <ClInclude Include="Include\Editor\RuntimeMeta.h" />
+    <ClInclude Include="Include\System\Particle\FloorAffector.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DystopiaEngine1.rc" />

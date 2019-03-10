@@ -58,7 +58,7 @@ Dystopia::Emitter::Emitter(ParticleEmitter* _owner) noexcept
 Dystopia::Emitter::Emitter(ParticleEmitter * _owner, int _drawMode, int _div, char const* _shader) noexcept
 	: mColour{}, mPosition{}, mVelocity{}, mAccel{}, mLifetime{}, mInitialLife{}, mCommand{},
 	mnParticleLimit{ 1000 }, mSpawnCount{}, mSpawn{}, mUpdate{}, mFixedUpdate{}, 
-	mbUpdatedPositions{ false }, mbUVChanged{ false }, mbIsAlive{ true }, _EDITOR_CODE(mbBuffers{ false } COMMA bEditorInit{ false } COMMA)
+	mbUpdatedPositions{ false }, mbUVChanged{ false }, mbIsAlive{ true }, _EDITOR_CODE(mbBuffers{ false } COMMA)
 	mpShader{ nullptr }, mShaderName{ _shader }, mpTexture{ nullptr }, mTextureName{ DEFAULT_TEXTURE },
 	mpOwner{ _owner }, mpTransform{ nullptr }, mDrawMode{ _drawMode }, mDiv{ _div }
 {
@@ -73,7 +73,7 @@ Dystopia::Emitter::Emitter(Dystopia::Emitter const& _rhs) noexcept
 	: mColour{}, mPosition{}, mVelocity{}, mAccel{}, mLifetime{}, mInitialLife{}, mCommand{},
 	mnParticleLimit{ _rhs.mnParticleLimit }, mSpawnCount{ _rhs.mSpawnCount }, 
 	mSpawn{ _rhs.mSpawn }, mUpdate{ _rhs.mUpdate }, mFixedUpdate{ _rhs.mFixedUpdate },
-	mbUpdatedPositions{ false }, mbUVChanged{ false }, mbIsAlive{ _rhs.mbIsAlive }, _EDITOR_CODE(mbBuffers{ false } COMMA bEditorInit{ false } COMMA)
+	mbUpdatedPositions{ false }, mbUVChanged{ false }, mbIsAlive{ _rhs.mbIsAlive }, _EDITOR_CODE(mbBuffers{ false } COMMA)
 	mpShader{ _rhs.mpShader }, mShaderName{ _rhs.mTextureName }, mpTexture{ _rhs.mpTexture }, mTextureName{ _rhs.mTextureName },
 	mpOwner{ nullptr }, mpTransform{ nullptr }, mDrawMode{ _rhs.mDrawMode }, mDiv{ _rhs.mDiv }
 {
@@ -183,7 +183,9 @@ void Dystopia::Emitter::InitArrays(void)
 
 void Dystopia::Emitter::InitBuffers(void) noexcept
 {
-	_EDITOR_CODE(if (bEditorInit) return static_cast<void>(bEditorInit = !bEditorInit);)
+	//_EDITOR_CODE(if (bEditorInit) return static_cast<void>(bEditorInit = !bEditorInit);)
+
+	_EDITOR_CODE(if (::Editor::EditorMain::GetInstance()->GetCurState() != ::Editor::eState::PLAY  && ::Editor::EditorMain::GetInstance()->GetNextState() != ::Editor::eState::PLAY) return;)
 
 	glBindBuffer(GL_DRAW_INDIRECT_BUFFER, mCmdBuffer);
 	glBufferData(GL_DRAW_INDIRECT_BUFFER, mParticle.mnLimit * sizeof(decltype(mCommand)::Val_t), mCommand.begin(), GL_STATIC_DRAW);
@@ -322,8 +324,9 @@ namespace
 	{
 		using val_t = Ut::RemoveRef_t<decltype(arr[0])>;
 
+		auto s = sizeof(val_t);
 		glBindBuffer(GL_ARRAY_BUFFER, buf);
-		auto MapPtr = glMapBufferRange(GL_ARRAY_BUFFER, 0, arr.size() * sizeof(val_t), GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT);
+		auto MapPtr = glMapBufferRange(GL_ARRAY_BUFFER, 0, arr.size() * s, GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT);
 
 #if defined(_OPENMP)
 		long long const lim = arr.size();
@@ -625,8 +628,6 @@ void Dystopia::Emitter::Serialise(TextSerialiser& _out) const noexcept
 void Dystopia::Emitter::Unserialise(TextSerialiser& _in) noexcept
 {
 	_in.ConsumeStartBlock();
-
-	_EDITOR_CODE(bEditorInit = true);
 
 	std::string buf;
 	buf.reserve(128);

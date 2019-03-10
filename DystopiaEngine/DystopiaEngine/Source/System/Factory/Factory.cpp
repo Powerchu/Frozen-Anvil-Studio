@@ -43,7 +43,8 @@ Dystopia::Factory::~Factory(void)
 Dystopia::GameObject* Dystopia::Factory::SpawnPrefab(const HashString& _prefab, const Math::Pt3D& _pos)
 {
 	auto fs = EngineCore::GetInstance()->Get<FileSystem>();
-	auto fp = fs->GetFullPath(_prefab.c_str(), eFileDir::eResource);
+	//auto _path = Dystopia::EngineCore::Get<Dystopia::FileSystem>()->FindFilePath(_prefab.c_str(), Dystopia::eFileDir::eResource);
+	auto fp = fs->FindFilePath(_prefab.c_str(), eFileDir::eResource);
 	if (!fp.size())
 		return nullptr;
 	auto _in = Dystopia::TextSerialiser::OpenFile(fp.c_str(), Dystopia::Serialiser::MODE_READ);
@@ -155,6 +156,7 @@ void Dystopia::Factory::LoadSegmentC(GameObject& _obj, unsigned _count, Dystopia
 		_in.ConsumeStartBlock();
 		_in >> sysID;
 		Component *pComponent = cList.GetComponentA(sysID, &_obj);
+
 		cList.IsolateUnserialise(pComponent, _in);
 
 		pComponent->RemoveFlags(Dystopia::eObjFlag::FLAG_EDITOR_OBJ);

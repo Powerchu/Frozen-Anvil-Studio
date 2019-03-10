@@ -55,7 +55,9 @@ Dystopia::ParticleEmitter::ParticleEmitter(void) noexcept
 }
 
 Dystopia::ParticleEmitter::ParticleEmitter(Dystopia::ParticleEmitter const& _rhs) noexcept
-	: mEmitters{ _rhs.mEmitters }
+	: Component{ _rhs }, mEmitters {
+	_rhs.mEmitters
+}
 {
 	for (auto& e : mEmitters)
 		e.SetOwner(this);
@@ -102,7 +104,7 @@ void Dystopia::ParticleEmitter::Render(void) const noexcept
 
 Dystopia::Emitter* Dystopia::ParticleEmitter::GetEmitter(unsigned _n) const noexcept
 {
-	if (_n > mEmitters.size() || _n < 0)
+	if (_n >= mEmitters.size() || _n < 0)
 		return nullptr;
 
 	return mEmitters.begin() + _n;
@@ -144,6 +146,7 @@ void Dystopia::ParticleEmitter::Unserialise(TextSerialiser& _in)
 	{
 		mEmitters.EmplaceBack(this);
 		mEmitters.back().Unserialise(_in);
+		mEmitters.back().Awake();
 	}
 }
 

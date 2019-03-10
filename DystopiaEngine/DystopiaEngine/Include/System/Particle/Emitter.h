@@ -126,7 +126,7 @@ namespace Dystopia
 
 		bool mbUpdatedPositions, mbUVChanged;
 		bool mbIsAlive;
-		_EDITOR_CODE(bool mbBuffers; bool bEditorInit);
+		_EDITOR_CODE(bool mbBuffers);
 
 	private:
 

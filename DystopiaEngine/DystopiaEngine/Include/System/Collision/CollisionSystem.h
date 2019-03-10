@@ -97,12 +97,13 @@ namespace Dystopia
 
 		AutoArray<Collider *> GetAllColliders() const;
 
-		_DLL_EXPORT bool RaycastFirstHit(Math::Vec3D const & _Dir, Math::Point3D const & _mPos,CollisionEvent * _Output, float _MaxLength = 0.f, eColLayer layer = eColLayer::LAYER_GLOBAL) const;
+		_DLL_EXPORT bool RaycastFirstHit(Math::Vec3D const & _Dir, Math::Point3D const & _mPos,CollisionEvent * _Output, float _MaxLength = 0.f, eColLayer layer = eColLayer::LAYER_GLOBAL, bool ignore_global = false) const;
 		_DLL_EXPORT bool RaycastAllHits (Math::Vec3D const & _Dir, Math::Point3D const & _mPos,AutoArray<CollisionEvent> & _Output, float _MaxLength = 0.f, eColLayer layer = eColLayer::LAYER_GLOBAL) const;
 
 		void MapIgnoreLayer(eColLayer _layer, eColLayer _toIgnore);
 		_DLL_EXPORT bool ToIgnore      (eColLayer _Layer1, eColLayer _Layer2) const;
 		_DLL_EXPORT void SetIgnore	   (unsigned _Layer1, unsigned _Layer2, bool _toignore);
+		_DLL_EXPORT eColLayer GetLayerByName(const char*);
 
 		static std::string const * GetColLayerNames();
 		static unsigned            GetColLayerSize();

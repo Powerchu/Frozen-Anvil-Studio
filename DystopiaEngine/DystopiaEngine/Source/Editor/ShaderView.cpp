@@ -402,6 +402,8 @@ bool Editor::ShaderView::MakeShader(const HashString& _name)
 			if (auto program = mpShaderSystem->GetShaderProgram(mArrProgramChosen[i].c_str()))
 				s->AttachProgram(program);
 	}
+	else
+		PrintToConsoleLog("Failed to create shader");
 	mArrProgramChosen[0] = mArrProgramChosen[1] = mArrProgramChosen[2] = "";
 	return true;
 }

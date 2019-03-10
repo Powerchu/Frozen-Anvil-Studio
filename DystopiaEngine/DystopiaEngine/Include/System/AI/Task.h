@@ -9,7 +9,7 @@ https://www.gamasutra.com/blogs/ChrisSimpson/20140717/221339/Behavior_trees_for_
 for basic understanding.
 This contain basic Task nodes.
 
-All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+All Content Copyright ï¿½ 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -29,11 +29,12 @@ namespace Dystopia
 		public:
 			HashString GetEditorName(void) const override { return "Wait Task"; }
 
-			explicit Wait(float _waitTime) : mWaitTime(_waitTime) {}
+			explicit Wait(float _waitTime) : mWaitTime(_waitTime), mMaxWaitTime(_waitTime) {}
+			Wait(NeuralTree::Blackboard::Ptr _bb, float _waitTime) : Task(_bb), mWaitTime(_waitTime), mMaxWaitTime(_waitTime) {}
 
 			void Init() override
 			{
-				
+				mWaitTime = mMaxWaitTime;
 			}
 
 			eStatus Update(float _deltaTime) override
@@ -42,21 +43,26 @@ namespace Dystopia
 				{
 					mWaitTime -= _deltaTime;
 
-					if (mWaitTime <= 0.f)
+					if (mWaitTime < 0.f)
 					{
 						mWaitTime = 0.0f;
 						return eStatus::SUCCESS;
 					}
 
-					return eStatus::RUNNING;
-				}
-				
-				return eStatus::FAIL;
 
+				}
+				return AuxUpdate(_deltaTime);
+
+				return eStatus::RUNNING;
 			}
+
+			virtual eStatus AuxUpdate(float) {
+				return eStatus::RUNNING;
+			};
 
 		private:
 			float mWaitTime;
+			float mMaxWaitTime;
 		};
 
 		class WaitBlackBoardTime : public Task
@@ -79,16 +85,13 @@ namespace Dystopia
 				{
 					mWaitTime -= _deltaTime;
 
-					if (mWaitTime <= 0.f)
+					if (mWaitTime < 0.f)
 					{
 						mWaitTime = 0.0f;
 						return eStatus::SUCCESS;
 					}
-
-					return eStatus::RUNNING;
 				}
-
-				return eStatus::FAIL;
+				return eStatus::RUNNING;
 			}
 
 		private:
