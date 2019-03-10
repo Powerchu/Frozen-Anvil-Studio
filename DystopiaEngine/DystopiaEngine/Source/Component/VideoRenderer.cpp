@@ -188,6 +188,8 @@ namespace Dystopia
 		buffer      = nullptr;
 		mBufferSize = 0;
 
+		mState = VideoState::NEUTRAL;
+
 		if (file_is_webm(mWebmHdl, mVidHdl))
 		{
 			vpx_codec_dec_cfg_t cfg;
@@ -211,14 +213,12 @@ namespace Dystopia
 			{
 #if EDITOR && _DEBUG 
 
-				DEBUG_PRINT(eLog::MESSAGE, "Decoder failed to initialise : line 127 VideoRenderer.cpp");
+				DEBUG_PRINT(eLog::MESSAGE, "Decoder failed to initialise : line 216 VideoRenderer.cpp");
 				//return VideoErrorCode::DECODDER_FAIL_INIT;
 #endif
 			}
 #endif
 		}
-		//mWebmHdl->video_track_index = 0;
-		//mWebmHdl->block_frame_index = 0;
 	}
 
 	vid_error_c_t VideoRenderer::ReadNextFrame()

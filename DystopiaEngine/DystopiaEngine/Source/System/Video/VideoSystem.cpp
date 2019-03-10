@@ -92,11 +92,18 @@ namespace Dystopia
 				/*Reset Buffer*/
 				mBuffer.ResetCount();
 			}
+			/*For testing rest*/
+
 			else if (pVid.mState == VideoState::STOP)
 			{
 				/*Test Reset*/
-				count = 0;
-				pVid.Play();
+				if (pVid.LoadVideo("TEST_VIDEO_2.webm") == VideoErrorCode::OK)
+				{
+					count = 0;
+					pVid.Play();
+				}
+				
+
 			}
 		}
 	}
