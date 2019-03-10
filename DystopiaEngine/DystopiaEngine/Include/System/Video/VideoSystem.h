@@ -6,7 +6,7 @@
 #include "System/Base/ComponentDonor.h"
 #include "System/Time/Timer.h"
 
-class vpx_image;
+struct vpx_image;
 namespace Dystopia
 {
 	class VideoRenderer;
