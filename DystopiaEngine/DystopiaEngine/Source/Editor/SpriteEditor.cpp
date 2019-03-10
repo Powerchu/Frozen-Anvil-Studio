@@ -239,13 +239,13 @@ void Editor::SpriteEditor::FieldAtlas(void)
 	EGUI::Display::VectorFields("Size", &mSectionSize, 0.01f, 0.f, 1, itemWidth);
 	EGUI::Display::VectorFieldsInt("Col & Row", &mSectionDime, 1, 1, 100, itemWidth);
 
-	EGUI::SameLine();
+	ImGui::SameLine(0.f, 5.f);
 	if (EGUI::Display::Button("Grow Col", Math::Vec2{ 100, 24 }))
 	{
 		mSectionSize.x += mSectionSize.x / mSectionDime.x;
 		mSectionDime.x += 1.f;
 	}
-	EGUI::SameLine();
+	ImGui::SameLine(0.f, 5.f);
 	if (EGUI::Display::Button("Grow Row", Math::Vec2{ 100, 24 }))
 	{
 		mSectionSize.y += mSectionSize.y / mSectionDime.y;
@@ -271,30 +271,30 @@ void Editor::SpriteEditor::FieldAtlas(void)
 
 void Editor::SpriteEditor::DrawSelectedGrid(float _ox, float _oy, float _ix, float _iy)
 {
-	auto pCanvas = ImGui::GetWindowDrawList();
-	auto& section = mpAtlas->GetAllSections()[mnSelectedSection];
-
-	ImGui::SetCursorPos(ImVec2{ _ox, _oy });
-	auto screenOrigin = ImGui::GetCursorScreenPos();
-	float ratioW = section.uEnd - section.uStart;
-	float ratioH = section.vEnd - section.vStart;
-	unsigned col = static_cast<unsigned>(ratioW / section.mCol);
-	unsigned row = static_cast<unsigned>(ratioH / section.mRow);
-	unsigned total = col * row;
-	float xLen = ratioW / col;
-	float yLen = ratioH / row;
-
-	for (unsigned i = 0; i < total; ++i)
-	{
-		Math::Vec2 rectMin{ screenOrigin.x + (((i % col) * xLen) * _ix) + (section.uStart * _ix),
-							screenOrigin.y + (((i / col) * yLen) * _iy) + (section.vStart * _iy) };
-		Math::Vec2 rectMax{ rectMin.x + (xLen * _ix),
-							rectMin.y + (yLen * _iy) };
-		pCanvas->AddRect(rectMin, rectMax, ImGui::GetColorU32(ImVec4{ 1,1,1,1}));
-		ImGui::SetCursorScreenPos(rectMin + ImVec2{ 2,1 });
-		EGUI::Display::Label("%d", i);
-		ImGui::SetCursorScreenPos(screenOrigin);
-	}
+	//auto pCanvas = ImGui::GetWindowDrawList();
+	//auto& section = mpAtlas->GetAllSections()[mnSelectedSection];
+	//
+	//ImGui::SetCursorPos(ImVec2{ _ox, _oy });
+	//auto screenOrigin = ImGui::GetCursorScreenPos();
+	//float ratioW = section.uEnd - section.uStart;
+	//float ratioH = section.vEnd - section.vStart;
+	//unsigned col = static_cast<unsigned>(ratioW / section.mCol);
+	//unsigned row = static_cast<unsigned>(ratioH / section.mRow);
+	//unsigned total = col * row;
+	//float xLen = ratioW / col;
+	//float yLen = ratioH / row;
+	//
+	//for (unsigned i = 0; i < total; ++i)
+	//{
+	//	Math::Vec2 rectMin{ screenOrigin.x + (((i % col) * xLen) * _ix) + (section.uStart * _ix),
+	//						screenOrigin.y + (((i / col) * yLen) * _iy) + (section.vStart * _iy) };
+	//	Math::Vec2 rectMax{ rectMin.x + (xLen * _ix),
+	//						rectMin.y + (yLen * _iy) };
+	//	//pCanvas->AddRect(rectMin, rectMax, ImGui::GetColorU32(ImVec4{ 1,1,1,1}));
+	//	ImGui::SetCursorScreenPos(rectMin + ImVec2{ 2,1 });
+	//	EGUI::Display::Label("%d", i);
+	//	ImGui::SetCursorScreenPos(screenOrigin);
+	//}
 
 	//ImGui::GetWindowDrawList()->AddRect(rectMin, rectMax, ImGui::GetColorU32(ImVec4{ 1,1,1,1 }));
 }
