@@ -19,7 +19,7 @@ struct vpx_image;
 namespace Dystopia
 {
 	class VideoSystem;
-
+	class Texture2D;
 
 	typedef enum class VideoErrorCode : unsigned
 	{
@@ -94,6 +94,8 @@ namespace Dystopia
 			void ResetVideo();
 			void PlayOnStart(bool _b);
 
+			Texture2D* GetTexture(void) const noexcept;
+
 			vid_error_c_t ReadNextFrame();
 			vpx_image *   GetFrameImage();
 
@@ -115,6 +117,11 @@ namespace Dystopia
 			uint8_t            *  buffer;
 			size_t                mBufferSize;
 			const void *          mCodecIterator;
+			
+			//void* glBuffer;
+			//unsigned pboID;
+			Texture2D* mpTexture;
+
 
 			VideoState            mState;
 			unsigned              mRecentFlags;

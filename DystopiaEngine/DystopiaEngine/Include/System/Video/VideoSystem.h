@@ -18,6 +18,7 @@ namespace Dystopia
 			unsigned width;
 			unsigned stride;
 			unsigned count;
+			unsigned pboID;
 			uint8_t * rgb_buff;
 
 			RGB_BUFFER();
@@ -63,6 +64,8 @@ namespace Dystopia
 	private:
 		RGB_BUFFER  mBuffer;
 		RGB_BUFFER  mBuffer2;
+
+		static unsigned pboID;
 
 		vpx_image * mCurrImg;
 		Timer         mTimer;

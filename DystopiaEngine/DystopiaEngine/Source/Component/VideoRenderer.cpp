@@ -4,6 +4,9 @@
 #include "System/Logger/LoggerSystem.h"
 #include "System/Video/VideoSystem.h"
 #include "System/File/FileSystem.h"
+#include "System/Graphics/TextureSystem.h"
+#include "System/Graphics/Texture.h"
+#include "System/Graphics/Texture2D.h"
 /*I/O*/
 #include "IO/TextSerialiser.h"					/*Serialiser*/
 
@@ -19,6 +22,10 @@
 #include "tools_common.h"
 #include "webmdec.h"
 #include "vpx/vpx_image.h"
+
+
+/* OPEN GL */
+#include "GL/glew.h"
 
 #if EDITOR
 #include "Editor/ProjectResource.h"
@@ -43,11 +50,17 @@ namespace Dystopia
 		 mPlayOnStart{false}
 	{
 		mWebmHdl->buffer = nullptr;
+
+		//glGenBuffers(1, &pboID);
+		//glBindBuffer(GL_PIXEL_PACK_BUFFER, pboID);
+		Image imgData{
+			"", false, true, GL_RGB, GL_RGB, 0, 0, 3, 0, nullptr
+		};
+		mpTexture = CORE::Get<TextureSystem>()->LoadRaw<Texture2D>(&imgData);
 	}
 
 	Dystopia::VideoRenderer::VideoRenderer(VideoRenderer const & rhs)
 	{
-
 	}
 
 	VideoRenderer::~VideoRenderer()
@@ -55,6 +68,8 @@ namespace Dystopia
 		delete mWebmHdl;
 		delete mVidHdl;
 		delete mDecodec;
+
+		//CORE::Get<TextureSystem>()->UnloadTexture(mpTexture);
 	}
 
 	void Dystopia::VideoRenderer::Awake(void)
@@ -230,6 +245,11 @@ namespace Dystopia
 	void VideoRenderer::PlayOnStart(bool _b)
 	{
 		mPlayOnStart = _b;
+	}
+
+	Texture2D* VideoRenderer::GetTexture(void) const noexcept
+	{
+		return mpTexture;
 	}
 
 	vid_error_c_t VideoRenderer::ReadNextFrame()

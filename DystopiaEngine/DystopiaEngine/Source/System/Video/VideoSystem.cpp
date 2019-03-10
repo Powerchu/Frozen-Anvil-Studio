@@ -22,8 +22,18 @@
 #include "webmdec.h"
 #include "vpx/vpx_image.h"
 
+/* OPEN GL */
+#include "GL/glew.h"
+
 /*Testing*/
 #include "IO/ImageParser.h"
+
+
+namespace
+{
+	static GLsync mFence = 0;
+}
+
 namespace Dystopia
 {
 	VideoSystem::VideoSystem()
@@ -80,11 +90,14 @@ namespace Dystopia
 				mCurrentVid = &pVid;
 		}
 
+		// OpenGL not ready for next frame
+		if (mFence && GL_TIMEOUT_EXPIRED == glClientWaitSync(mFence, 0, 0))
+			return;
 		
 		if (mCurrentVid)
 		{
 			/*Start the countdown*/
-			mTimer.Countdown(mCurrentVid->mVidHdl->framerate.numerator / mCurrentVid->mVidHdl->framerate.denominator);
+			mTimer.Countdown(mCurrentVid->mVidHdl->framerate.numerator * 1.f / mCurrentVid->mVidHdl->framerate.denominator);
 
 			/*Prev buffer is done decoding, get the next frame*/
 			if (!mBuffer.count)
@@ -124,12 +137,27 @@ namespace Dystopia
 			{
 				/*Pass to graphic to draw the complete image*/
 				/*TO DO*/
-				ImageParser::WriteBMP("Output/" + std::to_string(count++) + ".bmp", mBuffer.rgb_buff, mBuffer.width, mBuffer.height);
+				glBindBuffer(GL_PIXEL_PACK_BUFFER, mBuffer.pboID);
+				glFlushMappedBufferRange(GL_PIXEL_PACK_BUFFER, 0, mBuffer.width * mBuffer.height * mBuffer.stride);
+				glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, mBuffer.pboID);
+				mCurrentVid->GetTexture()->Bind();
+				glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, mBuffer.width, mBuffer.height, GL_RGB, GL_UNSIGNED_BYTE, 0);
+				mCurrentVid->GetTexture()->Unbind();
+				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+				mFence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+
+				//ImageParser::WriteBMP("Output/" + std::to_string(count++) + ".bmp", mBuffer.rgb_buff, mBuffer.width, mBuffer.height);
 				/*Reset the buffer count*/
 				mBuffer.ResetCount();
 				mCurrImg = nullptr;
 			}
 		}
+
+#if EDITOR
+		if (auto err = glGetError())
+			__debugbreak();
+#endif
 	}
 	void VideoSystem::PostUpdate()
 	{
@@ -192,28 +220,45 @@ namespace Dystopia
 #endif
 
 	VideoSystem::RGB_BUFFER::RGB_BUFFER()
-		:height{ 0 }, width{ 0 }, stride{ sizeof(uint8_t) * 4 }, count{ 0 }, rgb_buff{ nullptr }
+		:height{ 0 }, width{ 0 }, stride{ sizeof(uint8_t) * 4 }, count{ 0 }, rgb_buff{ nullptr }, pboID{ 0 }
 	{
-
 	}
 	VideoSystem::RGB_BUFFER::RGB_BUFFER(unsigned h, unsigned w)
-		: height{ h }, width{ w }, stride{ sizeof(uint8_t) * 4 }, count{ 0 }, rgb_buff{ static_cast<uint8_t*>(::operator new(h*w*stride)) }
+		: height{ h }, width{ w }, stride{ sizeof(uint8_t) * 4 }, count{ 0 }, rgb_buff{ nullptr /*static_cast<uint8_t*>(::operator new(h*w*stride))*/ }, pboID{ 0 }
 	{
-		memset(rgb_buff, 255, h*w*stride);
+		//memset(rgb_buff, 255, h*w*stride);
+		glGenBuffers(1, &pboID);
 	}
 	VideoSystem::RGB_BUFFER::~RGB_BUFFER()
 	{
-		::operator delete (rgb_buff);
+		//::operator delete (rgb_buff);
+
+		if (rgb_buff)
+		{
+			glBindBuffer(GL_PIXEL_PACK_BUFFER, pboID);
+			glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+			glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+		}
+		rgb_buff = nullptr;
+		glDeleteBuffers(1, &pboID);
 	}
 	void VideoSystem::RGB_BUFFER::Resize(unsigned h, unsigned w)
 	{
-		::operator delete(rgb_buff);
-		rgb_buff = nullptr;
-		rgb_buff = static_cast<uint8_t*>(::operator new(h*w*stride));
-		memset(rgb_buff, 255, h*w*stride);
+		constexpr GLbitfield mapFlags = GL_MAP_INVALIDATE_RANGE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_FLUSH_EXPLICIT_BIT | GL_MAP_WRITE_BIT;
+
+		//::operator delete(rgb_buff);
+		//rgb_buff = nullptr;
+		//rgb_buff = static_cast<uint8_t*>(::operator new(h*w*stride));
+		//memset(rgb_buff, 255, h*w*stride);
 		height = h;
 		width  = w;
 		count  = 0;
+
+		glBindBuffer(GL_PIXEL_PACK_BUFFER, pboID);
+		if (rgb_buff) glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
+		glBufferStorageEXT(GL_PIXEL_PACK_BUFFER, w*h*stride, nullptr, GL_MAP_PERSISTENT_BIT | GL_MAP_WRITE_BIT);
+		rgb_buff = static_cast<uint8_t*>(glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, w*h*stride, mapFlags));
+		glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
 	}
 	void VideoSystem::RGB_BUFFER::ResetCount()
 	{
