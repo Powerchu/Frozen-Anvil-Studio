@@ -322,7 +322,7 @@ namespace Dystopia
 		//rayEvent.mTimeIntersection = 99999.f;
 		for (auto const & elem : ListOfEdge)
 		{
-			/*Check if the edge normal is facing the ray*/
+			/*Check if the edge normal is facing the ray (The normals are inverse cause physics)*/
 			if (elem.mNorm3.Dot(_RayDir) * (_Pos - elem.mPos).Dot(elem.mNorm3) >= 0.f)
 				continue;
 			/*Check if the ray lies within the edge*/
