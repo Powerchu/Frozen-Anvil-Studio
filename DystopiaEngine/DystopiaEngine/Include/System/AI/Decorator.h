@@ -191,7 +191,7 @@ namespace Dystopia
 
 			void Exit(eStatus _status) override
 			{
-				if (_status == eStatus::FAIL) currCount = maxCount;
+				if (currCount <= 0) currCount = maxCount;
 			}
 
 			HashString GetEditorName(void) const override { return "Limiter"; }
