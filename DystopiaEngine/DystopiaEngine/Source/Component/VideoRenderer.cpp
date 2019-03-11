@@ -150,7 +150,7 @@ namespace Dystopia
 			{
 #if EDITOR && _DEBUG 
 
-				DEBUG_PRINT(eLog::MESSAGE, "Decoder failed to initialise : line 127 VideoRenderer.cpp");
+				DEBUG_PRINT(eLog::MESSAGE, "Decoder failed to initialise : line %d %s", __LINE__, __FILE__);
 				return VideoErrorCode::DECODDER_FAIL_INIT;
 #endif
 			}
@@ -219,8 +219,7 @@ namespace Dystopia
 			{
 #if EDITOR && _DEBUG 
 
-				DEBUG_PRINT(eLog::MESSAGE, "Decoder failed to initialise : line 216 VideoRenderer.cpp");
-				//return VideoErrorCode::DECODDER_FAIL_INIT;
+				DEBUG_PRINT(eLog::MESSAGE, "Decoder failed to initialise : line %d %s", __LINE__,__FILE__);
 #endif
 			}
 #endif
@@ -241,7 +240,7 @@ namespace Dystopia
 			{
 
 #if EDITOR && _DEBUG
-				DEBUG_PRINT(eLog::MESSAGE, "Failed to decode frame in ReadNextFrame");
+				DEBUG_PRINT(eLog::MESSAGE, "Failed to decode frame : line %d %s", __LINE__, __FILE__);
 #endif
 				return VideoErrorCode::UNKNOWN_ERROR;
 			}

@@ -49,26 +49,26 @@ namespace Dystopia
 	void VideoSystem::Update(float)
 	{
 		VideoRenderer * mCurrentVid = nullptr;
-		static VideoRenderer * testvid = nullptr;
-		static bool test = true;
-		static int  once = 0;
-		static int count = 0;
+		//static VideoRenderer * testvid = nullptr;
+		//static bool test = true;
+		//static int  once = 0;
+		//static int count = 0;
 
-		if (test)
-		{
-			testvid = ComponentDonor<VideoRenderer>::RequestComponent();
-			test = false;
-			testvid->mVidHdl->length = 0;
-			
-		}
-		else if(testvid && !once)
-		{
-			if(testvid->LoadVideo("TEST_VIDEO.webm") == VideoErrorCode::OK)
-				testvid->Play();
-			testvid->ReadNextFrame();
-			testvid->SetFlags(FLAG_ACTIVE);
-			once = 1;
-		}
+		//if (test)
+		//{
+		//	testvid = ComponentDonor<VideoRenderer>::RequestComponent();
+		//	test = false;
+		//	testvid->mVidHdl->length = 0;
+		//	
+		//}
+		//else if(testvid && !once)
+		//{
+		//	if(testvid->LoadVideo("TEST_VIDEO.webm") == VideoErrorCode::OK)
+		//		testvid->Play();
+		//	testvid->ReadNextFrame();
+		//	testvid->SetFlags(FLAG_ACTIVE);
+		//	once = 1;
+		//}
 
 		/*Future support for */
 		for (auto && pVid : ComponentDonor<VideoRenderer>::mComponents)
@@ -124,7 +124,7 @@ namespace Dystopia
 			{
 				/*Pass to graphic to draw the complete image*/
 				/*TO DO*/
-				ImageParser::WriteBMP("Output/" + std::to_string(count++) + ".bmp", mBuffer.rgb_buff, mBuffer.width, mBuffer.height);
+				//ImageParser::WriteBMP("Output/" + std::to_string(count++) + ".bmp", mBuffer.rgb_buff, mBuffer.width, mBuffer.height);
 				/*Reset the buffer count*/
 				mBuffer.ResetCount();
 				mCurrImg = nullptr;

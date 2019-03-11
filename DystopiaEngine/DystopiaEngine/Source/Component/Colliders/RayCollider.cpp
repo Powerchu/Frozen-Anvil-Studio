@@ -323,7 +323,7 @@ namespace Dystopia
 		for (auto const & elem : ListOfEdge)
 		{
 			/*Check if the edge normal is facing the ray*/
-			if (elem.mNorm3.Dot(_RayDir) >= 0.f || (_Pos - elem.mPos).Dot(_RayDir) > 0.f)
+			if (elem.mNorm3.Dot(_RayDir) * (_Pos - elem.mPos).Dot(elem.mNorm3) >= 0.f)
 				continue;
 			/*Check if the ray lies within the edge*/
 			auto && v1 = (_Pos - elem.mPos);

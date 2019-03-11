@@ -106,6 +106,8 @@ namespace Dystopia
 
 		private:
 
+
+			/*Member variable for Video Images*/
 			HashString            mVid;              /*Name of video           */
 			FILE *                mVidFileHandle;    /*Handle to video file    */
 			const VpxInterface *  decoder;           /*Decoder for Video       */
@@ -115,10 +117,18 @@ namespace Dystopia
 			uint8_t            *  buffer;
 			size_t                mBufferSize;
 			const void *          mCodecIterator;
+			/*Member variable for Video Audio*/
+			/* Reference
+			https://chromium.googlesource.com/webm/libwebm/+/libwebm-1.0.0.25/sample_muxer.cpp
+			*/
 
+			/********************************/
 			VideoState            mState;
 			unsigned              mRecentFlags;
 			bool                  mPlayOnStart;
+
+
+			
 			/*Functions*/
 
 
