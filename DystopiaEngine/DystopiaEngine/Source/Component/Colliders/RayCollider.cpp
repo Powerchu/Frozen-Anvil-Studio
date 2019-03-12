@@ -319,7 +319,7 @@ namespace Dystopia
 			return false;
 		auto && ListOfEdge = _Collider->GetConvexEdges();
 		bool    isColliding = false;
-		//rayEvent.mTimeIntersection = 99999.f;
+
 		for (auto & elem : ListOfEdge)
 		{
 			elem.mNorm3 = -elem.mNorm3;
