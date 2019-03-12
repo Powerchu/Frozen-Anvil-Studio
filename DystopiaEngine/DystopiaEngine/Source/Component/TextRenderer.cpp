@@ -54,7 +54,7 @@ Dystopia::TextRenderer::TextRenderer(const TextRenderer& _rhs) noexcept
 	,mColor{ _rhs.mColor },mDefaultCol(_rhs.mDefaultCol),mHoverCol(_rhs.mHoverCol),mClickColor(_rhs.mClickColor),mDisabledColor(_rhs.mDisabledColor)
 	,mfTintPerc(_rhs.mfTintPerc), mVerts{ _rhs.mVerts}
 {
-	mTextureFields = Ut::Move(_rhs.mTextureFields);
+	//mTextureFields = Ut::Move(_rhs.mTextureFields);
 }
 
 void Dystopia::TextRenderer::Awake(void)
