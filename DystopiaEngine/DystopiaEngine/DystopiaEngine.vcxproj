@@ -619,7 +619,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/DEDITOR /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER  /DEXPORT /DDEBUGALLOC /DCOMMANDPROMPT</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\libvpx\third_party\libyuv\include;$(SolutionDir)Dependancies\libvpx;$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\libvpx\third_party\libwebm\mkvparser;C:\Users\keith.goh\source\repos\Frozen-Anvil-Studio\DystopiaEngine\Dependancies\libvpx\third_party\libwebm;$(SolutionDir)Dependancies\libvpx\third_party\libwebm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\libvpx\third_party\libyuv\include;$(SolutionDir)Dependancies\libvpx;$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\libvpx\third_party\libwebm\mkvparser;$(SolutionDir)Dependancies\libvpx\third_party\libwebm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExceptionHandling>Sync</ExceptionHandling>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -688,7 +688,7 @@
       <SDLCheck>
       </SDLCheck>
       <AdditionalOptions>/DEDITOR /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER  /DEXPORT</AdditionalOptions>
-      <AdditionalIncludeDirectories>C:\Users\aaron\source\repos\Frozen-Anvil-Studio\DystopiaEngine\DystopiaEngine\Include;$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\lodepng\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\libvpx\third_party\libyuv\include;$(SolutionDir)Dependancies\libvpx;$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\libvpx\third_party\libwebm\mkvparser;$(SolutionDir)Dependancies\libvpx\third_party\libwebm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -698,8 +698,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependancies\freetype-2.9.1\lib;$(SolutionDir)Dependancies\glew-2.1.0\lib\Release\x64;$(SolutionDir)Dependancies\FMOD\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freetype.lib;opengl32.lib;glew32.lib;fmod64_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependancies\freetype-2.9.1\lib;$(SolutionDir)Dependancies\glew-2.1.0\lib\Release\x64;$(SolutionDir)Dependancies\FMOD\lib;$(SolutionDir)Dependancies\libvpx\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>freetype.lib;opengl32.lib;glew32.lib;fmod64_vc.lib;vpxmdd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>

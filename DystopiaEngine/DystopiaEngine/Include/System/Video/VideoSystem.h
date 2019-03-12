@@ -27,7 +27,7 @@ namespace Dystopia
 
 			~RGB_BUFFER();
 
-			void Resize(unsigned h, unsigned w);
+			void Resize(unsigned h, unsigned w, VideoRenderer * _pRenderer);
 			void ResetCount();
 			void insert(int r, int g, int b);
 			bool IsComplete() const;

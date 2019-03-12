@@ -48,6 +48,9 @@ namespace Dystopia
 	}
 	bool VideoSystem::Init(void)
 	{
+		if (!mBuffer.pboID)
+			glGenBuffers(1, &mBuffer.pboID);
+
 		return true;
 	}
 	void VideoSystem::PostInit(void)
@@ -64,21 +67,21 @@ namespace Dystopia
 		static int  once = 0;
 		static int count = 0;
 
-		if (test)
-		{
-			testvid = ComponentDonor<VideoRenderer>::RequestComponent();
-			test = false;
-			testvid->mVidHdl->length = 0;
-			
-		}
-		else if(testvid && !once)
-		{
-			if(testvid->LoadVideo("TEST_VIDEO.webm") == VideoErrorCode::OK)
-				testvid->Play();
-			testvid->ReadNextFrame();
-			testvid->SetFlags(FLAG_ACTIVE);
-			once = 1;
-		}
+		//if (test)
+		//{
+		//	testvid = ComponentDonor<VideoRenderer>::RequestComponent();
+		//	test = false;
+		//	testvid->mVidHdl->length = 0;
+		//	
+		//}
+		//else if(testvid && !once)
+		//{
+		//	if(testvid->LoadVideo("TEST_VIDEO.webm") == VideoErrorCode::OK)
+		//		testvid->Play();
+		//	testvid->ReadNextFrame();
+		//	testvid->SetFlags(FLAG_ACTIVE);
+		//	once = 1;
+		//}
 
 		/*Future support for */
 		for (auto && pVid : ComponentDonor<VideoRenderer>::mComponents)
@@ -91,9 +94,13 @@ namespace Dystopia
 		}
 
 		// OpenGL not ready for next frame
-		if (mFence && GL_TIMEOUT_EXPIRED == glClientWaitSync(mFence, 0, 0))
-			return;
-		
+		if (mFence)
+		{
+			if (GL_TIMEOUT_EXPIRED == glClientWaitSync(mFence, 0, 0))
+				return;
+		}
+
+		mFence = 0;
 		if (mCurrentVid)
 		{
 			/*Start the countdown*/
@@ -114,6 +121,8 @@ namespace Dystopia
 						mCurrImg = mCurrentVid->GetFrameImage();
 						if (mCurrImg && !mTimer.Complete())
 						{
+							if (!mBuffer.rgb_buff || mBuffer.width * mBuffer.height < mCurrImg->d_w * mCurrImg->d_h)
+								mBuffer.Resize(mCurrImg->d_h, mCurrImg->d_w, mCurrentVid);
 							/*Convert to RGB*/
 							Convert_YUV_RGB(&mBuffer, mCurrImg);
 						}
@@ -121,6 +130,8 @@ namespace Dystopia
 				}
 				else
 				{
+					if (!mBuffer.rgb_buff || mBuffer.width * mBuffer.height < mCurrImg->d_w * mCurrImg->d_h)
+						mBuffer.Resize(mCurrImg->d_h, mCurrImg->d_w, mCurrentVid);
 					/*Convert to RGB*/
 					Convert_YUV_RGB(&mBuffer, mCurrImg);
 				}
@@ -137,15 +148,28 @@ namespace Dystopia
 			{
 				/*Pass to graphic to draw the complete image*/
 				/*TO DO*/
-				glBindBuffer(GL_PIXEL_PACK_BUFFER, mBuffer.pboID);
-				glFlushMappedBufferRange(GL_PIXEL_PACK_BUFFER, 0, mBuffer.width * mBuffer.height * mBuffer.stride);
-				glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+
 				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, mBuffer.pboID);
+				if (auto err = glGetError())
+					__debugbreak();
+				glFlushMappedBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, mBuffer.width * mBuffer.height * mBuffer.stride);
+				if (auto err = glGetError())
+					__debugbreak();
 				mCurrentVid->GetTexture()->Bind();
+				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, mBuffer.pboID);
 				glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, mBuffer.width, mBuffer.height, GL_RGB, GL_UNSIGNED_BYTE, 0);
+				if (auto err = glGetError())
+					__debugbreak();
+				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+				if (auto err = glGetError())
+					__debugbreak();
 				mCurrentVid->GetTexture()->Unbind();
 				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+				if (auto err = glGetError())
+					__debugbreak();
 				mFence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+				if (auto err = glGetError())
+					__debugbreak();
 
 				//ImageParser::WriteBMP("Output/" + std::to_string(count++) + ".bmp", mBuffer.rgb_buff, mBuffer.width, mBuffer.height);
 				/*Reset the buffer count*/
@@ -177,8 +201,6 @@ namespace Dystopia
 
 	void VideoSystem::Convert_YUV_RGB(RGB_BUFFER * buff, vpx_image const * yuv_image)
 	{
-		if (!buff || buff->width * buff->height < yuv_image->d_w * yuv_image->d_h)
-			buff->Resize(yuv_image->d_h, yuv_image->d_w);
 
 		uint8_t * YPlane = yuv_image->planes[VPX_PLANE_Y];
 		uint8_t * UPlane = yuv_image->planes[VPX_PLANE_U];
@@ -220,14 +242,13 @@ namespace Dystopia
 #endif
 
 	VideoSystem::RGB_BUFFER::RGB_BUFFER()
-		:height{ 0 }, width{ 0 }, stride{ sizeof(uint8_t) * 4 }, count{ 0 }, rgb_buff{ nullptr }, pboID{ 0 }
+		:height{ 0 }, width{ 0 }, stride{ sizeof(uint8_t) * 3 }, count{ 0 }, rgb_buff{ nullptr }, pboID{ 0 }
 	{
 	}
 	VideoSystem::RGB_BUFFER::RGB_BUFFER(unsigned h, unsigned w)
-		: height{ h }, width{ w }, stride{ sizeof(uint8_t) * 4 }, count{ 0 }, rgb_buff{ nullptr /*static_cast<uint8_t*>(::operator new(h*w*stride))*/ }, pboID{ 0 }
+		: height{ h }, width{ w }, stride{ sizeof(uint8_t) * 3 }, count{ 0 }, rgb_buff{ nullptr /*static_cast<uint8_t*>(::operator new(h*w*stride))*/ }, pboID{ 0 }
 	{
 		//memset(rgb_buff, 255, h*w*stride);
-		glGenBuffers(1, &pboID);
 	}
 	VideoSystem::RGB_BUFFER::~RGB_BUFFER()
 	{
@@ -235,14 +256,14 @@ namespace Dystopia
 
 		if (rgb_buff)
 		{
-			glBindBuffer(GL_PIXEL_PACK_BUFFER, pboID);
-			glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
-			glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboID);
+			glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
+			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 		}
 		rgb_buff = nullptr;
 		glDeleteBuffers(1, &pboID);
 	}
-	void VideoSystem::RGB_BUFFER::Resize(unsigned h, unsigned w)
+	void VideoSystem::RGB_BUFFER::Resize(unsigned h, unsigned w, VideoRenderer * _pRenderer)
 	{
 		constexpr GLbitfield mapFlags = GL_MAP_INVALIDATE_RANGE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_FLUSH_EXPLICIT_BIT | GL_MAP_WRITE_BIT;
 
@@ -254,11 +275,28 @@ namespace Dystopia
 		width  = w;
 		count  = 0;
 
-		glBindBuffer(GL_PIXEL_PACK_BUFFER, pboID);
-		if (rgb_buff) glUnmapBuffer(GL_PIXEL_PACK_BUFFER);
-		glBufferStorageEXT(GL_PIXEL_PACK_BUFFER, w*h*stride, nullptr, GL_MAP_PERSISTENT_BIT | GL_MAP_WRITE_BIT);
-		rgb_buff = static_cast<uint8_t*>(glMapBufferRange(GL_PIXEL_PACK_BUFFER, 0, w*h*stride, mapFlags));
-		glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
+		_pRenderer->GetTexture()->ReplaceTexture(w, h, nullptr, false);
+
+		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboID);
+		if (rgb_buff) glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
+		glBufferStorage(GL_PIXEL_UNPACK_BUFFER, w*h*stride, nullptr, GL_MAP_PERSISTENT_BIT | GL_MAP_WRITE_BIT | GL_DYNAMIC_STORAGE_BIT);
+		//glBufferData(GL_PIXEL_UNPACK_BUFFER, w*h*stride, nullptr, GL_STREAM_DRAW);
+		if (auto err = glGetError())
+		{
+			__debugbreak();
+		}
+		rgb_buff = static_cast<uint8_t*>(glMapBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, w*h*stride, mapFlags));
+
+		if (auto err = glGetError())
+		{
+			__debugbreak();
+		}
+		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+
+		if (auto err = glGetError())
+		{
+			__debugbreak();
+		}
 	}
 	void VideoSystem::RGB_BUFFER::ResetCount()
 	{

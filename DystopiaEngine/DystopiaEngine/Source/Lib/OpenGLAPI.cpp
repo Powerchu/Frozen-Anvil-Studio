@@ -463,14 +463,30 @@ bool Gfx::OpenGL_API::VersionSelect(void* const& hdc) noexcept
 {
 	int attrbs[] {
 		WGL_CONTEXT_MAJOR_VERSION_ARB, 4,	// OpenGL minimum Major ver
-		WGL_CONTEXT_MINOR_VERSION_ARB, 3,	// OpenGL minimum Minor ver
+		WGL_CONTEXT_MINOR_VERSION_ARB, 6,	// OpenGL minimum Minor ver
 		WGL_CONTEXT_FLAGS_ARB, 0,
 		0
 	};
 
 	mOpenGL = nullptr;
 
-	// Try to create at least OpenGL 4.3
+	// Try to create OpenGL 4.6
+	mOpenGL = wglCreateContextAttribsARB(static_cast<HDC>(hdc), NULL, attrbs);
+	if (mOpenGL)
+	{
+		return true;
+	}
+
+	// Try 4.4...
+	attrbs[3] = 4;
+	mOpenGL = wglCreateContextAttribsARB(static_cast<HDC>(hdc), NULL, attrbs);
+	if (mOpenGL)
+	{
+		return true;
+	}
+
+	// Try 4.3...
+	attrbs[3] = 4;
 	mOpenGL = wglCreateContextAttribsARB(static_cast<HDC>(hdc), NULL, attrbs);
 	if (mOpenGL)
 	{

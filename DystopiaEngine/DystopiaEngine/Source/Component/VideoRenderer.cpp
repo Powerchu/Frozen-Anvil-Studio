@@ -1,5 +1,7 @@
 #include "Component/VideoRenderer.h"
 
+/*Component*/
+#include "Component/Renderer.h"
 /*System*/
 #include "System/Logger/LoggerSystem.h"
 #include "System/Video/VideoSystem.h"
@@ -7,6 +9,7 @@
 #include "System/Graphics/TextureSystem.h"
 #include "System/Graphics/Texture.h"
 #include "System/Graphics/Texture2D.h"
+#include "System/Graphics/GraphicsSystem.h"
 /*I/O*/
 #include "IO/TextSerialiser.h"					/*Serialiser*/
 
@@ -51,10 +54,8 @@ namespace Dystopia
 	{
 		mWebmHdl->buffer = nullptr;
 
-		//glGenBuffers(1, &pboID);
-		//glBindBuffer(GL_PIXEL_PACK_BUFFER, pboID);
 		Image imgData{
-			"", false, true, GL_RGB, GL_RGB, 0, 0, 3, 0, nullptr
+			"", false, true, GL_RGB, GL_RGB, 480, 360, 3, 1, nullptr
 		};
 		mpTexture = CORE::Get<TextureSystem>()->LoadRaw<Texture2D>(&imgData);
 	}
@@ -84,6 +85,18 @@ namespace Dystopia
 	{
 		if (mPlayOnStart)
 			mState = VideoState::PLAYING;
+
+		if (GetOwner())
+		if (!GetOwner()->GetComponent<Renderer>())
+		{
+			GetOwner()->AddComponent<Renderer>();
+			GetOwner()->GetComponent<Renderer>()->SetTexture(mpTexture);
+			GetOwner()->GetComponent<Renderer>()->SetFlags(eObjFlag::FLAG_ACTIVE);
+
+			LoadVideo("TEST_VIDEO.webm");
+			Play();
+		}
+
 	}
 
 	void VideoRenderer::Update(float)
@@ -149,7 +162,8 @@ namespace Dystopia
 #if EDITOR && _DEBUG
 			/*Success file is webm*/
 			DEBUG_PRINT(eLog::MESSAGE, "%s is a webm file", VidName.c_str());
-			
+#endif
+
 			/*Want to guess frame rate???*/
 			webm_guess_framerate(mWebmHdl, mVidHdl);
 
@@ -166,10 +180,9 @@ namespace Dystopia
 #if EDITOR && _DEBUG 
 
 				DEBUG_PRINT(eLog::MESSAGE, "Decoder failed to initialise : line 127 VideoRenderer.cpp");
+#endif
 				return VideoErrorCode::DECODDER_FAIL_INIT;
-#endif
 			}
-#endif
 		}
 		else
 		{
@@ -218,6 +231,7 @@ namespace Dystopia
 #if EDITOR && _DEBUG
 			/*Success file is webm*/
 			//DEBUG_PRINT(eLog::MESSAGE, "%s is a webm file", VidName.c_str());
+#endif
 
 			/*Want to guess frame rate???*/
 			webm_guess_framerate(mWebmHdl, mVidHdl);
@@ -235,10 +249,9 @@ namespace Dystopia
 #if EDITOR && _DEBUG 
 
 				DEBUG_PRINT(eLog::MESSAGE, "Decoder failed to initialise : line 216 VideoRenderer.cpp");
+#endif
 				//return VideoErrorCode::DECODDER_FAIL_INIT;
-#endif
 			}
-#endif
 		}
 	}
 

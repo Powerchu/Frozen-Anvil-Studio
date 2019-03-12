@@ -124,7 +124,7 @@ Dystopia::Texture* Dystopia::TextureSystem::LoadTexture(HashString const&);
 template<typename Ty>
 Ty* Dystopia::TextureSystem::LoadRaw(Image*_ptr)
 {
-	auto ret = mTextures.EmplaceAs<Ty>(std::to_string(reinterpret_cast<uintptr_t>(_ptr)).c_str(), *_ptr);
+	auto ret = mTextures.EmplaceAs<Ty>("", *_ptr);
 
 	return ret;
 }
