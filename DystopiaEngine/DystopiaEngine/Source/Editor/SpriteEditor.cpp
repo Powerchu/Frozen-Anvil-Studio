@@ -269,7 +269,7 @@ void Editor::SpriteEditor::FieldAtlas(void)
 	}
 }
 
-void Editor::SpriteEditor::DrawSelectedGrid(float _ox, float _oy, float _ix, float _iy)
+void Editor::SpriteEditor::DrawSelectedGrid(float /*_ox*/, float /*_oy*/, float /*_ix*/, float /*_iy*/)
 {
 	//auto pCanvas = ImGui::GetWindowDrawList();
 	//auto& section = mpAtlas->GetAllSections()[mnSelectedSection];
