@@ -183,6 +183,7 @@ void Dystopia::SpriteRenderer::Update(float _fDT)
 					}
 					Stop();
 				}
+				else if (currIndex == endIndex) Stop();
 			}
 
 			mfAccTime -= mfFrameTime;

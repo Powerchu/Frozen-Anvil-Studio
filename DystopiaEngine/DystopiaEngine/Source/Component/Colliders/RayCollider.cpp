@@ -319,11 +319,12 @@ namespace Dystopia
 			return false;
 		auto && ListOfEdge = _Collider->GetConvexEdges();
 		bool    isColliding = false;
-		//rayEvent.mTimeIntersection = 99999.f;
-		for (auto const & elem : ListOfEdge)
+
+		for (auto & elem : ListOfEdge)
 		{
+			elem.mNorm3 = -elem.mNorm3;
 			/*Check if the edge normal is facing the ray*/
-			if (elem.mNorm3.Dot(_RayDir) >= 0.f || (_Pos - elem.mPos).Dot(_RayDir) > 0.f)
+			if (elem.mNorm3.Dot(_RayDir) * (_Pos - elem.mPos).Dot(elem.mNorm3) >= 0.f)
 				continue;
 			/*Check if the ray lies within the edge*/
 			auto && v1 = (_Pos - elem.mPos);
@@ -360,7 +361,7 @@ namespace Dystopia
 				if (_OutputResult != nullptr)
 				{
 					_OutputResult->mTimeIntersection = time;
-					_OutputResult->mEdgeNormal = elem.mNorm3;
+					_OutputResult->mEdgeNormal = -elem.mNorm3;
 					_OutputResult->mfPeneDepth = 0;
 					_OutputResult->mCollisionPoint = _Pos + time * _RayDir;
 					_OutputResult->mCollidedWith = _Collider->GetOwner();

@@ -11,6 +11,7 @@ Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
 /* HEADER END *****************************************************************************/
+#include "Editor/DataSheetEditor.h"
 #if EDITOR
 #include "Utility/DebugAssert.h"
 
@@ -64,11 +65,12 @@ namespace Editor //Dystopia
 
 	ConsoleLog::ConsoleLog(void)
 		: //EditorTab{ false },
-		mLabel{ "Console" },
-		mArrDebugTexts{ "" },
 		mnLoggingIndex{ 0 },
 		mnRecordIndex{ 0 },
-		mAdminCommands{ "" }
+		mLabel{ "Console" },
+		mAdminCommands{ "" },
+		mArrDebugTexts{ "" },
+		mnScrollToBottom{0}
 	{
 		EditorPanel::SetOpened(true);
 	}
@@ -94,6 +96,8 @@ namespace Editor //Dystopia
 	{
 		EGUI::Indent(5);
 		if (EGUI::Display::Button("Clear")) Clear();
+		ImGui::SameLine();
+		EGUI::Display::CheckBox("Cleared On Play", &mbClearOnPlay, true, "Clear console on Play?", 1);
 		EGUI::UnIndent(5);
 		EGUI::Display::HorizontalSeparator();
 		PrintLogs();
@@ -117,12 +121,19 @@ namespace Editor //Dystopia
 		return mLabel;
 	}
 
+	
+
 	void ConsoleLog::PrintLogs(void)
 	{
-		if (EGUI::StartChild("##DetailLog", Math::Vec2{Size().x - 2.f, Size().y - 85.f}, false))
+		if (EGUI::StartChild("##DetailLog", Math::Vec2{Size().x - 2.f, Size().y - 85.f}, true))
 		{
 			for (unsigned int i = 0; i < mnLoggingIndex; ++i)
 				ImGui::TextWrapped(mArrDebugTexts[i].c_str());
+
+			if (mnScrollToBottom > 0) {
+				ImGui::SetScrollHere(1.0f);
+				mnScrollToBottom--;
+			}
 		}
 		EGUI::EndChild();
 		EGUI::Display::HorizontalSeparator();
@@ -173,6 +184,7 @@ namespace Editor //Dystopia
 		}
 		else mArrDebugTexts[mnLoggingIndex++] = _text.c_str();
 		mnRecordIndex++;
+		mnScrollToBottom = 2;
 	}
 	
 	void ConsoleLog::Clear(void)
@@ -181,6 +193,16 @@ namespace Editor //Dystopia
 			e.clear();
 		mnLoggingIndex = 0;
 		mnRecordIndex = 0;
+	}
+
+	void ConsoleLog::SetIsClearedOnPlay(bool _b)
+	{
+		mbClearOnPlay = _b;
+	}
+
+	bool ConsoleLog::GetIsClearedOnPlay() const
+	{
+		return mbClearOnPlay;
 	}
 }
 
