@@ -189,7 +189,7 @@ namespace Dystopia
 				return mpChild->Tick(_deltaTime);
 			}
 
-			void Exit(eStatus _status) override
+			void Exit(eStatus) override
 			{
 				if (currCount <= 0) currCount = maxCount;
 			}
