@@ -4,6 +4,7 @@
 #include "System/Logger/LoggerSystem.h"
 #include "System/Video/VideoSystem.h"
 #include "System/File/FileSystem.h"
+#include "System/Graphics/GraphicsSystem.h"
 /*I/O*/
 #include "IO/TextSerialiser.h"					/*Serialiser*/
 
@@ -19,6 +20,10 @@
 #include "tools_common.h"
 #include "webmdec.h"
 #include "vpx/vpx_image.h"
+
+/*-Audio-*/
+#include "mkvparser/mkvreader.h"
+
 
 #if EDITOR
 #include "Editor/ProjectResource.h"
@@ -69,6 +74,10 @@ namespace Dystopia
 	{
 		if (mPlayOnStart)
 			mState = VideoState::PLAYING;
+		if (!GetOwner()->GetComponent<Renderer>())
+		{
+			GetOwner()->AddComponent<Renderer>();
+		}
 	}
 
 	void VideoRenderer::Update(float)
@@ -127,6 +136,8 @@ namespace Dystopia
 		mWebmHdl->block_entry   = nullptr;
 		mWebmHdl->cluster       = nullptr;
 
+		
+
 		if (file_is_webm(mWebmHdl, mVidHdl))
 		{
 			vpx_codec_dec_cfg_t cfg;
@@ -140,6 +151,9 @@ namespace Dystopia
 
 			/*Get video instance decode*/
 			decoder = get_vpx_decoder_by_fourcc(mVidHdl->fourcc);
+
+			/*Testing Audio*/
+			//static_cast<mkvparser::Segment*>(mWebmHdl->segment)->GetTracks();
 
 			if (vpx_codec_dec_init(mDecodec, decoder->codec_interface(), &cfg, NULL))
 			{
