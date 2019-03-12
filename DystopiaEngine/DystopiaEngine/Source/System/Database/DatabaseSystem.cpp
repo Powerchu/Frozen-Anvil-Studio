@@ -20,6 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <string>
 
 Dystopia::DatabaseSystem::DatabaseSystem(void) 
+	: mpAppDataSheet{ nullptr }
 {
 }
 
@@ -29,6 +30,15 @@ Dystopia::DatabaseSystem::~DatabaseSystem(void)
 
 bool Dystopia::DatabaseSystem::Init(void)
 {
+	HashString name{"AppdataSheet.ddata"};
+	auto fs = CORE::Get<FileSystem>();
+	HashString path = fs->GetFullPath(name.c_str(), eFileDir::eAppData).c_str();
+	if (!path.length())
+	{
+		path = fs->GetDirPath(eFileDir::eAppData) + "\\" + name;
+		auto file = TextSerialiser::OpenFile(path.c_str(), Serialiser::MODE_WRITE);
+	}
+	mpAppDataSheet = DefaultAllocator<DataSheet>::ConstructAlloc(path);
 	return true;
 }
 
@@ -38,6 +48,9 @@ void Dystopia::DatabaseSystem::Update(float)
 
 void Dystopia::DatabaseSystem::Shutdown(void)
 {
+	if (mpAppDataSheet)
+		mpAppDataSheet->CloseSheet();
+
 	for (auto& elem : mArrDataSheets)
 		elem.second.CloseSheet();
 
@@ -177,6 +190,11 @@ Dystopia::DataSheet* Dystopia::DatabaseSystem::GetDatabase(const HashString& _na
 		if (elem.first == n)
 			return &elem.second;
 	return nullptr;
+}
+
+Dystopia::DataSheet* Dystopia::DatabaseSystem::GetAppDataSheet(void)
+{
+	return mpAppDataSheet;
 }
 
 void Dystopia::DatabaseSystem::SaveAllSheets(void)
