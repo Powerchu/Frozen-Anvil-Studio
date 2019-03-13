@@ -100,12 +100,13 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 	DRAW_MODE = _nMode;
 }
 
-
+#define COMMA ,
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
 	mvDebugColour{.0f, 1.f, .0f, .1f}, mvClearCol{0, 0, 0, 0}, mfGamma{2.0f}, mfDebugLineThreshold{0.958f},
-	mPixelFormat{0}, mAvailable{0}, mSettings(0), mbVSync{false}, mvResolution{Gbl::WINDOW_WIDTH, Gbl::WINDOW_HEIGHT}
+	mPixelFormat{0}, mAvailable{0}, mSettings(0), _EDITOR_CODE(mbVSync{false} COMMA) mvResolution{Gbl::WINDOW_WIDTH, Gbl::WINDOW_HEIGHT}
 {
 }
+#undef COMMA
 
 Dystopia::GraphicsSystem::~GraphicsSystem(void)
 {
@@ -791,8 +792,12 @@ void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
 
 		mViews.Emplace(w, h, alpha, src, dst);
 	}
-
+#if EDITOR
 	_in >> mbDebugDrawCheckBox;
+#else
+	bool dummy;
+	_in >> dummy;
+#endif
 	_in >> mfDebugLineThreshold;
 	_in >> mvDebugColour;
 	_in >> alpha;
@@ -815,8 +820,11 @@ void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
 		_out << e.GetBlendSrc();
 		_out << e.GetBlendDst();
 	}
-
+#if EDITOR
 	_out << mbDebugDrawCheckBox;
+#else
+	_out << false;
+#endif 
 	_out << mfDebugLineThreshold;
 	_out << mvDebugColour;
 	_out << (mSettings & eGfxSettings::GRAPHICS_VSYNC);

@@ -149,8 +149,9 @@ namespace Dystopia
 
 
 #if EDITOR
-		int mnParticleLimit;
+
 #endif
+		int mnParticleLimit;
 
 		template <typename Ty, typename U>
 		bool AffectorExists(Ty&, U);

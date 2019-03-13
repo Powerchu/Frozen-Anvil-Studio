@@ -15,7 +15,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _EVENT_H
 #define _EVENT_H
 
-#include "DataStructure/Tuple.h"
 #include "DataStructure/HashString.h"
 #include <type_traits>
 #include "Utility/Utility.h"

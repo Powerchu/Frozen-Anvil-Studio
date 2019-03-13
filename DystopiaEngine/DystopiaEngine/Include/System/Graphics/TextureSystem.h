@@ -21,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "DataStructure/AutoArray.h"
 #include "DataStructure/MagicArray.h"
 #include "DataStructure/HashString.h"
+#include "DataStructure/Tuple.h"
 
 #include "IO/Image.h"
 #include "IO/ImageParser.h"
