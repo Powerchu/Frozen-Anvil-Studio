@@ -37,6 +37,7 @@
 #include "Editor/EditorCommands.h"
 #endif 
 
+#define __VIDEO_DEBUG 0
 
 namespace Dystopia
 {
@@ -52,8 +53,13 @@ namespace Dystopia
 	     mRecentFlags{0},
 		 mPlayOnStart{false}
 	{
-		mWebmHdl->buffer = nullptr;
-
+		mWebmHdl->buffer      = nullptr;
+		mWebmHdl->block       = nullptr;
+		mWebmHdl->block_entry = nullptr;
+		mWebmHdl->cluster     = nullptr;
+		mWebmHdl->reader      = nullptr;
+		mWebmHdl->segment     = nullptr;
+		memset(mWebmHdl,0, sizeof(WebmInputContext));
 		Image imgData{
 			"", false, true, GL_RGB, GL_RGB, 480, 360, 3, 1, nullptr
 		};
@@ -83,17 +89,38 @@ namespace Dystopia
 
 	void Dystopia::VideoRenderer::Init(void)
 	{
-		if (mPlayOnStart)
-			mState = VideoState::PLAYING;
-
 		if (GetOwner())
-		if (!GetOwner()->GetComponent<Renderer>())
-		{
-			GetOwner()->AddComponent<Renderer>();
-			GetOwner()->GetComponent<Renderer>()->SetTexture(mpTexture);
-			GetOwner()->GetComponent<Renderer>()->SetFlags(eObjFlag::FLAG_ACTIVE);
+			if (!GetOwner()->GetComponent<Renderer>())
+			{
+				GetOwner()->AddComponent<Renderer>();
+				GetOwner()->GetComponent<Renderer>()->SetTexture(mpTexture);
+				GetOwner()->GetComponent<Renderer>()->SetFlags(eObjFlag::FLAG_ACTIVE);
 
-			LoadVideo("TEST_VIDEO.webm");
+#if __VIDEO_DEBUG
+				/*For Testing*/
+				LoadVideo("TEST_VIDEO.webm");
+				Play();
+#endif
+			}
+			else
+			{
+				GetOwner()->GetComponent<Renderer>()->SetTexture(mpTexture);
+				GetOwner()->GetComponent<Renderer>()->SetFlags(eObjFlag::FLAG_ACTIVE);
+
+#if __VIDEO_DEBUG
+				/*For Testing*/
+				LoadVideo("TEST_VIDEO.webm");
+				Play();
+#endif 
+			}
+
+		if (mPlayOnStart && mVid.c_str())
+		{
+			if (mVidFileHandle)
+				ResetVideo();
+			else
+				LoadVideo(mVid);
+
 			Play();
 		}
 
@@ -118,21 +145,25 @@ namespace Dystopia
 	void VideoRenderer::Serialise(TextSerialiser & in) const
 	{
 		in.InsertStartBlock("VideoRenderer");
-
-
-
+		Component::Serialise(in);
+		in << mVid;
+		in << mPlayOnStart;
 		in.InsertEndBlock("VideoRenderer");
 	}
 	void VideoRenderer::Unserialise(TextSerialiser & out)
 	{
 		out.ConsumeStartBlock();
-
-
+		Component::Unserialise(out);
+		out >> mVid;
+		out >> mPlayOnStart;
 
 		out.ConsumeEndBlock();
 	}
 	_DLL_EXPORT_ONLY vid_error_c_t VideoRenderer::LoadVideo(HashString const & VidName)
 	{
+		if (!VidName.length())
+			return VideoErrorCode::VIDEO_FILE_NOT_FOUND;
+
 		auto && path = EngineCore::Get<FileSystem>()->GetFullPath(VidName.c_str(), eFileDir::eResource);
 
 		if (path.empty())
@@ -150,10 +181,7 @@ namespace Dystopia
 		mVidHdl->length = 0;
 
 		/*Prevent invalid pointer*/
-		mWebmHdl->buffer        = nullptr;
-		mWebmHdl->block         = nullptr;
-		mWebmHdl->block_entry   = nullptr;
-		mWebmHdl->cluster       = nullptr;
+		memset(mWebmHdl, 0, sizeof(WebmInputContext));
 
 		if (file_is_webm(mWebmHdl, mVidHdl))
 		{
@@ -196,11 +224,14 @@ namespace Dystopia
 
 	void VideoRenderer::CloseCurrentVideo()
 	{
+		if (!mVidFileHandle)
+			return;
+
 		mVidFileHandle && fclose(mVidFileHandle);
 		mVidFileHandle = nullptr;
 
 		webm_free(mWebmHdl);
-		mWebmHdl->buffer = nullptr;
+		memset(mWebmHdl, 0, sizeof(WebmInputContext));
 	}
 
 	void VideoRenderer::Play()
@@ -211,6 +242,8 @@ namespace Dystopia
 
 	void VideoRenderer::ResetVideo()
 	{
+		if (!mVidFileHandle) return;
+
 		/*Reset EOF flag*/
 		std::clearerr(mVidFileHandle);
 		/*Reset file back to top*/
@@ -346,15 +379,29 @@ namespace Dystopia
 
 	}
 
-
+#if EDITOR
 	void VideoRenderer::EditorUI(void) noexcept
 	{
 		EGUI::PushLeftAlign(140.f);
-		//if (EGUI::Display::TextField("Video File", mVid))
-		//{
-		//	LoadVideo(mVid);
-		//}
+		
+		static char buff[1024]{ 0 };
+
+		if (EGUI::Display::TextField("Video File", static_cast<char *>(buff),1024,true,250.f,true))
+		{
+			mVid = Ut::Move(HashString{ static_cast<char *>(buff) });
+		}
+		if(EGUI::Display::CheckBox("Play on Startup", &mPlayOnStart, true, nullptr, 2.0f))
+		{
+#if EDITOR && _DEBUG
+
+			DEBUG_PRINT(eLog::MESSAGE, "Play on Startup %d", static_cast<int>(mPlayOnStart));
+#endif
+		}
 		EGUI::PopLeftAlign();
 	}
+#endif
 }
+
+#undef __VIDEO_DEBUG
+
 
