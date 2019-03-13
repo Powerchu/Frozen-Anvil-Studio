@@ -28,6 +28,8 @@ namespace Dystopia
 		, mfStaticFrictionCof(0.5F)
 		, mfDynamicFrictionCof(0.7F)
 		, mOtherID{ _Target->GetID() }
+		, isATrigger{ false }
+		, isBTrigger{ false }
 	{
 
 	}
@@ -39,6 +41,8 @@ namespace Dystopia
 		, mfStaticFrictionCof(0.5F)
 		, mfDynamicFrictionCof(0.7F)
 		, mOtherID{ 0 }
+		, isATrigger{ false }
+		, isBTrigger{ false }
 	{
 
 	}
@@ -46,15 +50,14 @@ namespace Dystopia
 	void CollisionEvent::ApplyImpulse()
 	{
 		//if (mCollidedWith->GetName() == "Game Object_clone_clone_clone") __debugbreak();
+		if (isATrigger || isBTrigger) return;
 
 		constexpr auto velLimit = 50.0F;
 		const auto bodyA = mThisCollider->GetComponent<RigidBody>();
 		const auto bodyB = mCollidedWith->GetComponent<RigidBody>();
-		const auto colB = mCollidedWith->GetComponent<Collider>();
 
 		if (nullptr == bodyA || nullptr == bodyB) return;
 
-		if (colB->IsTrigger()) return;
 
 		const auto a_invmass = bodyA->GetInverseMass();
 		const auto b_invmass = bodyB->GetInverseMass();
@@ -136,14 +139,13 @@ namespace Dystopia
 	void CollisionEvent::ApplyPenetrationCorrection(const int iter) const
 	{
 	//	if (mCollidedWith->GetName() == "Game Object_clone_clone_clone") __debugbreak();
+		if (isATrigger || isBTrigger) return;
 
 		const auto bodyA = mThisCollider->GetComponent<RigidBody>();
 		const auto bodyB = mCollidedWith->GetComponent<RigidBody>();
-		const auto colB = mCollidedWith->GetComponent<Collider>();
 
 		if (nullptr == bodyA || nullptr == bodyB) return;
 
-		if (colB->IsTrigger()) return;
 
 		const auto a_invmass = bodyA->GetInverseMass();
 		const auto b_invmass = bodyB->GetInverseMass();
