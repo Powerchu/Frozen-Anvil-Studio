@@ -62,6 +62,12 @@ int webm_guess_framerate(struct WebmInputContext *webm_ctx,
 // Resets the WebMInputContext.
 void webm_free(struct WebmInputContext *webm_ctx);
 
+namespace
+{
+	void rewind_and_reset(struct WebmInputContext *const webm_ctx, struct VpxInputContext *const vpx_ctx);
+}
+
+
 #ifdef __cplusplus
 }  // extern "C"
 #endif

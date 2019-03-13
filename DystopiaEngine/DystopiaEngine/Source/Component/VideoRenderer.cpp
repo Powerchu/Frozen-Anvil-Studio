@@ -51,7 +51,8 @@ namespace Dystopia
 		 buffer{nullptr},
 		 mCodecIterator{nullptr},
 	     mRecentFlags{0},
-		 mPlayOnStart{false}
+		 mPlayOnStart{false},
+		 mbLoop{true}
 	{
 		mWebmHdl->buffer      = nullptr;
 		mWebmHdl->block       = nullptr;
@@ -168,6 +169,7 @@ namespace Dystopia
 
 		if (path.empty())
 			return VideoErrorCode::VIDEO_FILE_NOT_FOUND;
+
 		if (mVidFileHandle)
 			CloseCurrentVideo();
 
@@ -198,10 +200,11 @@ namespace Dystopia
 			/*Get video instance decode*/
 			decoder = get_vpx_decoder_by_fourcc(mVidHdl->fourcc);
 
-			if (vpx_codec_dec_init(mDecodec, decoder->codec_interface(), &cfg, NULL))
+			if (!vpx_codec_dec_init(mDecodec, decoder->codec_interface(), &cfg, NULL))
 			{
 				/*Decoder success*/
 				mState = VideoState::NEUTRAL;
+				webm_read_frame(mWebmHdl, &buffer, &mBufferSize);
 			}
 			else if (!decoder)
 			{
@@ -215,6 +218,7 @@ namespace Dystopia
 		else
 		{
 			fclose(mVidFileHandle);
+			memset(mVidFileHandle, 0, sizeof(WebmInputContext));
 			mVidFileHandle = nullptr;
 			return VideoErrorCode::VIDEO_FILE_NOT_WEBM;
 		}
@@ -236,7 +240,6 @@ namespace Dystopia
 
 	void VideoRenderer::Play()
 	{
-		ResetVideo();
 		mState = VideoState::PLAYING;
 	}
 
@@ -249,13 +252,25 @@ namespace Dystopia
 		/*Reset file back to top*/
 		std::fseek(mVidFileHandle, 0, SEEK_SET);
 
-		buffer      = nullptr;
-		mBufferSize = 0;
+		/*Reset EOF flag*/
+		std::clearerr(mVidHdl->file);
+		/*Reset file back to top*/
+		std::fseek(mVidHdl->file, 0, SEEK_SET);
+
+
+		::rewind_and_reset(mWebmHdl,mVidHdl);
+
+		buffer         = nullptr;
+		mCodecIterator = nullptr;
+		mBufferSize    = 0;
+
 
 		if (mPlayOnStart)
 			mState = VideoState::PLAYING;
 		else
 			mState = VideoState::NEUTRAL;
+
+		mWebmHdl->reached_eos = 0;
 
 		if (file_is_webm(mWebmHdl, mVidHdl))
 		{
@@ -272,7 +287,7 @@ namespace Dystopia
 			/*Get video instance decode*/
 			decoder = get_vpx_decoder_by_fourcc(mVidHdl->fourcc);
 
-			if (vpx_codec_dec_init(mDecodec, decoder->codec_interface(), &cfg, NULL))
+			if (!vpx_codec_dec_init(mDecodec, decoder->codec_interface(), &cfg, NULL))
 			{
 				/*Decoder success*/
 				mState = VideoState::NEUTRAL;
@@ -317,15 +332,26 @@ namespace Dystopia
 		}
 		else if (code == 1)
 		{
-			webm_free(mWebmHdl);
-			mState = VideoState::STOP;
-			buffer           = nullptr;
-			mCodecIterator   = nullptr;
-			mWebmHdl->buffer = NULL;
-			mRecentFlags = 0;
-			mBufferSize  = 0;
+			if (mbLoop)
+			{
+				this->ResetVideo();
+				mState = VideoState::PLAYING;
+				return VideoErrorCode::OK;
+			}
+			else
+			{
+				webm_free(mWebmHdl);
+				mState = VideoState::STOP;
+				buffer = nullptr;
+				mCodecIterator = nullptr;
+				mWebmHdl->buffer = NULL;
+				mRecentFlags = 0;
+				mBufferSize = 0;
 
-			return VideoErrorCode::WEBM_EOF;
+				memset(mWebmHdl, 0, sizeof(WebmInputContext));
+				return VideoErrorCode::WEBM_EOF;
+			}
+
 		}
 		return VideoErrorCode::UNKNOWN_ERROR;
 	}
@@ -395,6 +421,13 @@ namespace Dystopia
 #if EDITOR && _DEBUG
 
 			DEBUG_PRINT(eLog::MESSAGE, "Play on Startup %d", static_cast<int>(mPlayOnStart));
+#endif
+		}
+		if (EGUI::Display::CheckBox("Loop", &mbLoop))
+		{
+#if EDITOR && _DEBUG
+
+			DEBUG_PRINT(eLog::MESSAGE, "Video Loop is %d", static_cast<int>(mbLoop));
 #endif
 		}
 		EGUI::PopLeftAlign();

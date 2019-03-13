@@ -126,6 +126,7 @@ namespace Dystopia
 			VideoState            mState;
 			unsigned              mRecentFlags;
 			bool                  mPlayOnStart;
+			bool                  mbLoop;
 			/*Functions*/
 
 
