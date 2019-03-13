@@ -256,7 +256,7 @@ void Dystopia::EngineCore::ExecuteGame()
 	Init();
 	PostInit();
 
-	Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->LoadScene("Cave.dscene");
+	Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->LoadScene("SplashScreen.dscene");
 
 	while (!mbQuit)
 	{

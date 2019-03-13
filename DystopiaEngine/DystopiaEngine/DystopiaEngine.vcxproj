@@ -33,6 +33,7 @@
     <ClCompile Include="Resource\BehavioursScripts\BossAI.cpp" />
     <ClCompile Include="Resource\BehavioursScripts\BossUI.cpp" />
     <ClCompile Include="Resource\BehavioursScripts\CamAi.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\CameraZoomPoint.cpp" />
     <ClCompile Include="Resource\BehavioursScripts\CamShake.cpp" />
     <ClCompile Include="Resource\BehavioursScripts\ChangeLevel.cpp" />
     <ClCompile Include="Resource\BehavioursScripts\CharacterController.cpp" />
@@ -45,6 +46,7 @@
     <ClCompile Include="Resource\BehavioursScripts\Flocker.cpp" />
     <ClCompile Include="Resource\BehavioursScripts\ForceBlast.cpp" />
     <ClCompile Include="Resource\BehavioursScripts\ForceFlame.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\ForegroundPasser.cpp" />
     <ClCompile Include="Resource\BehavioursScripts\FormSlam.cpp" />
     <ClCompile Include="Resource\BehavioursScripts\FormSlamChild.cpp" />
     <ClCompile Include="Resource\BehavioursScripts\FormSpike.cpp" />
@@ -473,6 +475,7 @@
     <ClInclude Include="Resource\BehavioursScripts\BossAI.h" />
     <ClInclude Include="Resource\BehavioursScripts\BossUI.h" />
     <ClInclude Include="Resource\BehavioursScripts\CamAi.h" />
+    <ClInclude Include="Resource\BehavioursScripts\CameraZoomPoint.h" />
     <ClInclude Include="Resource\BehavioursScripts\CamShake.h" />
     <ClInclude Include="Resource\BehavioursScripts\ChangeLevel.h" />
     <ClInclude Include="Resource\BehavioursScripts\CharacterController.h" />
@@ -485,6 +488,7 @@
     <ClInclude Include="Resource\BehavioursScripts\Flocker.h" />
     <ClInclude Include="Resource\BehavioursScripts\ForceBlast.h" />
     <ClInclude Include="Resource\BehavioursScripts\ForceFlame.h" />
+    <ClInclude Include="Resource\BehavioursScripts\ForegroundPasser.h" />
     <ClInclude Include="Resource\BehavioursScripts\FormSlam.h" />
     <ClInclude Include="Resource\BehavioursScripts\FormSlamChild.h" />
     <ClInclude Include="Resource\BehavioursScripts\FormSpike.h" />
@@ -761,7 +765,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\lodepng\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

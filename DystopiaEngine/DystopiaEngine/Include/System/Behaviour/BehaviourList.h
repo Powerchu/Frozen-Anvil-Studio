@@ -71,8 +71,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Resource/BehavioursScripts/WormHitBox.h"
 #include "../Resource/BehavioursScripts/WormHorizontalCharge.h"
 #include "../Resource/BehavioursScripts/WormShadow.h"
-
-
+#include "../Resource/BehavioursScripts/CameraZoomPoint.h"
+#include "../Resource/BehavioursScripts/ForegroundPasser.h"
 #endif
 
 #if EDITOR
@@ -94,6 +94,7 @@ namespace Dystopia
 		class ChangeLevel,
 		class CharacterController,
 		class CharacterHitBox,
+		class CameraZoomPoint,
 		class EnvironmentalResponse,
 		class Fader,
 		class FallingPillar,
@@ -103,6 +104,7 @@ namespace Dystopia
 		class FormSlamChild,
 		class FormSpike,
 		class FormSpikeChild,
+		class ForegroundPasser,
 		class GoblinAI,
 		class PlayerUIController,
 		class PrimativeEnemy,

@@ -498,6 +498,8 @@
     <ClCompile Include="Resource\BehavioursScripts\SortChildOrder.cpp" />
     <ClCompile Include="Resource\BehavioursScripts\SplashManager.cpp" />
     <ClCompile Include="Resource\BehavioursScripts\TownPanning.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\CameraZoomPoint.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\ForegroundPasser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -1321,6 +1323,8 @@
     <ClInclude Include="Resource\BehavioursScripts\SplashManager.h" />
     <ClInclude Include="Resource\BehavioursScripts\TownPanning.h" />
     <ClInclude Include="Resource\BehavioursScripts\VinesPlatform.h" />
+    <ClInclude Include="Resource\BehavioursScripts\CameraZoomPoint.h" />
+    <ClInclude Include="Resource\BehavioursScripts\ForegroundPasser.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
