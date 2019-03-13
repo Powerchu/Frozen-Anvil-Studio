@@ -187,6 +187,7 @@ AutoArray<std::pair<OString, Gfx::eUniform_t>> const& Dystopia::Shader::GetVaria
 void Dystopia::Shader::ImportVariables(void) noexcept
 {
 	mVars.clear();
+	mTextures.clear();
 
 	for (auto& p : mPrograms)
 	{
@@ -211,7 +212,7 @@ void Dystopia::Shader::ImportVariables(void) noexcept
 	}
 
 	mTextures.Sort([](auto& lhs, auto& rhs) {
-		return lhs.second < rhs.second;
+		return lhs.second > rhs.second;
 	});
 
 	mbUpdate = false;

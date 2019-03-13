@@ -228,10 +228,15 @@ void Dystopia::PointAffector::PointAttract(Emitter& _emitter, float _dt)
 	if (GetSineY())
 		funY = std::sin(GetSineSpeedScale()*accdt) * GetSineRange();
 
+	int stride = _emitter.GetStride();
+
 	for (unsigned i = 0; i < allAccel.size(); ++i)
 	{
-		Math::Vec3 direction{ GetOffsetX() + funX + emitterPos.x - allPos[i].x,
-							  GetOffsetY() + funY + emitterPos.y - allPos[i].y, 
+		if (i * stride > allPos.size())
+			__debugbreak();
+
+		Math::Vec3 direction{ GetOffsetX() + funX + emitterPos.x - allPos[i * stride].x,
+							  GetOffsetY() + funY + emitterPos.y - allPos[i * stride].y, 
 							  emitterPos.z - allPos[i].z };
 	
 		if (direction.MagnitudeSqr() > Math::epsilon && direction.MagnitudeSqr() < (GetRange()*GetRange()))
@@ -258,11 +263,16 @@ void Dystopia::PointAffector::PointRepulse(Emitter& _emitter, float _dt)
 	if (accdt > Math::tau)
 		*reinterpret_cast<float*>(data + 12) -= Math::tau;
 
+	int stride = _emitter.GetStride();
+
 	for (unsigned i = 0; i < allAccel.size(); ++i)
 	{
-		Math::Vec3 direction{ allPos[i].x - (GetOffsetX() + emitterPos.x + funX),
-							  allPos[i].y - (GetOffsetY() + emitterPos.y + funY),
-							  allPos[i].z - emitterPos.z };
+		if (i * stride > allPos.size())
+			__debugbreak();
+
+		Math::Vec3 direction{ allPos[i * stride].x - (GetOffsetX() + emitterPos.x + funX),
+							  allPos[i * stride].y - (GetOffsetY() + emitterPos.y + funY),
+							  allPos[i * stride].z - emitterPos.z };
 	
 		if (direction.MagnitudeSqr() > Math::epsilon && direction.MagnitudeSqr() < (GetRange()*GetRange()))
 			allAccel[i] = direction.Normalise() * static_cast<float>(GetStrength());
