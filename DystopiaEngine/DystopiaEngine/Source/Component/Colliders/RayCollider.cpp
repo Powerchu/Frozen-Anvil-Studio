@@ -322,7 +322,7 @@ namespace Dystopia
 
 		for (auto & elem : ListOfEdge)
 		{
-			elem.mNorm3 = -elem.mNorm3;
+			//elem.mNorm3 = elem.mNorm3;
 			/*Check if the edge normal is facing the ray*/
 			if (elem.mNorm3.Dot(_RayDir) * (_Pos - elem.mPos).Dot(elem.mNorm3) >= 0.f)
 				continue;
@@ -361,7 +361,7 @@ namespace Dystopia
 				if (_OutputResult != nullptr)
 				{
 					_OutputResult->mTimeIntersection = time;
-					_OutputResult->mEdgeNormal = -elem.mNorm3;
+					_OutputResult->mEdgeNormal = elem.mNorm3;
 					_OutputResult->mfPeneDepth = 0;
 					_OutputResult->mCollisionPoint = _Pos + time * _RayDir;
 					_OutputResult->mCollidedWith = _Collider->GetOwner();
