@@ -147,7 +147,7 @@ void Dystopia::SpriteRenderer::Update(float _fDT)
 					mnRow = startRow;
 				}
 
-				if (currIndex >= endIndex - 1)
+				if (currIndex > endIndex - 1)
 				{
 					mnCol = startCol;
 					mnRow = startRow;
@@ -183,7 +183,6 @@ void Dystopia::SpriteRenderer::Update(float _fDT)
 					}
 					Stop();
 				}
-				else if (currIndex == endIndex) Stop();
 			}
 
 			mfAccTime -= mfFrameTime;

@@ -61,6 +61,7 @@ namespace Dystopia
 		inline GameObject* FindGameObject(uint64_t _nID);
 		inline GameObject* FindGameObject(const HashString& _strName);
 		inline GameObject* FindGameObject_cstr(const char * const _str);
+		inline HashString GetCurrentSceneName(void) const;
 
 		AutoArray<GameObject*>& FindGameObjectByTag(const HashString& _tag);
 

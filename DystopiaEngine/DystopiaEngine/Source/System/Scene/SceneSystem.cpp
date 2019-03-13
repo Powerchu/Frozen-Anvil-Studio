@@ -108,6 +108,11 @@ Dystopia::GameObject* Dystopia::SceneSystem::FindGameObject_cstr(const char* con
 	return FindGameObject(HashString{ _str });
 }
 
+inline HashString Dystopia::SceneSystem::GetCurrentSceneName(void) const
+{
+	return GetCurrentScene().GetSceneName().c_str();
+}
+
 Dystopia::GameObject * Dystopia::SceneSystem::Instantiate(const HashString& _prefabName, const Math::Pt3D& _position)
 {
 	HashString file = _prefabName;
