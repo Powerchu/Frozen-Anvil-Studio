@@ -27,6 +27,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Resource/BehavioursScripts/SplashManager.h"
 #include "../Resource/BehavioursScripts/AiDirector.h"
 #include "../Resource/BehavioursScripts/BossAI.h"
+#include "../Resource/BehavioursScripts/BossUI.h"
 #include "../Resource/BehavioursScripts/CamAi.h"
 #include "../Resource/BehavioursScripts/CamShake.h"
 #include "../Resource/BehavioursScripts/CharacterController.h"
@@ -51,6 +52,27 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Resource/BehavioursScripts/VinesPlatform.h"
 #include "../Resource/BehavioursScripts/IntroductionScene.h"
 #include "../Resource/BehavioursScripts/CheckPoint.h"
+#include "../Resource/BehavioursScripts/ChangeLevel.h"
+
+#include "../Resource/BehavioursScripts/EmpoweredStone.h"
+#include "../Resource/BehavioursScripts/EnvironmentalResponse.h"
+#include "../Resource/BehavioursScripts/Flocker.h"
+#include "../Resource/BehavioursScripts/IceEncasing.h"
+#include "../Resource/BehavioursScripts/IcePillar.h"
+#include "../Resource/BehavioursScripts/Icicles.h"
+#include "../Resource/BehavioursScripts/IcicleZone.h"
+#include "../Resource/BehavioursScripts/IntroductionScene.h"
+#include "../Resource/BehavioursScripts/SkillRelay.h"
+#include "../Resource/BehavioursScripts/SortChildOrder.h"
+#include "../Resource/BehavioursScripts/StageRelay.h"
+#include "../Resource/BehavioursScripts/TestBubble.h"
+#include "../Resource/BehavioursScripts/TownPanning.h"
+#include "../Resource/BehavioursScripts/WormCave.h"
+#include "../Resource/BehavioursScripts/WormHitBox.h"
+#include "../Resource/BehavioursScripts/WormHorizontalCharge.h"
+#include "../Resource/BehavioursScripts/WormShadow.h"
+
+
 #endif
 
 #if EDITOR
@@ -66,8 +88,10 @@ namespace Dystopia
 		class SplashManager,
 		class AiDirector,
 		class BossAI,
+		class BossUI,
 		class CamAi,
 		class CamShake,
+		class ChangeLevel,
 		class CharacterController,
 		class CharacterHitBox,
 		class EnvironmentalResponse,
@@ -89,8 +113,24 @@ namespace Dystopia
 		class SortChildOrder,
 		class VinesPlatform,
 		class IntroductionScene,
-		class CheckPoint
-		
+		class CheckPoint,
+		class EmpoweredStone,
+		class EnvironmentalResponse,
+		class Flocker,
+		class IceEncasing,
+		class IcePillar,
+		class Icicles,
+		class IcicleZone,
+		class IntroductionScene,
+		class SkillRelay,
+		class SortChildOrder,
+		class StageRelay,
+		class TestBubble,
+		class TownPanning,
+		class WormCave,
+		class WormHitBox,
+		class WormHorizontalCharge,
+		class WormShadow
 	>::result;
 }
 

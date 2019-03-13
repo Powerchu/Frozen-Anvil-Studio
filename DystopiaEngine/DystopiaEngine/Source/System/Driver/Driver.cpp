@@ -251,13 +251,12 @@ bool Dystopia::EngineCore::GetQuitState() const
 
 void Dystopia::EngineCore::ExecuteGame()
 {
-
 	PreInit();
 	LoadSettings();
 	Init();
 	PostInit();
 
-	Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->LoadScene("SplashScreen.dscene");
+	Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->LoadScene("Cave.dscene");
 
 	while (!mbQuit)
 	{

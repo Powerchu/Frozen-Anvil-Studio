@@ -133,6 +133,7 @@ inline void Dystopia::ComponentDonor<Ty, Settings>::InitComponents(void)
 			continue;
 		elem.Init();
 	}
+
 }
 
 #endif		// INCLUDE GUARD

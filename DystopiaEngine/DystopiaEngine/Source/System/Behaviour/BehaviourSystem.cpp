@@ -835,104 +835,214 @@ void BehaviourSystem::NewBehaviourReference(BehaviourWrap _BWrap)
 			}
 		}
 #else
-		/*Clear all current Behaviour*/
-		ClearAllBehaviours();
-		/*Consume "BEHAVIOUR_SYSTEM BLOCK"*/
-		_obj.ConsumeStartBlock();
-		/*Get Number of Behaviour Scripts*/
-		unsigned size = 0;
-		_obj >> size;
-		for (unsigned i = 0; i < size; ++i)
+/*Clear all current Behaviour*/
+ClearAllBehaviours();
+/*Consume "BEHAVIOUR_SYSTEM BLOCK"*/
+_obj.ConsumeStartBlock();
+/*Get Number of Behaviour Scripts*/
+unsigned size = 0;
+_obj >> size;
+for (unsigned i = 0; i < size; ++i)
+{
+	_obj.ConsumeStartBlock();
+	std::string BehaviourScriptName;
+	_obj >> BehaviourScriptName;
+	std::string test = BehaviourScriptName;
+	if (BehaviourScriptName == "WormCave")
+	{
+		
+		test = "";
+	}
+	for (auto const & elem : mvBehaviourReferences)
+	{
+
+
+		if (elem.mName == BehaviourScriptName)
 		{
-			_obj.ConsumeStartBlock();
-			std::string BehaviourScriptName;
-			_obj >> BehaviourScriptName;
-			for (auto const & elem : mvBehaviourReferences)
+
+			unsigned NumOfBehaviour = 0;
+			_obj >> NumOfBehaviour;
+			for (unsigned u = 0; u < NumOfBehaviour; ++u)
 			{
-				if (elem.mName == BehaviourScriptName)
+				/*Make new Behaviour*/
+				_obj.ConsumeStartBlock(); /*Consume START BEHAVIOUR BLOCK*/
+				uint64_t _ID = 0;
+				unsigned _Flags = 0;
+				_obj >> _ID;
+				_obj >> _Flags;
+				auto * ptr = RequestBehaviour(_ID, elem.mName);
+
+				_obj.ConsumeStartBlock(); /*Consume Behaviour Member Variable Block*/
+				if (!ptr)
 				{
-					unsigned NumOfBehaviour = 0;
-					_obj >> NumOfBehaviour;
-					for (unsigned u = 0; u < NumOfBehaviour; ++u)
+					std::string Var;
+					_obj >> Var;
+					while (Var != "END" && Var != "")
 					{
-						/*Make new Behaviour*/
-						_obj.ConsumeStartBlock(); /*Consume START BEHAVIOUR BLOCK*/
-						uint64_t _ID = 0;
-						unsigned _Flags = 0;
-						_obj >> _ID;
-						_obj >> _Flags;
-						auto * ptr = RequestBehaviour(_ID, elem.mName);
-						_obj.ConsumeStartBlock(); /*Consume Behaviour Member Variable Block*/
-						if (!ptr)
+						_obj.ConsumeStartBlock();
+						/*Call Unserialise*/
+						_obj.ConsumeStartBlock();
+						_obj >> Var;
+					}
+
+				}
+				else
+				{
+					auto BehaviourMetaData = ptr->GetMetaData();
+					if (BehaviourMetaData)
+					{
+
+						std::string Var;
+						_obj >> Var;
+						while (Var != "END" && Var != "")
 						{
-							std::string Var;
-							_obj >> Var;
-							while (Var != "END")
+							if (BehaviourMetaData[Var.c_str()])
+							{
+								_obj.ConsumeStartBlock();
+								/*Call Unserialise*/
+								BehaviourMetaData[Var.c_str()].Unserialise(ptr, _obj, BehaviourHelper::SuperUnserialiseFunctor{});
+								_obj.ConsumeStartBlock();
+							}
+							else
 							{
 								_obj.ConsumeStartBlock();
 								/*Call Unserialise*/
 								_obj.ConsumeStartBlock();
-								_obj >> Var;
 							}
-
-						}
-						else
-						{
-							auto BehaviourMetaData = ptr->GetMetaData();
-							if (BehaviourMetaData)
-							{
-
-								std::string Var;
-								_obj >> Var;
-								while (Var != "END")
-								{
-									if (BehaviourMetaData[Var.c_str()])
-									{
-										_obj.ConsumeStartBlock();
-										/*Call Unserialise*/
-										BehaviourMetaData[Var.c_str()].Unserialise(ptr, _obj, BehaviourHelper::SuperUnserialiseFunctor{});
-										_obj.ConsumeStartBlock();
-									}
-									else
-									{
-										_obj.ConsumeStartBlock();
-										/*Call Unserialise*/
-										_obj.ConsumeStartBlock();
-									}
-									_obj >> Var;
-								}
-							}
-						}
-						_obj.ConsumeEndBlock();   /*Consume Behaviour Member Variable Block*/
-												  /*Time to Super Set Functor*/
-						_obj.ConsumeEndBlock();  /*Consume END BEHAVIOUR BLOCK*/
-
-												 /*Insert to GameObject*/
-
-						if (_Flags & eObjFlag::FLAG_EDITOR_OBJ)
-						{
-							/*Object is editor object*/
-							DeleteBehaviour(ptr);
-						}
-						else
-						{
-							/*Insert to GameObject*/
-							auto SceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
-							if (auto x = SceneSys->GetActiveScene().FindGameObject(_ID))
-							{
-								ptr->SetOwner(x);
-								x->AddComponent(ptr, BehaviourTag{});
-							}
-							else
-							{
-								DeleteBehaviour(ptr);
-							}
+							_obj >> Var;
 						}
 					}
-					break;
 				}
+				_obj.ConsumeEndBlock();   /*Consume Behaviour Member Variable Block*/
+				/*Time to Super Set Functor*/
+				_obj.ConsumeEndBlock();  /*Consume END BEHAVIOUR BLOCK*/
+
+				if (ptr && static_cast<eObjFlag>(_Flags) & eObjFlag::FLAG_EDITOR_OBJ)
+				{
+					/*Object is editor object*/
+					DeleteBehaviour(ptr);
+				}
+				else
+				{
+					if (ptr)
+					{
+						/*Insert to GameObject*/
+						auto SceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
+						if (auto x = SceneSys->GetActiveScene().FindGameObject(_ID))
+						{
+							ptr->SetOwner(x);
+							x->AddComponent(ptr, BehaviourTag{});
+						}
+						else
+						{
+							DeleteBehaviour(ptr);
+						}
+					}
+				}
+
 			}
+			break;
 		}
+	}
+}
+		///*Clear all current Behaviour*/
+		//ClearAllBehaviours();
+		///*Consume "BEHAVIOUR_SYSTEM BLOCK"*/
+		//_obj.ConsumeStartBlock();
+		///*Get Number of Behaviour Scripts*/
+		//unsigned size = 0;
+		//_obj >> size;
+		//for (unsigned i = 0; i < size; ++i)
+		//{
+		//	_obj.ConsumeStartBlock();
+		//	std::string BehaviourScriptName;
+		//	_obj >> BehaviourScriptName;
+		//	for (auto const & elem : mvBehaviourReferences)
+		//	{
+		//		if (elem.mName == BehaviourScriptName)
+		//		{
+		//			unsigned NumOfBehaviour = 0;
+		//			_obj >> NumOfBehaviour;
+		//			for (unsigned u = 0; u < NumOfBehaviour; ++u)
+		//			{
+		//				/*Make new Behaviour*/
+		//				_obj.ConsumeStartBlock(); /*Consume START BEHAVIOUR BLOCK*/
+		//				uint64_t _ID = 0;
+		//				unsigned _Flags = 0;
+		//				_obj >> _ID;
+		//				_obj >> _Flags;
+		//				auto * ptr = RequestBehaviour(_ID, elem.mName);
+		//				_obj.ConsumeStartBlock(); /*Consume Behaviour Member Variable Block*/
+		//				if (!ptr)
+		//				{
+		//					std::string Var;
+		//					_obj >> Var;
+		//					while (Var != "END")
+		//					{
+		//						_obj.ConsumeStartBlock();
+		//						/*Call Unserialise*/
+		//						_obj.ConsumeStartBlock();
+		//						_obj >> Var;
+		//					}
+
+		//				}
+		//				else
+		//				{
+		//					auto BehaviourMetaData = ptr->GetMetaData();
+		//					if (BehaviourMetaData)
+		//					{
+
+		//						std::string Var;
+		//						_obj >> Var;
+		//						while (Var != "END")
+		//						{
+		//							if (BehaviourMetaData[Var.c_str()])
+		//							{
+		//								_obj.ConsumeStartBlock();
+		//								/*Call Unserialise*/
+		//								BehaviourMetaData[Var.c_str()].Unserialise(ptr, _obj, BehaviourHelper::SuperUnserialiseFunctor{});
+		//								_obj.ConsumeStartBlock();
+		//							}
+		//							else
+		//							{
+		//								_obj.ConsumeStartBlock();
+		//								/*Call Unserialise*/
+		//								_obj.ConsumeStartBlock();
+		//							}
+		//							_obj >> Var;
+		//						}
+		//					}
+		//				}
+		//				_obj.ConsumeEndBlock();   /*Consume Behaviour Member Variable Block*/
+		//										  /*Time to Super Set Functor*/
+		//				_obj.ConsumeEndBlock();  /*Consume END BEHAVIOUR BLOCK*/
+
+		//										 /*Insert to GameObject*/
+
+		//				if (_Flags & eObjFlag::FLAG_EDITOR_OBJ)
+		//				{
+		//					/*Object is editor object*/
+		//					DeleteBehaviour(ptr);
+		//				}
+		//				else
+		//				{
+		//					/*Insert to GameObject*/
+		//					auto SceneSys = EngineCore::GetInstance()->GetSystem<SceneSystem>();
+		//					if (auto x = SceneSys->GetActiveScene().FindGameObject(_ID))
+		//					{
+		//						ptr->SetOwner(x);
+		//						x->AddComponent(ptr, BehaviourTag{});
+		//					}
+		//					else
+		//					{
+		//						DeleteBehaviour(ptr);
+		//					}
+		//				}
+		//			}
+		//			break;
+		//		}
+		//	}
+		//}
 #endif
 	}
 
