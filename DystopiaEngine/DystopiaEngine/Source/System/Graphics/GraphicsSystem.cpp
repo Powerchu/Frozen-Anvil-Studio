@@ -109,6 +109,7 @@ Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
 
 Dystopia::GraphicsSystem::~GraphicsSystem(void)
 {
+	::Gfx::ShutdownGraphicsAPI();
 
 }
 

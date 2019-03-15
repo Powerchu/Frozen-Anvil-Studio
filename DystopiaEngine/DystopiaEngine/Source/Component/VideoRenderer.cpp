@@ -53,7 +53,8 @@ namespace Dystopia
 	     mRecentFlags{0},
 		 mPlayOnStart{false},
 		 mbLoop{true},
-		 pboID{0}
+		 mpTexture{nullptr},
+		 mpCurrImg{nullptr}
 	{
 		mWebmHdl->buffer      = nullptr;
 		mWebmHdl->block       = nullptr;
@@ -63,10 +64,9 @@ namespace Dystopia
 		mWebmHdl->segment     = nullptr;
 		memset(mWebmHdl,0, sizeof(WebmInputContext));
 
-		if (!pboID)
-			glGenBuffers(1, &pboID);
 
-		Image imgData{
+		Image imgData
+		{
 			"", false, true, GL_RGB, GL_RGB, 0, 0, 3, 1, nullptr
 		};
 		mpTexture = CORE::Get<TextureSystem>()->LoadRaw<Texture2D>(&imgData);
@@ -79,7 +79,8 @@ namespace Dystopia
 
 	VideoRenderer::~VideoRenderer()
 	{
-		CloseCurrentVideo();
+		//if(mWebmHdl->buffer)
+		//CloseCurrentVideo();
 
 		delete mWebmHdl;
 		delete mVidHdl;
@@ -96,6 +97,7 @@ namespace Dystopia
 
 	void Dystopia::VideoRenderer::Init(void)
 	{
+		
 		if (GetOwner())
 			if (!GetOwner()->GetComponent<Renderer>())
 			{
@@ -118,6 +120,10 @@ namespace Dystopia
 
 			if(mPlayOnStart)
 				Play();
+		}
+		if (mpCurrImg)
+		{
+			mBuffer.Resize(mpCurrImg->d_h, mpCurrImg->d_w, this);
 		}
 
 	}
@@ -196,7 +202,12 @@ namespace Dystopia
 			{
 				/*Decoder success*/
 				mState = VideoState::NEUTRAL;
-				webm_read_frame(mWebmHdl, &buffer, &mBufferSize);
+				//if (ReadNextFrame() == VideoErrorCode::OK)
+				//{
+				//	mpCurrImg = GetFrameImage();
+				//	mBuffer.Resize(mpCurrImg->d_h, mpCurrImg->d_w, this);
+				//}
+				
 			}
 			else if (!decoder)
 			{
@@ -232,6 +243,7 @@ namespace Dystopia
 		memset(mWebmHdl, 0, sizeof(WebmInputContext));
 		memset(mVidHdl,  0, sizeof(VpxInputContext));
 
+		mpCurrImg     = nullptr;
 		buffer        = nullptr;
 		mBufferSize   = 0;
 		mBufferSize   = 0;
@@ -262,7 +274,7 @@ namespace Dystopia
 		buffer         = nullptr;
 		mCodecIterator = nullptr;
 		mBufferSize    = 0;
-
+		mpCurrImg      = nullptr;
 
 		if (mPlayOnStart)
 			mState = VideoState::PLAYING;
@@ -290,7 +302,11 @@ namespace Dystopia
 			{
 				/*Decoder success*/
 				mState = VideoState::NEUTRAL;
-				webm_read_frame(mWebmHdl, &buffer, &mBufferSize);
+				//if (ReadNextFrame() == VideoErrorCode::OK)
+				//{
+				//	mpCurrImg = GetFrameImage();
+				//	mBuffer.Resize(mpCurrImg->d_h, mpCurrImg->d_w, this);	
+				//}
 			}
 			else if (!decoder)
 			{
@@ -298,7 +314,6 @@ namespace Dystopia
 
 				DEBUG_PRINT(eLog::MESSAGE, "Decoder failed to initialise : line 216 VideoRenderer.cpp");
 #endif
-				//return VideoErrorCode::DECODDER_FAIL_INIT;
 			}
 		}
 	}
@@ -358,7 +373,33 @@ namespace Dystopia
 
 	vpx_image * VideoRenderer::GetFrameImage()
 	{
-		return vpx_codec_get_frame(mDecodec, &mCodecIterator);
+		if (mBuffer.IsComplete())
+			mpCurrImg = nullptr;
+
+		if (!mpCurrImg)
+		{
+			mpCurrImg = vpx_codec_get_frame(mDecodec, &mCodecIterator);
+		}
+
+		return mpCurrImg;
+	}
+
+	bool VideoRenderer::BufferIsComplete() const
+	{
+		return mBuffer.IsComplete();
+	}
+
+	bool VideoRenderer::BufferIsComplete()
+	{
+		bool b = mBuffer.IsComplete();
+		if (b)
+			mBuffer.ResetCount();
+		return b;
+	}
+
+	unsigned VideoRenderer::RgbBufferBufferID() const
+	{
+		return mBuffer.GetPboID();
 	}
 
 #if EDITOR
@@ -392,47 +433,69 @@ namespace Dystopia
 #endif
 
 
+
+
+
 	RGB_BUFFER::RGB_BUFFER()
 		:height{ 0 }, width{ 0 }, stride{ sizeof(uint8_t) * 3 }, count{ 0 }, rgb_buff{ nullptr }, pboID{ 0 }, mImg{ nullptr }
 	{
+		glGenBuffers(1, &pboID);
 	}
 	RGB_BUFFER::RGB_BUFFER(unsigned h, unsigned w)
 		: height{ h }, width{ w }, stride{ sizeof(uint8_t) * 3 }, count{ 0 }, rgb_buff{ nullptr /*static_cast<uint8_t*>(::operator new(h*w*stride))*/ }, pboID{ 0 }
 	{
-		//memset(rgb_buff, 255, h*w*stride);
+		glGenBuffers(1, &pboID);
 	}
 	RGB_BUFFER::~RGB_BUFFER()
 	{
 		//::operator delete (rgb_buff);
 
-		if (rgb_buff)
-		{
-			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboID);
-			glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
-			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-		}
-		rgb_buff = nullptr;
-		glDeleteBuffers(1, &pboID);
-		pboID = 0;
+		DeleteBuffer();
 	}
+
+
+
 	void RGB_BUFFER::Resize(unsigned h, unsigned w, VideoRenderer * _pRenderer)
 	{
 		constexpr GLbitfield mapFlags = GL_MAP_INVALIDATE_RANGE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_FLUSH_EXPLICIT_BIT | GL_MAP_WRITE_BIT;
-
-		//::operator delete(rgb_buff);
-		//rgb_buff = nullptr;
-		//rgb_buff = static_cast<uint8_t*>(::operator new(h*w*stride));
-		//memset(rgb_buff, 255, h*w*stride);
 		height = h;
 		width = w;
 		count = 0;
 
-		_pRenderer->GetTexture()->ReplaceTexture(w, h, nullptr, false);
 
+		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+		_pRenderer->GetTexture()->Bind();
+		_pRenderer->GetTexture()->ReplaceTexture(w, h, nullptr, false);
+		if (auto err = glGetError())
+		{
+			__debugbreak();
+		}
+		if (rgb_buff)
+		{
+			//glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
+			//if (auto err = glGetError())
+			//{
+			//	__debugbreak();
+			//}
+			DeleteBuffer();
+			if (auto err = glGetError())
+			{
+				__debugbreak();
+			}
+			glGenBuffers(1, &pboID);
+			if (auto err = glGetError())
+			{
+				__debugbreak();
+			}
+		}
 		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboID);
-		if (rgb_buff) glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
-		glBufferStorage(GL_PIXEL_UNPACK_BUFFER, w*h*stride, nullptr, GL_MAP_PERSISTENT_BIT | GL_MAP_WRITE_BIT | GL_DYNAMIC_STORAGE_BIT);
+		if (auto err = glGetError())
+		{
+			__debugbreak();
+		}
+
 		//glBufferData(GL_PIXEL_UNPACK_BUFFER, w*h*stride, nullptr, GL_STREAM_DRAW);
+		glBufferStorage(GL_PIXEL_UNPACK_BUFFER, w*h*stride, nullptr, GL_MAP_PERSISTENT_BIT | GL_MAP_WRITE_BIT | GL_DYNAMIC_STORAGE_BIT);
 		if (auto err = glGetError())
 		{
 			__debugbreak();
@@ -450,16 +513,18 @@ namespace Dystopia
 			__debugbreak();
 		}
 	}
+
 	void RGB_BUFFER::ResetCount()
 	{
 		count = 0;
 	}
+
 	void RGB_BUFFER::insert(int r, int g, int b)
 	{
 		if (count >= height * width)
 			return;
-		new (rgb_buff + count * stride)       uint8_t{ static_cast<uint8_t>(r) };
-		new (rgb_buff + count * stride + 1)   uint8_t{ static_cast<uint8_t>(g) };
+		new (rgb_buff + count * stride)         uint8_t{ static_cast<uint8_t>(r) };
+		new (rgb_buff + count * stride + 1)     uint8_t{ static_cast<uint8_t>(g) };
 		new (rgb_buff + count++ * stride + 2)   uint8_t{ static_cast<uint8_t>(b) };
 	}
 	bool RGB_BUFFER::IsComplete() const
@@ -468,6 +533,25 @@ namespace Dystopia
 		{
 			return true;
 		}
+
+		return false;
+	}
+	unsigned RGB_BUFFER::GetPboID() const
+	{
+		return pboID;
+	}
+	void RGB_BUFFER::DeleteBuffer()
+	{
+		if (rgb_buff)
+		{
+			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboID);
+			glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
+			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+		}
+
+		rgb_buff = nullptr;
+		glDeleteBuffers(1, &pboID);
+		pboID = 0;
 	}
 }
 

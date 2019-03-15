@@ -10,7 +10,7 @@ struct vpx_image;
 namespace Dystopia
 {
 	class VideoRenderer;
-	class RGB_BUFFER;
+	struct RGB_BUFFER;
 	class VideoSystem : public Systems, public ComponentDonor<VideoRenderer>
 	{
 

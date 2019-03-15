@@ -54,9 +54,8 @@ namespace Dystopia
 		unsigned width;
 		unsigned stride;
 		unsigned count;
-		unsigned pboID;
-		uint8_t   * rgb_buff;
-		vpx_image * mImg;
+
+
 
 		RGB_BUFFER();
 
@@ -67,7 +66,16 @@ namespace Dystopia
 		void Resize(unsigned h, unsigned w, VideoRenderer * _pRenderer);
 		void ResetCount();
 		void insert(int r, int g, int b);
-		bool IsComplete() const;
+		bool IsComplete()   const;
+		unsigned GetPboID() const;
+
+	private:
+		uint8_t   * rgb_buff;
+		vpx_image * mImg;
+		unsigned    pboID;
+
+
+		void DeleteBuffer();
 	};
 
 	class _DLL_EXPORT VideoRenderer : public Component
@@ -122,6 +130,9 @@ namespace Dystopia
 
 			vid_error_c_t ReadNextFrame();
 			vpx_image *   GetFrameImage();
+			bool          BufferIsComplete() const;
+			bool          BufferIsComplete();
+			unsigned      RgbBufferBufferID() const;
 
 #if EDITOR
 			void EditorUI(void) noexcept override;
@@ -140,12 +151,12 @@ namespace Dystopia
 			vpx_codec_ctx      *  mDecodec;
 			uint8_t            *  buffer;
 			size_t                mBufferSize;
-			unsigned              pboID;
 			const void *          mCodecIterator;
 			
 			//void* glBuffer;
 
 			Texture2D* mpTexture;
+			vpx_image* mpCurrImg;
 			RGB_BUFFER mBuffer;
 
 			VideoState            mState;
