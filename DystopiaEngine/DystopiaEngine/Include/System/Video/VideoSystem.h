@@ -10,28 +10,10 @@ struct vpx_image;
 namespace Dystopia
 {
 	class VideoRenderer;
+	class RGB_BUFFER;
 	class VideoSystem : public Systems, public ComponentDonor<VideoRenderer>
 	{
-		struct RGB_BUFFER
-		{
-			unsigned height;
-			unsigned width;
-			unsigned stride;
-			unsigned count;
-			unsigned pboID;
-			uint8_t * rgb_buff;
 
-			RGB_BUFFER();
-
-			RGB_BUFFER(unsigned h, unsigned w);
-
-			~RGB_BUFFER();
-
-			void Resize(unsigned h, unsigned w, VideoRenderer * _pRenderer);
-			void ResetCount();
-			void insert(int r, int g, int b);
-			bool IsComplete() const;
-		};
 	public:
 
 		VideoSystem();
@@ -62,12 +44,12 @@ namespace Dystopia
 
 
 	private:
-		RGB_BUFFER  mBuffer;
-		RGB_BUFFER  mBuffer2;
+		//RGB_BUFFER  mBuffer;
+		//RGB_BUFFER  mBuffer2;
 
-		static unsigned pboID;
+		//static unsigned pboID;
 
-		vpx_image * mCurrImg;
+		//vpx_image * mCurrImg;
 		Timer         mTimer;
 		void Convert_YUV_RGB(RGB_BUFFER * buffer, vpx_image const * yuv_image);
 		int  Clamp(int v) const;

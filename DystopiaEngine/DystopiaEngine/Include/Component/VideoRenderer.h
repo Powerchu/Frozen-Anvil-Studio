@@ -21,6 +21,7 @@ namespace Dystopia
 	class VideoSystem;
 	class Texture2D;
 
+
 	typedef enum class VideoErrorCode : unsigned
 	{
 		OK = 0,
@@ -46,6 +47,29 @@ namespace Dystopia
 		
 
 	}vid_status_t;
+
+	struct RGB_BUFFER
+	{
+		unsigned height;
+		unsigned width;
+		unsigned stride;
+		unsigned count;
+		unsigned pboID;
+		uint8_t   * rgb_buff;
+		vpx_image * mImg;
+
+		RGB_BUFFER();
+
+		RGB_BUFFER(unsigned h, unsigned w);
+
+		~RGB_BUFFER();
+
+		void Resize(unsigned h, unsigned w, VideoRenderer * _pRenderer);
+		void ResetCount();
+		void insert(int r, int g, int b);
+		bool IsComplete() const;
+	};
+
 	class _DLL_EXPORT VideoRenderer : public Component
 	{
 		public:
@@ -116,12 +140,13 @@ namespace Dystopia
 			vpx_codec_ctx      *  mDecodec;
 			uint8_t            *  buffer;
 			size_t                mBufferSize;
+			unsigned              pboID;
 			const void *          mCodecIterator;
 			
 			//void* glBuffer;
-			//unsigned pboID;
-			Texture2D* mpTexture;
 
+			Texture2D* mpTexture;
+			RGB_BUFFER mBuffer;
 
 			VideoState            mState;
 			unsigned              mRecentFlags;

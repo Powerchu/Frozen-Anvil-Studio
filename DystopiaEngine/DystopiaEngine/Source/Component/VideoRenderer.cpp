@@ -52,7 +52,8 @@ namespace Dystopia
 		 mCodecIterator{nullptr},
 	     mRecentFlags{0},
 		 mPlayOnStart{false},
-		 mbLoop{true}
+		 mbLoop{true},
+		 pboID{0}
 	{
 		mWebmHdl->buffer      = nullptr;
 		mWebmHdl->block       = nullptr;
@@ -61,23 +62,28 @@ namespace Dystopia
 		mWebmHdl->reader      = nullptr;
 		mWebmHdl->segment     = nullptr;
 		memset(mWebmHdl,0, sizeof(WebmInputContext));
+
+		if (!pboID)
+			glGenBuffers(1, &pboID);
+
 		Image imgData{
-			"", false, true, GL_RGB, GL_RGB, 480, 360, 3, 1, nullptr
+			"", false, true, GL_RGB, GL_RGB, 0, 0, 3, 1, nullptr
 		};
 		mpTexture = CORE::Get<TextureSystem>()->LoadRaw<Texture2D>(&imgData);
 	}
 
 	Dystopia::VideoRenderer::VideoRenderer(VideoRenderer const & rhs)
 	{
+		__debugbreak();
 	}
 
 	VideoRenderer::~VideoRenderer()
 	{
+		CloseCurrentVideo();
+
 		delete mWebmHdl;
 		delete mVidHdl;
 		delete mDecodec;
-
-		//CORE::Get<TextureSystem>()->UnloadTexture(mpTexture);
 	}
 
 	void Dystopia::VideoRenderer::Awake(void)
@@ -96,33 +102,22 @@ namespace Dystopia
 				GetOwner()->AddComponent<Renderer>();
 				GetOwner()->GetComponent<Renderer>()->SetTexture(mpTexture);
 				GetOwner()->GetComponent<Renderer>()->SetFlags(eObjFlag::FLAG_ACTIVE);
-
-#if __VIDEO_DEBUG
-				/*For Testing*/
-				LoadVideo("TEST_VIDEO.webm");
-				Play();
-#endif
 			}
 			else
 			{
 				GetOwner()->GetComponent<Renderer>()->SetTexture(mpTexture);
 				GetOwner()->GetComponent<Renderer>()->SetFlags(eObjFlag::FLAG_ACTIVE);
-
-#if __VIDEO_DEBUG
-				/*For Testing*/
-				LoadVideo("TEST_VIDEO.webm");
-				Play();
-#endif 
 			}
 
-		if (mPlayOnStart && mVid.c_str())
+		if (mVid.c_str())
 		{
 			if (mVidFileHandle)
 				ResetVideo();
 			else
 				LoadVideo(mVid);
 
-			Play();
+			if(mPlayOnStart)
+				Play();
 		}
 
 	}
@@ -182,9 +177,6 @@ namespace Dystopia
 		mVidHdl->file   = mVidFileHandle;
 		mVidHdl->length = 0;
 
-		/*Prevent invalid pointer*/
-		memset(mWebmHdl, 0, sizeof(WebmInputContext));
-
 		if (file_is_webm(mWebmHdl, mVidHdl))
 		{
 			vpx_codec_dec_cfg_t cfg;
@@ -235,7 +227,14 @@ namespace Dystopia
 		mVidFileHandle = nullptr;
 
 		webm_free(mWebmHdl);
+
+
 		memset(mWebmHdl, 0, sizeof(WebmInputContext));
+		memset(mVidHdl,  0, sizeof(VpxInputContext));
+
+		buffer        = nullptr;
+		mBufferSize   = 0;
+		mBufferSize   = 0;
 	}
 
 	void VideoRenderer::Play()
@@ -291,6 +290,7 @@ namespace Dystopia
 			{
 				/*Decoder success*/
 				mState = VideoState::NEUTRAL;
+				webm_read_frame(mWebmHdl, &buffer, &mBufferSize);
 			}
 			else if (!decoder)
 			{
@@ -318,7 +318,7 @@ namespace Dystopia
 		int code = webm_read_frame(mWebmHdl, &buffer, &mBufferSize);
 		if (code == 0)
 		{
-			if (vpx_codec_decode(mDecodec, buffer, mBufferSize, NULL, 0))
+			if (vpx_codec_decode(mDecodec, buffer, mBufferSize, NULL, 0) != VPX_CODEC_OK)
 			{
 
 #if EDITOR && _DEBUG
@@ -359,50 +359,6 @@ namespace Dystopia
 	vpx_image * VideoRenderer::GetFrameImage()
 	{
 		return vpx_codec_get_frame(mDecodec, &mCodecIterator);
-		/*If current frame has not been completely read*/
-		//if (mRecentFlags)
-		//{
-			//vpx_image_t * img = nullptr;
-			//if (img = vpx_codec_get_frame(mDecodec, &mCodecIterator))
-			//{
-			//	return img;
-			//}
-			//else
-			//{
-			//	mRecentFlags = 0;
-			//	//mCodecIterator = nullptr;
-			//	return nullptr;
-			//}
-		//}
-		/*Get next frame*/
-//		else
-//		{
-//			vid_error_c_t error_code = ReadNextFrame();
-//			if (error_code == VideoErrorCode::WEBM_EOF)
-//			{
-//				/*Free and reset the webm handle*/
-//				webm_free(mWebmHdl);
-//				mState           = VideoState::STOP;
-//				buffer           = nullptr;
-//				mCodecIterator   = nullptr;
-//				mWebmHdl->buffer = NULL;
-//				mRecentFlags     = 0;
-//				return nullptr;
-//			}
-//			else if (error_code == VideoErrorCode::UNKNOWN_ERROR)
-//			{
-//#if EDITOR && _DEBUG
-//				DEBUG_PRINT(eLog::MESSAGE, "Unknown Error in GetFrameImage");
-//#endif
-//				return nullptr;
-//			}
-//			else
-//			{
-//				mRecentFlags = 1;
-//				return GetFrameImage();
-//			}
-//		}
-
 	}
 
 #if EDITOR
@@ -414,6 +370,7 @@ namespace Dystopia
 
 		if (EGUI::Display::TextField("Video File", static_cast<char *>(buff),1024,true,250.f,true))
 		{
+			CloseCurrentVideo();
 			mVid = Ut::Move(HashString{ static_cast<char *>(buff) });
 		}
 		if(EGUI::Display::CheckBox("Play on Startup", &mPlayOnStart, true, nullptr, 2.0f))
@@ -433,6 +390,85 @@ namespace Dystopia
 		EGUI::PopLeftAlign();
 	}
 #endif
+
+
+	RGB_BUFFER::RGB_BUFFER()
+		:height{ 0 }, width{ 0 }, stride{ sizeof(uint8_t) * 3 }, count{ 0 }, rgb_buff{ nullptr }, pboID{ 0 }, mImg{ nullptr }
+	{
+	}
+	RGB_BUFFER::RGB_BUFFER(unsigned h, unsigned w)
+		: height{ h }, width{ w }, stride{ sizeof(uint8_t) * 3 }, count{ 0 }, rgb_buff{ nullptr /*static_cast<uint8_t*>(::operator new(h*w*stride))*/ }, pboID{ 0 }
+	{
+		//memset(rgb_buff, 255, h*w*stride);
+	}
+	RGB_BUFFER::~RGB_BUFFER()
+	{
+		//::operator delete (rgb_buff);
+
+		if (rgb_buff)
+		{
+			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboID);
+			glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
+			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+		}
+		rgb_buff = nullptr;
+		glDeleteBuffers(1, &pboID);
+		pboID = 0;
+	}
+	void RGB_BUFFER::Resize(unsigned h, unsigned w, VideoRenderer * _pRenderer)
+	{
+		constexpr GLbitfield mapFlags = GL_MAP_INVALIDATE_RANGE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_FLUSH_EXPLICIT_BIT | GL_MAP_WRITE_BIT;
+
+		//::operator delete(rgb_buff);
+		//rgb_buff = nullptr;
+		//rgb_buff = static_cast<uint8_t*>(::operator new(h*w*stride));
+		//memset(rgb_buff, 255, h*w*stride);
+		height = h;
+		width = w;
+		count = 0;
+
+		_pRenderer->GetTexture()->ReplaceTexture(w, h, nullptr, false);
+
+		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboID);
+		if (rgb_buff) glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
+		glBufferStorage(GL_PIXEL_UNPACK_BUFFER, w*h*stride, nullptr, GL_MAP_PERSISTENT_BIT | GL_MAP_WRITE_BIT | GL_DYNAMIC_STORAGE_BIT);
+		//glBufferData(GL_PIXEL_UNPACK_BUFFER, w*h*stride, nullptr, GL_STREAM_DRAW);
+		if (auto err = glGetError())
+		{
+			__debugbreak();
+		}
+		rgb_buff = static_cast<uint8_t*>(glMapBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, w*h*stride, mapFlags));
+
+		if (auto err = glGetError())
+		{
+			__debugbreak();
+		}
+		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+
+		if (auto err = glGetError())
+		{
+			__debugbreak();
+		}
+	}
+	void RGB_BUFFER::ResetCount()
+	{
+		count = 0;
+	}
+	void RGB_BUFFER::insert(int r, int g, int b)
+	{
+		if (count >= height * width)
+			return;
+		new (rgb_buff + count * stride)       uint8_t{ static_cast<uint8_t>(r) };
+		new (rgb_buff + count * stride + 1)   uint8_t{ static_cast<uint8_t>(g) };
+		new (rgb_buff + count++ * stride + 2)   uint8_t{ static_cast<uint8_t>(b) };
+	}
+	bool RGB_BUFFER::IsComplete() const
+	{
+		if (count == height * width)
+		{
+			return true;
+		}
+	}
 }
 
 #undef __VIDEO_DEBUG
