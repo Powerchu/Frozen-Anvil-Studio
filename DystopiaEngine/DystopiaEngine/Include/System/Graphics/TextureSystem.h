@@ -61,6 +61,8 @@ namespace Dystopia
 		template <typename Ty>
 		Ty* LoadRaw(Image*, HashString const&);
 
+		void Free(Texture*) noexcept;
+
 		void SaveAtlases(void);
 		void SaveTexture(Texture const*);
 
