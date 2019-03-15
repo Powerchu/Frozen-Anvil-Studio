@@ -21,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorProc.h"
 #include "Editor/RuntimeMeta.h"
 #include "Editor/SceneView.h"
+#include "Editor/ConsoleLog.h"
 
 #include "System/Driver/Driver.h"
 #include "System/Logger/LoggerSystem.h"
@@ -416,6 +417,8 @@ void Editor::EditorStates::Play(void)
 {
 	EditorMain::GetInstance()->ChangeState(eState::PLAY);
 	Dystopia::EngineCore::GetInstance()->InterruptContinue();
+	if (Editor::EditorMain::GetInstance()->GetPanel<Editor::ConsoleLog>()->GetIsClearedOnPlay())
+		Editor::EditorMain::GetInstance()->GetPanel<Editor::ConsoleLog>()->Clear();
 
 	Dystopia::SystemList<std::make_index_sequence<Ut::SizeofList<Dystopia::UsableComponents>::value>>::InitDonors();
 }

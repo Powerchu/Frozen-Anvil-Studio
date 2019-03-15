@@ -367,6 +367,25 @@ void Dystopia::Renderer::TextureField()
 {
 	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
 
+	const auto& texList = mpShader->GetTextureList();
+	if (mTextureFields.size() > texList.size())
+	{
+		mTextureFields.resize(texList.size());
+	}
+	else if (mTextureFields.size() < texList.size())
+	{
+		int idx = 0;
+
+		while (idx < mTextureFields.size())
+		{
+			mTextureFields[idx].Get<0>() = texList[idx].second;
+			++idx;
+		}
+
+		while (idx < texList.size())
+			mTextureFields.EmplaceBack(texList[idx++].second, nullptr);
+	}
+
 	for (auto& [idx, mpTexture] : mTextureFields)
 	{
 		EGUI::PushID(idx);
@@ -374,7 +393,7 @@ void Dystopia::Renderer::TextureField()
 		HashString displayName{"Texture"};
 		if (mpShader)
 		{
-			const auto& texList = mpShader->GetTextureList();
+			//const auto& texList = mpShader->GetTextureList();
 			for (auto& tp : texList)
 			{
 				if (tp.second == idx)

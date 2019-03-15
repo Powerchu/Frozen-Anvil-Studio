@@ -239,9 +239,9 @@ namespace EGUI
 		}
 		======================================================================================================================= */
 		Array<eDragStatus, 3> VectorFields(const char * _label, Math::Vector4 *_outputVec, float _dragSpeed = 1.0f,
-			float _min = 0.0f, float _max = 1.0f, float _width = 50.f, bool _wParamEnable = false);
+			float _min = 0.0f, float _max = 1.0f, float _width = 50.f, bool _wParamEnable = false, unsigned digits = 3);
 		Array<eDragStatus, 2> VectorFields(const char * _label, Math::Vector2 *_outputVec, float _dragSpeed = 1.0f,
-			float _min = 0.0f, float _max = 1.0f, float _width = 50.f);
+			float _min = 0.0f, float _max = 1.0f, float _width = 50.f, unsigned digits = 3);
 		Array<eDragStatus, 2> VectorFieldsInt(const char *_label, Math::Vector2 *_outputVec, int _dragSpeed = 1,
 			int _min = 0, int _max = 1, float _width = 50.f);
 		/* =======================================================================================================================
@@ -284,7 +284,7 @@ namespace EGUI
 		}
 		======================================================================================================================= */
 		eDragStatus DragFloat(const char * _label, float *_pOutFloat, float _dragSpeed = 1.0f,
-			float _min = 0.0f, float _max = 1.0f, bool _hideText = false, float _width = 100.f);
+			float _min = 0.0f, float _max = 1.0f, bool _hideText = false, float _width = 100.f, unsigned digits = 3);
 		eDragStatus SliderFloat(const char * _label, float *_pOutFloat, float _min = 0.0f, float _max = 1.0f,
 			bool _hideText = false, float _width = 100.f);
 		eDragStatus SliderInt(const char * _label, int *_pOutInt, int _min = 0, int _max = 1,

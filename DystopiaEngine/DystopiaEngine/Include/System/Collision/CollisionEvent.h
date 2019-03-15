@@ -34,6 +34,8 @@ namespace Dystopia
 		float				mfDynamicFrictionCof;
 		float               mTimeIntersection;
 		u64int              mOtherID;
+		bool				isATrigger;
+		bool				isBTrigger;
 
 		void ApplyImpulse();
 		void ApplyPenetrationCorrection(int iter = 1) const;

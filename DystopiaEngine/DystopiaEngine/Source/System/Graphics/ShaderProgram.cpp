@@ -99,6 +99,7 @@ Dystopia::ShaderProgram& Dystopia::ShaderProgram::operator=(ShaderProgram&& _rhs
 	Ut::Swap(mbIsCustom, _rhs.mbIsCustom);
 	Ut::Swap(mbValid   , _rhs.mbValid   );
 	Ut::Swap(mVars     , _rhs.mVars     );
+	Ut::Swap(mTextures , _rhs.mTextures );
 
 	return *this;
 }
@@ -140,6 +141,8 @@ bool Dystopia::ShaderProgram::LoadProgram(Gfx::ShaderStage _stage, char const* _
 
 	if (GetInstance()->LinkShader(mProgram, shader))
 	{
+		mVars.clear();
+		mTextures.clear();
 		GetInstance()->QueryVariables(mProgram, mVars, mTextures);
 	}
 	else

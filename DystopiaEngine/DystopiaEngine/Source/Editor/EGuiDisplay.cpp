@@ -347,7 +347,7 @@ namespace EGUI
 			return ImGui::RadioButton(_label, _pValueStorage, _btnValue);
 		}
 
-		eDragStatus DragFloat(const char * _label, float* _outputFloat, float _dragSpeed, float _min, float _max, bool _hideText, float _width)
+		eDragStatus DragFloat(const char * _label, float* _outputFloat, float _dragSpeed, float _min, float _max, bool _hideText, float _width, unsigned digits)
 		{
 			static POINT p;
 			static const int xPos = (GetSystemMetrics(SM_CXSCREEN)) / 2;
@@ -364,7 +364,10 @@ namespace EGUI
 			ImGui::PushItemWidth(_width);
 			//HashString invi{ "##DragF" };
 			//invi += _label;
-			changing = ImGui::DragFloat(_label, _outputFloat, _dragSpeed, _min, _max, "%.3f");
+			std::string format{ "%." };
+			format += std::to_string(digits);
+			format += "f";
+			changing = ImGui::DragFloat(_label, _outputFloat, _dragSpeed, _min, _max, format.c_str());
 			ImGui::PopItemWidth();
 
 			if (!IsItemActiveLastFrame() && ImGui::IsItemActive())
@@ -452,7 +455,7 @@ namespace EGUI
 			return eNO_CHANGE;
 		}
 
-		Array<eDragStatus, 3> VectorFields(const char * _label, Math::Vector4 *_outputVec, float _dragSpeed, float _min, float _max, float _width, bool _wParamEnable)
+		Array<eDragStatus, 3> VectorFields(const char * _label, Math::Vector4 *_outputVec, float _dragSpeed, float _min, float _max, float _width, bool _wParamEnable, unsigned digits)
 		{
 			std::string field1 = "##VecX", field2 = "##VecY", field3 = "##VecZ";
 			float x, y, z;
@@ -467,17 +470,22 @@ namespace EGUI
 			Label(_label);
 			SameLine(DefaultAlighnmentSpacing, g_StackLeftAlign.IsEmpty() ? DefaultAlignLeft : g_StackLeftAlign.Peek());
 
-			Label("X:"); ImGui::SameLine();
+			Label("X"); 
+			ImGui::SameLine(0,4);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
-			eDragStatus statX = EGUI::Display::DragFloat(field1.c_str(), &x, _dragSpeed, _min, _max, true, _width);
+			eDragStatus statX = EGUI::Display::DragFloat(field1.c_str(), &x, _dragSpeed, _min, _max, true, _width, digits);
 			if (statX != eDragStatus::eNO_CHANGE) _outputVec->x = x;
 
-			ImGui::SameLine(); Label("Y:"); ImGui::SameLine();
-			eDragStatus statY = EGUI::Display::DragFloat(field2.c_str(), &y, _dragSpeed, _min, _max, true, _width);
+			ImGui::SameLine(0,0); 
+			Label("Y"); 
+			ImGui::SameLine(0,4);
+			eDragStatus statY = EGUI::Display::DragFloat(field2.c_str(), &y, _dragSpeed, _min, _max, true, _width, digits);
 			if (statY != eDragStatus::eNO_CHANGE) _outputVec->y = y;
 
-			ImGui::SameLine(); Label("Z:"); ImGui::SameLine();
-			eDragStatus statZ = EGUI::Display::DragFloat(field3.c_str(), &z, _dragSpeed, _min, _max, true, _width);
+			ImGui::SameLine(0, 0);
+			Label("Z"); 
+			ImGui::SameLine(0,4);
+			eDragStatus statZ = EGUI::Display::DragFloat(field3.c_str(), &z, _dragSpeed, _min, _max, true, _width, digits);
 			if (statZ != eDragStatus::eNO_CHANGE) _outputVec->z = z;
 
 			if (_wParamEnable)
@@ -485,15 +493,15 @@ namespace EGUI
 				float w = _outputVec->w;
 				std::string field4 = "##VecW";
 				field4 += _label;
-				ImGui::SameLine(); Label("W:"); ImGui::SameLine();
-				eDragStatus statW = EGUI::Display::DragFloat(field4.c_str(), &w, _dragSpeed, _min, _max, true, _width);
+				ImGui::SameLine(0,0); Label("W"); ImGui::SameLine(0,4);
+				const eDragStatus statW = EGUI::Display::DragFloat(field4.c_str(), &w, _dragSpeed, _min, _max, true, _width, digits);
 				if (statW != eDragStatus::eNO_CHANGE) _outputVec->w = w;
 			}
 
 			return Array<eDragStatus, 3>{statX, statY, statZ};
 		}
 
-		Array<eDragStatus, 2> VectorFields(const char * _label, Math::Vector2 *_outputVec, float _dragSpeed, float _min, float _max, float _width)
+		Array<eDragStatus, 2> VectorFields(const char * _label, Math::Vector2 *_outputVec, float _dragSpeed, float _min, float _max, float _width, unsigned digits)
 		{
 			std::string field1 = "##VecX", field2 = "##VecY";
 			float x, y;
@@ -509,11 +517,11 @@ namespace EGUI
 
 			Label("X:"); ImGui::SameLine();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - DefaultAlighnmentOffsetY);
-			eDragStatus statX = EGUI::Display::DragFloat(field1.c_str(), &x, _dragSpeed, _min, _max, true, _width);
+			eDragStatus statX = EGUI::Display::DragFloat(field1.c_str(), &x, _dragSpeed, _min, _max, true, _width, digits);
 			if (statX != eDragStatus::eNO_CHANGE) _outputVec->x = x;
 
 			ImGui::SameLine(); Label("Y:"); ImGui::SameLine();
-			eDragStatus statY = EGUI::Display::DragFloat(field2.c_str(), &y, _dragSpeed, _min, _max, true, _width);
+			eDragStatus statY = EGUI::Display::DragFloat(field2.c_str(), &y, _dragSpeed, _min, _max, true, _width, digits);
 			if (statY != eDragStatus::eNO_CHANGE) _outputVec->y = y;
 
 			ImGui::PopItemWidth();

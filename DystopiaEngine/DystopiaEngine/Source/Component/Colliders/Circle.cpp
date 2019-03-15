@@ -201,6 +201,8 @@ namespace Dystopia
 		const auto positionDelta   =  other_pos - this_pos;
 		const float combinedRadius = this->GetRadius() + other_col.GetRadius();
 		CollisionEvent col_info(GetOwner(), other_col.GetOwner());
+		col_info.isATrigger = this->mbIsTrigger;
+		col_info.isBTrigger = other_col.mbIsTrigger;
 
 		// If the position delta is < combined radius, it is colliding
 		if (positionDelta.MagnitudeSqr() < combinedRadius*combinedRadius) // collided, getCollisionEvent
@@ -271,6 +273,8 @@ namespace Dystopia
 			other_body = other_col.GetOwner()->GetComponent<RigidBody>();
 
 		CollisionEvent newEvent(this->GetOwner(), other_col.GetOwner());
+		newEvent.isATrigger = this->mbIsTrigger;
+		newEvent.isBTrigger = other_col.mbIsTrigger;
 		newEvent.mEdgeNormal = Math::MakeVector3D(0, 0, 0);
 		AutoArray<Edge> const & ConvexEdges = other_col.GetConvexEdges();
 

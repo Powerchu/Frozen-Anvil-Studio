@@ -224,7 +224,9 @@ namespace Dystopia
 					mbColliding = true;
 					_pColB.mbColliding = true;
 					/*Use EPA to get collision information*/
-					const CollisionEvent ColEvent = GetCollisionEvent(Simplex, _pColB);
+					CollisionEvent ColEvent = GetCollisionEvent(Simplex, _pColB);
+					ColEvent.isATrigger = this->mbIsTrigger;
+					ColEvent.isBTrigger = _pColB.mbIsTrigger;
 					//marr_ContactSets.push_back(ColEvent);
 					
 					//InformOtherComponents(true, ColEvent);
@@ -248,6 +250,8 @@ namespace Dystopia
 			other_body = _ColB.GetOwner()->GetComponent<RigidBody>();
 
 		CollisionEvent newEvent(this->GetOwner(), _ColB.GetOwner());
+		newEvent.isATrigger = this->mbIsTrigger;
+		newEvent.isBTrigger = _ColB.mbIsTrigger;
 
 		const auto & Edges = GetConvexEdges();
 		bool isInside = true;

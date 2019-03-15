@@ -138,7 +138,6 @@ namespace Editor
 		const float sz3 = ((Size().x - sz1) * 0.5f) + splitterSz;
 
 		const Math::Vec2 folderWindowSize = Math::Vec2{ sz1, h };
-		const Math::Vec2 fileWindowSize = Math::Vec2{ sz3, h };
 		
 		
 		if (mResetToFile.length())
@@ -159,6 +158,8 @@ namespace Editor
 
 		EGUI::SameLine();
 		ImGui::PushStyleColor(ImGuiCol_ChildWindowBg, ImVec4{ 0,0,0,0 });
+		const Math::Vec2 fileWindowSize = Math::Vec2{ ImGui::GetContentRegionAvailWidth(), h };
+
 		EGUI::StartChild("##FileWindow", fileWindowSize, true);
 		if (mpCurrentFolder)
 		{
