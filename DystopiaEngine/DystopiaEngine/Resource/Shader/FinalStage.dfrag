@@ -12,11 +12,8 @@ uniform sampler2D texUI;
 
 void main()
 {
-  // Ignore colour blending for now
   vec4 color1 = texture(texGame, vUV);
-  vec4 color2 = texture(texUI, vUV);
-  
-  //vec3 col = color1.rgb * (1.f - color2.a) + color2.rgb * color2.a;
+  vec4 color2 = texture(texUI  , vUV);
   vec3 col = color1.rgb + color2.a * (color2.rgb - color1.rgb);
   
   // Gamma correction

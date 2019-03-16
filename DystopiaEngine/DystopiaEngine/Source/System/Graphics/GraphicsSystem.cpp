@@ -105,7 +105,7 @@ Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
 
 Dystopia::GraphicsSystem::~GraphicsSystem(void)
 {
-
+	::Gfx::ShutdownGraphicsAPI();
 }
 
 void Dystopia::GraphicsSystem::SetGamma(float _fGamma) noexcept
@@ -334,7 +334,7 @@ namespace
 	};
 
 	template <typename T>
-	inline void DrawRenderer(T& _renderer, Dystopia::Shader* s, float _fGamma)
+	inline void DrawRenderer(T& _renderer, Dystopia::Shader* s)
 	{
 		auto m = _renderer->GetOwner()->GetComponent<Dystopia::Transform>()->GetTransformMatrix();
 
@@ -343,7 +343,6 @@ namespace
 				t->Bind(n);
 
 		s->UploadUniform("ModelMat", m);
-		s->UploadUniform("Gamma", _fGamma);
 
 		for (auto&e : _renderer->GetOverrides())
 		{
@@ -423,9 +422,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4 const& _View, 
 		s->UploadUniform("ViewMat", _View);
 
 		if (r->GetOwner()->GetFlags() & ActiveFlags)
-		{
-			DrawRenderer(r, s, mfGamma);
-		}
+			DrawRenderer(r, s);
 	}
 
 	for (auto& r : set2)
@@ -441,7 +438,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4 const& _View, 
 			s->UploadUniform("ProjectMat", _Proj);
 			s->UploadUniform("ViewMat", _View);
 			s->UploadUniform("vColor", r->GetTint());
-			DrawRenderer(r, s, mfGamma);
+			DrawRenderer(r, s);
 		}
 	}
 
@@ -457,7 +454,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4 const& _View, 
 		
 		if (r->GetOwner()->GetFlags() & ActiveFlags)
 		{
-			DrawRenderer(r, s, mfGamma);
+			DrawRenderer(r, s);
 		}
 	}
 
@@ -712,8 +709,8 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 
 #if (EDITOR)
 	fb.Bind();
-	auto const FbTex = fb.AsTexture();
-	unsigned const w = FbTex->GetWidth(), h = FbTex->GetHeight();
+	auto const fbTex = fb.AsTexture();
+	unsigned const w = fbTex->GetWidth(), h = fbTex->GetHeight();
 
 	glViewport(0, 0, w, h);
 #else
@@ -726,7 +723,7 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 #endif
 
 	GetGameView().AsTexture()->Bind(0);
-	GetUIView().AsTexture()->Bind(1);
+	GetUIView()  .AsTexture()->Bind(1);
 
 	auto const model =  Math::Scale(2.f, (float) Ut::Constant<int, EDITOR ? -2 : 2>::value);
 	Shader* shader = CORE::Get<ShaderSystem>()->GetShader("FinalStage");
@@ -764,7 +761,7 @@ void Dystopia::GraphicsSystem::LoadDefaults(void)
 {
 	unsigned const x = static_cast<unsigned>(mvResolution.x), y = static_cast<unsigned>(mvResolution.y);
 	mViews.Emplace(x, y, true);
-	mViews.Emplace(x, y, true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+	mViews.Emplace(x, y, true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	mViews.Emplace(x, y, false);
 
 #if EDITOR
