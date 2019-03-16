@@ -26,13 +26,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::Framebuffer::Framebuffer(void) noexcept
-	: mpTexture{ nullptr }, mbAlpha{ false }, mnWidth{ 0 }, mnHeight{ 0 },
+	: mAttachments{ }, mbAlpha{ false }, mnWidth{ 0 }, mnHeight{ 0 },
 	mBlendSrc{ GL_SRC_ALPHA }, mBlendDst{ GL_ONE_MINUS_SRC_ALPHA }
 {
 }
 
 Dystopia::Framebuffer::Framebuffer(unsigned _nWidth, unsigned _nHeight, bool _bAlpha, int _blendSrc, int _blendDst) noexcept
-	: mpTexture{ nullptr }, mbAlpha{ _bAlpha }, 
+	: mAttachments{ }, mbAlpha{ _bAlpha },
 	mnWidth{ _nWidth }, mnHeight{ _nHeight }, mBlendSrc{ _blendSrc }, mBlendDst{ _blendDst }
 {
 }
@@ -46,11 +46,11 @@ Dystopia::Framebuffer::~Framebuffer(void) noexcept
 
 void Dystopia::Framebuffer::Init(void)
 {
-	unsigned format = mbAlpha ? GL_RGBA : GL_RGB;
-	Image tmp = { "", false, true, format, format, mnWidth, mnHeight, mbAlpha ? 4u : 3u, 1u, nullptr };
-	mpTexture = EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->LoadRaw<Texture2D>(&tmp);
-
-	DEBUG_ASSERT(!mpTexture, "Framebuffer Error: Failed to create texture!\n");
+	//unsigned format = mbAlpha ? GL_RGBA : GL_RGB;
+	//Image tmp = { "", false, true, format, format, mnWidth, mnHeight, mbAlpha ? 4u : 3u, 1u, nullptr };
+	//mpTexture = EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->LoadRaw<Texture2D>(&tmp);
+	//
+	//DEBUG_ASSERT(!mpTexture, "Framebuffer Error: Failed to create texture!\n");
 
 	glGenFramebuffers(1, &mnID);
 	glGenRenderbuffers(1, &mDepthBuffer);
@@ -61,7 +61,7 @@ void Dystopia::Framebuffer::Init(void)
 
 	// Bind the texture and stencil buffer to the FBO
 	Bind();
-	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mpTexture->GetID(), 0);
+	//glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mpTexture->GetID(), 0);
 	glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, mDepthBuffer);
 
 	Unbind();
@@ -125,7 +125,7 @@ int Dystopia::Framebuffer::GetBlendDst(void) const noexcept
 
 Dystopia::Texture* Dystopia::Framebuffer::AsTexture(void) const noexcept
 {
-	return mpTexture;
+	return mAttachments[0];
 }
 
 

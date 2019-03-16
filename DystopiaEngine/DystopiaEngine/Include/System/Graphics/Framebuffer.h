@@ -14,13 +14,25 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #ifndef _FRAMEBUFFER_H_
 #define _FRAMEBUFFER_H_
 
+#include "Utility/MetaAlgorithms.h"
+#include "Utility/MetaDataStructures.h"
+
+#include "DataStructure/AutoArray.h"
+
 
 namespace Dystopia
 {
 	class Texture;
 
+	struct ColourAttachment  {};
+	struct DepthAttachment   {};
+	struct StencilAttachment {};
+	struct DepthStencilAttachment : DepthAttachment, StencilAttachment {};
+
 	class Framebuffer
 	{
+		using AttachmentTypes = Ut::Collection<ColourAttachment, DepthAttachment, StencilAttachment, DepthStencilAttachment>;
+
 	public:
 		// ====================================== CONSTRUCTORS ======================================= // 
 
@@ -46,10 +58,13 @@ namespace Dystopia
 
 		Texture* AsTexture(void) const noexcept;
 
+		template <typename T>
+		auto Attach(Texture*) -> Ut::EnableIf_t<Ut::MetaFind<T, AttachmentTypes>::value, Framebuffer&>;
+
 	private:
 
 		unsigned mnID, mDepthBuffer;
-		Texture* mpTexture;
+		AutoArray<Texture*> mAttachments;
 
 		bool mbAlpha;
 		unsigned mnWidth, mnHeight;
