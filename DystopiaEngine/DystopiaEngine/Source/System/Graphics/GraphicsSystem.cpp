@@ -767,6 +767,8 @@ void Dystopia::GraphicsSystem::LoadDefaults(void)
 #if EDITOR
 	mViews.Emplace(x, y, false);
 #endif
+	// LoadFramebuffers();
+
 	mvClearCol = { 0,0,0,0 };
 	DRAW_MODE = GL_TRIANGLES;
 }
@@ -795,48 +797,57 @@ void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
 	_in >> DRAW_MODE;
 
 	int n;
-	bool alpha;
-	unsigned w, h;
-	int src, dst;
+	bool vSync = false;
 
 	_in >> n;
 	for (int j = 0; j < n; ++j)
 	{
-		_in >> w;
-		_in >> h;
-		_in >> alpha;
-		_in >> src;
-		_in >> dst;
-
-		mViews.Emplace(w, h, alpha, src, dst);
+		_in >> Unused{}.EnforceType<unsigned>();
+		_in >> Unused{}.EnforceType<unsigned>();
+		_in >> Unused{}.EnforceType<bool>();
+		_in >> Unused{}.EnforceType<int>();
+		std::cin >> Unused{}.EnforceType<int>();
 	}
+	//for (int j = 0; j < n; ++j)
+	//{
+	//	_in >> w;
+	//	_in >> h;
+	//	_in >> alpha;
+	//	_in >> src;
+	//	_in >> dst;
+	//
+	//	mViews.Emplace(w, h, alpha, src, dst);
+	//}
+
 #if EDITOR
 	_in >> mbDebugDrawCheckBox;
 #else
 	_in >> Unused{}.EnforceType<bool>();
 #endif
+
 	_in >> mfDebugLineThreshold;
 	_in >> mvDebugColour;
-	_in >> alpha;
+	_in >> vSync;
 	_in >> mvClearCol;
 	_in >> mvResolution;
 
-	ToggleVsync(alpha);
+	ToggleVsync(vSync);
+	// LoadFramebuffers();
 }
 
 void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
 {
 	_out << DRAW_MODE;
-
-	_out << mViews.size();
-	for (auto& e : mViews)
-	{
-		_out << e.GetWidth();
-		_out << e.GetHeight();
-		_out << e.HasAlpha();
-		_out << e.GetBlendSrc();
-		_out << e.GetBlendDst();
-	}
+	_out << -1;
+	//_out << mViews.size();
+	//for (auto& e : mViews)
+	//{
+	//	_out << e.GetWidth();
+	//	_out << e.GetHeight();
+	//	_out << e.HasAlpha();
+	//	_out << e.GetBlendSrc();
+	//	_out << e.GetBlendDst();
+	//}
 #if EDITOR
 	_out << mbDebugDrawCheckBox;
 #else
