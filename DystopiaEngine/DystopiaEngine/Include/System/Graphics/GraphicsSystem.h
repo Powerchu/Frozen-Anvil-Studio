@@ -124,8 +124,8 @@ namespace Dystopia
 		void StartFrame(void);
 		void EndFrame(void);
 
-		void DrawScene(Camera&, Math::Matrix4&, Math::Matrix4&);
-		void DrawDebug(Camera&, Math::Matrix4&, Math::Matrix4&);
+		void DrawScene(Camera&, Math::Mat4 const&, Math::Mat4 const&);
+		void DrawDebug(Camera&, Math::Mat4 const&, Math::Mat4 const&);
 
 #	if EDITOR
 		bool mbVSync;

@@ -6,8 +6,6 @@
 \brief
 BRIEF HERE
 
-TODO: Draw batching.
-
 All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
@@ -15,7 +13,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System/Graphics/GraphicsSystem.h"	// File header
 #include "System/Graphics/GraphicsDefs.h"	// eGraphicSettings
-#include "System/Graphics/CharSpace.h"
 #include "System/Graphics/Framebuffer.h"
 #include "System/Driver/Driver.h"			// EngineCore
 #include "Lib/GraphicsLib.h"
@@ -40,10 +37,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "System/Window/WindowManager.h"	// Window Manager
 #include "System/Window/Window.h"			// Window
-#include "System/Scene/SceneSystem.h"
-#include "System/Scene/Scene.h"
 #include "System/Collision/CollisionSystem.h"
-#include "System/Physics/PhysicsSystem.h"
 #include "System/Logger/LoggerSystem.h"
 #include "System/Logger/LogPriority.h"
 #include "System/Profiler/ProfilerAction.h"
@@ -63,6 +57,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Globals.h"
 #include "Utility/DebugAssert.h"			// DEBUG_ASSERT
 #include "Math/Vectors.h"
+#include "DataStructure/Unused.h"
 
 #define WIN32_LEAN_AND_MEAN		// Exclude rarely used stuff from Windows headers
 #define NOMINMAX				// Disable Window header min & max macros
@@ -359,7 +354,7 @@ namespace
 	}
 }
 
-void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::Mat4& _Proj)
+void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4 const& _View, Math::Mat4 const& _Proj)
 {
 	ScopedTimer<ProfilerAction> timeKeeper{ "Graphics System", "Scene Draw" };
 
@@ -472,10 +467,10 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 #   endif 
 }
 
-void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _View, Math::Mat4& _Proj)
+void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4 const& _View, Math::Mat4 const& _Proj)
 {
 	ScopedTimer<ProfilerAction> timeKeeper{ "Graphics System", "Debug Draw" };
-	auto AllObj = EngineCore::GetInstance()->GetSystem<CollisionSystem>()->GetAllColliders();
+	auto AllObj = CORE::Get<CollisionSystem>()->GetAllColliders();
 	auto ActiveFlags = _cam.GetOwner()->GetFlags();
 
 	// Get Camera's layer, we only want to draw inclusive stuff
@@ -500,7 +495,7 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _View, Math::
 			if (Obj->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 		
 		GameObject* pOwner = Obj->GetOwner();
-		if (pOwner && (pOwner->GetFlags() & ActiveFlags))
+		if (pOwner && (pOwner->GetFlags() & ActiveFlags) == ActiveFlags && (Obj->GetFlags() & ActiveFlags) == ActiveFlags)
 		{
 			if (Obj->GetColliderType() != eColliderType::CIRCLE)
 				s->UploadUniform("ModelMat", pOwner->GetComponent<Transform>()->GetTransformMatrix() * Math::Translate(Obj->GetOffSet())  * Obj->GetTransformationMatrix());
@@ -568,8 +563,7 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 
 	StartFrame();
 
-	glClearColor(0, 0, 0, 0);
-	auto& AllCam = EngineCore::GetInstance()->GetSystem<CameraSystem>()->GetAllCameras();
+	auto& AllCam = CORE::Get<CameraSystem>()->GetAllCameras();
 
 	/*
 	// Do batching?
@@ -598,19 +592,12 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 	for (auto& e : ComponentDonor<SpriteRenderer>::mComponents)
 	{
 		auto flags = e.GetFlags();
+
 		if constexpr (EDITOR)
 			if (flags & eObjFlag::FLAG_EDITOR_OBJ) continue;
+
 		if (flags & eObjFlag::FLAG_ACTIVE)
-		{
 			e.Update(_fDT);
-		}
-	}
-
-	for(auto& e : mViews)
-	{
-		e.Bind();
-
-		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	}
 
 	// For every camera in the game window (can be more than 1!)
@@ -649,6 +636,17 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 
 void Dystopia::GraphicsSystem::PostUpdate(void)
 {
+	ScopedTimer<ProfilerAction> timeKeeper{ "Graphics System", "Post Update" };
+	for (auto& Cam : CORE::Get<CameraSystem>()->GetAllCameras())
+	{
+		if constexpr (EDITOR)
+			if (Cam.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+
+		// If the camera is inactive, skip
+		if (Cam.GetOwner() && (Cam.GetFlags() & eObjFlag::FLAG_ACTIVE) && Cam.DrawDebug())
+			DrawDebug(Cam, Cam.GetViewMatrix(), Cam.GetProjectionMatrix());
+	}
+
 	EndFrame();
 
 	for (auto& render : ComponentDonor<Renderer>::mComponents)
@@ -684,8 +682,20 @@ void Dystopia::GraphicsSystem::PostUpdate(void)
 
 void Dystopia::GraphicsSystem::StartFrame(void)
 {
+	glClearColor(0, 0, 0, 0);
+
+	for (auto& e : mViews)
+	{
+		e.Bind();
+
+		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	}
 }
 
+#if !defined(EDITOR)
+#define UNDEF_EDITOR
+#define EDITOR 0
+#endif
 void Dystopia::GraphicsSystem::EndFrame(void)
 {
 	static Mesh* quad = EngineCore::GetInstance()->Get<MeshSystem>()->GetMesh("Quad");
@@ -693,7 +703,8 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 
 #if (EDITOR)
 	fb.Bind();
-	unsigned const w = fb.AsTexture()->GetWidth(), h = fb.AsTexture()->GetHeight();
+	auto const FbTex = fb.AsTexture();
+	unsigned const w = FbTex->GetWidth(), h = FbTex->GetHeight();
 
 	glViewport(0, 0, w, h);
 #else
@@ -727,10 +738,14 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 	SwapBuffers(win.GetDeviceContext());
 #endif
 }
+#if defined(UNDEF_EDITOR)
+#undef UNDEF_EDITOR
+#undef EDITOR
+#endif
 
 void Dystopia::GraphicsSystem::Shutdown(void)
 {
-	// We are responsible for this
+	// We are responsible for these
 	CORE::Get<MeshSystem   >()->Shutdown();
 	CORE::Get<TextureSystem>()->Shutdown();
 	CORE::Get<ShaderSystem >()->Shutdown();
@@ -738,16 +753,13 @@ void Dystopia::GraphicsSystem::Shutdown(void)
 
 void Dystopia::GraphicsSystem::LoadDefaults(void)
 {
-	mViews.Emplace(2048u, 2048u, true);
-	mViews.Emplace(2048u, 2048u, true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-	mViews.Emplace(
-		static_cast<unsigned>(mvResolution.x),
-		static_cast<unsigned>(mvResolution.y),
-		false
-	);
+	unsigned const x = static_cast<unsigned>(mvResolution.x), y = static_cast<unsigned>(mvResolution.y);
+	mViews.Emplace(x, y, true);
+	mViews.Emplace(x, y, true, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+	mViews.Emplace(x, y, false);
 
 #if EDITOR
-	mViews.Emplace(2048u, 2048u, false);
+	mViews.Emplace(x, y, false);
 #endif
 	mvClearCol = { 0,0,0,0 };
 	DRAW_MODE = GL_TRIANGLES;
@@ -795,8 +807,7 @@ void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
 #if EDITOR
 	_in >> mbDebugDrawCheckBox;
 #else
-	bool dummy;
-	_in >> dummy;
+	_in >> Unused{}.EnforceType<bool>();
 #endif
 	_in >> mfDebugLineThreshold;
 	_in >> mvDebugColour;

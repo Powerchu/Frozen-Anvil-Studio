@@ -183,6 +183,7 @@
     <ClInclude Include="Include\Component\RayCollider.h" />
     <ClInclude Include="Include\Component\PointCollider.h" />
     <ClInclude Include="Include\DataStructure\Delegate.h" />
+    <ClInclude Include="Include\DataStructure\Unused.h" />
     <ClInclude Include="Include\Editor\BehaviourTreeEditor.h" />
     <ClInclude Include="Include\Editor\DataSheetEditor.h" />
     <ClInclude Include="Include\Editor\EditorFactory.h" />

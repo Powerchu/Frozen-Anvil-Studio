@@ -1233,6 +1233,9 @@
     <ClInclude Include="Include\System\Particle\FloorAffector.h">
       <Filter>Game Engine\Systems\Particle\Affectors\Floor</Filter>
     </ClInclude>
+    <ClInclude Include="Include\DataStructure\Unused.h">
+      <Filter>DataStructures</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

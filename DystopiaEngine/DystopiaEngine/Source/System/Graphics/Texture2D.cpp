@@ -112,6 +112,7 @@ void Dystopia::Texture2D::ReplaceTexture(unsigned w, unsigned h, void* _pData, b
 	mData.mnFormat  = _bAlpha ? GL_RGBA : GL_RGB;
 	mData.mbChanged = true;
 
+	Bind();
 	glTexImage2D(mnType, 0, mData.mnFormat, w, h, 0, mData.mnFormat, GL_UNSIGNED_BYTE, _pData);
 }
 

@@ -274,6 +274,7 @@ void Dystopia::SpriteRenderer::EditorUI(void) noexcept
 	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
 
 	EGUI::PushLeftAlign(95);
+	Renderer::TranslucencyField();
 	Renderer::TextureField();
 	EGUI::Display::HorizontalSeparator();
 

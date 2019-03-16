@@ -35,22 +35,22 @@ public:
 	ProxyPtr(ProxyPtr&&) noexcept;
 	ProxyPtr(const ProxyPtr&) noexcept;
 
-	template <typename U, typename = Ut::EnableIf_t<Ut::IsConvertible<U*, T*>::value>>
+	template <typename U, typename = Ut::EnableIf_t<Ut::TryCast<T*>(Ut::declval<U*>())>>
 	ProxyPtr(ProxyPtr<U>&&) noexcept;
-	template <typename U, typename = Ut::EnableIf_t<Ut::IsConvertible<U*, T*>::value>>
+	template <typename U, typename = Ut::EnableIf_t<Ut::TryCast<T*>(Ut::declval<U*>())>>
 	ProxyPtr(const ProxyPtr<U>&) noexcept;
 
 
 	// ======================================== OPERATORS ======================================== // 
 
-	ProxyPtr& operator=(std::nullptr_t);
-	ProxyPtr& operator=(ProxyPtr&&) noexcept;
-	ProxyPtr& operator=(const ProxyPtr&) noexcept;
+	ProxyPtr& operator = (std::nullptr_t);
+	ProxyPtr& operator = (ProxyPtr&&) noexcept;
+	ProxyPtr& operator = (const ProxyPtr&) noexcept;
 
-	template <typename U, typename = Ut::EnableIf_t<Ut::IsConvertible<U*, T*>::value>>
-	ProxyPtr& operator=(ProxyPtr<U>&&) noexcept;
-	template <typename U, typename = Ut::EnableIf_t<Ut::IsConvertible<U*, T*>::value>>
-	ProxyPtr& operator=(const ProxyPtr<U>&) noexcept;
+	template <typename U, typename = Ut::EnableIf_t<Ut::TryCast<T*>(Ut::declval<U*>())>>
+	ProxyPtr& operator = (ProxyPtr<U>&&) noexcept;
+	template <typename U, typename = Ut::EnableIf_t<Ut::TryCast<T*>(Ut::declval<U*>())>>
+	ProxyPtr& operator = (const ProxyPtr<U>&) noexcept;
 
 	T& operator*  (void) { Check(); return *mpObj; }
 	T* operator-> (void) { Check(); return  mpObj; }
@@ -63,7 +63,6 @@ public:
 	inline explicit operator bool(void) const { return !!mpObj; }
 
 	inline T* GetRaw(void) const noexcept;
-	inline void _Clean(void) noexcept;
 
 private:
 
