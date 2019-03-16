@@ -72,6 +72,10 @@ void Dystopia::Renderer::Awake(void)
 
 void Dystopia::Renderer::Init(void)
 {
+	//if (HasTransparency())
+	//{
+	//	CORE::Get<GraphicsSystem>()->RegisterTransparency(this);
+	//}
 }
 
 void Dystopia::Renderer::Draw(void) const noexcept

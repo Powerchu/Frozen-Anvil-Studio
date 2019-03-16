@@ -121,7 +121,7 @@ float Dystopia::GraphicsSystem::GetGamma(void) noexcept
 void Dystopia::GraphicsSystem::ToggleVsync(bool _b) noexcept
 {
 	mSettings = _b ? 
-		mSettings | eGfxSettings::GRAPHICS_VSYNC : 
+		mSettings |  eGfxSettings::GRAPHICS_VSYNC: 
 		mSettings & ~eGfxSettings::GRAPHICS_VSYNC;
 
 #   if EDITOR
@@ -152,7 +152,7 @@ float Dystopia::GraphicsSystem::GetAspectRatio() const
 
 void Dystopia::GraphicsSystem::SetAllCameraAspect(const float _x, const float _y) const
 {
-	const auto CamSys = EngineCore::GetInstance()->Get<CameraSystem>();
+	const auto CamSys = CORE::Get<CameraSystem>();
 
 	for (auto& c : CamSys->GetAllCameras())
 	{
@@ -218,7 +218,7 @@ void Dystopia::GraphicsSystem::PostInit(void)
 	if (CORE::Get<FileSystem>()->CheckFileExist("Shader/ShaderList.txt", eFileDir::eResource))
 		CORE::Get<ShaderSystem>()->LoadShaderList("Shader/ShaderList.txt", eFileDir::eResource);
 
-	glPointSize(10);
+	//glPointSize(10);
 
 #   if defined(_DEBUG) | defined(DEBUG)
 	if (auto err = glGetError())
@@ -501,12 +501,18 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4 const& _View, 
 				s->UploadUniform("ModelMat", pOwner->GetComponent<Transform>()->GetTransformMatrix() * Math::Translate(Obj->GetOffSet())  * Obj->GetTransformationMatrix());
 			else
 			{
-				auto pos = pOwner->GetComponent<Transform>()->GetGlobalPosition();
-				auto scaleV = Math::Abs(pOwner->GetComponent<Transform>()->GetGlobalScale());
-				auto scale = Math::Max(scaleV, scaleV.yxwz);
-				auto scaleM = Math::Scale(scale);
-				auto Translation = Math::Translate(pos.x, pos.y);
-				s->UploadUniform("ModelMat", Translation * pOwner->GetComponent<Transform>()->GetGlobalRotation().Matrix() * Math::Translate(pOwner->GetComponent<Transform>()->GetGlobalScale()*Obj->GetOffSet()) * scaleM * Obj->GetTransformationMatrix());
+				auto const transform   = pOwner->GetComponent<Transform>();
+				auto const pos         = transform->GetGlobalPosition();
+				auto const scaleV      = Math::Abs(pOwner->GetComponent<Transform>()->GetGlobalScale());
+				auto const scaleM      = Math::Scale(Math::Max(scaleV, scaleV.yxwz));
+				auto const Translation = Math::Translate(pos.x, pos.y);
+				s->UploadUniform("ModelMat", 
+					Translation * 
+					transform->GetGlobalRotation().Matrix() *
+					Math::Translate(transform->GetGlobalScale() * Obj->GetOffSet()) *
+					scaleM * 
+					Obj->GetTransformationMatrix()
+				);
 			}
 			
 			if (Obj->IsSleeping())
@@ -637,6 +643,9 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 void Dystopia::GraphicsSystem::PostUpdate(void)
 {
 	ScopedTimer<ProfilerAction> timeKeeper{ "Graphics System", "Post Update" };
+
+	// CORE::Get<PostProcessSys>()->Update();
+
 	for (auto& Cam : CORE::Get<CameraSystem>()->GetAllCameras())
 	{
 		if constexpr (EDITOR)

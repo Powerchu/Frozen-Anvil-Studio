@@ -111,14 +111,15 @@ Ty* Dystopia::TextureSystem::LoadTexture(HashString const& _strPath)
 	if (it != mTextures.end())
 		return static_cast<Ty*>(&*it);
 
+	Ty*  ret    = nullptr;
 	auto import = ImportImage(_strPath);
 	auto loaded = LoadImage(_strPath.c_str(), import);
 
-	if (loaded)
-		return mTextures.EmplaceAs<Ty>(_strPath, *loaded);
+	if (loaded) ret = mTextures.EmplaceAs<Ty>(_strPath, *loaded);
 
 	DEBUG_BREAK(!loaded, "Texture System Error: Failed to load texture \"%s\"", _strPath.c_str());
-	return nullptr;
+	DefaultAllocator<Image>::DestructFree(import);
+	return ret;
 }
 
 template <>
