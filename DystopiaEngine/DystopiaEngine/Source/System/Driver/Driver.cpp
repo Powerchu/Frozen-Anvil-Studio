@@ -251,7 +251,6 @@ bool Dystopia::EngineCore::GetQuitState() const
 
 void Dystopia::EngineCore::ExecuteGame()
 {
-
 	PreInit();
 	LoadSettings();
 	Init();

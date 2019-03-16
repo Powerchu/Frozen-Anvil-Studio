@@ -37,6 +37,7 @@ static const std::string g_VertPopup = "Behaviour List";
 static const std::string g_FragPopup = "Make Frag Program";
 static const std::string g_GeoPopup = "Make Geo Program";
 
+#if EDITOR
 Editor::ShaderView::ShaderView(void)
 	: mLabel{ "Shader View" }, mpShaderSystem{ nullptr },
 	mArrStageVert{}, mArrStageFrag{}, mArrStageGeo{}, mArrIndexTracker{},
@@ -408,7 +409,7 @@ bool Editor::ShaderView::MakeShader(const HashString& _name)
 	return true;
 }
 
-
+#endif
 
 
 

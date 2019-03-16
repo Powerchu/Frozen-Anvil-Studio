@@ -37,7 +37,6 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 #include "Editor/RuntimeMeta.h"
 
-#include <GL/glew.h>
 
 #if EDITOR
 #include "Editor/EGUI.h"

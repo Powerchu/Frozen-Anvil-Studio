@@ -66,11 +66,11 @@ void Dystopia::Camera::Awake(void)
 		SetPerspective(Math::Degrees{ static_cast<float>(mnPersFOV_deg) }, EngineCore::Get<GraphicsSystem>()->GetAspectRatio(), mClippingPlane.mnNear, mClippingPlane.mnFar);
 }
 
+
 void Dystopia::Camera::Init(void)
 {
 	if (mnFlags & eObjFlag::FLAG_RESERVED)
 		mnFlags |= eObjFlag::FLAG_ACTIVE;
-
 }
 
 void Dystopia::Camera::SetMasterCamera(void)
