@@ -79,8 +79,7 @@ namespace Dystopia
 
 	VideoRenderer::~VideoRenderer()
 	{
-		//if(mWebmHdl->buffer)
-		//CloseCurrentVideo();
+		CloseCurrentVideo();
 
 		delete mWebmHdl;
 		delete mVidHdl;
@@ -193,20 +192,22 @@ namespace Dystopia
 #endif
 
 			/*Want to guess frame rate???*/
-			webm_guess_framerate(mWebmHdl, mVidHdl);
+			//webm_guess_framerate(mWebmHdl, mVidHdl);
+			//mWebmHdl->buffer = nullptr;
 
 			/*Get video instance decode*/
 			decoder = get_vpx_decoder_by_fourcc(mVidHdl->fourcc);
 
 			if (!vpx_codec_dec_init(mDecodec, decoder->codec_interface(), &cfg, NULL))
 			{
+				DEBUG_PRINT(eLog::MESSAGE, "Size of mDecodec %d", sizeof(*decoder));
 				/*Decoder success*/
 				mState = VideoState::NEUTRAL;
-				//if (ReadNextFrame() == VideoErrorCode::OK)
-				//{
-				//	mpCurrImg = GetFrameImage();
-				//	mBuffer.Resize(mpCurrImg->d_h, mpCurrImg->d_w, this);
-				//}
+				if (ReadNextFrame() == VideoErrorCode::OK)
+				{
+					mpCurrImg = GetFrameImage();
+					mBuffer.Resize(mpCurrImg->d_h, mpCurrImg->d_w, this);
+				}
 				
 			}
 			else if (!decoder)
@@ -238,7 +239,7 @@ namespace Dystopia
 		mVidFileHandle = nullptr;
 
 		webm_free(mWebmHdl);
-
+		vpx_codec_destroy(mDecodec);
 
 		memset(mWebmHdl, 0, sizeof(WebmInputContext));
 		memset(mVidHdl,  0, sizeof(VpxInputContext));
@@ -270,11 +271,18 @@ namespace Dystopia
 
 
 		::rewind_and_reset(mWebmHdl,mVidHdl);
+		vpx_codec_destroy(mDecodec);
 
-		buffer         = nullptr;
-		mCodecIterator = nullptr;
-		mBufferSize    = 0;
-		mpCurrImg      = nullptr;
+		memset(mVidHdl, 0, sizeof(VpxInputContext));
+
+		buffer          = nullptr;
+		mCodecIterator  = nullptr;
+		mBufferSize     = 0;
+		mpCurrImg       = nullptr;
+		mVidHdl->fourcc = 0;
+
+		mVidHdl->file   = mVidFileHandle;
+		mVidHdl->length = 0;
 
 		if (mPlayOnStart)
 			mState = VideoState::PLAYING;
@@ -293,20 +301,21 @@ namespace Dystopia
 #endif
 
 			/*Want to guess frame rate???*/
-			webm_guess_framerate(mWebmHdl, mVidHdl);
+			//webm_guess_framerate(mWebmHdl, mVidHdl);
 
 			/*Get video instance decode*/
 			decoder = get_vpx_decoder_by_fourcc(mVidHdl->fourcc);
 
 			if (!vpx_codec_dec_init(mDecodec, decoder->codec_interface(), &cfg, NULL))
 			{
+				DEBUG_PRINT(eLog::MESSAGE, "Size of mDecodec %d", sizeof(*mDecodec));
 				/*Decoder success*/
 				mState = VideoState::NEUTRAL;
-				//if (ReadNextFrame() == VideoErrorCode::OK)
-				//{
-				//	mpCurrImg = GetFrameImage();
-				//	mBuffer.Resize(mpCurrImg->d_h, mpCurrImg->d_w, this);	
-				//}
+				if (ReadNextFrame() == VideoErrorCode::OK)
+				{
+					mpCurrImg = GetFrameImage();
+					mBuffer.Resize(mpCurrImg->d_h, mpCurrImg->d_w, this);	
+				}
 			}
 			else if (!decoder)
 			{
