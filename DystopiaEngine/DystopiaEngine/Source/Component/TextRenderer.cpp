@@ -145,6 +145,11 @@ void Dystopia::TextRenderer::SetAlphaPerc(float _perc)
 	mfTintPerc = _perc;
 }
 
+float Dystopia::TextRenderer::GetAlphaPerc() const
+{
+	return mfTintPerc;
+}
+
 void Dystopia::TextRenderer::RegenMesh(void)
 {
 	AutoArray<Gfx::Vertex> verts;
