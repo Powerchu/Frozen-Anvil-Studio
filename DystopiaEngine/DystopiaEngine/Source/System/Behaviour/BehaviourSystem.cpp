@@ -262,7 +262,7 @@ namespace Dystopia
 		mHotloader->ChangesInTempFolder(vTempFileName);
 		if (vTempFileName.size() > 0)
 		{
-			std::string SceneName = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetSceneName();
+			std::string SceneName = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetSceneName().c_str();
 			if (SceneName.empty() || SceneName == "Untitled")
 			{
 				SceneName = FileSys->GetProjectFolders<std::string>(eFileDir::eResource) + "/Temp/Untitled.dscene";
@@ -422,7 +422,7 @@ namespace Dystopia
 
 		if (hasSaveFile)
 		{
-			std::string && SceneName = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetSceneName();
+			std::string && SceneName = EngineCore::GetInstance()->GetSystem<SceneSystem>()->GetCurrentScene().GetSceneName().c_str();
 			EngineCore::GetInstance()->GetSystem<SceneSystem>()->LoadScene(FileSys->GetFullPath((SceneName) + ".dscene", eFileDir::eResource));
 		}
 			
