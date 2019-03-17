@@ -193,7 +193,7 @@ void Editor::ShaderView::StageVert(void)
 		for (unsigned i = 0; i < mArrIndexTracker[0]; ++i)
 		{
 			auto& prog = allPrograms[mArrStageVert[i]];
-			sprintf_s(buffer, "Program ID [%03d] = %s", prog.GetID(), prog.GetName().c_str());
+			sprintf_s(buffer, "Program ID [%03d] = %s", static_cast<int>(reinterpret_cast<intptr_t>( prog.GetID())), prog.GetName().c_str());
 			EGUI::Display::SelectableTxt(buffer);
 
 			unsigned progIndex = mArrStageVert[i];
@@ -220,7 +220,7 @@ void Editor::ShaderView::StageFrag(void)
 		for (unsigned i = 0; i < mArrIndexTracker[1]; ++i)
 		{
 			auto& prog = allPrograms[mArrStageFrag[i]];
-			sprintf_s(buffer, "Program ID [%03d] = %s", prog.GetID(), prog.GetName().c_str());
+			sprintf_s(buffer, "Program ID [%03d] = %s", static_cast<int>(reinterpret_cast<intptr_t>(prog.GetID())), prog.GetName().c_str());
 			EGUI::Display::SelectableTxt(buffer);
 
 			unsigned progIndex = mArrStageFrag[i];
@@ -247,7 +247,7 @@ void Editor::ShaderView::StageGeo(void)
 		for (unsigned i = 0; i < mArrIndexTracker[2]; ++i)
 		{
 			auto& prog = allPrograms[mArrStageGeo[i]];
-			sprintf_s(buffer, "Program ID [%03d] = %s", prog.GetID(), prog.GetName().c_str());
+			sprintf_s(buffer, "Program ID [%03d] = %s", static_cast<int>(reinterpret_cast<intptr_t>(prog.GetID())), prog.GetName().c_str());
 			EGUI::Display::SelectableTxt(buffer);
 
 			unsigned progIndex = mArrStageGeo[i];
