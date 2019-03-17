@@ -77,7 +77,7 @@ void Dystopia::AudioSource::Update(float)
 	mChannel.mpChannel->setVolume(mVolume);
 	mChannel.mpChannel->setFrequency(FREQUENCY * mFrequency);
 	mChannel.mpChannel->setPitch(mPitch);
-	mpSound->mpSound->set3DMinMaxDistance(mRange, mMaxRange);
+	//mpSound->mpSound->set3DMinMaxDistance(mRange, mMaxRange);
 
 	if (!mIsPlaying && mLoop)
 		mReady = true;
