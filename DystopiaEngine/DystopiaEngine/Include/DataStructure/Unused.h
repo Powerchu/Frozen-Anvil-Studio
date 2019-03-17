@@ -51,6 +51,9 @@ public:
 	template <typename T>
 	constexpr Unused& operator = (T&&) noexcept;
 
+	template <typename T>
+	constexpr void operator () (T&&) const noexcept;
+
 	constexpr Unused& operator = (Unused&&)      noexcept = default;
 	constexpr Unused& operator = (Unused const&) noexcept = default;
 
@@ -88,6 +91,11 @@ template <typename T>
 constexpr inline Unused& Unused::operator = (T&&) noexcept
 {
 	return *this;
+}
+
+template<typename T>
+inline constexpr void Unused::operator()(T&&) const noexcept
+{
 }
 
 template<typename T>

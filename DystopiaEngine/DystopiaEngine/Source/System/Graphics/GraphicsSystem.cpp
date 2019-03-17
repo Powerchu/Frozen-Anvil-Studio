@@ -63,7 +63,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #define NOMINMAX				// Disable Window header min & max macros
 
 #include <string>
-#include <algorithm>			// TEMPORARY std::sort
+#include <algorithm>			// std::sort I messed up and now this is permanent
 #include <windows.h>			// WinAPI
 #include <GL/glew.h>
 #include <GL/wglew.h>			// glew Windows ext
@@ -215,7 +215,7 @@ void Dystopia::GraphicsSystem::PostInit(void)
 {
 	pGfxAPI->PrintEnvironment();
 
-	if (CORE::Get<FileSystem>()->CheckFileExist("Shader/ShaderList.txt", eFileDir::eResource))
+	if (CORE::Get<FileSystem>()  ->CheckFileExist("Shader/ShaderList.txt", eFileDir::eResource))
 		CORE::Get<ShaderSystem>()->LoadShaderList("Shader/ShaderList.txt", eFileDir::eResource);
 
 	//glPointSize(10);
@@ -255,11 +255,6 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	ShaderSystem  *pShaderSys = CORE::Get<ShaderSystem >();
 	WindowManager *pWinSys    = CORE::Get<WindowManager>();
 
-#   if defined(_DEBUG) | defined(DEBUG)
-	if (auto err = glGetError())
-		__debugbreak();
-#   endif
-
 	Mesh*      mesh    = pMeshSys->GetMesh("Quad");
 	Shader*    shader  = (*pShaderSys)["Logo Shader"];
 	Texture2D* texture = pTexSys->LoadTexture<Texture2D>("Resource/Editor/EditorStartup.png");
@@ -285,8 +280,7 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 	glClearColor(.0f, .0f, .0f, .0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
-	shader->Bind();
+	shader ->Bind();
 	texture->Bind();
 
 	shader->UploadUniform("ViewMat", View);
@@ -351,92 +345,60 @@ namespace
 
 		_renderer->Draw();
 	}
+
+	template <typename T, typename U, typename V, typename Policy = Unused>
+	void GetRenderers(T& set, U& transparents, V& components, Policy&& func = Ut::RemoveRef_t<Policy>{})
+	{
+		for (auto& e : components)
+		{
+			if constexpr (EDITOR)
+				if (e.GetFlags() & Dystopia::eObjFlag::FLAG_EDITOR_OBJ) continue;
+
+			if ( e.GetOwner() && 
+				(e.GetFlags() & Dystopia::eObjFlag::FLAG_ACTIVE) &&
+				(e.GetOwner()->GetFlags() & Dystopia::eObjFlag::FLAG_ACTIVE))
+			{
+				func(e);
+
+				if (e.HasTransparency())
+					transparents.Insert(&e);
+				else
+					set.Insert(&e);
+			}
+		}
+	}
 }
 
-void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4 const& _View, Math::Mat4 const& _Proj)
+void Dystopia::GraphicsSystem::DrawScene(Camera& _cam)
 {
 	ScopedTimer<ProfilerAction> timeKeeper{ "Graphics System", "Scene Draw" };
 
-	AutoArray<Renderer*> set1{ ComponentDonor<Renderer>::mComponents.size() };
-	AutoArray<SpriteRenderer*> set2{ ComponentDonor<SpriteRenderer>::mComponents.size() };
-	AutoArray<TextRenderer*> set3{ ComponentDonor<TextRenderer>::mComponents.size() };
-
-	for (auto& e : ComponentDonor<Renderer>::mComponents)
-	{
-		if constexpr (EDITOR)
-			if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
-
-		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE &&	nullptr != e.GetOwner())
-			set1.Insert(&e);
-	}
-	for (auto& e : ComponentDonor<SpriteRenderer>::mComponents)
-	{
-		if constexpr (EDITOR)
-			if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
-
-		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE &&	nullptr != e.GetOwner())
-			set2.Insert(&e);
-	}
-	for (auto& e : ComponentDonor<TextRenderer>::mComponents)
-	{
-		if constexpr(EDITOR)
-			if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
-
-		if (e.GetFlags() & eObjFlag::FLAG_ACTIVE &&	nullptr != e.GetOwner())
-			set3.Insert(&e);
-	}
-
-	std::sort(set1.begin(), set1.end(), [](const auto& _rhs, const auto& _lhs) {
-		return _rhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z < _lhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
-	});
-	std::sort(set2.begin(), set2.end(), [](const auto& _rhs, const auto& _lhs) {
-		return _rhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z < _lhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
-	});
-	std::sort(set3.begin(), set3.end(), [](const auto& _rhs, const auto& _lhs) {
-		return _rhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z < _lhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
-	});
-
 	// Draw the game objects to screen based on the camera
 	// Get Camera's layer, we only want to draw inclusive stuff
-	auto ActiveFlags = _cam.GetOwner()->GetFlags();
-	ActiveFlags &= eObjFlag::FLAG_ALL_LAYERS;
+	auto ActiveFlags = static_cast<eObjFlag>(eObjFlag::FLAG_ALL_LAYERS & _cam.GetOwner()->GetFlags());
+	auto const ErrShader = CORE::Get<ShaderSystem>()->GetShader("Error Shader");
 
-	for (auto& r : set1)
+	for (auto& r : mSet1)
 	{
-		if constexpr (EDITOR)
-			if (r->GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
-
-		auto s = r->GetShader();
-		if (s && s->IsValid() && r->GetTexture())
-		{
-			s->Bind();
-			s->UploadUniform("vUVBounds", 0.f, 0.f, 1.f, 1.f);
-		}
-		else
-		{
-			s = CORE::Get<ShaderSystem>()->GetShader("Error Shader");
-			s->Bind();
-		}
-
-		s->UploadUniform("ProjectMat", _Proj);
-		s->UploadUniform("ViewMat", _View);
-
 		if (r->GetOwner()->GetFlags() & ActiveFlags)
+		{
+			auto s = r->GetTexture() ? r->GetShader() : ErrShader;
+			s->Bind();
+			//s->UploadUniform("vUVBounds", 0.f, 0.f, 1.f, 1.f);
+			//s->UploadUniform("ProjectMat", _Proj);
+			//s->UploadUniform("ViewMat", _View);
 			DrawRenderer(r, s);
+		}
 	}
 
-	for (auto& r : set2)
+	for (auto& r : mSet2)
 	{
-		if constexpr (EDITOR)
-			if (r->GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
-
 		if (r->GetOwner()->GetFlags() & ActiveFlags)
 		{
-			auto s = r->GetShader();
-			s = r->GetTexture() ? s : CORE::Get<ShaderSystem>()->GetShader("Error Shader");
+			auto s = r->GetTexture() ? r->GetShader() : ErrShader;
 			s->Bind();
-			s->UploadUniform("ProjectMat", _Proj);
-			s->UploadUniform("ViewMat", _View);
+			//s->UploadUniform("ProjectMat", _Proj);
+			//s->UploadUniform("ViewMat", _View);
 			s->UploadUniform("vColor", r->GetTint());
 			DrawRenderer(r, s);
 		}
@@ -444,19 +406,10 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4 const& _View, 
 
 	auto s = CORE::Get<ShaderSystem>()->GetShader("Font Shader");
 	s->Bind();
-	s->UploadUniform("ProjectMat", _Proj);
-	s->UploadUniform("ViewMat", _View);
 
-	for (auto& r : set3)
-	{
-		if constexpr (EDITOR)
-			if (r->GetOwner()->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
-		
+	for (auto& r : mSet3)
 		if (r->GetOwner()->GetFlags() & ActiveFlags)
-		{
 			DrawRenderer(r, s);
-		}
-	}
 
 #   if defined(_DEBUG) | defined(DEBUG)
 	if (auto err = glGetError())
@@ -464,7 +417,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4 const& _View, 
 #   endif 
 }
 
-void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4 const& _View, Math::Mat4 const& _Proj)
+void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam)
 {
 	ScopedTimer<ProfilerAction> timeKeeper{ "Graphics System", "Debug Draw" };
 	auto AllObj = CORE::Get<CollisionSystem>()->GetAllColliders();
@@ -475,11 +428,6 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4 const& _View, 
 
 	glDisable(GL_DEPTH_TEST);
 	Shader* s = CORE::Get<ShaderSystem>()->GetShader("Collider Shader");
-
-	s->Bind();
-	s->UploadUniform("ViewMat", _View);
-	s->UploadUniform("ProjectMat", _Proj);
-	s->UploadUniform("threshold", mfDebugLineThreshold);
 
 	Math::Vector4 CollidingColor{ 1.f, 0, 0, .1f }, SleepingColor{ 1.f,1.f,0,.1f }, TriggerColor{ .8f,.8f,.8f,.1f }, activeColor;
 
@@ -498,15 +446,15 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4 const& _View, 
 				s->UploadUniform("ModelMat", pOwner->GetComponent<Transform>()->GetTransformMatrix() * Math::Translate(Obj->GetOffSet())  * Obj->GetTransformationMatrix());
 			else
 			{
-				auto const transform   = pOwner->GetComponent<Transform>();
-				auto const pos         = transform->GetGlobalPosition();
+				auto const t           = pOwner->GetComponent<Transform>();
+				auto const pos         = t->GetGlobalPosition();
 				auto const scaleV      = Math::Abs(pOwner->GetComponent<Transform>()->GetGlobalScale());
 				auto const scaleM      = Math::Scale(Math::Max(scaleV, scaleV.yxwz));
 				auto const Translation = Math::Translate(pos.x, pos.y);
 				s->UploadUniform("ModelMat", 
 					Translation * 
-					transform->GetGlobalRotation().Matrix() *
-					Math::Translate(transform->GetGlobalScale() * Obj->GetOffSet()) *
+					t->GetGlobalRotation().Matrix() *
+					Math::Translate(t->GetGlobalScale() * Obj->GetOffSet()) *
 					scaleM * 
 					Obj->GetTransformationMatrix()
 				);
@@ -552,6 +500,10 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4 const& _View, 
 
 void Dystopia::GraphicsSystem::Update(float _fDT)
 {
+	auto constexpr SortFunc = [](const auto& _rhs, const auto& _lhs) {
+		return _rhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z < _lhs->GetOwner()->GetComponent<Transform>()->GetGlobalPosition().z;
+	};
+
 	if constexpr (EDITOR)
 	{
 		ScopedTimer<ProfilerAction> timeKeeper{ "Graphics System", "Editor Update" };
@@ -564,44 +516,32 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 #		endif 
 	}
 
+	ScopedTimer<ProfilerAction> timeKeeper{ "Graphics System", "Update" };
 	StartFrame();
+
+	GetRenderers(mSet1, mTransparency, ComponentDonor<Renderer>      ::mComponents);
+	GetRenderers(mSet2, mTransparency, ComponentDonor<SpriteRenderer>::mComponents, [&_fDT](auto& e) {e.Update(_fDT);});
+	GetRenderers(mSet3, mTransparency, ComponentDonor<TextRenderer>  ::mComponents);
+
+	std::sort(mSet1.begin(), mSet1.end(), SortFunc);
+	std::sort(mSet2.begin(), mSet2.end(), SortFunc);
+	std::sort(mSet3.begin(), mSet3.end(), SortFunc);
 
 	auto& AllCam = CORE::Get<CameraSystem>()->GetAllCameras();
 
 	/*
 	// Do batching?
-	for (auto& e : ComponentDonor<Renderer>::mComponents)
-	{
-	auto flags = e.GetFlags();
-
-	#   if EDITOR
-	if (flags & eObjFlag::FLAG_EDITOR_OBJ)
-	continue;
-	#   endif
-
-	if (flags & eObjFlag::FLAG_RESERVED)
-	{
-	// Remove the object from the pool
-
-	// Modify the object's status in the render pool
-	if (flags & eObjFlag::FLAG_ACTIVE)
-	{
-	// Add the object back in, into the correct spot
-	}
-	}
-	}
 	*/
-
-	for (auto& e : ComponentDonor<SpriteRenderer>::mComponents)
-	{
-		auto flags = e.GetFlags();
-
-		if constexpr (EDITOR)
-			if (flags & eObjFlag::FLAG_EDITOR_OBJ) continue;
-
-		if (flags & eObjFlag::FLAG_ACTIVE)
-			e.Update(_fDT);
-	}
+	//for (auto& e : ComponentDonor<SpriteRenderer>::mComponents)
+	//{
+	//	auto flags = e.GetFlags();
+	//
+	//	if constexpr (EDITOR)
+	//		if (flags & eObjFlag::FLAG_EDITOR_OBJ) continue;
+	//
+	//	if (flags & eObjFlag::FLAG_ACTIVE)
+	//		e.Update(_fDT);
+	//}
 
 	// For every camera in the game window (can be more than 1!)
 	for (auto& Cam : AllCam)
@@ -610,11 +550,13 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 			if (Cam.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 
 		// If the camera is inactive, skip
-		if (Cam.GetOwner() && (Cam.GetFlags() & eObjFlag::FLAG_ACTIVE))
+		if ( Cam.GetOwner() && 
+			(Cam.GetFlags() & eObjFlag::FLAG_ACTIVE) && 
+			(Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE))
 		{
 			Cam.SetCamera();
-			Math::Matrix4 View = Cam.GetViewMatrix();
-			Math::Matrix4 Proj = Cam.GetProjectionMatrix();
+			Math::Matrix4 const& View = Cam.GetViewMatrix();
+			Math::Matrix4 const& Proj = Cam.GetProjectionMatrix();
 
 			const auto surface = Cam.GetSurface();
 			const auto vp = Cam.GetViewport();
@@ -622,15 +564,29 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 			glViewport(static_cast<int>(vp.mnX), static_cast<int>(vp.mnY),
 				static_cast<int>(vp.mnWidth), static_cast<int>(vp.mnHeight));
 
-			surface->Bind();
-			DrawScene(Cam, View, Proj);
+			for (auto& shader : CORE::Get<ShaderSystem>()->GetAllShaders())
+			{
+				shader.Bind();
+				shader.UploadUniform("ViewMat"   , View);
+				shader.UploadUniform("ProjectMat", Proj);
+				shader.UploadUniform("vColor"   , 1.f, 1.f, 1.f, 1.f);
+				shader.UploadUniform("vUVBounds", 0.f, 0.f, 1.f, 1.f);
+			}
 
-			if (Cam.DrawDebug())
-				DrawDebug(Cam, View, Proj);
+			surface->Bind();
+			DrawScene(Cam);
+
+			//if (Cam.DrawDebug())
+			//	DrawDebug(Cam);
 		}
 	}
 
 	static_cast<Dystopia::Framebuffer const*>(nullptr)->Unbind();
+
+	mSet1.clear();
+	mSet2.clear();
+	mSet3.clear();
+
 #  if defined(_DEBUG) | defined(DEBUG)
 		if (auto err = glGetError())
 			__debugbreak();
@@ -641,43 +597,106 @@ void Dystopia::GraphicsSystem::PostUpdate(void)
 {
 	ScopedTimer<ProfilerAction> timeKeeper{ "Graphics System", "Post Update" };
 
+	auto const& CamArray = CORE::Get<CameraSystem>()->GetAllCameras();
+	auto const ErrShader = CORE::Get<ShaderSystem>()->GetShader("Error Shader");
+
+	//for (auto& r : mTransparency)
+	//{
+	//	for (auto& Cam : CamArray)
+	//	{
+	//		if constexpr (EDITOR)
+	//			if (Cam.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+	//
+	//		// If the camera is inactive, skip
+	//		if (Cam.GetOwner() && Cam.DrawDebug() &&
+	//			(Cam.GetFlags() & eObjFlag::FLAG_ACTIVE) &&
+	//			(Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE))
+	//		{
+	//			auto ActiveFlags = static_cast<eObjFlag>(eObjFlag::FLAG_ALL_LAYERS & Cam.GetOwner()->GetFlags());
+	//
+	//			Math::Matrix4 const& View = Cam.GetViewMatrix();
+	//			Math::Matrix4 const& Proj = Cam.GetProjectionMatrix();
+	//
+	//			if (r->GetOwner()->GetFlags() & ActiveFlags)
+	//			{
+	//				auto s = r->GetTexture() ? r->GetShader() : ErrShader;
+	//				s->Bind();
+	//				s->UploadUniform("ProjectMat", Proj);
+	//				s->UploadUniform("ViewMat", View);
+	//				s->UploadUniform("vUVBounds", 0.f, 0.f, 1.f, 1.f);	// TODO: Think of a better way
+	//				s->UploadUniform("vColor", 1.f, 1.f, 1.f, 1.f);
+	//				DrawRenderer(r, s);
+	//			}
+	//		}
+	//	}
+	//}
+
+	for (auto& Cam : CamArray)
+	{
+		if constexpr (EDITOR)
+			if (Cam.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+
+		// If the camera is inactive, skip
+		if ( Cam.GetOwner() &&
+			(Cam.GetFlags() & eObjFlag::FLAG_ACTIVE) &&
+			(Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE))
+		{
+			auto ActiveFlags = static_cast<eObjFlag>(eObjFlag::FLAG_ALL_LAYERS & Cam.GetOwner()->GetFlags());
+
+			Math::Matrix4 const& View = Cam.GetViewMatrix();
+			Math::Matrix4 const& Proj = Cam.GetProjectionMatrix();
+
+			for (auto& r : mTransparency)
+			{
+				if (r->GetOwner()->GetFlags() & ActiveFlags)
+				{
+					auto s = r->GetTexture() ? r->GetShader() : ErrShader;
+					s->Bind();
+					s->UploadUniform("ProjectMat", Proj);
+					s->UploadUniform("ViewMat"   , View);
+					s->UploadUniform("vUVBounds" , 0.f, 0.f, 1.f, 1.f);	// TODO: Think of a better way
+					s->UploadUniform("vColor"    , 1.f, 1.f, 1.f, 1.f);
+					DrawRenderer(r, s);
+				}
+			}
+		}
+	}
+	mTransparency.clear();
+
 	// CORE::Get<PostProcessSys>()->Update();
 
+	Shader* debugShader = CORE::Get<ShaderSystem>()->GetShader("Collider Shader");
+	debugShader->Bind();
+	debugShader->UploadUniform("threshold", mfDebugLineThreshold);
 	for (auto& Cam : CORE::Get<CameraSystem>()->GetAllCameras())
 	{
 		if constexpr (EDITOR)
 			if (Cam.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 
 		// If the camera is inactive, skip
-		if (Cam.GetOwner() && (Cam.GetFlags() & eObjFlag::FLAG_ACTIVE) && Cam.DrawDebug())
-			DrawDebug(Cam, Cam.GetViewMatrix(), Cam.GetProjectionMatrix());
+		if ( Cam.GetOwner() && Cam.DrawDebug() &&
+			(Cam.GetFlags() & eObjFlag::FLAG_ACTIVE) &&
+			(Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE))
+		{
+			debugShader->UploadUniform("ViewMat"   , Cam.GetViewMatrix()      );
+			debugShader->UploadUniform("ProjectMat", Cam.GetProjectionMatrix());
+			DrawDebug(Cam);
+		}
 	}
 
 	EndFrame();
 
 	for (auto& render : ComponentDonor<Renderer>::mComponents)
-	{
 		if (eObjFlag::FLAG_REMOVE & render.GetFlags())
-		{
 			ComponentDonor<Renderer>::mComponents.Remove(&render);
-		}
-	}
 
 	for (auto& render : ComponentDonor<SpriteRenderer>::mComponents)
-	{
 		if (eObjFlag::FLAG_REMOVE & render.GetFlags())
-		{
 			ComponentDonor<SpriteRenderer>::mComponents.Remove(&render);
-		}
-	}
 
 	for (auto& render : ComponentDonor<TextRenderer>::mComponents)
-	{
 		if (eObjFlag::FLAG_REMOVE & render.GetFlags())
-		{
 			ComponentDonor<TextRenderer>::mComponents.Remove(&render);
-		}
-	}
 
 #   if defined(_DEBUG) | defined(DEBUG)
 	if (auto err = glGetError())

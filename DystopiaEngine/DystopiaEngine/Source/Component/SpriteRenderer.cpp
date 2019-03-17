@@ -109,8 +109,9 @@ void Dystopia::SpriteRenderer::Draw(void) const noexcept
 				shader->UploadUniform("vUVBounds", 0.f, 0.f, 1.f, 1.f);
 			}
 		}
-		Renderer::Draw();
 	}
+
+	Renderer::Draw();
 }
 
 void Dystopia::SpriteRenderer::Update(float _fDT)

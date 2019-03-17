@@ -22,6 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/Vectors.h"
 
 #include "Utility/Utility.h"
+#include "DataStructure/AutoArray.h"
 
 #include <map>
 #include <string>
@@ -124,8 +125,13 @@ namespace Dystopia
 		void StartFrame(void);
 		void EndFrame(void);
 
-		void DrawScene(Camera&, Math::Mat4 const&, Math::Mat4 const&);
-		void DrawDebug(Camera&, Math::Mat4 const&, Math::Mat4 const&);
+		void DrawScene(Camera& /*, Math::Mat4 const&, Math::Mat4 const&*/ );
+		void DrawDebug(Camera& /*, Math::Mat4 const&, Math::Mat4 const&*/ );
+
+		AutoArray<Renderer*>       mSet1;
+		AutoArray<SpriteRenderer*> mSet2;
+		AutoArray<TextRenderer*>   mSet3;
+		AutoArray<Renderer*>       mTransparency;
 
 #	if EDITOR
 		bool mbVSync;
