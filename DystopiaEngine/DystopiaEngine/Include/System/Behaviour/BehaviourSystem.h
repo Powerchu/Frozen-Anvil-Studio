@@ -23,6 +23,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Behaviour/Behaviour.h"
 #include "System/File/FileSystem.h"
 #include "System/Scene/SceneSystem.h"
+#include "System/Scene/Scene.h"
 
 #include <memory>
 
@@ -250,8 +251,8 @@ namespace Dystopia
 		{
 
 			BehaviourMessage Message(_FuncParams...);
-			auto && Array = EngineCore::GetInstance()->Get<SceneSystem>()->GetActiveScene();
-			for (auto & elem : Array.GetAllGameObjects())
+			auto && Array = EngineCore::GetInstance()->Get<SceneSystem>()->GetActiveScene().GetAllGameObjects();
+			for (auto & elem : Array)
 			{
 				auto BehaviourArray = elem.GetAllBehaviours();
 				for (auto & BehaveElem : BehaviourArray)

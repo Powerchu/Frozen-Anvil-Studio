@@ -54,7 +54,7 @@ namespace Dystopia
 
 		uint64_t GetSceneID(void) const;
 
-		std::string GetSceneName(void) const;
+		HashString GetSceneName(void) const;
 
 		void SetAllActive() 
 		{
@@ -65,7 +65,7 @@ namespace Dystopia
 	private:
 
 		uint64_t			  mID;
-		std::string			  mName;
+		HashString			  mName;
 		MagicArray<GameObject> mGameObjs;
 		AutoArray<GameObject*> mLastSearch;
 

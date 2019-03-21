@@ -1224,7 +1224,7 @@ namespace EGUI
 		bool GoxTab(const char *text, bool *v)
 		{
 			ImFont *font = GImGui->Font;
-			char c;
+			//char c;
 			ImGuiContext& g = *GImGui;
 			const ImGuiStyle& style = g.Style;
 			const float pad = style.FramePadding.x;
@@ -1240,7 +1240,7 @@ namespace EGUI
 			const bool ret = ImGui::Button("", ImVec2(text_size.y + pad * 2,
 			                                    text_size.x + pad * 2));
 			ImGui::PopStyleColor();
-			while ((c = *text++)) {
+			while (auto c = *text++) {
 				const ImFont::Glyph *glyph = font->FindGlyph(c);
 				if (!glyph) continue;
 

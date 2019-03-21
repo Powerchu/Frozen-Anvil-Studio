@@ -156,10 +156,10 @@ uint64_t Dystopia::Scene::GetSceneID(void) const
 
 void Dystopia::Scene::SetSceneName(const std::string& _name)
 {
-	mName = _name;
+	mName = _name.c_str();
 }
 
-std::string Dystopia::Scene::GetSceneName(void) const
+HashString Dystopia::Scene::GetSceneName(void) const
 {
 	return mName;
 }

@@ -73,8 +73,8 @@ namespace Dystopia
 		Scene *mpCurrScene;
 		bool mbRestartScene;
 
-		std::string mLastSavedData;
-		std::string	mNextSceneFile;
+		HashString mLastSavedData;
+		HashString mNextSceneFile;
 
 		void SceneChanged(void);
 	};

@@ -454,7 +454,7 @@ void Editor::EditorStates::TempSave(void)
 	file += ".";
 	file += Gbl::SCENE_EXT;
 
-	sceneSystem->SaveScene(file.c_str(), sceneSystem->GetCurrentScene().GetSceneName());
+	sceneSystem->SaveScene(file.c_str(), sceneSystem->GetCurrentScene().GetSceneName().c_str());
 	mArrTempFile.Insert(file);
 }
 
