@@ -25,19 +25,19 @@ namespace Dystopia
 	class Texture;
 
 	struct ColourAttachment  {};
-	struct DepthAttachment   {};
-	struct StencilAttachment {};
-	struct DepthStencilAttachment : DepthAttachment, StencilAttachment {};
+	//struct DepthAttachment   {};
+	//struct StencilAttachment {};
+	//struct DepthStencilAttachment : DepthAttachment, StencilAttachment {};
 
 	class Framebuffer
 	{
-		using AttachmentTypes = Ut::Collection<ColourAttachment, DepthAttachment, StencilAttachment, DepthStencilAttachment>;
+		//using AttachmentTypes = Ut::Collection<ColourAttachment, DepthAttachment, StencilAttachment, DepthStencilAttachment>;
 
 	public:
 		// ====================================== CONSTRUCTORS ======================================= // 
 
-		Framebuffer(void) noexcept;
-		explicit Framebuffer(unsigned _nWidth, unsigned _nHeight, bool _bAlpha, int = 0x302, int = 0x303) noexcept;
+		//Framebuffer(void) noexcept;
+		explicit Framebuffer(unsigned _nWidth, unsigned _nHeight, bool _bAlpha/*, int = 0x302, int = 0x303*/) noexcept;
 
 		~Framebuffer(void) noexcept;
 
@@ -45,7 +45,8 @@ namespace Dystopia
 		// ===================================== MEMBER FUNCTIONS ==================================== // 
 
 		void Init(void);
-		void Init(unsigned _nWidth, unsigned _nHeight, bool _bAlpha = true, int = 0x302, int = 0x303);
+		void InitNoDepth(void);
+		//void Init(unsigned _nWidth, unsigned _nHeight, bool _bAlpha = true/*, int = 0x302, int = 0x303*/);
 
 		void Bind(void) const noexcept;
 		void Unbind(void) const noexcept;
@@ -53,13 +54,16 @@ namespace Dystopia
 		bool HasAlpha(void) const noexcept;
 		unsigned GetWidth (void) const noexcept;
 		unsigned GetHeight(void) const noexcept;
-		int GetBlendSrc(void) const noexcept;
-		int GetBlendDst(void) const noexcept;
+		//int GetBlendSrc(void) const noexcept;
+		//int GetBlendDst(void) const noexcept;
 
 		Texture* AsTexture(void) const noexcept;
 
-		template <typename T>
-		auto Attach(Texture*) -> Ut::EnableIf_t<Ut::MetaFind<T, AttachmentTypes>::value, Framebuffer&>;
+		void Attach(bool _bAlpha, int = 0) noexcept;
+		void Resize(unsigned _nWidth, unsigned _nHeight) noexcept;
+
+		//template <typename T>
+		//auto Attach(Texture*, int = 0) -> Ut::EnableIf_t<Ut::MetaFind<T, AttachmentTypes>::value, Framebuffer&>;
 
 	private:
 
@@ -68,7 +72,7 @@ namespace Dystopia
 
 		bool mbAlpha;
 		unsigned mnWidth, mnHeight;
-		int mBlendSrc, mBlendDst;
+		//int mBlendSrc, mBlendDst;
 	};
 }
 

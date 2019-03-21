@@ -778,18 +778,35 @@ void Dystopia::GraphicsSystem::Shutdown(void)
 
 void Dystopia::GraphicsSystem::LoadDefaults(void)
 {
-	unsigned const x = static_cast<unsigned>(mvResolution.x), y = static_cast<unsigned>(mvResolution.y);
-	mViews.Emplace(x, y, true);
-	mViews.Emplace(x, y, true, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	mViews.Emplace(x, y, false);
-
-#if EDITOR
-	mViews.Emplace(x, y, false);
-#endif
-	// LoadFramebuffers();
+	LoadFramebuffers();
 
 	mvClearCol = { 0,0,0,0 };
 	DRAW_MODE = GL_TRIANGLES;
+}
+
+void Dystopia::GraphicsSystem::LoadFramebuffers(void) noexcept
+{
+	unsigned const x = static_cast<unsigned>(mvResolution.x), y = static_cast<unsigned>(mvResolution.y);
+
+	// World
+	auto fb = mViews.Emplace(x, y, true);
+	fb->Attach(true);	   // Colours
+	fb->Attach(false, 1);  // Normals
+	fb->Attach(false, 2);  // Bright
+
+	// UI
+	fb = mViews.Emplace(x, y, true);
+	fb->Attach(true);	   // Colours
+
+	// Final
+	mViews.Emplace(x, y, false);
+	fb->Attach(false);
+
+#if EDITOR
+	// Editor
+	mViews.Emplace(x, y, false);
+	fb->Attach(false);
+#endif
 }
 
 void Dystopia::GraphicsSystem::SetResolution(unsigned w, unsigned h) noexcept
@@ -798,7 +815,7 @@ void Dystopia::GraphicsSystem::SetResolution(unsigned w, unsigned h) noexcept
 	mvResolution.y = static_cast<float>(h);
 }
 
-void Dystopia::GraphicsSystem::UpdateResolution(void) const noexcept
+void Dystopia::GraphicsSystem::UpdateResolution(void) noexcept
 {
 #if !EDITOR
 	EngineCore::Get<WindowManager>()->GetMainWindow().SetSize(
@@ -809,6 +826,9 @@ void Dystopia::GraphicsSystem::UpdateResolution(void) const noexcept
 	static_cast<Texture2D*>(GetFrameBuffer().AsTexture())->ReplaceTexture(
 		static_cast<unsigned>(mvResolution.x), static_cast<unsigned>(mvResolution.y), nullptr, false
 	);
+
+	//mViews.clear();
+	//LoadFramebuffers();
 }
 
 void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
@@ -825,7 +845,7 @@ void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
 		_in >> Unused{}.EnforceType<unsigned>();
 		_in >> Unused{}.EnforceType<bool>();
 		_in >> Unused{}.EnforceType<int>();
-		std::cin >> Unused{}.EnforceType<int>();
+		_in >> Unused{}.EnforceType<int>();
 	}
 	//for (int j = 0; j < n; ++j)
 	//{

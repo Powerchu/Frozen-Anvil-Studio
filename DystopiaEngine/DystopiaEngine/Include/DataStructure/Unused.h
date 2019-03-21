@@ -110,7 +110,7 @@ constexpr inline typename Unused::Enforcer<T>& Unused::Enforcer<T>::operator = (
 }
 
 template <typename U, typename T>
-constexpr decltype(auto) operator >> (U&& lhs, Unused::Enforcer<T> const&) noexcept(noexcept(Ut::declval<U>() >> Ut::declval<T>()))
+constexpr decltype(auto) operator >> (U&& lhs, Unused::Enforcer<T> const&) noexcept(noexcept(Ut::declval<U>() >> Ut::declval<T&>()))
 {
 	alignas(T) char dummy[sizeof(T)];
 	return lhs >> *(reinterpret_cast<T*>(dummy));

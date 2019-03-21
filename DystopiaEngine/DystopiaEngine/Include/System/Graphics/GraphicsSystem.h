@@ -100,7 +100,7 @@ namespace Dystopia
 		static void SetDrawMode(int) noexcept;
 
 		void SetResolution(unsigned w, unsigned h) noexcept;
-		void UpdateResolution(void) const noexcept;
+		void UpdateResolution(void) noexcept;
 
 		void EditorAspectRatio(void);
 		void EditorUI(void);
@@ -127,6 +127,8 @@ namespace Dystopia
 
 		void DrawScene(Camera& /*, Math::Mat4 const&, Math::Mat4 const&*/ );
 		void DrawDebug(Camera& /*, Math::Mat4 const&, Math::Mat4 const&*/ );
+
+		void LoadFramebuffers(void) noexcept;
 
 		AutoArray<Renderer*>       mSet1;
 		AutoArray<SpriteRenderer*> mSet2;
