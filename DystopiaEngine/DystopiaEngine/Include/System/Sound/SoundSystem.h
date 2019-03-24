@@ -55,6 +55,7 @@ namespace Dystopia
 
 		void ReceiveMessage(const eSysMessage&);
 		Sound* LoadSound(const HashString& _file);
+		void   CreateSound(const char * _data, int _buffersize, int _noChannels, int _format, int _freq = 44100);
 		char RegisterNewListener(AudioListener * const & _Listener);
 
 		_DLL_EXPORT void SetMaster(float);

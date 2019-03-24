@@ -10,6 +10,7 @@
 #include "System/Graphics/Texture.h"
 #include "System/Graphics/Texture2D.h"
 #include "System/Graphics/GraphicsSystem.h"
+#include "System/Sound/SoundSystem.h"
 /*I/O*/
 #include "IO/TextSerialiser.h"					/*Serialiser*/
 
@@ -25,7 +26,7 @@
 #include "tools_common.h"
 #include "webmdec.h"
 #include "vpx/vpx_image.h"
-
+#include "third_party/libwebm/mkvparser/mkvreader.h"
 
 /* OPEN GL */
 #include "GL/glew.h"
@@ -38,6 +39,15 @@
 #endif 
 
 #define __VIDEO_DEBUG 0
+
+
+/*REFERENCES*/
+/*
+https://github.com/webmproject/libwebm/blob/master/mkvmuxer_sample.cc (for extracting audio)
+https://qa.fmod.com/t/playing-raw-audio-data/7456                     (F-MOD Raw Audio)
+
+FMOD_System_CreateSound                                               (Function to create sound from raw data)
+*/
 
 namespace Dystopia
 {
@@ -130,6 +140,7 @@ namespace Dystopia
 
 	void VideoRenderer::Update(float)
 	{
+
 	}
 
 	void Dystopia::VideoRenderer::OnDestroy(void)
@@ -184,8 +195,7 @@ namespace Dystopia
 		mVidHdl->length = 0;
 		mElapsedTime    = 0.f;
 
-
-
+		
 		//mWebmHdl->buffer = nullptr;
 
 		if (file_is_webm(mWebmHdl, mVidHdl))
@@ -199,6 +209,7 @@ namespace Dystopia
 
 			/*Want to guess frame rate???*/
 			webm_guess_framerate(mWebmHdl, mVidHdl);
+
 			//mWebmHdl->buffer = nullptr;
 
 			/*Get video instance decode*/
@@ -308,8 +319,23 @@ namespace Dystopia
 
 			/*Want to guess frame rate???*/
 			webm_guess_framerate(mWebmHdl, mVidHdl);
-			//mDuration = mVidHdl->framerate.numerator/mVidHdl->framerate.denominator * mWebmHdl->
 
+			/*Testing audio*/
+			const mkvparser::Tracks * const tracks = reinterpret_cast<mkvparser::Segment*>(mWebmHdl->segment)->GetTracks();
+			for (unsigned i = 0; i < tracks->GetTracksCount(); ++i)
+			{
+				auto * track = tracks->GetTrackByIndex(i);
+				if (track->GetType() == mkvparser::Track::kAudio)
+				{
+#if EDITOR 
+					DEBUG_PRINT(eLog::MESSAGE, "Track is audio");
+#endif
+					auto audiotrack = reinterpret_cast<mkvparser::AudioTrack const *>(track);
+					size_t buffsize = 0;
+					auto buff = audiotrack->GetCodecPrivate(buffsize);
+					CORE::Get<SoundSystem>()->CreateSound(reinterpret_cast<const char *>(buff), static_cast<int>(buffsize),audiotrack->GetChannels(), 1);
+				}
+			}
 			/*Get video instance decode*/
 			decoder = get_vpx_decoder_by_fourcc(mVidHdl->fourcc);
 

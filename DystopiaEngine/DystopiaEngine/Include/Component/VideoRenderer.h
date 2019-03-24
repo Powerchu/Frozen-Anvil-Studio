@@ -152,7 +152,7 @@ namespace Dystopia
 			uint8_t            *  buffer;
 			size_t                mBufferSize;
 			const void *          mCodecIterator;
-			
+			void *                mAudioSegment;
 			//void* glBuffer;
 
 			Texture2D* mpTexture;
