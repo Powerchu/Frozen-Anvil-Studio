@@ -161,10 +161,13 @@ namespace Dystopia
 
 			VideoState            mState;
 			unsigned              mRecentFlags;
+			float                 mElapsedTime;
 			bool                  mPlayOnStart;
 			bool                  mbLoop;
+
 			/*Functions*/
 
+			
 
 			friend VideoSystem;
 	};

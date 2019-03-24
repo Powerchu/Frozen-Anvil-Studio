@@ -59,7 +59,7 @@ namespace Dystopia
 	void VideoSystem::FixedUpdate(float)
 	{
 	}
-	void VideoSystem::Update(float)
+	void VideoSystem::Update(float _dt)
 	{
 		VideoRenderer * mCurrentVid = nullptr;
 
@@ -86,9 +86,31 @@ namespace Dystopia
 
 		if (mCurrentVid)
 		{
-			/*Start the countdown*/
-			mTimer.Countdown(mCurrentVid->mVidHdl->framerate.numerator * 1.f / mCurrentVid->mVidHdl->framerate.denominator);
+			mCurrentVid->mElapsedTime += _dt;
+			float frame = 1.f /(mCurrentVid->mVidHdl->framerate.numerator * 1.f / (mCurrentVid->mVidHdl->framerate.denominator));
 
+			/*If the elapsed time is ready for the next frame*/
+			if (mCurrentVid->mElapsedTime < frame)
+				return;
+
+			/*Skip frames to catch up*/
+			while (mCurrentVid->mElapsedTime > (frame*2.f))
+			{
+				auto mCurrImg = mCurrentVid->GetFrameImage();
+				if (!mCurrImg)
+				{
+					/*Get the next decoded frame*/
+					if (mCurrentVid->ReadNextFrame() == VideoErrorCode::OK)
+					{
+						/*Get a new decode image*/
+						mCurrImg = mCurrentVid->GetFrameImage();
+					}
+				}
+				mCurrentVid->mElapsedTime -= frame;
+			}
+
+			/*Start the countdown*/
+			mTimer.Countdown(frame);
 			/*Prev buffer is done decoding, get the next frame*/
 			if (!mCurrentVid->mBuffer.count)
 			{
@@ -120,83 +142,43 @@ namespace Dystopia
 				}
 			}
 			/*Previous video frame is not completely decoded and translated*/
-			else if(mCurrentVid->mpCurrImg)
+			else if (mCurrentVid->mpCurrImg)
 			{
 				/*Conver to RGB*/
 				Convert_YUV_RGB(&mCurrentVid->mBuffer, mCurrentVid->mpCurrImg);
 			}
-
+				
 			if (mCurrentVid->BufferIsComplete())
 			{
-						glBindBuffer(GL_PIXEL_UNPACK_BUFFER, mCurrentVid->RgbBufferBufferID());
-						if (auto err = glGetError())
-							__debugbreak();
-						glFlushMappedBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, mCurrentVid->mBuffer.width * mCurrentVid->mBuffer.height * mCurrentVid->mBuffer.stride);
-						if (auto err = glGetError())
-							__debugbreak();
-						mCurrentVid->GetTexture()->Bind();
-						if (auto err = glGetError())
-							__debugbreak();
-						//glBindBuffer(GL_PIXEL_UNPACK_BUFFER, mCurrentVid->RgbBufferBufferID());
-						//if (auto err = glGetError())
-						//	__debugbreak();
-						glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, mCurrentVid->mBuffer.width, mCurrentVid->mBuffer.height, GL_RGB, GL_UNSIGNED_BYTE, 0);
-						if (auto err = glGetError())
-							__debugbreak();
-						mCurrentVid->GetTexture()->Unbind();
-						if (auto err = glGetError())
-							__debugbreak();
-						glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-						if (auto err = glGetError())
-							__debugbreak();
-						mFence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-						if (auto err = glGetError())
-							__debugbreak();
+				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, mCurrentVid->RgbBufferBufferID());
+				if (auto err = glGetError())
+					__debugbreak();
+				glFlushMappedBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, mCurrentVid->mBuffer.width * mCurrentVid->mBuffer.height * mCurrentVid->mBuffer.stride);
+				if (auto err = glGetError())
+					__debugbreak();
+				mCurrentVid->GetTexture()->Bind();
+				if (auto err = glGetError())
+					__debugbreak();
+				glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, mCurrentVid->mBuffer.width, mCurrentVid->mBuffer.height, GL_RGB, GL_UNSIGNED_BYTE, 0);
+				if (auto err = glGetError())
+					__debugbreak();
+				mCurrentVid->GetTexture()->Unbind();
+				if (auto err = glGetError())
+					__debugbreak();
+				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+				if (auto err = glGetError())
+					__debugbreak();
+				mFence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+				if (auto err = glGetError())
+					__debugbreak();
 
-						mCurrentVid->mBuffer.ResetCount();
-						mCurrentVid->mpCurrImg = nullptr;
+				mCurrentVid->mBuffer.ResetCount();
+				mCurrentVid->mpCurrImg = nullptr;
+				mCurrentVid->mElapsedTime -= frame;
 			}
 
 		}
-		//	/*Buffer is complete*/
-		//	if (mBuffer.IsComplete())
-		//	{
-		//		/*Pass to graphic to draw the complete image*/
-		//		/*TO DO*/
-		//		mBuffer.mImg = nullptr;
 
-		//		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, mBuffer.pboID);
-		//		if (auto err = glGetError())
-		//			__debugbreak();
-		//		glFlushMappedBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, mBuffer.width * mBuffer.height * mBuffer.stride);
-		//		if (auto err = glGetError())
-		//			__debugbreak();
-		//		mCurrentVid->GetTexture()->Bind();
-		//		if (auto err = glGetError())
-		//			__debugbreak();
-		//		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, mBuffer.pboID);
-		//		if (auto err = glGetError())
-		//			__debugbreak();
-		//		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, mBuffer.width, mBuffer.height, GL_RGB, GL_UNSIGNED_BYTE, 0);
-		//		if (auto err = glGetError())
-		//			__debugbreak();
-		//		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-		//		if (auto err = glGetError())
-		//			__debugbreak();
-		//		mCurrentVid->GetTexture()->Unbind();
-		//		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-		//		if (auto err = glGetError())
-		//			__debugbreak();
-		//		mFence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-		//		if (auto err = glGetError())
-		//			__debugbreak();
-
-		//		//ImageParser::WriteBMP("Output/" + std::to_string(count++) + ".bmp", mBuffer.rgb_buff, mBuffer.width, mBuffer.height);
-		//		/*Reset the buffer count*/
-		//		mBuffer.ResetCount();
-		//		mCurrImg = nullptr;
-		//	}
-		//}
 
 #if EDITOR
 		if (auto err = glGetError())

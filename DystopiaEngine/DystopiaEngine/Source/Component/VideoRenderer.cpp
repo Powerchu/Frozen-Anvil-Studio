@@ -54,7 +54,8 @@ namespace Dystopia
 		 mPlayOnStart{false},
 		 mbLoop{true},
 		 mpTexture{nullptr},
-		 mpCurrImg{nullptr}
+		 mpCurrImg{nullptr},
+		 mElapsedTime{0.f}
 	{
 		mWebmHdl->buffer      = nullptr;
 		mWebmHdl->block       = nullptr;
@@ -181,6 +182,11 @@ namespace Dystopia
 		/*Pass file handle to Video Handle*/
 		mVidHdl->file   = mVidFileHandle;
 		mVidHdl->length = 0;
+		mElapsedTime    = 0.f;
+
+
+
+		//mWebmHdl->buffer = nullptr;
 
 		if (file_is_webm(mWebmHdl, mVidHdl))
 		{
@@ -192,7 +198,7 @@ namespace Dystopia
 #endif
 
 			/*Want to guess frame rate???*/
-			//webm_guess_framerate(mWebmHdl, mVidHdl);
+			webm_guess_framerate(mWebmHdl, mVidHdl);
 			//mWebmHdl->buffer = nullptr;
 
 			/*Get video instance decode*/
@@ -280,7 +286,7 @@ namespace Dystopia
 		mBufferSize     = 0;
 		mpCurrImg       = nullptr;
 		mVidHdl->fourcc = 0;
-
+		mElapsedTime    = 0.f;
 		mVidHdl->file   = mVidFileHandle;
 		mVidHdl->length = 0;
 
@@ -301,7 +307,8 @@ namespace Dystopia
 #endif
 
 			/*Want to guess frame rate???*/
-			//webm_guess_framerate(mWebmHdl, mVidHdl);
+			webm_guess_framerate(mWebmHdl, mVidHdl);
+			//mDuration = mVidHdl->framerate.numerator/mVidHdl->framerate.denominator * mWebmHdl->
 
 			/*Get video instance decode*/
 			decoder = get_vpx_decoder_by_fourcc(mVidHdl->fourcc);
@@ -339,6 +346,9 @@ namespace Dystopia
 
 	vid_error_c_t VideoRenderer::ReadNextFrame()
 	{
+		if (!mVidFileHandle || !mVid.c_str())
+			return VideoErrorCode::VIDEO_FILE_NOT_FOUND;
+
 		int code = webm_read_frame(mWebmHdl, &buffer, &mBufferSize);
 		if (code == 0)
 		{
@@ -481,11 +491,6 @@ namespace Dystopia
 		}
 		if (rgb_buff)
 		{
-			//glUnmapBuffer(GL_PIXEL_UNPACK_BUFFER);
-			//if (auto err = glGetError())
-			//{
-			//	__debugbreak();
-			//}
 			DeleteBuffer();
 			if (auto err = glGetError())
 			{
