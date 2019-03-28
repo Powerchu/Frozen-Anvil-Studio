@@ -47,6 +47,7 @@ https://github.com/webmproject/libwebm/blob/master/mkvmuxer_sample.cc (for extra
 https://qa.fmod.com/t/playing-raw-audio-data/7456                     (F-MOD Raw Audio)
 
 FMOD_System_CreateSound                                               (Function to create sound from raw data)
+http://docs.mystler.eu/cwe/classmkvparser_1_1_track.html              (mkvparser::track reference)
 */
 
 namespace Dystopia
@@ -209,8 +210,7 @@ namespace Dystopia
 
 			/*Want to guess frame rate???*/
 			webm_guess_framerate(mWebmHdl, mVidHdl);
-
-			//mWebmHdl->buffer = nullptr;
+			mWebmHdl->buffer = nullptr;
 
 			/*Get video instance decode*/
 			decoder = get_vpx_decoder_by_fourcc(mVidHdl->fourcc);
@@ -308,6 +308,8 @@ namespace Dystopia
 
 		mWebmHdl->reached_eos = 0;
 
+
+
 		if (file_is_webm(mWebmHdl, mVidHdl))
 		{
 			vpx_codec_dec_cfg_t cfg;
@@ -319,29 +321,13 @@ namespace Dystopia
 
 			/*Want to guess frame rate???*/
 			webm_guess_framerate(mWebmHdl, mVidHdl);
-
+			mWebmHdl->buffer = nullptr;
 			/*Testing audio*/
-			const mkvparser::Tracks * const tracks = reinterpret_cast<mkvparser::Segment*>(mWebmHdl->segment)->GetTracks();
-			for (unsigned i = 0; i < tracks->GetTracksCount(); ++i)
-			{
-				auto * track = tracks->GetTrackByIndex(i);
-				if (track->GetType() == mkvparser::Track::kAudio)
-				{
-#if EDITOR 
-					DEBUG_PRINT(eLog::MESSAGE, "Track is audio");
-#endif
-					auto audiotrack = reinterpret_cast<mkvparser::AudioTrack const *>(track);
-					size_t buffsize = 0;
-					auto buff = audiotrack->GetCodecPrivate(buffsize);
-					CORE::Get<SoundSystem>()->CreateSound(reinterpret_cast<const char *>(buff), static_cast<int>(buffsize),audiotrack->GetChannels(), 1);
-				}
-			}
 			/*Get video instance decode*/
 			decoder = get_vpx_decoder_by_fourcc(mVidHdl->fourcc);
 
 			if (!vpx_codec_dec_init(mDecodec, decoder->codec_interface(), &cfg, NULL))
 			{
-				DEBUG_PRINT(eLog::MESSAGE, "Size of mDecodec %d", sizeof(*mDecodec));
 				/*Decoder success*/
 				mState = VideoState::NEUTRAL;
 				if (ReadNextFrame() == VideoErrorCode::OK)
@@ -349,6 +335,53 @@ namespace Dystopia
 					mpCurrImg = GetFrameImage();
 					mBuffer.Resize(mpCurrImg->d_h, mpCurrImg->d_w, this);	
 				}
+
+//				const mkvparser::Tracks * const tracks = reinterpret_cast<mkvparser::Segment*>(mWebmHdl->segment)->GetTracks();
+//				for (unsigned i = 0; i < tracks->GetTracksCount(); ++i)
+//				{
+//					auto * track = tracks->GetTrackByIndex(i);
+//					if (track->GetType() == mkvparser::Track::kAudio)
+//					{
+//#if EDITOR 
+//						DEBUG_PRINT(eLog::MESSAGE, "Track is audio");
+//#endif
+//						auto audiotrack = reinterpret_cast<mkvparser::AudioTrack const *>(track);
+//
+//
+//						mkvparser::AudioTrack::Info info;
+//						//HashString codecName = audiotrack->GetCodecNameAsUTF8();
+//						//unsigned char *  p_codecprivate = new unsigned char[buffsize];
+//						//char *           p_codecId = new char[strlen(audiotrack->GetCodecId()) + 1]{ 0 };
+//
+//						//memcpy(p_codecId, audiotrack->GetCodecId(), strlen(audiotrack->GetCodecId()));
+//						//memcpy(p_codecprivate, buff, buffsize);
+//
+//						//info.codecPrivate     = p_codecprivate;
+//						//info.codecPrivateSize = buffsize;
+//						//info.codecId          = p_codecId;
+//						//info.codecDelay       = track->GetCodecDelay();
+//						//info.lacing           = track->GetLacing();
+//						//info.seekPreRoll      = track->GetSeekPreRoll();
+//						//info.type             = mkvparser::Track::kAudio;
+//						//info.settings.size    = track->m_element_size;
+//						//info.settings.start	  = track->m_element_start;
+//						//mkvparser::AudioTrack * audioresult = nullptr;
+//
+//						//mkvparser::AudioTrack::Parse(reinterpret_cast<mkvparser::Segment*>(track->m_pSegment), info, track->m_element_size, track->m_element_start, audioresult);
+//
+//						//mkvparser::BlockEntry const * pBlock = nullptr;
+//						//audiotrack->GetFirst(pBlock);
+//						//auto & frame = pBlock->GetBlock()->GetFrame(0);
+//						//auto buff = new uint8_t[frame.len];
+//
+//						//auto l = frame.Read(reinterpret_cast<mkvparser::MkvReader *>(mWebmHdl->reader), buff);
+//						//size_t buffsize = 0;
+//						//auto buff = audioresult->GetCodecPrivate(buffsize);
+//						
+//						//CORE::Get<SoundSystem>()->CreateSound(reinterpret_cast<const char *>(buff), static_cast<int>(buffsize), audioresult->GetChannels(), 1);
+//
+//					}
+//				}
 			}
 			else if (!decoder)
 			{
