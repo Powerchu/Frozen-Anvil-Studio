@@ -73,7 +73,7 @@ void Dystopia::Framebuffer::Init(void)
 	//glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mpTexture->GetID(), 0);
 	glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, mDepthBuffer);
 
-	glDrawBuffers(mAttachments.size(), buffers);
+	glDrawBuffers(static_cast<GLsizei>(mAttachments.size()), buffers);
 
 	Unbind();
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
@@ -93,7 +93,7 @@ void Dystopia::Framebuffer::InitNoDepth(void)
 	};
 
 	Bind();
-	glDrawBuffers(mAttachments.size(), buffers);
+	glDrawBuffers(static_cast<GLsizei>(mAttachments.size()), buffers);
 
 	Unbind();
 }
@@ -153,9 +153,9 @@ Dystopia::Texture* Dystopia::Framebuffer::AsTexture(void) const noexcept
 	return mAttachments[0];
 }
 
-void Dystopia::Framebuffer::Attach(bool _bAlpha, int num, unsigned datatype)
+void Dystopia::Framebuffer::Attach(bool _bAlpha, int num, unsigned datatype) noexcept
 {
-	unsigned format = mbAlpha ? GL_RGBA : GL_RGB;
+	unsigned format = _bAlpha ? GL_RGBA : GL_RGB;
 	Image tmp = { "", false, true, format, format, mnWidth, mnHeight, mbAlpha ? 4u : 3u, 1u, nullptr };
 	tmp.mDataType = datatype;
 	mAttachments.EmplaceBack(CORE::Get<TextureSystem>()->LoadRaw<Texture2D>(&tmp));
