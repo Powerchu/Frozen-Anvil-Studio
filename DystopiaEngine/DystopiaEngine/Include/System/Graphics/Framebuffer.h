@@ -59,7 +59,7 @@ namespace Dystopia
 
 		Texture* AsTexture(void) const noexcept;
 
-		void Attach(bool _bAlpha, int = 0) noexcept;
+		void Attach(bool _bAlpha, int = 0, unsigned = 0x1401) noexcept;
 		void Resize(unsigned _nWidth, unsigned _nHeight) noexcept;
 
 		//template <typename T>

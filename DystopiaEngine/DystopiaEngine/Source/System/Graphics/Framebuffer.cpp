@@ -153,10 +153,11 @@ Dystopia::Texture* Dystopia::Framebuffer::AsTexture(void) const noexcept
 	return mAttachments[0];
 }
 
-void Dystopia::Framebuffer::Attach(bool _bAlpha, int num)
+void Dystopia::Framebuffer::Attach(bool _bAlpha, int num, unsigned datatype)
 {
 	unsigned format = mbAlpha ? GL_RGBA : GL_RGB;
 	Image tmp = { "", false, true, format, format, mnWidth, mnHeight, mbAlpha ? 4u : 3u, 1u, nullptr };
+	tmp.mDataType = datatype;
 	mAttachments.EmplaceBack(CORE::Get<TextureSystem>()->LoadRaw<Texture2D>(&tmp));
 
 	Bind();

@@ -239,7 +239,7 @@ Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetUIView(void) const noexcept
 
 Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetFrameBuffer(void) const noexcept
 {
-	return mViews[2];
+	return mViews[4];
 }
 
 Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetView(int _n) const
@@ -790,9 +790,9 @@ void Dystopia::GraphicsSystem::LoadFramebuffers(void) noexcept
 
 	// World
 	auto fb = mViews.Emplace(x, y, true);
-	fb->Attach(true);	   // Colours
-	fb->Attach(false, 1);  // Normals
-	fb->Attach(false, 2);  // Bright
+	fb->Attach(true);	                  // Colours
+	fb->Attach(false, 1);                 // Normals
+	fb->Attach(false, 2, GL_HALF_FLOAT);  // Bright
 
 	// UI
 	fb = mViews.Emplace(x, y, true);
@@ -801,6 +801,13 @@ void Dystopia::GraphicsSystem::LoadFramebuffers(void) noexcept
 	// Final
 	mViews.Emplace(x, y, false);
 	fb->Attach(false);
+
+	// Partial 
+	fb = mViews.Emplace(x, y, true);
+	fb->Attach(true);
+	// Partial 2
+	fb = mViews.Emplace(x, y, true);
+	fb->Attach(true);
 
 #if EDITOR
 	// Editor
@@ -847,6 +854,7 @@ void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
 		_in >> Unused{}.EnforceType<int>();
 		_in >> Unused{}.EnforceType<int>();
 	}
+
 	//for (int j = 0; j < n; ++j)
 	//{
 	//	_in >> w;
@@ -871,7 +879,7 @@ void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
 	_in >> mvResolution;
 
 	ToggleVsync(vSync);
-	// LoadFramebuffers();
+	LoadFramebuffers();
 }
 
 void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)

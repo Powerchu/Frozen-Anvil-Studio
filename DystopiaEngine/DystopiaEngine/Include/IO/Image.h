@@ -26,6 +26,7 @@ namespace Dystopia
 		unsigned mnRawFormat, mnFormat;
 		unsigned mnWidth, mnHeight;
 		unsigned mnChannels, mnMipMaps;
+		unsigned mDataType = 0x1401;
 		void* mpImageData;
 
 		Image(void) noexcept;
