@@ -24,6 +24,9 @@
 
 #pragma warning (push)
 #pragma warning (disable : 4996)
+#pragma warning (disable : 4456)
+#pragma warning (disable : 4457)
+
 namespace mkvparser {
 const long long kStringElementSizeLimit = 20 * 1000 * 1000;
 const float MasteringMetadata::kValueNotPresent = FLT_MAX;

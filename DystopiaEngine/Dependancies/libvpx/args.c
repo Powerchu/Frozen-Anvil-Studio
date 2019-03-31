@@ -15,6 +15,9 @@
 #include "vpx/vpx_integer.h"
 #include "vpx_ports/msvc.h"
 
+#pragma warning (push)
+#pragma warning (disable : 4701)
+
 #if defined(__GNUC__) && __GNUC__
 extern void die(const char *fmt, ...) __attribute__((noreturn));
 #else
@@ -213,5 +216,7 @@ int arg_parse_enum_or_int(const struct arg *arg) {
   return arg_parse_int(arg);
 }
 
+
+#pragma warning(pop)
 
 
