@@ -51,7 +51,7 @@ namespace Dystopia
 
 		//vpx_image * mCurrImg;
 		Timer         mTimer;
-		void Convert_YUV_RGB(RGB_BUFFER * buffer, vpx_image const * yuv_image);
+		void Convert_YUV_RGB(RGB_BUFFER * buffer, vpx_image const * yuv_image, bool _prevdone);
 		int  Clamp(int v) const;
 	};
 

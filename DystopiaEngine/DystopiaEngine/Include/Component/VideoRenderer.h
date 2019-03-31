@@ -164,6 +164,7 @@ namespace Dystopia
 			float                 mElapsedTime;
 			bool                  mPlayOnStart;
 			bool                  mbLoop;
+			bool                  mbPrevDone;
 
 			/*Functions*/
 

@@ -54,19 +54,20 @@ namespace Dystopia
 {
 	VideoRenderer::VideoRenderer()
 		:mVidFileHandle{ nullptr },
-		 decoder{ nullptr }, 
-		 mWebmHdl{ new WebmInputContext },
-		 mVidHdl{ new VpxInputContext },
-		 mDecodec{new vpx_codec_ctx_t},
-		 mState{VideoState::NEUTRAL},
-		 buffer{nullptr},
-		 mCodecIterator{nullptr},
-	     mRecentFlags{0},
-		 mPlayOnStart{false},
-		 mbLoop{true},
-		 mpTexture{nullptr},
-		 mpCurrImg{nullptr},
-		 mElapsedTime{0.f}
+		decoder{ nullptr },
+		mWebmHdl{ new WebmInputContext },
+		mVidHdl{ new VpxInputContext },
+		mDecodec{ new vpx_codec_ctx_t },
+		mState{ VideoState::NEUTRAL },
+		buffer{ nullptr },
+		mCodecIterator{ nullptr },
+		mRecentFlags{ 0 },
+		mPlayOnStart{ false },
+		mbLoop{ true },
+		mpTexture{ nullptr },
+		mpCurrImg{ nullptr },
+		mElapsedTime{ 0.f },
+		mbPrevDone{ true }
 	{
 		mWebmHdl->buffer      = nullptr;
 		mWebmHdl->block       = nullptr;
@@ -79,7 +80,7 @@ namespace Dystopia
 
 		Image imgData
 		{
-			"", false, true, GL_RGB, GL_RGB, 0, 0, 3, 1, nullptr
+			"", false, false, GL_RGB, GL_RGB, 0, 0, 3, 1, nullptr
 		};
 		mpTexture = CORE::Get<TextureSystem>()->LoadRaw<Texture2D>(&imgData);
 	}
@@ -170,15 +171,18 @@ namespace Dystopia
 		Component::Unserialise(out);
 		out >> mVid;
 		out >> mPlayOnStart;
-
 		out.ConsumeEndBlock();
+
+		if (LoadVideo(mVid) == VideoErrorCode::VIDEO_FILE_NOT_FOUND)
+			DEBUG_PRINT(eLog::MESSAGE, "%s file not found", mVid.c_str());
 	}
 	_DLL_EXPORT_ONLY vid_error_c_t VideoRenderer::LoadVideo(HashString const & VidName)
 	{
+		;
 		if (!VidName.length())
 			return VideoErrorCode::VIDEO_FILE_NOT_FOUND;
 
-		auto && path = EngineCore::Get<FileSystem>()->GetFullPath(VidName.c_str(), eFileDir::eResource);
+		auto && path = EngineCore::Get<FileSystem>()->GetFullPath(VidName.find(".webm", 0) != HashString::nPos?VidName.c_str(): (VidName + ".webm").c_str(), eFileDir::eResource);
 
 		if (path.empty())
 			return VideoErrorCode::VIDEO_FILE_NOT_FOUND;
@@ -456,7 +460,8 @@ namespace Dystopia
 
 		if (!mpCurrImg)
 		{
-			mpCurrImg = vpx_codec_get_frame(mDecodec, &mCodecIterator);
+			mpCurrImg  = vpx_codec_get_frame(mDecodec, &mCodecIterator);
+			mbPrevDone = true;
 		}
 
 		return mpCurrImg;
@@ -486,6 +491,9 @@ namespace Dystopia
 		EGUI::PushLeftAlign(140.f);
 		
 		static char buff[1024]{ 0 };
+
+		if(mVid.c_str())
+			strcpy_s(buff, mVid.c_str());
 
 		if (EGUI::Display::TextField("Video File", static_cast<char *>(buff),1024,true,250.f,true))
 		{

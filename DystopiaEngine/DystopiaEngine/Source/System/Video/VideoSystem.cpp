@@ -9,7 +9,7 @@
 #include "Component/TextRenderer.h"
 #include "Component/SpriteRenderer.h"
 #include "Component/VideoRenderer.h"
-
+#include "Component/AudioSource.h"
 #include "Object/GameObject.h"
 
 /*Utility*/
@@ -86,31 +86,31 @@ namespace Dystopia
 
 		if (mCurrentVid)
 		{
+
 			mCurrentVid->mElapsedTime += _dt;
 			float frame = 1.f /(mCurrentVid->mVidHdl->framerate.numerator * 1.f / (mCurrentVid->mVidHdl->framerate.denominator));
 
-			/*If the elapsed time is ready for the next frame*/
-			if (mCurrentVid->mElapsedTime < frame)
-				return;
-
 			/*Skip frames to catch up*/
-			while (mCurrentVid->mElapsedTime > (frame*2.f))
-			{
-				auto mCurrImg = mCurrentVid->GetFrameImage();
-				if (!mCurrImg)
+			if(mCurrentVid->mbPrevDone)
+				while (mCurrentVid->mElapsedTime > (frame))
 				{
-					/*Get the next decoded frame*/
-					if (mCurrentVid->ReadNextFrame() == VideoErrorCode::OK)
+					auto mCurrImg = mCurrentVid->GetFrameImage();
+					if (!mCurrImg)
 					{
-						/*Get a new decode image*/
-						mCurrImg = mCurrentVid->GetFrameImage();
+						/*Get the next decoded frame*/
+						if (mCurrentVid->ReadNextFrame() == VideoErrorCode::OK)
+						{
+							/*Get a new decode image*/
+							mCurrImg = mCurrentVid->GetFrameImage();
+						}
 					}
+					mCurrentVid->mElapsedTime -= frame;
 				}
-				mCurrentVid->mElapsedTime -= frame;
-			}
 
 			/*Start the countdown*/
-			mTimer.Countdown(frame);
+			if(mCurrentVid->mbPrevDone)
+				mTimer.Countdown(frame);
+
 			/*Prev buffer is done decoding, get the next frame*/
 			if (!mCurrentVid->mBuffer.count)
 			{
@@ -127,7 +127,7 @@ namespace Dystopia
 						if (mCurrImg && !mTimer.Complete())
 						{
 							//mCurrentVid->mBuffer.Resize(mCurrImg->d_h, mCurrImg->d_w, mCurrentVid);
-							Convert_YUV_RGB(&mCurrentVid->mBuffer, mCurrImg);
+							Convert_YUV_RGB(&mCurrentVid->mBuffer, mCurrImg,mCurrentVid->mbPrevDone);
 						}
 					}
 					else
@@ -138,43 +138,55 @@ namespace Dystopia
 				else
 				{
 					//mCurrentVid->mBuffer.Resize(mCurrImg->d_h, mCurrImg->d_w, mCurrentVid);
-					Convert_YUV_RGB(&mCurrentVid->mBuffer, mCurrImg);
+					Convert_YUV_RGB(&mCurrentVid->mBuffer, mCurrImg, mCurrentVid->mbPrevDone);
 				}
 			}
 			/*Previous video frame is not completely decoded and translated*/
 			else if (mCurrentVid->mpCurrImg)
 			{
 				/*Conver to RGB*/
-				Convert_YUV_RGB(&mCurrentVid->mBuffer, mCurrentVid->mpCurrImg);
+				Convert_YUV_RGB(&mCurrentVid->mBuffer, mCurrentVid->mpCurrImg, mCurrentVid->mbPrevDone);
 			}
-				
+			
+			/*If the elapsed time is faster than fps, return and draw decoded frame in the next update loop*/
+			if (mCurrentVid->mElapsedTime < frame)
+			{
+				mCurrentVid->mbPrevDone = false;
+				return;
+			}
+			
 			if (mCurrentVid->BufferIsComplete())
 			{
 				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, mCurrentVid->RgbBufferBufferID());
-				if (auto err = glGetError())
-					__debugbreak();
+				//if (auto err = glGetError())
+				//	__debugbreak();
 				glFlushMappedBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, mCurrentVid->mBuffer.width * mCurrentVid->mBuffer.height * mCurrentVid->mBuffer.stride);
-				if (auto err = glGetError())
-					__debugbreak();
+				//if (auto err = glGetError())
+				//	__debugbreak();
 				mCurrentVid->GetTexture()->Bind();
-				if (auto err = glGetError())
-					__debugbreak();
+				//if (auto err = glGetError())
+				//	__debugbreak();
 				glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, mCurrentVid->mBuffer.width, mCurrentVid->mBuffer.height, GL_RGB, GL_UNSIGNED_BYTE, 0);
-				if (auto err = glGetError())
-					__debugbreak();
+				//if (auto err = glGetError())
+				//	__debugbreak();
 				mCurrentVid->GetTexture()->Unbind();
-				if (auto err = glGetError())
-					__debugbreak();
+				//if (auto err = glGetError())
+				//	__debugbreak();
 				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-				if (auto err = glGetError())
-					__debugbreak();
+				//if (auto err = glGetError())
+				//	__debugbreak();
 				mFence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-				if (auto err = glGetError())
-					__debugbreak();
+				//if (auto err = glGetError())
+				//	__debugbreak();
 
 				mCurrentVid->mBuffer.ResetCount();
-				mCurrentVid->mpCurrImg = nullptr;
+				mCurrentVid->mpCurrImg     = nullptr;
 				mCurrentVid->mElapsedTime -= frame;
+				mCurrentVid->mbPrevDone    = true;
+			}
+			else
+			{
+				mCurrentVid->mbPrevDone = false;
 			}
 
 		}
@@ -201,15 +213,18 @@ namespace Dystopia
 	{
 	}
 
-	void VideoSystem::Convert_YUV_RGB(RGB_BUFFER * buff, vpx_image const * yuv_image)
+	void VideoSystem::Convert_YUV_RGB(RGB_BUFFER * buff, vpx_image const * yuv_image, bool _prevdone)
 	{
 
 		uint8_t * YPlane = yuv_image->planes[VPX_PLANE_Y];
 		uint8_t * UPlane = yuv_image->planes[VPX_PLANE_U];
 		uint8_t * VPlane = yuv_image->planes[VPX_PLANE_V];
 
+
 		for (unsigned y = buff->count / yuv_image->d_w; y < yuv_image->d_h; ++y)
 		{
+			if (_prevdone && mTimer.Complete())
+				return;
 			for (unsigned x = buff->count % yuv_image->d_w; x < yuv_image->d_w; ++x)
 			{
 
@@ -229,8 +244,8 @@ namespace Dystopia
 				buff->insert(r, g, b);
 			}
 
-			if (mTimer.Complete())
-				return;
+			//if (_prevdone && mTimer.Complete())
+			//	return;
 		}
 	}
 
