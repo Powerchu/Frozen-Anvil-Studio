@@ -80,7 +80,7 @@ namespace Dystopia
 
 		Image imgData
 		{
-			"", false, false, GL_RGB, GL_RGB, 0, 0, 3, 1, nullptr
+			"", false, false, GL_SRGB, GL_RGB, 0, 0, 3, 1, nullptr
 		};
 		mpTexture = CORE::Get<TextureSystem>()->LoadRaw<Texture2D>(&imgData);
 	}

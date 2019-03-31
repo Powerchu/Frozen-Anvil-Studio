@@ -107,12 +107,13 @@ void Dystopia::Texture2D::InitTexture(void)
 
 void Dystopia::Texture2D::ReplaceTexture(unsigned w, unsigned h, void* _pData, bool _bAlpha)
 {
-	mData.mnWidth   = w;
-	mData.mnHeight  = h;
-	mData.mnFormat  = _bAlpha ? GL_RGBA : GL_RGB;
-	mData.mbChanged = true;
+	mData.mnWidth     = w;
+	mData.mnHeight    = h;
+	mData.mnFormat    = _bAlpha ? GL_RGBA : GL_RGB;
+	mData.mnRawFormat = mData.mbRGB ?  _bAlpha ? GL_RGBA : GL_RGB : _bAlpha ? GL_SRGB_ALPHA : GL_SRGB;
+	mData.mbChanged   = true;
 
-	glTexImage2D(mnType, 0, mData.mnFormat, w, h, 0, mData.mnFormat, GL_UNSIGNED_BYTE, _pData);
+	glTexImage2D(mnType, 0, mData.mnRawFormat, w, h, 0, mData.mnFormat, GL_UNSIGNED_BYTE, _pData);
 }
 
 void Dystopia::Texture2D::InitCompressedTexture(void)
