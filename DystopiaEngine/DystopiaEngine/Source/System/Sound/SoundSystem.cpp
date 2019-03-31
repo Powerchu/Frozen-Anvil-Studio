@@ -110,8 +110,8 @@ void Dystopia::SoundSystem::Update(float _dt)
 			{
 				if (Transform* pTrans = pOwner->GetComponent<Transform>())
 				{
-					c.UpdateFMODPos(pTrans->GetGlobalPosition());
-					mpFMOD->set3DListenerAttributes(mMapOfListeners[&c], c.GetFMODPos(), NULL, NULL, NULL);
+					//c.UpdateFMODPos(pTrans->GetGlobalPosition());
+					//mpFMOD->set3DListenerAttributes(mMapOfListeners[&c], c.GetFMODPos(), NULL, NULL, NULL);
 				}
 			}
 		}
@@ -128,8 +128,8 @@ void Dystopia::SoundSystem::Update(float _dt)
 			{
 				if (Transform* pTrans = pOwner->GetComponent<Transform>())
 				{
-					auto && pos = pTrans->GetGlobalPosition();
-					c.UpdateFMODPos(pos);
+					//auto && pos = pTrans->GetGlobalPosition();
+					//c.UpdateFMODPos(pos);
 				}
 			}
 			c.Update(_dt);
@@ -375,6 +375,13 @@ _DLL_EXPORT void Dystopia::SoundSystem::StopAll(void)
 			c.GetChannel().mpChannel->stop();
 }
 
+#if EDITOR
+void Dystopia::SoundSystem::EditorUpdate(void)
+{
+	if (mpFMOD)
+		mpFMOD->update();
+}
+#endif
 
 
 

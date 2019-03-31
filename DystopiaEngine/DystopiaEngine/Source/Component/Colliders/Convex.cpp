@@ -224,7 +224,9 @@ namespace Dystopia
 					mbColliding = true;
 					_pColB.mbColliding = true;
 					/*Use EPA to get collision information*/
-					const CollisionEvent ColEvent = GetCollisionEvent(Simplex, _pColB);
+					CollisionEvent ColEvent = GetCollisionEvent(Simplex, _pColB);
+					ColEvent.isATrigger = this->mbIsTrigger;
+					ColEvent.isBTrigger = _pColB.mbIsTrigger;
 					//marr_ContactSets.push_back(ColEvent);
 					
 					//InformOtherComponents(true, ColEvent);
@@ -248,6 +250,8 @@ namespace Dystopia
 			other_body = _ColB.GetOwner()->GetComponent<RigidBody>();
 
 		CollisionEvent newEvent(this->GetOwner(), _ColB.GetOwner());
+		newEvent.isATrigger = this->mbIsTrigger;
+		newEvent.isBTrigger = _ColB.mbIsTrigger;
 
 		const auto & Edges = GetConvexEdges();
 		bool isInside = true;
@@ -987,7 +991,7 @@ namespace Dystopia
 			const double ProjectDis = ClosestEdge.mNorm3.Dot(Point.mPosition);
 			const double result = ProjectDis - ClosestEdge.mOrthogonalDistance;
 			/*If fail the test, expand the simplex and run the test again*/
-			if (Math::Abs(result) <= FLT_EPSILON*10000)
+			if (Math::Abs(result) <= FLT_EPSILON*100000)
 			{
 				Math::Vec3D const & OffSetA = GetOffSet();
 				Math::Matrix3D WorldSpaceA = GetOwnerTransform() * Math::Translate(OffSetA.x, OffSetA.y, OffSetA.z)* GetTransformationMatrix();

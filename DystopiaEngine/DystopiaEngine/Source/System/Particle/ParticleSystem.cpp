@@ -50,11 +50,16 @@ void Dystopia::ParticleSystem::Update(float _dt)
 	{
 		ScopedTimer<ProfilerAction> timeKeeper{ "Particle System", "Update" };
 
+		if (auto err = glGetError())
+		{
+			__debugbreak();
+		}
+
 		for (auto& e : mComponents)
 		{
 			if constexpr (EDITOR)
 				if (e.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
-		
+
 			if ((e.GetFlags() & eObjFlag::FLAG_ACTIVE))
 			{
 				for (auto& emit : e.GetEmitters())

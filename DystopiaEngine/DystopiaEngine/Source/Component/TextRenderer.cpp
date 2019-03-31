@@ -54,7 +54,7 @@ Dystopia::TextRenderer::TextRenderer(const TextRenderer& _rhs) noexcept
 	,mColor{ _rhs.mColor },mDefaultCol(_rhs.mDefaultCol),mHoverCol(_rhs.mHoverCol),mClickColor(_rhs.mClickColor),mDisabledColor(_rhs.mDisabledColor)
 	,mfTintPerc(_rhs.mfTintPerc), mVerts{ _rhs.mVerts}
 {
-	mTextureFields = Ut::Move(_rhs.mTextureFields);
+	
 }
 
 void Dystopia::TextRenderer::Awake(void)
@@ -93,7 +93,7 @@ void Dystopia::TextRenderer::SetFont(const std::string& _strPath)
 {
 	if (_strPath != "")
 	{
-		mpData = CORE::Get<FontSystem>()->LoadFont(_strPath);
+		mpData = CORE::Get<FontSystem>()->LoadFont(CORE::Get<FileSystem>()->GetFullPath(_strPath, eFileDir::eCurrent));
 		Renderer::SetTexture(mpData->mpAtlas->GetInternal());
 		RegenMesh();
 	}
@@ -143,6 +143,11 @@ void Dystopia::TextRenderer::SetAlphaPerc(float _perc)
 	else if (_perc >= 1.f) _perc = 1.0f;
 
 	mfTintPerc = _perc;
+}
+
+float Dystopia::TextRenderer::GetAlphaPerc() const
+{
+	return mfTintPerc;
 }
 
 void Dystopia::TextRenderer::RegenMesh(void)

@@ -24,7 +24,7 @@ using AcceptableTypes = Ut::Collection< Ut::Indexer<0, int>,
 										Ut::Indexer<3, char>, 
 										Ut::Indexer<4, HashString>>;
 
-struct _DLL_EXPORT DataSheetElementBase
+struct DataSheetElementBase
 {
 	DataSheetElementBase(const HashString& _name) : mName{ _name } {}
 	virtual ~DataSheetElementBase(void) {}
@@ -36,7 +36,7 @@ template<typename T>
 struct DataSheetElement;
 
 template<>
-struct _DLL_EXPORT DataSheetElement<int> : DataSheetElementBase
+struct DataSheetElement<int> : DataSheetElementBase
 {
 	static constexpr unsigned N = Ut::MetaFind<int, AcceptableTypes>::result::value;
 	virtual unsigned GetTypeN(void) { return N; }
@@ -47,7 +47,7 @@ struct _DLL_EXPORT DataSheetElement<int> : DataSheetElementBase
 	int mVal;
 };
 template<>
-struct _DLL_EXPORT DataSheetElement<float> : DataSheetElementBase
+struct DataSheetElement<float> : DataSheetElementBase
 {
 	static constexpr unsigned N = Ut::MetaFind<float, AcceptableTypes>::result::value;
 	virtual unsigned GetTypeN(void) { return N; }
@@ -58,7 +58,7 @@ struct _DLL_EXPORT DataSheetElement<float> : DataSheetElementBase
 	float mVal;
 };
 template<>
-struct _DLL_EXPORT DataSheetElement<bool> : DataSheetElementBase
+struct DataSheetElement<bool> : DataSheetElementBase
 {
 	static constexpr unsigned N = Ut::MetaFind<bool, AcceptableTypes>::result::value;
 	virtual unsigned GetTypeN(void) { return N; }
@@ -69,7 +69,7 @@ struct _DLL_EXPORT DataSheetElement<bool> : DataSheetElementBase
 	bool mVal;
 };
 template<>
-struct _DLL_EXPORT DataSheetElement<char> : DataSheetElementBase
+struct DataSheetElement<char> : DataSheetElementBase
 {
 	static constexpr unsigned N = Ut::MetaFind<char, AcceptableTypes>::result::value;
 	virtual unsigned GetTypeN(void) { return N; }
@@ -80,7 +80,7 @@ struct _DLL_EXPORT DataSheetElement<char> : DataSheetElementBase
 	char mVal;
 };
 template<>
-struct _DLL_EXPORT DataSheetElement<HashString> : DataSheetElementBase
+struct DataSheetElement<HashString> : DataSheetElementBase
 {
 	static constexpr unsigned N = Ut::MetaFind<HashString, AcceptableTypes>::result::value;
 	virtual unsigned GetTypeN(void) { return N; }

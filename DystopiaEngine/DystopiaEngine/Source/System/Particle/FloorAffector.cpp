@@ -109,7 +109,9 @@ void Dystopia::FloorAffector::EditorUI(void)
 	float y = GetOffsetY();
 	bool b1 = EGUI::Display::DragFloat("Offset X", &x, 0.1f, -FLT_MAX, FLT_MAX);
 	bool b2 = EGUI::Display::DragFloat("Offset Y", &y, 0.1f, -FLT_MAX, FLT_MAX);
-	if (b1 || b2)
+	if (b1)
+		SetOffset(x, y);
+	if (b2)
 		SetOffset(x, y);
 
 	x = GetSizeX();

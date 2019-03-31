@@ -6,7 +6,7 @@
 \brief
 	Renders text
 
-All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+All Content Copyright ï¿½ 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -97,6 +97,8 @@ namespace Dystopia
 		void SetColor(float r, float g, float b, float a);
 		void SetAlpha(float _a);
 		void SetAlphaPerc(float _perc);
+
+		float GetAlphaPerc() const;
 
 		TextRenderer* Duplicate(void) const;
 		void Serialise(TextSerialiser&) const;

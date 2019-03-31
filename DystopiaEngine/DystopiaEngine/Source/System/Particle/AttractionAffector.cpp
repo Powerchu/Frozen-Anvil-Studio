@@ -232,7 +232,7 @@ void Dystopia::PointAffector::PointAttract(Emitter& _emitter, float _dt)
 
 	for (unsigned i = 0; i < allAccel.size(); ++i)
 	{
-		if (i * stride > allAccel.size())
+		if (i * stride > allPos.size())
 			__debugbreak();
 
 		Math::Vec3 direction{ GetOffsetX() + funX + emitterPos.x - allPos[i * stride].x,
@@ -267,7 +267,7 @@ void Dystopia::PointAffector::PointRepulse(Emitter& _emitter, float _dt)
 
 	for (unsigned i = 0; i < allAccel.size(); ++i)
 	{
-		if (i * stride > allAccel.size())
+		if (i * stride > allPos.size())
 			__debugbreak();
 
 		Math::Vec3 direction{ allPos[i * stride].x - (GetOffsetX() + emitterPos.x + funX),

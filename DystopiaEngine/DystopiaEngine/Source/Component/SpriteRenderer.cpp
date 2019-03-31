@@ -147,7 +147,7 @@ void Dystopia::SpriteRenderer::Update(float _fDT)
 					mnRow = startRow;
 				}
 
-				if (endIndex && currIndex > (endIndex))
+				if (currIndex > endIndex - 1)
 				{
 					mnCol = startCol;
 					mnRow = startRow;
@@ -155,7 +155,7 @@ void Dystopia::SpriteRenderer::Update(float _fDT)
 			}
 			else
 			{
-				if (endIndex && currIndex > (endIndex))
+				if (currIndex >= endIndex - 1)
 				{
 					if (mAnimations[mnID].mnEnd == mAnimations[mnID].mnStart)
 					{
@@ -675,7 +675,7 @@ void Dystopia::SpriteRenderer::TintColorPicker()
 
 void Dystopia::SpriteRenderer::UpdateAtlas(void)
 {
-	auto mainTex = Renderer::GetTexture();
+	auto mainTex = Renderer::GetTexture(static_cast<unsigned>((GetTextures().size() - 1)));
 	if (mainTex)
 	{
 		if (!mpAtlas || (mpAtlas->GetInternal()->GetID() != mainTex->GetID()))

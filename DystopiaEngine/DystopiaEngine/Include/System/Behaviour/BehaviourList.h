@@ -25,8 +25,9 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Resource/BehavioursScripts/MainMenu.h"
 #include "../Resource/BehavioursScripts/PauseMenu.h"
 #include "../Resource/BehavioursScripts/SplashManager.h"
-//#include "../Resource/BehavioursScripts/AiDirector.h"
+#include "../Resource/BehavioursScripts/AiDirector.h"
 #include "../Resource/BehavioursScripts/BossAI.h"
+#include "../Resource/BehavioursScripts/BossUI.h"
 #include "../Resource/BehavioursScripts/CamAi.h"
 #include "../Resource/BehavioursScripts/CamShake.h"
 #include "../Resource/BehavioursScripts/CharacterController.h"
@@ -49,16 +50,29 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Resource/BehavioursScripts/SkillRelay.h"
 #include "../Resource/BehavioursScripts/SortChildOrder.h"
 #include "../Resource/BehavioursScripts/VinesPlatform.h"
-//#include "../Resource/BehavioursScripts/WiloShadow.h"
 #include "../Resource/BehavioursScripts/IntroductionScene.h"
 #include "../Resource/BehavioursScripts/CheckPoint.h"
-#include "../Resource/BehavioursScripts/TownPanning.h"
 #include "../Resource/BehavioursScripts/ChangeLevel.h"
-#include "../Resource/BehavioursScripts/BossUI.h"
 
-/*Include your header for new behaviour here. Remember to include the
-  behaviour in project. Make sure the behaviour file is in Resource/BehaviourScripts
-  After including, add your behaviour to the BehaviourList below*/
+#include "../Resource/BehavioursScripts/EmpoweredStone.h"
+#include "../Resource/BehavioursScripts/EnvironmentalResponse.h"
+#include "../Resource/BehavioursScripts/Flocker.h"
+#include "../Resource/BehavioursScripts/IceEncasing.h"
+#include "../Resource/BehavioursScripts/IcePillar.h"
+#include "../Resource/BehavioursScripts/Icicles.h"
+#include "../Resource/BehavioursScripts/IcicleZone.h"
+#include "../Resource/BehavioursScripts/IntroductionScene.h"
+#include "../Resource/BehavioursScripts/SkillRelay.h"
+#include "../Resource/BehavioursScripts/SortChildOrder.h"
+#include "../Resource/BehavioursScripts/StageRelay.h"
+#include "../Resource/BehavioursScripts/TestBubble.h"
+#include "../Resource/BehavioursScripts/TownPanning.h"
+#include "../Resource/BehavioursScripts/WormCave.h"
+#include "../Resource/BehavioursScripts/WormHitBox.h"
+#include "../Resource/BehavioursScripts/WormHorizontalCharge.h"
+#include "../Resource/BehavioursScripts/WormShadow.h"
+#include "../Resource/BehavioursScripts/CameraZoomPoint.h"
+#include "../Resource/BehavioursScripts/ForegroundPasser.h"
 #endif
 
 #if EDITOR
@@ -72,12 +86,15 @@ namespace Dystopia
 		class MainMenu,
 		class PauseMenu,
 		class SplashManager,
-		//class AiDirector,
+		class AiDirector,
 		class BossAI,
+		class BossUI,
 		class CamAi,
 		class CamShake,
+		class ChangeLevel,
 		class CharacterController,
 		class CharacterHitBox,
+		class CameraZoomPoint,
 		class EnvironmentalResponse,
 		class Fader,
 		class FallingPillar,
@@ -87,6 +104,7 @@ namespace Dystopia
 		class FormSlamChild,
 		class FormSpike,
 		class FormSpikeChild,
+		class ForegroundPasser,
 		class GoblinAI,
 		class PlayerUIController,
 		class PrimativeEnemy,
@@ -96,13 +114,25 @@ namespace Dystopia
 		class SkillRelay,
 		class SortChildOrder,
 		class VinesPlatform,
-		//class WiloShadow,
 		class IntroductionScene,
 		class CheckPoint,
+		class EmpoweredStone,
+		class EnvironmentalResponse,
+		class Flocker,
+		class IceEncasing,
+		class IcePillar,
+		class Icicles,
+		class IcicleZone,
+		class IntroductionScene,
+		class SkillRelay,
+		class SortChildOrder,
+		class StageRelay,
+		class TestBubble,
 		class TownPanning,
-		class ChangeLevel,
-		class BossUI
-		
+		class WormCave,
+		class WormHitBox,
+		class WormHorizontalCharge,
+		class WormShadow
 	>::result;
 }
 

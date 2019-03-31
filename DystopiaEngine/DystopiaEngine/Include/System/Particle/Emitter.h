@@ -126,7 +126,8 @@ namespace Dystopia
 
 		bool mbUpdatedPositions, mbUVChanged;
 		bool mbIsAlive;
-		_EDITOR_CODE(bool mbBuffers; bool bEditorInit);
+		bool mbBuffers; 
+		_EDITOR_CODE(bool bEditorInit);
 
 	private:
 
@@ -149,8 +150,9 @@ namespace Dystopia
 
 
 #if EDITOR
-		int mnParticleLimit;
+
 #endif
+		int mnParticleLimit;
 
 		template <typename Ty, typename U>
 		bool AffectorExists(Ty&, U);

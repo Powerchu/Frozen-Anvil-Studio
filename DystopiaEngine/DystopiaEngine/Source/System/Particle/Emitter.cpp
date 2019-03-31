@@ -58,7 +58,7 @@ Dystopia::Emitter::Emitter(ParticleEmitter* _owner) noexcept
 Dystopia::Emitter::Emitter(ParticleEmitter * _owner, int _drawMode, int _div, char const* _shader) noexcept
 	: mColour{}, mPosition{}, mVelocity{}, mAccel{}, mLifetime{}, mInitialLife{}, mCommand{},
 	mnParticleLimit{ 1000 }, mSpawnCount{}, mSpawn{}, mUpdate{}, mFixedUpdate{}, 
-	mbUpdatedPositions{ false }, mbUVChanged{ false }, mbIsAlive{ true }, _EDITOR_CODE(mbBuffers{ false } COMMA bEditorInit{ false } COMMA)
+	mbUpdatedPositions{ false }, mbUVChanged{ false }, mbIsAlive{ true }, mbBuffers{ false }, _EDITOR_CODE(bEditorInit{ false } COMMA)
 	mpShader{ nullptr }, mShaderName{ _shader }, mpTexture{ nullptr }, mTextureName{ DEFAULT_TEXTURE },
 	mpOwner{ _owner }, mpTransform{ nullptr }, mDrawMode{ _drawMode }, mDiv{ _div }
 {
@@ -73,7 +73,7 @@ Dystopia::Emitter::Emitter(Dystopia::Emitter const& _rhs) noexcept
 	: mColour{}, mPosition{}, mVelocity{}, mAccel{}, mLifetime{}, mInitialLife{}, mCommand{},
 	mnParticleLimit{ _rhs.mnParticleLimit }, mSpawnCount{ _rhs.mSpawnCount }, 
 	mSpawn{ _rhs.mSpawn }, mUpdate{ _rhs.mUpdate }, mFixedUpdate{ _rhs.mFixedUpdate },
-	mbUpdatedPositions{ false }, mbUVChanged{ false }, mbIsAlive{ _rhs.mbIsAlive }, _EDITOR_CODE(mbBuffers{ false } COMMA bEditorInit{ false } COMMA)
+	mbUpdatedPositions{ false }, mbUVChanged{ false }, mbIsAlive{ _rhs.mbIsAlive }, mbBuffers{ false }, _EDITOR_CODE(bEditorInit{ false } COMMA)
 	mpShader{ _rhs.mpShader }, mShaderName{ _rhs.mTextureName }, mpTexture{ _rhs.mpTexture }, mTextureName{ _rhs.mTextureName },
 	mpOwner{ nullptr }, mpTransform{ nullptr }, mDrawMode{ _rhs.mDrawMode }, mDiv{ _rhs.mDiv }
 {
@@ -83,7 +83,7 @@ Dystopia::Emitter::Emitter(Dystopia::Emitter const& _rhs) noexcept
 
 Dystopia::Emitter::~Emitter(void) noexcept
 {
-	_EDITOR_CODE(if (mbBuffers) {)
+	if (mbBuffers) {
 
 	Bind();
 
@@ -97,25 +97,27 @@ Dystopia::Emitter::~Emitter(void) noexcept
 
 	glDeleteBuffers(6, &mClrBuffer);
 	glDeleteVertexArrays(1, &mVAO);
-
-	_EDITOR_CODE(})
+	mVAO = mClrBuffer = mPosBuffer = mSzBuffer = mRotBuffer = mUVBuffer = 0;
+	}
 }
 
 void Dystopia::Emitter::GenBuffers(void) noexcept
 {
 	glGenVertexArrays(1, &mVAO);
 	glGenBuffers(6, &mClrBuffer);
-	_EDITOR_CODE(mbBuffers = true);
+	mbBuffers = true;
 }
 
 
 void Dystopia::Emitter::Awake(void)
 {
+
 	if (!mpShader)
 		mpShader = CORE::Get<ShaderSystem>()->GetShader(mShaderName.c_str());
 
 	if (!mpTexture)
 		mpTexture = CORE::Get<TextureSystem>()->GetTexture(mTextureName.c_str());
+
 }
 
 void Dystopia::Emitter::Init(void)
@@ -187,9 +189,17 @@ void Dystopia::Emitter::InitBuffers(void) noexcept
 
 	_EDITOR_CODE(if (::Editor::EditorMain::GetInstance()->GetCurState() != ::Editor::eState::PLAY  && ::Editor::EditorMain::GetInstance()->GetNextState() != ::Editor::eState::PLAY) return;)
 
+#   if !defined(DEBUG) | defined(_DEBUG)
+		if (auto err = glGetError())
+			__debugbreak();
+#    endif
 	glBindBuffer(GL_DRAW_INDIRECT_BUFFER, mCmdBuffer);
 	glBufferData(GL_DRAW_INDIRECT_BUFFER, mParticle.mnLimit * sizeof(decltype(mCommand)::Val_t), mCommand.begin(), GL_STATIC_DRAW);
 
+#   if !defined(DEBUG) | defined(_DEBUG)
+	if (auto err = glGetError())
+		__debugbreak();
+#    endif
 	Bind();
 
 	glEnableVertexAttribArray(0);
@@ -222,7 +232,7 @@ void Dystopia::Emitter::InitBuffers(void) noexcept
 	glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, 0, 0);
 	glVertexAttribDivisor(4, 1);
 
-#   if defined(DEBUG) | defined(_DEBUG)
+#   if !defined(DEBUG) | defined(_DEBUG)
 	if (auto err = glGetError())
 		__debugbreak();
 #    endif
@@ -305,13 +315,13 @@ void Dystopia::Emitter::Bind(void) const noexcept
 {
 	glBindBuffer(GL_DRAW_INDIRECT_BUFFER, mCmdBuffer);
 	glBindVertexArray(mVAO);
-	_EDITOR_CODE(if (mpTexture))
+	if (mpTexture)
 	mpTexture->Bind();
 }
 
 void Dystopia::Emitter::Unbind(void) const noexcept
 {
-	_EDITOR_CODE(if (mpTexture))
+	if (mpTexture)
 	mpTexture->Unbind();
 	glBindVertexArray(0);
 	glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
@@ -375,10 +385,6 @@ void Dystopia::Emitter::Render(void) const noexcept
 	//glDrawArraysInstanced(mDrawMode, 0, mDiv, static_cast<GLsizei>(mPosition.size()) / mDiv);
 	//glDrawArraysInstancedBaseInstance(mDrawMode, 0, mDiv, static_cast<GLsizei>(mPosition.size()) / mDiv, 0);
 	//glMultiDrawArrays(mDrawMode, first.begin(), count.begin(), static_cast<GLsizei>(mPosition.size()) / mDiv);
-
-	// TODO: REMOVE
-	if (auto err = glGetError())
-		__debugbreak();
 }
 
 void Dystopia::Emitter::KillParticle(size_t _nIdx) noexcept

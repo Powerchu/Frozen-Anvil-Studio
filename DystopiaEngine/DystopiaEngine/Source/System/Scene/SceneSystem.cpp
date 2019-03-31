@@ -108,6 +108,11 @@ Dystopia::GameObject* Dystopia::SceneSystem::FindGameObject_cstr(const char* con
 	return FindGameObject(HashString{ _str });
 }
 
+inline HashString Dystopia::SceneSystem::GetCurrentSceneName(void) const
+{
+	return GetCurrentScene().GetSceneName().c_str();
+}
+
 Dystopia::GameObject * Dystopia::SceneSystem::Instantiate(const HashString& _prefabName, const Math::Pt3D& _position)
 {
 	HashString file = _prefabName;
@@ -167,9 +172,12 @@ void Dystopia::SceneSystem::SceneChanged(void)
 		EngineCore::GetInstance()->Get<BehaviourSystem>()->Unserialise(SerialObj);
 		SerialObj.ConsumeEndBlock();
 		mNextSceneFile.clear();
+
 		for (auto& obj : mpCurrScene->GetAllGameObjects())
 			obj.Awake();
+
 		mpCurrScene->Init();
+
 		Dystopia::SystemList<std::make_index_sequence<Ut::SizeofList<Dystopia::UsableComponents>::value>>::InitDonors();
 	}
 }
@@ -194,8 +202,8 @@ void Dystopia::SceneSystem::LoadScene(const std::string& _strFile)
 {
 	TextSerialiser::OpenFile(_strFile.c_str(), TextSerialiser::MODE_READ); // just to check if file valid
 
-	mNextSceneFile = _strFile;
-	mLastSavedData = _strFile;
+	mNextSceneFile = _strFile.c_str();
+	mLastSavedData = _strFile.c_str();
 	mpNextScene = nullptr;//new Scene{};
 }
 
@@ -212,7 +220,7 @@ void Dystopia::SceneSystem::SaveScene(const std::string & _strFile, const std::s
 	EngineCore::GetInstance()->Get<BehaviourSystem>()->Serialise(SerialObj);
 	SerialObj.InsertEndBlock("Scene");
 
-	mLastSavedData = _strFile;
+	mLastSavedData = _strFile.c_str();
 }
 
 

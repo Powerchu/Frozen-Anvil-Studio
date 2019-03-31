@@ -100,12 +100,13 @@ void Dystopia::GraphicsSystem::SetDrawMode(int _nMode) noexcept
 	DRAW_MODE = _nMode;
 }
 
-
+#define COMMA ,
 Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
 	mvDebugColour{.0f, 1.f, .0f, .1f}, mvClearCol{0, 0, 0, 0}, mfGamma{2.0f}, mfDebugLineThreshold{0.958f},
-	mPixelFormat{0}, mAvailable{0}, mSettings(0), mbVSync{false}, mvResolution{Gbl::WINDOW_WIDTH, Gbl::WINDOW_HEIGHT}
+	mPixelFormat{0}, mAvailable{0}, mSettings(0), _EDITOR_CODE(mbVSync{false} COMMA) mvResolution{Gbl::WINDOW_WIDTH, Gbl::WINDOW_HEIGHT}
 {
 }
+#undef COMMA
 
 Dystopia::GraphicsSystem::~GraphicsSystem(void)
 {
@@ -475,7 +476,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam, Math::Mat4& _View, Math::
 void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _View, Math::Mat4& _Proj)
 {
 	ScopedTimer<ProfilerAction> timeKeeper{ "Graphics System", "Debug Draw" };
-	auto AllObj = EngineCore::GetInstance()->GetSystem<CollisionSystem>()->GetAllColliders();
+	auto allCol = EngineCore::GetInstance()->GetSystem<CollisionSystem>()->GetAllColliders();
 	auto ActiveFlags = _cam.GetOwner()->GetFlags();
 
 	// Get Camera's layer, we only want to draw inclusive stuff
@@ -494,37 +495,38 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _View, Math::
 	// Find out a way to allow stuff other than colliders to draw stuff
 
 	// Draw the game objects to screen based on the camera
-	for (auto& Obj : AllObj)
+	for (auto& col : allCol)
 	{
 		if constexpr (EDITOR)
-			if (Obj->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+			if (col->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 		
-		GameObject* pOwner = Obj->GetOwner();
+		GameObject* pOwner = col->GetOwner();
 		if (pOwner && (pOwner->GetFlags() & ActiveFlags))
 		{
-			if (Obj->GetColliderType() != eColliderType::CIRCLE)
-				s->UploadUniform("ModelMat", pOwner->GetComponent<Transform>()->GetTransformMatrix() * Math::Translate(Obj->GetOffSet())  * Obj->GetTransformationMatrix());
+			auto pTransform = pOwner->GetComponent<Transform>();
+			if (col->GetColliderType() != eColliderType::CIRCLE)
+				s->UploadUniform("ModelMat", pTransform->GetTransformMatrix() * Math::Translate(col->GetOffSet())  * col->GetTransformationMatrix());
 			else
 			{
 				auto pos = pOwner->GetComponent<Transform>()->GetGlobalPosition();
 				auto scaleV = Math::Abs(pOwner->GetComponent<Transform>()->GetGlobalScale());
-				auto scale = Math::Max(scaleV, scaleV.yxwz);
-				auto scaleM = Math::Scale(scale);
-				auto Translation = Math::Translate(pos.x, pos.y);
-				s->UploadUniform("ModelMat", Translation * pOwner->GetComponent<Transform>()->GetGlobalRotation().Matrix() * Math::Translate(pOwner->GetComponent<Transform>()->GetGlobalScale()*Obj->GetOffSet()) * scaleM * Obj->GetTransformationMatrix());
+				const auto scale = Math::Max(scaleV, scaleV.yxwz);
+				const auto scaleM = Math::Scale(scale);
+				const auto Translation = Math::Translate(pos.x, pos.y);
+				s->UploadUniform("ModelMat", Translation * pTransform->GetGlobalRotation().Matrix() * Math::Translate(pTransform->GetGlobalScale()*col->GetOffSet()) * scaleM * col->GetTransformationMatrix());
 			}
 			
-			if (Obj->IsSleeping())
+			if (col->IsSleeping())
 			{
 				activeColor = SleepingColor;
 			}
 			
-			else if (Obj->HasCollision())
+			else if (col->HasCollision())
 			{
 				activeColor = CollidingColor;
 			}
 			
-			else if (Obj->IsTrigger())
+			else if (col->IsTrigger())
 			{
 				activeColor = TriggerColor;
 			}
@@ -534,7 +536,7 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam, Math::Mat4& _View, Math::
 				activeColor = mvDebugColour;
 			}
 
-			if (Mesh* pObjMesh = Obj->GetMesh())
+			if (Mesh* pObjMesh = col->GetMesh())
 			{
 				s->UploadUniform("vColor", activeColor);
 				pObjMesh->DrawMesh(GetDrawMode());
@@ -792,8 +794,12 @@ void Dystopia::GraphicsSystem::LoadSettings(DysSerialiser_t& _in)
 
 		mViews.Emplace(w, h, alpha, src, dst);
 	}
-
+#if EDITOR
 	_in >> mbDebugDrawCheckBox;
+#else
+	bool dummy;
+	_in >> dummy;
+#endif
 	_in >> mfDebugLineThreshold;
 	_in >> mvDebugColour;
 	_in >> alpha;
@@ -816,8 +822,11 @@ void Dystopia::GraphicsSystem::SaveSettings(DysSerialiser_t& _out)
 		_out << e.GetBlendSrc();
 		_out << e.GetBlendDst();
 	}
-
+#if EDITOR
 	_out << mbDebugDrawCheckBox;
+#else
+	_out << false;
+#endif 
 	_out << mfDebugLineThreshold;
 	_out << mvDebugColour;
 	_out << (mSettings & eGfxSettings::GRAPHICS_VSYNC);

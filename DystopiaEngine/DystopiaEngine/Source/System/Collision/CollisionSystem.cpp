@@ -112,7 +112,7 @@ namespace Dystopia
 		ScopedTimer<ProfilerAction> timeKeeper{ "Collision System", "Update" };
 
 		BoundingColliderNode		mCollisionTree;
-		PotentialContacts	        ArrayContacts[1024];
+		static PotentialContacts    ArrayContacts[4048];
 		unsigned				    ContactCount = 0;
 
 		using CollisionTable = std::pair<eColliderType, eColliderType>;
@@ -219,7 +219,7 @@ namespace Dystopia
 		}
 
 		if (!mCollisionTree.isEmpty())
-			ContactCount = mCollisionTree.GetNumPotentialContact(1024, ArrayContacts);
+			ContactCount = mCollisionTree.GetNumPotentialContact(4048, ArrayContacts);
 
 		for (unsigned i = 0; i < ContactCount; ++i)
 		{
@@ -323,6 +323,8 @@ namespace Dystopia
 
 			elem->InformOtherComponents();
 		}
+
+		//memset(ArrayContacts, 0, sizeof(PotentialContacts) * 4048);
 	}
 
 	void CollisionSystem::Shutdown()

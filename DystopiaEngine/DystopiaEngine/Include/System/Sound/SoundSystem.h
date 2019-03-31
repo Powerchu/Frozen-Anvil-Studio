@@ -67,6 +67,10 @@ namespace Dystopia
 		_DLL_EXPORT float GetFX() const;
 		_DLL_EXPORT void StopAll(void);
 
+#if EDITOR
+		void EditorUpdate(void);
+#endif 
+
 	private:
 		float mMasterVol;
 		float mBGMVol;

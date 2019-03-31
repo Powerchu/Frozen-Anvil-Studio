@@ -875,6 +875,11 @@ namespace Dystopia
 		return toRet;
 	}
 
+	HashString FileSystem::GetDirPath(eFileDir _dir)
+	{
+		return mPathTable[_dir].c_str();
+	}
+
 	HashString FileSystem::GetFromResource(const char *_str)
 	{
 		std::filesystem::path DirPath{ GetProjectFolders<std::string>(eFileDir::eResource) };

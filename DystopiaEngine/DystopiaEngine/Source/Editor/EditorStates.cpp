@@ -21,6 +21,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Editor/EditorProc.h"
 #include "Editor/RuntimeMeta.h"
 #include "Editor/SceneView.h"
+#include "Editor/ConsoleLog.h"
 
 #include "System/Driver/Driver.h"
 #include "System/Logger/LoggerSystem.h"
@@ -30,6 +31,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Behaviour/BehaviourSystem.h"
 #include "System/Scene/SceneSystem.h"
 #include "System/Scene/Scene.h"
+#include "System/Sound/SoundSystem.h"
 #include "System/File/FileSystem.h"
 #include "System/Input/InputSystem.h"
 
@@ -105,6 +107,7 @@ void Editor::EditorStates::StartFrame(void)
 		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::Profiler>()->Update(dt);
 		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::BehaviourSystem>()->PollChanges();
 		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::FileSystem>()->Update(dt);
+		Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SoundSystem>()->EditorUpdate();
 		break;
 	default: ;
 	}
@@ -416,6 +419,8 @@ void Editor::EditorStates::Play(void)
 {
 	EditorMain::GetInstance()->ChangeState(eState::PLAY);
 	Dystopia::EngineCore::GetInstance()->InterruptContinue();
+	if (Editor::EditorMain::GetInstance()->GetPanel<Editor::ConsoleLog>()->GetIsClearedOnPlay())
+		Editor::EditorMain::GetInstance()->GetPanel<Editor::ConsoleLog>()->Clear();
 
 	Dystopia::SystemList<std::make_index_sequence<Ut::SizeofList<Dystopia::UsableComponents>::value>>::InitDonors();
 }
@@ -449,7 +454,7 @@ void Editor::EditorStates::TempSave(void)
 	file += ".";
 	file += Gbl::SCENE_EXT;
 
-	sceneSystem->SaveScene(file.c_str(), sceneSystem->GetCurrentScene().GetSceneName());
+	sceneSystem->SaveScene(file.c_str(), sceneSystem->GetCurrentScene().GetSceneName().c_str());
 	mArrTempFile.Insert(file);
 }
 

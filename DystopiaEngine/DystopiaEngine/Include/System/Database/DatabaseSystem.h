@@ -48,6 +48,8 @@ namespace Dystopia
 		DataSheet* GetDatabase(const HashString& _name);
 		void SaveAllSheets(void);
 
+		DataSheet* GetAppDataSheet(void);
+
 		AutoArray<std::pair<HashString, DataSheet>>& GetAllSheets(void);
 		AutoArray<const char *>& GetAllNames(void);
 
@@ -57,6 +59,7 @@ namespace Dystopia
 		AutoArray<const char *> mArrSheetNames;
 
 		HashString GetPathFormatted(const HashString& _name);
+		DataSheet* mpAppDataSheet;
 
 	};
 }
