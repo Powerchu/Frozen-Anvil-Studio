@@ -156,7 +156,7 @@ void Dystopia::SpriteRenderer::Update(float _fDT)
 			}
 			else
 			{
-				if (currIndex >= endIndex - 1)
+				if (currIndex > endIndex - 1)
 				{
 					if (mAnimations[mnID].mnEnd == mAnimations[mnID].mnStart)
 					{

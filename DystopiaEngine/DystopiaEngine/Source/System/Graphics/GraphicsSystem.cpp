@@ -434,16 +434,17 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam)
 	// Find out a way to allow stuff other than colliders to draw stuff
 
 	// Draw the game objects to screen based on the camera
-	for (auto& Obj : AllObj)
+	for (auto& col : allCol)
 	{
 		if constexpr (EDITOR)
-			if (Obj->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
+			if (col->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 		
 		GameObject* pOwner = Obj->GetOwner();
 		if (pOwner && (pOwner->GetFlags() & ActiveFlags) == ActiveFlags && (Obj->GetFlags() & ActiveFlags) == ActiveFlags)
 		{
-			if (Obj->GetColliderType() != eColliderType::CIRCLE)
-				s->UploadUniform("ModelMat", pOwner->GetComponent<Transform>()->GetTransformMatrix() * Math::Translate(Obj->GetOffSet())  * Obj->GetTransformationMatrix());
+			auto pTransform = pOwner->GetComponent<Transform>();
+			if (col->GetColliderType() != eColliderType::CIRCLE)
+				s->UploadUniform("ModelMat", pTransform->GetTransformMatrix() * Math::Translate(col->GetOffSet())  * col->GetTransformationMatrix());
 			else
 			{
 				auto const t           = pOwner->GetComponent<Transform>();
@@ -460,17 +461,17 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam)
 				);
 			}
 			
-			if (Obj->IsSleeping())
+			if (col->IsSleeping())
 			{
 				activeColor = SleepingColor;
 			}
 			
-			else if (Obj->HasCollision())
+			else if (col->HasCollision())
 			{
 				activeColor = CollidingColor;
 			}
 			
-			else if (Obj->IsTrigger())
+			else if (col->IsTrigger())
 			{
 				activeColor = TriggerColor;
 			}
@@ -480,7 +481,7 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam)
 				activeColor = mvDebugColour;
 			}
 
-			if (Mesh* pObjMesh = Obj->GetMesh())
+			if (Mesh* pObjMesh = col->GetMesh())
 			{
 				s->UploadUniform("vColor", activeColor);
 				pObjMesh->DrawMesh(GetDrawMode());

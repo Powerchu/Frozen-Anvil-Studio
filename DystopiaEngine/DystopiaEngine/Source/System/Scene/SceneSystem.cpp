@@ -202,8 +202,8 @@ void Dystopia::SceneSystem::LoadScene(const std::string& _strFile)
 {
 	TextSerialiser::OpenFile(_strFile.c_str(), TextSerialiser::MODE_READ); // just to check if file valid
 
-	mNextSceneFile = _strFile;
-	mLastSavedData = _strFile;
+	mNextSceneFile = _strFile.c_str();
+	mLastSavedData = _strFile.c_str();
 	mpNextScene = nullptr;//new Scene{};
 }
 
@@ -220,7 +220,7 @@ void Dystopia::SceneSystem::SaveScene(const std::string & _strFile, const std::s
 	EngineCore::GetInstance()->Get<BehaviourSystem>()->Serialise(SerialObj);
 	SerialObj.InsertEndBlock("Scene");
 
-	mLastSavedData = _strFile;
+	mLastSavedData = _strFile.c_str();
 }
 
 

@@ -991,7 +991,7 @@ namespace Dystopia
 			const double ProjectDis = ClosestEdge.mNorm3.Dot(Point.mPosition);
 			const double result = ProjectDis - ClosestEdge.mOrthogonalDistance;
 			/*If fail the test, expand the simplex and run the test again*/
-			if (Math::Abs(result) <= FLT_EPSILON*10000)
+			if (Math::Abs(result) <= FLT_EPSILON*100000)
 			{
 				Math::Vec3D const & OffSetA = GetOffSet();
 				Math::Matrix3D WorldSpaceA = GetOwnerTransform() * Math::Translate(OffSetA.x, OffSetA.y, OffSetA.z)* GetTransformationMatrix();
