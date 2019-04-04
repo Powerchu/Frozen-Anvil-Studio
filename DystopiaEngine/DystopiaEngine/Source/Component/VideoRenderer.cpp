@@ -67,7 +67,8 @@ namespace Dystopia
 		mpTexture{ nullptr },
 		mpCurrImg{ nullptr },
 		mElapsedTime{ 0.f },
-		mbPrevDone{ true }
+		mbPrevDone{ true },
+		mBufferSize{ 0 }
 	{
 		mWebmHdl->buffer      = nullptr;
 		mWebmHdl->block       = nullptr;
@@ -86,8 +87,38 @@ namespace Dystopia
 	}
 
 	Dystopia::VideoRenderer::VideoRenderer(VideoRenderer const & rhs)
+		:mVidFileHandle{ nullptr },
+		decoder{ nullptr },
+		mWebmHdl{ new WebmInputContext },
+		mVidHdl{ new VpxInputContext },
+		mDecodec{ new vpx_codec_ctx_t },
+		mState{ VideoState::NEUTRAL },
+		buffer{ nullptr },
+		mCodecIterator{ nullptr },
+		mRecentFlags{ 0 },
+		mPlayOnStart{ false },
+		mbLoop{ true },
+		mpTexture{ nullptr },
+		mpCurrImg{ nullptr },
+		mElapsedTime{ 0.f },
+		mbPrevDone{ true },
+		mBufferSize{0}
 	{
-		__debugbreak();
+
+		mWebmHdl->buffer = nullptr;
+		mWebmHdl->block = nullptr;
+		mWebmHdl->block_entry = nullptr;
+		mWebmHdl->cluster = nullptr;
+		mWebmHdl->reader = nullptr;
+		mWebmHdl->segment = nullptr;
+		memset(mWebmHdl, 0, sizeof(WebmInputContext));
+
+		LoadVideo(rhs.mVid);
+		Image imgData
+		{
+			"", false, false, GL_SRGB, GL_RGB, 0, 0, 3, 1, nullptr
+		};
+		mpTexture = CORE::Get<TextureSystem>()->LoadRaw<Texture2D>(&imgData);
 	}
 
 	VideoRenderer::~VideoRenderer()
@@ -163,6 +194,7 @@ namespace Dystopia
 		Component::Serialise(in);
 		in << mVid;
 		in << mPlayOnStart;
+		in << mbLoop;
 		in.InsertEndBlock("VideoRenderer");
 	}
 	void VideoRenderer::Unserialise(TextSerialiser & out)
@@ -171,6 +203,7 @@ namespace Dystopia
 		Component::Unserialise(out);
 		out >> mVid;
 		out >> mPlayOnStart;
+		out >> mbLoop;
 		out.ConsumeEndBlock();
 
 		if (LoadVideo(mVid) == VideoErrorCode::VIDEO_FILE_NOT_FOUND)
@@ -196,6 +229,7 @@ namespace Dystopia
 			return VideoErrorCode::VIDEO_FILE_FAIL_TO_OPEN;
 
 		/*Pass file handle to Video Handle*/
+
 		mVidHdl->file   = mVidFileHandle;
 		mVidHdl->length = 0;
 		mElapsedTime    = 0.f;
@@ -215,7 +249,7 @@ namespace Dystopia
 			/*Want to guess frame rate???*/
 			webm_guess_framerate(mWebmHdl, mVidHdl);
 			mWebmHdl->buffer = nullptr;
-
+			mBufferSize = 0;
 			/*Get video instance decode*/
 			decoder = get_vpx_decoder_by_fourcc(mVidHdl->fourcc);
 
@@ -267,7 +301,6 @@ namespace Dystopia
 
 		mpCurrImg     = nullptr;
 		buffer        = nullptr;
-		mBufferSize   = 0;
 		mBufferSize   = 0;
 	}
 
@@ -402,6 +435,11 @@ namespace Dystopia
 		mPlayOnStart = _b;
 	}
 
+	_DLL_EXPORT_ONLY void VideoRenderer::Pause()
+	{
+		mState = VideoState::PAUSE;
+	}
+
 	Texture2D* VideoRenderer::GetTexture(void) const noexcept
 	{
 		return mpTexture;
@@ -485,12 +523,27 @@ namespace Dystopia
 		return mBuffer.GetPboID();
 	}
 
+	bool VideoRenderer::IsDone() const
+	{
+		return mState == VideoState::STOP;
+	}
+
+	bool VideoRenderer::IsPlaying() const
+	{
+		return mState == VideoState::PLAYING;
+	}
+
+	bool VideoRenderer::IsPause() const
+	{
+		return mState == VideoState::PAUSE;
+	}
+
 #if EDITOR
 	void VideoRenderer::EditorUI(void) noexcept
 	{
 		EGUI::PushLeftAlign(140.f);
 		
-		static char buff[1024]{ 0 };
+		static char buff[2048]{ 0 };
 
 		if(mVid.c_str())
 			strcpy_s(buff, mVid.c_str());

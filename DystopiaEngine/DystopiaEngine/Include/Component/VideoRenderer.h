@@ -125,15 +125,18 @@ namespace Dystopia
 			_DLL_EXPORT_ONLY void Play();
 			_DLL_EXPORT_ONLY void ResetVideo();
 			_DLL_EXPORT_ONLY void PlayOnStart(bool _b);
+			_DLL_EXPORT_ONLY void Pause();
 
 			Texture2D* GetTexture(void) const noexcept;
 
 			vid_error_c_t ReadNextFrame();
 			vpx_image *   GetFrameImage();
-			bool          BufferIsComplete() const;
+			bool          BufferIsComplete()  const;
 			bool          BufferIsComplete();
 			unsigned      RgbBufferBufferID() const;
-
+			bool          IsDone()            const;
+			bool          IsPlaying()         const;
+			bool          IsPause()           const;
 #if EDITOR
 			void EditorUI(void) noexcept override;
 #endif

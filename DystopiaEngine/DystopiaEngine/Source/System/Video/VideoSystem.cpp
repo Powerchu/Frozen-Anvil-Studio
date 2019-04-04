@@ -199,6 +199,11 @@ namespace Dystopia
 	}
 	void VideoSystem::PostUpdate()
 	{
+		for (auto & vid : ComponentDonor<VideoRenderer>::mComponents)
+		{
+			if (vid.GetFlags() & FLAG_REMOVE)
+				ComponentDonor<VideoRenderer>::mComponents.Remove(&vid);
+		}
 	}
 	void VideoSystem::Shutdown(void)
 	{
