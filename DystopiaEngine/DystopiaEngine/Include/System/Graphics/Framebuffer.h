@@ -54,13 +54,16 @@ namespace Dystopia
 		bool HasAlpha(void) const noexcept;
 		unsigned GetWidth (void) const noexcept;
 		unsigned GetHeight(void) const noexcept;
+		int GetClearColor(void) const noexcept;
 		//int GetBlendSrc(void) const noexcept;
 		//int GetBlendDst(void) const noexcept;
 
-		Texture* AsTexture(void) const noexcept;
+		Texture* AsTexture(unsigned = 0) const noexcept;
 
 		void Attach(bool _bAlpha, int = 0, unsigned = 0x1401) noexcept;
 		void Resize(unsigned _nWidth, unsigned _nHeight) noexcept;
+
+		void SetClearColor(int) noexcept;
 
 		//template <typename T>
 		//auto Attach(Texture*, int = 0) -> Ut::EnableIf_t<Ut::MetaFind<T, AttachmentTypes>::value, Framebuffer&>;
@@ -72,6 +75,7 @@ namespace Dystopia
 
 		bool mbAlpha;
 		unsigned mnWidth, mnHeight;
+		int mClearCol;
 		//int mBlendSrc, mBlendDst;
 	};
 }

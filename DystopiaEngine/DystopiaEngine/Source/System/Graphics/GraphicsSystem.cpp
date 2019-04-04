@@ -239,7 +239,7 @@ Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetUIView(void) const noexcept
 
 Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetFrameBuffer(void) const noexcept
 {
-	return mViews[4];
+	return mViews[2];
 }
 
 Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetView(int _n) const
@@ -707,12 +707,12 @@ void Dystopia::GraphicsSystem::PostUpdate(void)
 
 void Dystopia::GraphicsSystem::StartFrame(void)
 {
-	glClearColor(0, 0, 0, 0);
-
+	constexpr float rcpColor = 1.f / 255.f;
 	for (auto& e : mViews)
 	{
 		e.Bind();
 
+		glClearColor(0, 0, 0, rcpColor * (0xFF & e.GetClearColor()));
 		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	}
 }
@@ -793,13 +793,14 @@ void Dystopia::GraphicsSystem::LoadFramebuffers(void) noexcept
 	fb->Attach(true);	                  // Colours
 	fb->Attach(false, 1);                 // Normals
 	fb->Attach(false, 2, GL_HALF_FLOAT);  // Bright
+	fb->SetClearColor(0x000000ff);
 
 	// UI
 	fb = mViews.Emplace(x, y, true);
 	fb->Attach(true);	   // Colours
 
 	// Final
-	mViews.Emplace(x, y, false);
+	fb = mViews.Emplace(x, y, false);
 	fb->Attach(false);
 
 	// Partial 
@@ -811,9 +812,13 @@ void Dystopia::GraphicsSystem::LoadFramebuffers(void) noexcept
 
 #if EDITOR
 	// Editor
-	mViews.Emplace(x, y, false);
+	fb = mViews.Emplace(x, y, false);
 	fb->Attach(false);
+	fb->SetClearColor(0x000000ff);
 #endif
+
+	for (auto& e : mViews)
+		e.Init();
 }
 
 void Dystopia::GraphicsSystem::SetResolution(unsigned w, unsigned h) noexcept

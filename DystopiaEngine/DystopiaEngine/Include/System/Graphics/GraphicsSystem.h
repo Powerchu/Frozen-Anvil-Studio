@@ -90,7 +90,7 @@ namespace Dystopia
 		Framebuffer& GetGameView(void) const noexcept;
 		Framebuffer& GetUIView(void) const noexcept;
 		Framebuffer& GetFrameBuffer(void) const noexcept;
-		Framebuffer& GetSceneView(void) const noexcept;
+		//Framebuffer& GetSceneView(void) const noexcept;
 		Framebuffer& GetView(int) const;
 
 		template <typename ...Ty>

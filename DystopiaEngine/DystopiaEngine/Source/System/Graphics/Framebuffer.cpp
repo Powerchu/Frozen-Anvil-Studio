@@ -34,7 +34,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 Dystopia::Framebuffer::Framebuffer(unsigned _nWidth, unsigned _nHeight, bool _bAlpha/*, int _blendSrc, int _blendDst*/) noexcept
 	: mAttachments{ }, mbAlpha{ _bAlpha }, mDepthBuffer{ 0 },
-	mnWidth{ _nWidth }, mnHeight{ _nHeight }//, mBlendSrc{ _blendSrc }, mBlendDst{ _blendDst }
+	mnWidth{ _nWidth }, mnHeight{ _nHeight }, 
+	mClearCol{ 0 }//, mBlendSrc{ _blendSrc }, mBlendDst{ _blendDst }
 {
 	glGenFramebuffers(1, &mnID);
 }
@@ -46,6 +47,7 @@ Dystopia::Framebuffer::~Framebuffer(void) noexcept
 
 	for (auto& e : mAttachments)
 		CORE::Get<TextureSystem>()->Free(e);
+	mAttachments.clear();
 }
 
 
@@ -137,6 +139,11 @@ unsigned Dystopia::Framebuffer::GetHeight(void) const noexcept
 	return mnHeight;
 }
 
+int Dystopia::Framebuffer::GetClearColor(void) const noexcept
+{
+	return mClearCol;
+}
+
 //int Dystopia::Framebuffer::GetBlendSrc(void) const noexcept
 //{
 //	return mBlendSrc;
@@ -148,9 +155,9 @@ unsigned Dystopia::Framebuffer::GetHeight(void) const noexcept
 //}
 
 
-Dystopia::Texture* Dystopia::Framebuffer::AsTexture(void) const noexcept
+Dystopia::Texture* Dystopia::Framebuffer::AsTexture(unsigned _nIdx) const noexcept
 {
-	return mAttachments[0];
+	return mAttachments[_nIdx];
 }
 
 void Dystopia::Framebuffer::Attach(bool _bAlpha, int num, unsigned datatype) noexcept
@@ -175,5 +182,10 @@ void Dystopia::Framebuffer::Resize(unsigned _nWidth, unsigned _nHeight) noexcept
 		e->Bind();
 		static_cast<Texture2D*>(e)->ReplaceTexture(_nWidth, _nHeight, nullptr, e->GetSettings().mnChannels > 3);
 	}
+}
+
+void Dystopia::Framebuffer::SetClearColor(int _nColor) noexcept
+{
+	mClearCol = _nColor;
 }
 
