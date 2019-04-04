@@ -87,7 +87,7 @@ void Gfx::OpenGL_API::ToggleVSync(bool _b) const noexcept
 {
 	if (Opts::GRAPHICS_VSYNC == (mAvailable & Opts::GRAPHICS_VSYNC))
 	{
-		wglSwapIntervalEXT(_b ? -1 : 1);
+		wglSwapIntervalEXT(_b ? -1 : 0);
 	}
 }
 

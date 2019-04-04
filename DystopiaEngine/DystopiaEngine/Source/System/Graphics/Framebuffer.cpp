@@ -170,9 +170,10 @@ void Dystopia::Framebuffer::Resize(unsigned _nWidth, unsigned _nHeight) noexcept
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, mnWidth, mnHeight);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-	//for (auto& e : mAttachments)
-	//{
-	//	e->Bind();
-	//}
+	for (auto& e : mAttachments)
+	{
+		e->Bind();
+		static_cast<Texture2D*>(e)->ReplaceTexture(_nWidth, _nHeight, nullptr, e->GetSettings().mnChannels > 3);
+	}
 }
 
