@@ -30,6 +30,7 @@
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
     <ClCompile Include="Include\IO\XMLParser.cpp" />
     <ClCompile Include="Source\Editor\ShaderView.cpp" />
+    <ClCompile Include="Source\System\Graphics\PostProcessSys.cpp" />
     <ClCompile Include="Source\System\Particle\AccelerationAffector.cpp" />
     <ClCompile Include="Source\System\Particle\AttractionAffector.cpp" />
     <ClCompile Include="Source\System\Particle\BubbleAffector.cpp" />
@@ -291,6 +292,7 @@
     <ClInclude Include="Include\System\Graphics\Font.h" />
     <ClInclude Include="Include\System\Graphics\FontSystem.h" />
     <ClInclude Include="Include\System\Graphics\MeshBuilder.h" />
+    <ClInclude Include="Include\System\Graphics\PostProcessSys.h" />
     <ClInclude Include="Include\System\Graphics\ShaderProgram.h" />
     <ClInclude Include="Include\System\Graphics\TextureAtlas.h" />
     <ClInclude Include="Include\System\Logger\FileLogger.h" />
