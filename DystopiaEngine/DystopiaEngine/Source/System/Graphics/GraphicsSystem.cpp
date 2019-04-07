@@ -43,6 +43,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Profiler/ProfilerAction.h"
 #include "System/Time/ScopedTimer.h"
 #include "System/File/FileSystem.h"
+#include "System/Graphics/PostProcessSys.h"
 
 #include "IO/TextSerialiser.h"
 
@@ -670,7 +671,7 @@ void Dystopia::GraphicsSystem::PostUpdate(void)
 	}
 	mTransparency.clear();
 
-	// CORE::Get<PostProcessSys>()->Update();
+	CORE::Get<PostProcessSystem>()->ApplyBlur();
 
 	Shader* debugShader = CORE::Get<ShaderSystem>()->GetShader("Collider Shader");
 	debugShader->Bind();
@@ -744,8 +745,8 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #endif
 
-	GetGameView().AsTexture()->Bind(0);
-	GetUIView()  .AsTexture()->Bind(1);
+	GetView(5) .AsTexture()->Bind(0);
+	GetUIView().AsTexture()->Bind(1);
 
 	auto const model =  Math::Scale(2.f, (float) Ut::Constant<int, EDITOR ? -2 : 2>::value);
 	Shader* shader = CORE::Get<ShaderSystem>()->GetShader("FinalStage");
@@ -793,9 +794,9 @@ void Dystopia::GraphicsSystem::LoadFramebuffers(void) noexcept
 
 	// World
 	auto fb = mViews.Emplace(x, y, true);
-	fb->Attach(true);	                  // Colours
-	fb->Attach(false, 1);                 // Normals
-	fb->Attach(false, 2, GL_HALF_FLOAT);  // Bright
+	fb->Attach(true);	                        // Colours
+	fb->Attach(false, 1);                       // Normals
+	fb->Attach(false, 2, GL_FLOAT, GL_RGB16F);  // Bright
 	fb->SetClearColor(0x000000ff);
 
 	// UI
@@ -807,9 +808,12 @@ void Dystopia::GraphicsSystem::LoadFramebuffers(void) noexcept
 	fb->Attach(false);
 
 	// Partial 
-	fb = mViews.Emplace(x, y, true);
+	fb = mViews.Emplace(x >> 1, y >> 1, true);
 	fb->Attach(true);
 	// Partial 2
+	fb = mViews.Emplace(x >> 1, y >> 1, true);
+	fb->Attach(true);
+	// Partial 3
 	fb = mViews.Emplace(x, y, true);
 	fb->Attach(true);
 

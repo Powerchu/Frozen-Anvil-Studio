@@ -13,6 +13,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 /* HEADER END *****************************************************************************/
 #include "System/Graphics/PostProcessSys.h"	// File header
 #include "System/Graphics/GraphicsSystem.h"
+#include "System/Graphics/MeshSystem.h"
 #include "System/Graphics/Framebuffer.h"
 #include "Lib/GraphicsLib.h"
 #include "System/Driver/Driver.h"			// EngineCore
@@ -25,18 +26,99 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Graphics/Shader.h"
 #include "System/Graphics/ShaderSystem.h"
 
+#include "Math/Vectors.h"
+#include "Math/Matrix4.h"
+
 #include "IO/TextSerialiser.h"
 #include "Utility/DebugAssert.h"			// DEBUG_ASSERT
 
 
+#include <GL/glew.h>
+
 bool Dystopia::PostProcessSystem::Init(void)
 {
-	return true;
+	first  = & CORE::Get<GraphicsSystem>()->GetView(3);
+	second = & CORE::Get<GraphicsSystem>()->GetView(4);
+	third  = & CORE::Get<GraphicsSystem>()->GetView(5);
+	game   = & CORE::Get<GraphicsSystem>()->GetGameView();
+
+	return first && second && third && game;
+}
+
+void Dystopia::PostProcessSystem::PostInit(void)
+{
+	auto pShaderSys = CORE::Get<ShaderSystem>();
+
+	auto s = pShaderSys->GetShader("Blur Pass");
+
+	Math::Matrix4 MVP{
+		2.f, .0f, .0f, .0f,
+		.0f, 2.f, .0f, .0f,
+		.0f, .0f, .0f, .0f,
+		.0f, .0f, .0f, 1.f
+	};
+
+	s->UploadUniform("MVP", MVP);
+
+	s = pShaderSys->GetShader("Blur Merge");
+	MVP[5] = -MVP[5];
+	s->UploadUniform("MVP", MVP);
 }
 
 void Dystopia::PostProcessSystem::Update(float)
 {
+}
+
+void Dystopia::PostProcessSystem::ApplyBlur(void)
+{
+	auto pShaderSys = CORE::Get<ShaderSystem>();
+	auto blurShader = pShaderSys->GetShader("Blur Pass");
+	auto Mesh = CORE::Get<MeshSystem>()->GetMesh("Quad");
+
 	// Blur pass
+	auto const w = first->GetWidth();
+	auto const h = first->GetHeight();
+	auto const w_step = 1.f / w;
+	auto const h_step = 1.f / h;
+
+	blurShader->Bind();
+
+	glViewport(0, 0, first->GetWidth(), first->GetHeight());
+
+	blurShader->UploadUniform("vStep", Math::Vec2{ 1.f / game->GetWidth(), 0 });
+	first->Bind();
+	game->AsTexture(2)->Bind();
+	Mesh->DrawMesh(4);
+
+	blurShader->UploadUniform("vStep", Math::Vec2{ 0, h_step });
+	second->Bind();
+	first->AsTexture()->Bind();
+	Mesh->DrawMesh(4);
+
+	for (int n = 0; n < 8; ++n)
+	{
+		blurShader->UploadUniform("vStep", Math::Vec2{ w_step, 0 });
+		first->Bind();
+		glClearColor(0, 0, 0, 0);
+		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+		second->AsTexture()->Bind();
+		Mesh->DrawMesh(4);
+	
+		blurShader->UploadUniform("vStep", Math::Vec2{ 0, h_step });
+		second->Bind();
+		glClearColor(0, 0, 0, 0);
+		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+		first->AsTexture()->Bind();
+		Mesh->DrawMesh(4);
+	}
+
+	pShaderSys->GetShader("Blur Merge")->Bind();
+	third->Bind();
+	glViewport(0, 0, game->GetWidth(), game->GetHeight());
+
+	//game  ->AsTexture()->Bind(0);
+	second->AsTexture()->Bind();
+	Mesh->DrawMesh(4);
 }
 
 void Dystopia::PostProcessSystem::Shutdown(void)
