@@ -514,6 +514,9 @@
     <ClCompile Include="..\Dependancies\libvpx\y4minput.c">
       <Filter>Dependancies\libvpx</Filter>
     </ClCompile>
+    <ClCompile Include="Source\System\Graphics\PostProcessSys.cpp">
+      <Filter>Game Engine\Systems\PostProcess</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -1380,6 +1383,9 @@
     <ClInclude Include="Include\DataStructure\Unused.h">
       <Filter>DataStructures</Filter>
     </ClInclude>
+    <ClInclude Include="Include\System\Graphics\PostProcessSys.h">
+      <Filter>Game Engine\Systems\PostProcess</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1936,6 +1942,9 @@
     </Filter>
     <Filter Include="Dependancies\libvpx">
       <UniqueIdentifier>{9b6039c0-cc6c-4ae1-b97d-01c4a5dac729}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\PostProcess">
+      <UniqueIdentifier>{621f58d6-da63-4a8a-a162-25ac75e00569}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -4,9 +4,9 @@
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
-BRIEF HERE
+	Graphics System
 
-All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+All Content Copyright © 2019 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -109,6 +109,8 @@ Dystopia::GraphicsSystem::GraphicsSystem(void) noexcept :
 
 Dystopia::GraphicsSystem::~GraphicsSystem(void)
 {
+	mViews.clear();
+
 	::Gfx::ShutdownGraphicsAPI();
 }
 
@@ -221,8 +223,6 @@ void Dystopia::GraphicsSystem::PostInit(void)
 
 	if (CORE::Get<FileSystem>()  ->CheckFileExist("Shader/ShaderList.txt", eFileDir::eResource))
 		CORE::Get<ShaderSystem>()->LoadShaderList("Shader/ShaderList.txt", eFileDir::eResource);
-
-	//glPointSize(10);
 
 #   if defined(_DEBUG) | defined(DEBUG)
 	if (auto err = glGetError())
@@ -373,6 +373,10 @@ namespace
 	}
 }
 
+#if !defined(EDITOR)
+#define UNDEF_EDITOR
+#define EDITOR 0
+#endif
 void Dystopia::GraphicsSystem::DrawScene(Camera& _cam)
 {
 	ScopedTimer<ProfilerAction> timeKeeper{ "Graphics System", "Scene Draw" };
@@ -430,6 +434,7 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam)
 	// Get Camera's layer, we only want to draw inclusive stuff
 	ActiveFlags &= eObjFlag::FLAG_ALL_LAYERS | eObjFlag::FLAG_ACTIVE;
 
+	glDepthMask(GL_FALSE);
 	glDisable(GL_DEPTH_TEST);
 	Shader* s = CORE::Get<ShaderSystem>()->GetShader("Collider Shader");
 
@@ -496,6 +501,7 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam)
 		}
 	}
 
+	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
 #   if defined(_DEBUG) | defined(DEBUG)
 	if (auto err = glGetError())
@@ -722,10 +728,6 @@ void Dystopia::GraphicsSystem::StartFrame(void)
 	}
 }
 
-#if !defined(EDITOR)
-#define UNDEF_EDITOR
-#define EDITOR 0
-#endif
 void Dystopia::GraphicsSystem::EndFrame(void)
 {
 	static Mesh* quad = EngineCore::GetInstance()->Get<MeshSystem>()->GetMesh("Quad");
@@ -822,8 +824,8 @@ void Dystopia::GraphicsSystem::LoadFramebuffers(void) noexcept
 	fb->SetClearColor(0x000000ff);
 #endif
 
-	for (auto& e : mViews)
-		e.Init();
+	//for (auto& e : mViews)
+	//	e.Init();
 }
 
 void Dystopia::GraphicsSystem::SetResolution(unsigned w, unsigned h) noexcept

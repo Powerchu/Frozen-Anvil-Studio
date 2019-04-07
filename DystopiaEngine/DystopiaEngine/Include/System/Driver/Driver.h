@@ -52,6 +52,7 @@ namespace Dystopia
 			Ut::Indexer<eSYSTEMS::FILE_SYSTEM        , class FileSystem        >,
 			Ut::Indexer<eSYSTEMS::INTERMEDIARY_SYSTEM, class EditorIntermediary>,
 			Ut::Indexer<eSYSTEMS::PARTICLE_SYSTEM    , class ParticleSystem    >,
+			Ut::Indexer<eSYSTEMS::POSTPROCESS_SYSTEM , class PostProcessSystem >,
 			Ut::Indexer<eSYSTEMS::VIDEO_SYSTEM       , class VideoSystem       >
 		>>;
 
