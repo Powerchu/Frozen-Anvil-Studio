@@ -90,7 +90,7 @@ namespace Dystopia
 		:mVidFileHandle{ nullptr },
 		decoder{ nullptr },
 		mWebmHdl{ new WebmInputContext },
-		mVidHdl{ new VpxInputContext },
+		mVidHdl{  new VpxInputContext },
 		mDecodec{ new vpx_codec_ctx_t },
 		mState{ VideoState::NEUTRAL },
 		buffer{ nullptr },
@@ -102,7 +102,8 @@ namespace Dystopia
 		mpCurrImg{ nullptr },
 		mElapsedTime{ 0.f },
 		mbPrevDone{ true },
-		mBufferSize{0}
+		mBufferSize{0},
+		mVid{ rhs.mVid }
 	{
 
 		mWebmHdl->buffer = nullptr;
@@ -128,6 +129,9 @@ namespace Dystopia
 		delete mWebmHdl;
 		delete mVidHdl;
 		delete mDecodec;
+
+		CORE::Get<TextureSystem>()->Free(mpTexture);
+		mpTexture = nullptr;
 	}
 
 	void Dystopia::VideoRenderer::Awake(void)
@@ -543,7 +547,7 @@ namespace Dystopia
 	{
 		EGUI::PushLeftAlign(140.f);
 		
-		static char buff[2048]{ 0 };
+		char buff[2048]{ 0 };
 
 		if(mVid.c_str())
 			strcpy_s(buff, mVid.c_str());

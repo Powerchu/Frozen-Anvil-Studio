@@ -54,6 +54,10 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/SpriteRenderer.h"
 #include "Component/Collider.h"
 
+
+//Data Structures
+#include "DataStructure/AutoArray.h"      // AutoArray
+
 #include "Globals.h"
 #include "Utility/DebugAssert.h"			// DEBUG_ASSERT
 #include "Math/Vectors.h"
@@ -420,7 +424,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam)
 void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam)
 {
 	ScopedTimer<ProfilerAction> timeKeeper{ "Graphics System", "Debug Draw" };
-	auto AllObj = CORE::Get<CollisionSystem>()->GetAllColliders();
+	auto allCol = CORE::Get<CollisionSystem>()->GetAllColliders();
 	auto ActiveFlags = _cam.GetOwner()->GetFlags();
 
 	// Get Camera's layer, we only want to draw inclusive stuff
@@ -439,8 +443,8 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam)
 		if constexpr (EDITOR)
 			if (col->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 		
-		GameObject* pOwner = Obj->GetOwner();
-		if (pOwner && (pOwner->GetFlags() & ActiveFlags) == ActiveFlags && (Obj->GetFlags() & ActiveFlags) == ActiveFlags)
+		GameObject* pOwner = col->GetOwner();
+		if (pOwner && (pOwner->GetFlags() & ActiveFlags) == ActiveFlags && (col->GetFlags() & ActiveFlags) == ActiveFlags)
 		{
 			auto pTransform = pOwner->GetComponent<Transform>();
 			if (col->GetColliderType() != eColliderType::CIRCLE)
@@ -455,9 +459,9 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam)
 				s->UploadUniform("ModelMat", 
 					Translation * 
 					t->GetGlobalRotation().Matrix() *
-					Math::Translate(t->GetGlobalScale() * Obj->GetOffSet()) *
+					Math::Translate(t->GetGlobalScale() * col->GetOffSet()) *
 					scaleM * 
-					Obj->GetTransformationMatrix()
+					col->GetTransformationMatrix()
 				);
 			}
 			
