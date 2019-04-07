@@ -72,6 +72,10 @@ void Dystopia::Renderer::Awake(void)
 
 void Dystopia::Renderer::Init(void)
 {
+	//if (HasTransparency())
+	//{
+	//	CORE::Get<GraphicsSystem>()->RegisterTransparency(this);
+	//}
 }
 
 void Dystopia::Renderer::Draw(void) const noexcept
@@ -162,9 +166,14 @@ AutoArray<Tuple<unsigned, Dystopia::Texture*>> const& Dystopia::Renderer::GetTex
 	return mTextureFields;
 }
 
+void Dystopia::Renderer::SetTransparencyFlag(bool b) noexcept
+{
+	mnFlags = b ? mnFlags | eObjFlag::FLAG_RESERVED : mnFlags & ~eObjFlag::FLAG_RESERVED;
+}
+
 bool Dystopia::Renderer::HasTransparency(void) const noexcept
 {
-	return (mnFlags & eObjFlag::FLAG_RESERVED) != 0;
+	return !!(mnFlags & eObjFlag::FLAG_RESERVED);
 }
 
 std::pair<OString, ::Gfx::eUniform_t> const* Dystopia::Renderer::FindUniformInShader(const char* _strName)
@@ -354,6 +363,7 @@ void Dystopia::Renderer::EditorUI(void) noexcept
 #if EDITOR
 	EGUI::PushLeftAlign(80);
 
+	TranslucencyField();
 	TextureField();
 	//MeshField();
 	ShaderField();
@@ -363,7 +373,17 @@ void Dystopia::Renderer::EditorUI(void) noexcept
 }
 
 #if EDITOR
-void Dystopia::Renderer::TextureField()
+void Dystopia::Renderer::TranslucencyField(void) noexcept
+{
+	static bool IsTranslucent = HasTransparency();
+
+	if (EGUI::Display::CheckBox("Has Transparaency", &IsTranslucent))
+	{
+		SetTransparencyFlag(IsTranslucent);
+	}
+}
+
+void Dystopia::Renderer::TextureField(void)
 {
 	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
 
@@ -432,7 +452,7 @@ void Dystopia::Renderer::TextureField()
 	}
 }
 
-void Dystopia::Renderer::MeshField()
+void Dystopia::Renderer::MeshField(void)
 {
 	//if (EGUI::Display::EmptyBox("Mesh", 150, (mpMesh) ? mpMesh->GetName().c_str() : "", true))
 	//{
@@ -638,4 +658,5 @@ inline void Dystopia::Renderer::UIVisitor::operator()(Math::Vec4& _variant)
 //	EGUI::Display::DragInt(strName.c_str(), &_variant.second, 1, -INT_MAX, INT_MAX, true);
 //}
 
-#endif
+#endif	// EDITOR
+

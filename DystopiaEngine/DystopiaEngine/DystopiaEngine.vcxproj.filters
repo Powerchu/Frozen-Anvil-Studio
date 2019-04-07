@@ -1377,6 +1377,9 @@
     <ClInclude Include="..\Dependancies\libvpx\y4minput.h">
       <Filter>Dependancies\libvpx</Filter>
     </ClInclude>
+    <ClInclude Include="Include\DataStructure\Unused.h">
+      <Filter>DataStructures</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">

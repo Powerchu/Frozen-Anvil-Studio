@@ -89,7 +89,7 @@ void Dystopia::Texture2D::InitTexture(void)
 
 	for (unsigned n = 0; (n < mData.mnMipMaps) && w && h; ++n)
 	{
-		glTexImage2D(mnType, n, mData.mnRawFormat, w, h, 0, mData.mnFormat, GL_UNSIGNED_BYTE, data_ptr);
+		glTexImage2D(mnType, n, mData.mnRawFormat, w, h, 0, mData.mnFormat, mData.mDataType, data_ptr);
 		data_ptr += mData.mnChannels * w * h;
 
 		// Assume each MipMap is half of the previous
@@ -112,7 +112,7 @@ void Dystopia::Texture2D::ReplaceTexture(unsigned w, unsigned h, void* _pData, b
 	mData.mnFormat    = _bAlpha ? GL_RGBA : GL_RGB;
 	mData.mnRawFormat = mData.mbRGB ?  _bAlpha ? GL_RGBA : GL_RGB : _bAlpha ? GL_SRGB_ALPHA : GL_SRGB;
 	mData.mbChanged   = true;
-
+	Bind();
 	glTexImage2D(mnType, 0, mData.mnRawFormat, w, h, 0, mData.mnFormat, GL_UNSIGNED_BYTE, _pData);
 }
 

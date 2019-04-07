@@ -257,7 +257,7 @@ void Dystopia::EngineCore::ExecuteGame()
 	Init();
 	PostInit();
 
-	Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->LoadScene("SplashScreen.dscene");
+	Get<SceneSystem>()->LoadScene("SplashScreen.dscene");
 
 	while (!mbQuit)
 	{
@@ -266,6 +266,7 @@ void Dystopia::EngineCore::ExecuteGame()
 		Update();
 		PostUpdate();
 	}
+
 	Shutdown();
 	return;
 }

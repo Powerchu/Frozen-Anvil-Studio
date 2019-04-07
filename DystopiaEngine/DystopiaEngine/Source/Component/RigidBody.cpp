@@ -228,7 +228,7 @@ namespace Dystopia
 		 ********************************************************************/
 		 //Store previous Position
 		mPrevPosition = mPosition = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
-		//mfZAngleDeg   = GetOwner()->GetComponent<Transform>()->GetGlobalRotation().ToEuler().z;
+		mfZAngleDeg   = GetOwner()->GetComponent<Transform>()->GetGlobalRotation().ToEuler().z;
 
 		if (Get_IsKinematic()) return;
 

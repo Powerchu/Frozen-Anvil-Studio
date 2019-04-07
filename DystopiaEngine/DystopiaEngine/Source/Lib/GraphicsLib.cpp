@@ -78,6 +78,9 @@ void Gfx::ShutdownGraphicsAPI(void) noexcept
 	case GfxMode::OPENGL:
 		Dystopia::DefaultAllocator<OpenGL_API>::DestructFree(static_cast<OpenGL_API*>(pInstance));
 		break;
+
+	case GfxMode::NONE:
+		break;
 	}
 }
 

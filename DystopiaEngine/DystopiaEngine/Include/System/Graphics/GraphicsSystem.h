@@ -22,6 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/Vectors.h"
 
 #include "Utility/Utility.h"
+#include "DataStructure/AutoArray.h"
 
 #include <map>
 #include <string>
@@ -89,7 +90,7 @@ namespace Dystopia
 		Framebuffer& GetGameView(void) const noexcept;
 		Framebuffer& GetUIView(void) const noexcept;
 		Framebuffer& GetFrameBuffer(void) const noexcept;
-		Framebuffer& GetSceneView(void) const noexcept;
+		//Framebuffer& GetSceneView(void) const noexcept;
 		Framebuffer& GetView(int) const;
 
 		template <typename ...Ty>
@@ -99,7 +100,7 @@ namespace Dystopia
 		static void SetDrawMode(int) noexcept;
 
 		void SetResolution(unsigned w, unsigned h) noexcept;
-		void UpdateResolution(void) const noexcept;
+		void UpdateResolution(void) noexcept;
 
 		void EditorAspectRatio(void);
 		void EditorUI(void);
@@ -124,8 +125,15 @@ namespace Dystopia
 		void StartFrame(void);
 		void EndFrame(void);
 
-		void DrawScene(Camera&, Math::Matrix4&, Math::Matrix4&);
-		void DrawDebug(Camera&, Math::Matrix4&, Math::Matrix4&);
+		void DrawScene(Camera& /*, Math::Mat4 const&, Math::Mat4 const&*/ );
+		void DrawDebug(Camera& /*, Math::Mat4 const&, Math::Mat4 const&*/ );
+
+		void LoadFramebuffers(void) noexcept;
+
+		AutoArray<Renderer*>       mSet1;
+		AutoArray<SpriteRenderer*> mSet2;
+		AutoArray<TextRenderer*>   mSet3;
+		AutoArray<Renderer*>       mTransparency;
 
 #	if EDITOR
 		bool mbVSync;
