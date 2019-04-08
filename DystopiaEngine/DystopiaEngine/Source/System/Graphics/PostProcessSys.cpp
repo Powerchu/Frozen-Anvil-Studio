@@ -114,10 +114,10 @@ void Dystopia::PostProcessSystem::ApplyBlur(void)
 
 	pShaderSys->GetShader("Blur Merge")->Bind();
 	third->Bind();
-	glViewport(0, 0, game->GetWidth(), game->GetHeight());
+	glViewport(0, 0, third->GetWidth(), third->GetHeight());
 
-	//game  ->AsTexture()->Bind(0);
-	second->AsTexture()->Bind();
+	game  ->AsTexture()->Bind(0);
+	second->AsTexture()->Bind(1);
 	Mesh->DrawMesh(4);
 }
 

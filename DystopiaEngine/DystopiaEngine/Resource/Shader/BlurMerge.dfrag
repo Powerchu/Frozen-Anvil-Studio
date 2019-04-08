@@ -19,5 +19,6 @@ void main()
   vec3 temp = max(vec3(0), color.rgb - vec3(0.004));
   vec3 mult = 6.2 * temp;
   fragColor = vec4((temp * (mult + .5)) / (temp * (mult + 1.7) + 0.06), color.a);
+  //fragColor = vec4((temp) / (temp + vec3(1)), color.a);
 }
 

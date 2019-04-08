@@ -745,6 +745,7 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 	unsigned const w = fbTex->GetWidth(), h = fbTex->GetHeight();
 
 	glViewport(0, 0, w, h);
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 #else
 	auto& win = EngineCore::Get<WindowManager>()->GetMainWindow();
 
@@ -754,14 +755,14 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #endif
 
-	GetView(5) .AsTexture()->Bind(0);
-	GetUIView().AsTexture()->Bind(1);
-
 	auto const model =  Math::Scale(2.f, (float) Ut::Constant<int, EDITOR ? -2 : 2>::value);
 	Shader* shader = CORE::Get<ShaderSystem>()->GetShader("FinalStage");
 	shader->Bind();
 	shader->UploadUniform("ModelMat", model);
 	shader->UploadUniform("Gamma", mfGamma);
+
+	GetView(5) .AsTexture()->Bind(0);
+	GetUIView().AsTexture()->Bind(1);
 
 	quad->DrawMesh(GL_TRIANGLES);
 
@@ -818,10 +819,10 @@ void Dystopia::GraphicsSystem::LoadFramebuffers(void) noexcept
 
 	// Partial 
 	fb = mViews.Emplace(x >> 1, y >> 1, true);
-	fb->Attach(true);
+	fb->Attach(true, 0, GL_FLOAT, GL_RGB16F);
 	// Partial 2
 	fb = mViews.Emplace(x >> 1, y >> 1, true);
-	fb->Attach(true);
+	fb->Attach(true, 0, GL_FLOAT, GL_RGB16F);
 	// Partial 3
 	fb = mViews.Emplace(x, y, true);
 	fb->Attach(true);
