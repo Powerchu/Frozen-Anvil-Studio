@@ -106,6 +106,8 @@ namespace Dystopia
 		void EditorUI(void);
 
 		void DrawSplash(void);
+
+		unsigned GetEditorView(void) const;
 	private:
 
 		Math::Vector4 mvDebugColour;

@@ -301,10 +301,10 @@ namespace Dystopia
 			if (_OutputResult != nullptr)
 			{
 				/*Insert Collision Info*/
-				_OutputResult->mEdgeNormal =  (_Pos + (_RayDir*t) - _Collider->GetGlobalPosition()).Normalise();
+				_OutputResult->mEdgeNormal       =  (_Pos + (_RayDir*t) - _Collider->GetGlobalPosition()).Normalise();
 				_OutputResult->mTimeIntersection = t;
-				_OutputResult->mCollisionPoint = _Pos + (_RayDir*t);
-				_OutputResult->mCollidedWith = _Collider->GetOwner();
+				_OutputResult->mCollisionPoint   = _Pos + (_RayDir*t);
+				_OutputResult->mCollidedWith     = _Collider->GetOwner();
 			}
 			return true;
 		}

@@ -306,6 +306,11 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 #   endif 
 }
 
+unsigned Dystopia::GraphicsSystem::GetEditorView(void) const
+{
+	return mViews.size() -1;
+}
+
 namespace
 {
 	struct ShaderUploadVisitor
