@@ -27,10 +27,11 @@ namespace Dystopia
 	public:
 
 		bool Init(void) override;
-		virtual void PostInit(void) override { };
+		void PostInit(void) override;
 
 		void Update(float) override;
-		void PostUpdate(void) override { };
+
+		void ApplyBlur(void);
 
 		void Shutdown(void) override;
 
@@ -44,6 +45,8 @@ namespace Dystopia
 		unsigned mSettings;
 		Framebuffer* first;
 		Framebuffer* second;
+		Framebuffer* third;
+		Framebuffer* game;
 	};
 }
 

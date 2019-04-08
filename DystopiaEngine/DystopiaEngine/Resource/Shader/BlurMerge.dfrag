@@ -1,0 +1,23 @@
+#version 410 core
+
+layout(location = 2) in vec2 vUV;
+layout(location = 0) out vec4 fragColor;
+
+uniform sampler2D colorTex;
+uniform sampler2D brightTex;
+
+uniform float exp = 1;
+
+void main()
+{
+  vec4 color  = texture(colorTex , vUV);
+  vec4 bright = texture(brightTex, vUV);
+  color   = color + bright;
+  color.a = min(1, color.a);
+  
+  // filmic tone map pulled from the internet
+  vec3 temp = max(vec3(0), color.rgb - vec3(0.004));
+  vec3 mult = 6.2 * temp;
+  fragColor = vec4((temp * (mult + .5)) / (temp * (mult + 1.7) + 0.06), color.a);
+}
+
