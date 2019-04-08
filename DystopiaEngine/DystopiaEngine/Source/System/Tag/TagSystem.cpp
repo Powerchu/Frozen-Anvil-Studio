@@ -30,7 +30,8 @@ namespace Dystopia
 				std::make_pair(Tags::TAG_10, "PillarStopper"),
 				std::make_pair(Tags::TAG_11, "CaveProjectile"),
 				std::make_pair(Tags::TAG_12, "WormChargeInteractable"),
-				_TAG_(20) }
+				std::make_pair(Tags::TAG_13, "WormBoss"),
+				_TAG_(19) }
 	{
 	}
 
