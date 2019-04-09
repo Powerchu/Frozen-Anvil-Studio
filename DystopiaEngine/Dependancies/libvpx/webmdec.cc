@@ -122,7 +122,7 @@ int webm_read_frame(struct WebmInputContext *webm_ctx, uint8_t **buffer,
                     size_t *buffer_size) {
   // This check is needed for frame parallel decoding, in which case this
   // function could be called even after it has reached end of input stream.
-  if (webm_ctx->reached_eos) {
+  if (webm_ctx->reached_eos || !webm_ctx->cluster) {
     return 1;
   }
   mkvparser::Segment *const segment =
@@ -137,12 +137,16 @@ int webm_read_frame(struct WebmInputContext *webm_ctx, uint8_t **buffer,
   do {
     long status = 0;
     bool get_new_block = false;
-    if (block_entry == NULL && !block_entry_eos) {
+    if (block_entry == NULL && !block_entry_eos) 
+	{
       status = cluster->GetFirst(block_entry);
       get_new_block = true;
-    } else if (block_entry_eos || block_entry->EOS()) {
+    } 
+	else if (block_entry_eos || block_entry->EOS()) 
+	{
       cluster = segment->GetNext(cluster);
-      if (cluster == NULL || cluster->EOS()) {
+      if (cluster == NULL || cluster->EOS()) 
+	  {
         *buffer_size = 0;
         webm_ctx->reached_eos = 1;
         return 1;
@@ -150,9 +154,11 @@ int webm_read_frame(struct WebmInputContext *webm_ctx, uint8_t **buffer,
       status = cluster->GetFirst(block_entry);
       block_entry_eos = false;
       get_new_block = true;
-    } else if (block == NULL ||
+    } 
+	else if   (block == NULL ||
                webm_ctx->block_frame_index == block->GetFrameCount() ||
-               block->GetTrackNumber() != webm_ctx->video_track_index) {
+               block->GetTrackNumber() != webm_ctx->video_track_index) 
+	{
       status = cluster->GetNext(block_entry, block_entry);
       if (block_entry == NULL || block_entry->EOS()) {
         block_entry_eos = true;

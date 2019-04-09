@@ -610,47 +610,47 @@ namespace Dystopia
 		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 		_pRenderer->GetTexture()->Bind();
 		_pRenderer->GetTexture()->ReplaceTexture(w, h, nullptr, false);
-		if (auto err = glGetError())
-		{
-			__debugbreak();
-		}
+		//if (auto err = glGetError())
+		//{
+		//	__debugbreak();
+		//}
 		if (rgb_buff)
 		{
 			DeleteBuffer();
-			if (auto err = glGetError())
-			{
-				__debugbreak();
-			}
+			//if (auto err = glGetError())
+			//{
+			//	__debugbreak();
+			//}
 			glGenBuffers(1, &pboID);
-			if (auto err = glGetError())
-			{
-				__debugbreak();
-			}
+			//if (auto err = glGetError())
+			//{
+			//	__debugbreak();
+			//}
 		}
 		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboID);
-		if (auto err = glGetError())
-		{
-			__debugbreak();
-		}
+		//if (auto err = glGetError())
+		//{
+		//	__debugbreak();
+		//}
 
 		//glBufferData(GL_PIXEL_UNPACK_BUFFER, w*h*stride, nullptr, GL_STREAM_DRAW);
 		glBufferStorage(GL_PIXEL_UNPACK_BUFFER, w*h*stride, nullptr, GL_MAP_PERSISTENT_BIT | GL_MAP_WRITE_BIT | GL_DYNAMIC_STORAGE_BIT);
-		if (auto err = glGetError())
-		{
-			__debugbreak();
-		}
+		//if (auto err = glGetError())
+		//{
+		//	__debugbreak();
+		//}
 		rgb_buff = static_cast<uint8_t*>(glMapBufferRange(GL_PIXEL_UNPACK_BUFFER, 0, w*h*stride, mapFlags));
 
-		if (auto err = glGetError())
-		{
-			__debugbreak();
-		}
+		//if (auto err = glGetError())
+		//{
+		//	__debugbreak();
+		//}
 		glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
-		if (auto err = glGetError())
-		{
-			__debugbreak();
-		}
+		//if (auto err = glGetError())
+		//{
+		//	__debugbreak();
+		//}
 	}
 
 	void RGB_BUFFER::ResetCount()

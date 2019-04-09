@@ -298,15 +298,15 @@ namespace Dystopia
 				return false;
 			/*No break here on purpose*/
 		case false:
-			if (_OutputResult != nullptr)
+			if (_OutputResult != nullptr && t < _OutputResult->mTimeIntersection)
 			{
 				/*Insert Collision Info*/
 				_OutputResult->mEdgeNormal       =  (_Pos + (_RayDir*t) - _Collider->GetGlobalPosition()).Normalise();
 				_OutputResult->mTimeIntersection = t;
 				_OutputResult->mCollisionPoint   = _Pos + (_RayDir*t);
 				_OutputResult->mCollidedWith     = _Collider->GetOwner();
+				return true;
 			}
-			return true;
 		}
 		return false;
 	}

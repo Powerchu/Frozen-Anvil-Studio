@@ -101,7 +101,8 @@ namespace Dystopia
 			VideoRenderer();
 			VideoRenderer(VideoRenderer const & rhs);
 			~VideoRenderer();
-
+			/*No i do not want to allow this. Too many shit to handle*/
+			VideoRenderer& operator=(VideoRenderer const &) = delete;
 			void Awake(void);
 			/*Load the Component*/
 			virtual void Load(void);
