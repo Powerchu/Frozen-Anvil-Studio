@@ -58,11 +58,6 @@ void Dystopia::Framebuffer::Init(void)
 		GL_COLOR_ATTACHMENT5, GL_COLOR_ATTACHMENT6, GL_COLOR_ATTACHMENT7, GL_COLOR_ATTACHMENT8, GL_COLOR_ATTACHMENT9,
 		GL_COLOR_ATTACHMENT10, GL_COLOR_ATTACHMENT11, GL_COLOR_ATTACHMENT12, GL_COLOR_ATTACHMENT13, GL_COLOR_ATTACHMENT14
 	};
-	//unsigned format = mbAlpha ? GL_RGBA : GL_RGB;
-	//Image tmp = { "", false, true, format, format, mnWidth, mnHeight, mbAlpha ? 4u : 3u, 1u, nullptr };
-	//mpTexture = EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->LoadRaw<Texture2D>(&tmp);
-	//
-	//DEBUG_ASSERT(!mpTexture, "Framebuffer Error: Failed to create texture!\n");
 
 	glGenRenderbuffers(1, &mDepthBuffer);
 
@@ -72,7 +67,6 @@ void Dystopia::Framebuffer::Init(void)
 
 	// Bind the texture and stencil buffer to the FBO
 	Bind();
-	//glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mpTexture->GetID(), 0);
 	glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, mDepthBuffer);
 
 	glDrawBuffers(static_cast<GLsizei>(mAttachments.size()), buffers);
@@ -160,10 +154,11 @@ Dystopia::Texture* Dystopia::Framebuffer::AsTexture(unsigned _nIdx) const noexce
 	return mAttachments[_nIdx];
 }
 
-void Dystopia::Framebuffer::Attach(bool _bAlpha, int num, unsigned datatype) noexcept
+void Dystopia::Framebuffer::Attach(bool _bAlpha, int num, unsigned datatype, unsigned internalFmt) noexcept
 {
 	unsigned format = _bAlpha ? GL_RGBA : GL_RGB;
-	Image tmp = { "", false, true, format, format, mnWidth, mnHeight, mbAlpha ? 4u : 3u, 1u, nullptr };
+	internalFmt = internalFmt ? internalFmt : format;
+	Image tmp = { "", false, true, internalFmt, format, mnWidth, mnHeight, mbAlpha ? 4u : 3u, 1u, nullptr };
 	tmp.mDataType = datatype;
 	mAttachments.EmplaceBack(CORE::Get<TextureSystem>()->LoadRaw<Texture2D>(&tmp));
 

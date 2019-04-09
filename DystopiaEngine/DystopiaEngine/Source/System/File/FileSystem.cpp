@@ -143,7 +143,7 @@ namespace Dystopia
 					auto & ref = mMapOfTrackInfo[TrackJob->mFileHandle];
 					for (auto & f : ref)
 					{
-						//f.second(TrackJob->mFileName.c_str());
+						f.second(TrackJob->mFileName.c_str());
 						f.second();
 						//f.second(names.c_str(), ListOfFileNames[i].second);
 					}
@@ -179,11 +179,12 @@ namespace Dystopia
 		std::filesystem::path DirPath{ mPathTable[_ParentDirectory] };
 		std::error_code error; 
 		std::filesystem::recursive_directory_iterator DirIter { DirPath, std::filesystem::directory_options::skip_permission_denied, error };
-		std::string fullpath = Normalize(DirPath.string() + "/" + _FileName);
+		std::string fullpath  = Normalize(DirPath.string() + "/" + _FileName);
+		std::string fullpath2 = Normalize(_FileName.c_str());
 		for (auto const & elem : DirIter )
 		{
 			std::string FullName = Normalize(elem.path().string());
-			if (elem.path().filename().string() == _FileName || FullName == fullpath)
+			if (elem.path().filename().string() == _FileName || FullName == fullpath || fullpath2 == FullName)
 			{
 				//|| std::filesystem::equivalent(DirPath.wstring + "/"+ _FileName,elem,error))
 				return elem.path().string();

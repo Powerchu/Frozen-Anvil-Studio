@@ -43,6 +43,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Profiler/ProfilerAction.h"
 #include "System/Time/ScopedTimer.h"
 #include "System/File/FileSystem.h"
+#include "System/Graphics/PostProcessSys.h"
 
 #include "IO/TextSerialiser.h"
 
@@ -207,13 +208,13 @@ bool Dystopia::GraphicsSystem::Init(void)
 	DEBUG_BREAK(mViews.size() < 3, "Graphics System Error: Graphics did not load settings properly!\n");
 	auto pShaderSys = CORE::Get<ShaderSystem>();
 
-	for (auto& e : mViews)
-		e.Init();
+	//for (auto& e : mViews)
+	//	e.Init();
 
-	auto shader = pShaderSys->GetShader("FinalStage");
-	shader->UploadUniformi("texGame", 0);
-	shader->UploadUniformi("texUI", 1);
-
+	//auto shader = pShaderSys->GetShader("FinalStage");
+	//shader->UploadUniformi("texGame", 0);
+	//shader->UploadUniformi("texUI", 1);
+	
 	return true;
 }
 
@@ -223,6 +224,11 @@ void Dystopia::GraphicsSystem::PostInit(void)
 
 	if (CORE::Get<FileSystem>()  ->CheckFileExist("Shader/ShaderList.txt", eFileDir::eResource))
 		CORE::Get<ShaderSystem>()->LoadShaderList("Shader/ShaderList.txt", eFileDir::eResource);
+
+	auto pShaderSys = CORE::Get<ShaderSystem>();
+	auto shader = pShaderSys->GetShader("FinalStage");
+	shader->UploadUniformi("texGame", 0);
+	shader->UploadUniformi("texUI", 1);
 
 #   if defined(_DEBUG) | defined(DEBUG)
 	if (auto err = glGetError())
@@ -249,6 +255,11 @@ Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetFrameBuffer(void) const noex
 Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetView(int _n) const
 {
 	return mViews[_n];
+}
+
+unsigned Dystopia::GraphicsSystem::GetEditorView(void) const
+{
+	return static_cast<unsigned>(mViews.size() - 1);
 }
 
 
@@ -306,11 +317,6 @@ void Dystopia::GraphicsSystem::DrawSplash(void)
 #   endif 
 }
 
-unsigned Dystopia::GraphicsSystem::GetEditorView(void) const
-{
-	return mViews.size() -1;
-}
-
 namespace
 {
 	struct ShaderUploadVisitor
@@ -335,6 +341,28 @@ namespace
 			s->UploadUniformi(strName.c_str(), value);
 		}
 	};
+
+	template <typename T>
+	inline constexpr unsigned GetRendererTypeID(T*)
+	{
+		static_assert(false, "Unknown type!");
+	}
+
+	template <>
+	inline constexpr unsigned GetRendererTypeID(Dystopia::Renderer*)
+	{
+		return 0u;
+	}
+	template <>
+	inline constexpr unsigned GetRendererTypeID(Dystopia::SpriteRenderer*)
+	{
+		return 1u;
+	}
+	template <>
+	inline constexpr unsigned GetRendererTypeID(Dystopia::TextRenderer*)
+	{
+		return 2u;
+	}
 
 	template <typename T>
 	inline void DrawRenderer(T& _renderer, Dystopia::Shader* s)
@@ -370,11 +398,22 @@ namespace
 				func(e);
 
 				if (e.HasTransparency())
-					transparents.Insert(&e);
+					transparents.EmplaceBack(&e, GetRendererTypeID(&e));
 				else
 					set.Insert(&e);
 			}
 		}
+	}
+
+	template <typename T>
+	void RendererAction(T*, Dystopia::Shader*)
+	{
+
+	}
+	template <>
+	inline void RendererAction(Dystopia::SpriteRenderer* r, Dystopia::Shader* s)
+	{
+		s->UploadUniform("vColor", r->GetTint());
 	}
 }
 
@@ -400,6 +439,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam)
 			//s->UploadUniform("vUVBounds", 0.f, 0.f, 1.f, 1.f);
 			//s->UploadUniform("ProjectMat", _Proj);
 			//s->UploadUniform("ViewMat", _View);
+			RendererAction(r, s);
 			DrawRenderer(r, s);
 		}
 	}
@@ -412,7 +452,7 @@ void Dystopia::GraphicsSystem::DrawScene(Camera& _cam)
 			s->Bind();
 			//s->UploadUniform("ProjectMat", _Proj);
 			//s->UploadUniform("ViewMat", _View);
-			s->UploadUniform("vColor", r->GetTint());
+			RendererAction(r, s);
 			DrawRenderer(r, s);
 		}
 	}
@@ -612,36 +652,46 @@ void Dystopia::GraphicsSystem::Update(float _fDT)
 void Dystopia::GraphicsSystem::PostUpdate(void)
 {
 	ScopedTimer<ProfilerAction> timeKeeper{ "Graphics System", "Post Update" };
+	static void(*rendererActs[])(Renderer*, Shader*) = {
+		[](auto r, auto s) { RendererAction(r, s); DrawRenderer(r, s); },
+		[](auto r, auto s) { auto nr = static_cast<SpriteRenderer*>(r);  RendererAction(nr, s); DrawRenderer(nr, s); },
+		[](auto r, auto s) { auto nr = static_cast<TextRenderer*>(r);  RendererAction(nr, s); DrawRenderer(nr, s); }
+	};
 
 	auto const& CamArray = CORE::Get<CameraSystem>()->GetAllCameras();
 	auto const ErrShader = CORE::Get<ShaderSystem>()->GetShader("Error Shader");
 
-	//for (auto& r : mTransparency)
+	//for (auto& set : mTransparency)
 	//{
+	//	auto& r = set.Get<0>();
+	//	auto s = r->GetTexture() ? r->GetShader() : ErrShader;
+	//	s->Bind();
+	//
 	//	for (auto& Cam : CamArray)
 	//	{
 	//		if constexpr (EDITOR)
 	//			if (Cam.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 	//
+	//		Math::Matrix4 const& View = Cam.GetViewMatrix();
+	//		Math::Matrix4 const& Proj = Cam.GetProjectionMatrix();
+	//		const auto vp = Cam.GetViewport();
+	//	
 	//		// If the camera is inactive, skip
-	//		if (Cam.GetOwner() && Cam.DrawDebug() &&
+	//		if (Cam.GetOwner() &&
 	//			(Cam.GetFlags() & eObjFlag::FLAG_ACTIVE) &&
 	//			(Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE))
 	//		{
 	//			auto ActiveFlags = static_cast<eObjFlag>(eObjFlag::FLAG_ALL_LAYERS & Cam.GetOwner()->GetFlags());
 	//
-	//			Math::Matrix4 const& View = Cam.GetViewMatrix();
-	//			Math::Matrix4 const& Proj = Cam.GetProjectionMatrix();
+	//			Cam.GetSurface()->Bind();
+	//			glViewport(static_cast<int>(vp.mnX), static_cast<int>(vp.mnY),
+	//				static_cast<int>(vp.mnWidth), static_cast<int>(vp.mnHeight));
 	//
 	//			if (r->GetOwner()->GetFlags() & ActiveFlags)
 	//			{
-	//				auto s = r->GetTexture() ? r->GetShader() : ErrShader;
-	//				s->Bind();
 	//				s->UploadUniform("ProjectMat", Proj);
 	//				s->UploadUniform("ViewMat", View);
-	//				s->UploadUniform("vUVBounds", 0.f, 0.f, 1.f, 1.f);	// TODO: Think of a better way
-	//				s->UploadUniform("vColor", 1.f, 1.f, 1.f, 1.f);
-	//				DrawRenderer(r, s);
+	//				rendererActs[set.Get<1>()](r, s);
 	//			}
 	//		}
 	//	}
@@ -661,25 +711,29 @@ void Dystopia::GraphicsSystem::PostUpdate(void)
 
 			Math::Matrix4 const& View = Cam.GetViewMatrix();
 			Math::Matrix4 const& Proj = Cam.GetProjectionMatrix();
+			const auto vp = Cam.GetViewport();
 
-			for (auto& r : mTransparency)
+			glViewport(static_cast<int>(vp.mnX), static_cast<int>(vp.mnY),
+				static_cast<int>(vp.mnWidth), static_cast<int>(vp.mnHeight));
+			Cam.GetSurface()->Bind();
+
+			for (auto& set : mTransparency)
 			{
+				auto& r = set.Get<0>();
 				if (r->GetOwner()->GetFlags() & ActiveFlags)
 				{
 					auto s = r->GetTexture() ? r->GetShader() : ErrShader;
 					s->Bind();
 					s->UploadUniform("ProjectMat", Proj);
 					s->UploadUniform("ViewMat"   , View);
-					s->UploadUniform("vUVBounds" , 0.f, 0.f, 1.f, 1.f);	// TODO: Think of a better way
-					s->UploadUniform("vColor"    , 1.f, 1.f, 1.f, 1.f);
-					DrawRenderer(r, s);
+					rendererActs[set.Get<1>()](r, s);
 				}
 			}
 		}
 	}
 	mTransparency.clear();
 
-	// CORE::Get<PostProcessSys>()->Update();
+	CORE::Get<PostProcessSystem>()->ApplyBlur();
 
 	Shader* debugShader = CORE::Get<ShaderSystem>()->GetShader("Collider Shader");
 	debugShader->Bind();
@@ -744,6 +798,7 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 	unsigned const w = fbTex->GetWidth(), h = fbTex->GetHeight();
 
 	glViewport(0, 0, w, h);
+	glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 #else
 	auto& win = EngineCore::Get<WindowManager>()->GetMainWindow();
 
@@ -753,14 +808,14 @@ void Dystopia::GraphicsSystem::EndFrame(void)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 #endif
 
-	GetGameView().AsTexture()->Bind(0);
-	GetUIView()  .AsTexture()->Bind(1);
-
 	auto const model =  Math::Scale(2.f, (float) Ut::Constant<int, EDITOR ? -2 : 2>::value);
 	Shader* shader = CORE::Get<ShaderSystem>()->GetShader("FinalStage");
 	shader->Bind();
 	shader->UploadUniform("ModelMat", model);
 	shader->UploadUniform("Gamma", mfGamma);
+
+	GetView(5) .AsTexture()->Bind(0);
+	GetUIView().AsTexture()->Bind(1);
 
 	quad->DrawMesh(GL_TRIANGLES);
 
@@ -802,31 +857,41 @@ void Dystopia::GraphicsSystem::LoadFramebuffers(void) noexcept
 
 	// World
 	auto fb = mViews.Emplace(x, y, true);
-	fb->Attach(true);	                  // Colours
-	fb->Attach(false, 1);                 // Normals
-	fb->Attach(false, 2, GL_HALF_FLOAT);  // Bright
+	fb->Attach(true);	                        // Colours
+	fb->Attach(false, 1);                       // Normals
+	fb->Attach(false, 2, GL_FLOAT, GL_RGB16F);  // Bright
 	fb->SetClearColor(0x000000ff);
+	fb->Init();
 
 	// UI
 	fb = mViews.Emplace(x, y, true);
 	fb->Attach(true);	   // Colours
+	fb->Init();
 
 	// Final
 	fb = mViews.Emplace(x, y, false);
 	fb->Attach(false);
+	fb->InitNoDepth();
 
 	// Partial 
-	fb = mViews.Emplace(x, y, true);
-	fb->Attach(true);
+	fb = mViews.Emplace(x >> 1, y >> 1, true);
+	fb->Attach(true, 0, GL_FLOAT, GL_RGB16F);
+	fb->InitNoDepth();
 	// Partial 2
+	fb = mViews.Emplace(x >> 1, y >> 1, true);
+	fb->Attach(true, 0, GL_FLOAT, GL_RGB16F);
+	fb->InitNoDepth();
+	// Partial 3
 	fb = mViews.Emplace(x, y, true);
-	fb->Attach(true);
+	fb->Attach(true, 0, GL_FLOAT, GL_RGB16F);
+	fb->InitNoDepth();
 
 #if EDITOR
 	// Editor
 	fb = mViews.Emplace(x, y, false);
 	fb->Attach(false);
 	fb->SetClearColor(0x000000ff);
+	fb->Init();
 #endif
 
 	//for (auto& e : mViews)
