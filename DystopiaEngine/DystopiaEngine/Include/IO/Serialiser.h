@@ -101,7 +101,7 @@ template <class Serialiser_t, typename T>
 Serialiser_t& operator << (Dystopia::SerialiserBase<Serialiser_t>& _file, const T& _rhs);
 
 template <class Serialiser_t, typename T>
-Serialiser_t& operator >> (Dystopia::SerialiserBase<Serialiser_t>& _file, const T& _rhs);
+Serialiser_t& operator >> (Dystopia::SerialiserBase<Serialiser_t>& _file, T& _rhs);
 
 
 

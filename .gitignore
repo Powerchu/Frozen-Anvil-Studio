@@ -287,31 +287,19 @@ __pycache__/
 *.xsd.cs
 /DystopiaEngine/DystopiaEngine/DEPRECATED
 /DystopiaEngine/DystopiaEngine/imgui.ini
-/DystopiaEngine/DystopiaEngine/Resource/Temp
-/DystopiaEngine/DystopiaEngine/Resource\Asset
 *.dystor
+*.ddata
 /DystopiaEngine/DystopiaEngine/.vscode
-/DystopiaEngine/DystopiaEngine/Resource/Asset/Character
-/DystopiaEngine/DystopiaEngine/Resource/Asset/Monster
-/DystopiaEngine/DystopiaEngine/Resource/Asset/NPCs
-/DystopiaEngine/DystopiaEngine/Resource/Asset/Skills
-/DystopiaEngine/DystopiaEngine/Resource/Asset/UI
-/DystopiaEngine/DystopiaEngine/Goblin.cpp
-/DystopiaEngine/DystopiaEngine/Goblin.h
 /DystopiaEngine/DystopiaEngine/Resource/Asset
 /DystopiaEngine/DystopiaEngine/Resource/Audio
+/DystopiaEngine/DystopiaEngine/Resource/BehavioursScripts
+/DystopiaEngine/DystopiaEngine/Resource/Font
 /DystopiaEngine/DystopiaEngine/Resource/Prefab
 /DystopiaEngine/DystopiaEngine/Resource/Scene
 /DystopiaEngine/DystopiaEngine/Resource/Shader
-/DystopiaEngine/DystopiaEngine/Resource/Character_Skills.ddata
-/DystopiaEngine/DystopiaEngine/Resource/Character_Stats.ddata
-/DystopiaEngine/DystopiaEngine/Resource/Force_Skills.ddata
-/DystopiaEngine/DystopiaEngine/Resource/Form_Skills.ddata
-/DystopiaEngine/DystopiaEngine/Resource/Interactable.ddata
-/DystopiaEngine/DystopiaEngine/Resource/Font/Times New Roman.ttf.bmp
-/DystopiaEngine/DystopiaEngine/Resource/Font/Times New Roman.ttf.bmp.dmeta
-/DystopiaEngine/DystopiaEngine/Resource/Font/Times New Roman.ttf.dmap
-/DystopiaEngine/DystopiaEngine/Resource/Font/SourceSansPro-Regular.ttf.dmap
-/DystopiaEngine/DystopiaEngine/Resource/BehavioursScripts
+/DystopiaEngine/DystopiaEngine/Resource/Temp
 /DystopiaEngine/DystopiaEngine/Settings.dyst
 /DystopiaEngine/DystopiaEngine/Resource/Font
+/DystopiaEngine/DystopiaEngine/Output
+/DystopiaEngine/DystopiaEngine/TEST VIDEO.webm
+/DystopiaEngine/DystopiaEngine/Resource

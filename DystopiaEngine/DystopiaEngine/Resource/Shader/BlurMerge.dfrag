@@ -1,0 +1,20 @@
+#version 410 core
+
+layout(location = 2) in vec2 vUV;
+layout(location = 0) out vec4 fragColor;
+
+uniform sampler2D colorTex;
+uniform sampler2D brightTex;
+
+uniform float exp = 1;
+
+void main()
+{
+  vec4 color  = texture(colorTex , vUV);
+  vec4 bright = texture(brightTex, vUV);
+  color   = color + bright;
+  color.a = min(1, color.a);
+  
+  fragColor = color;
+}
+

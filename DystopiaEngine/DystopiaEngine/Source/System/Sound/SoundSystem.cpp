@@ -245,6 +245,59 @@ Dystopia::Sound* Dystopia::SoundSystem::LoadSound(const HashString& _file)
 	return nullptr;
 }
 
+void Dystopia::SoundSystem::CreateSound(const char * _data, int _buffersize, int _noChannels, int _format, int _freq)
+{
+	/*Default freq : 4100*/
+	FMOD_SOUND_FORMAT format[8]
+	{
+		FMOD_SOUND_FORMAT_NONE,
+		FMOD_SOUND_FORMAT_PCM8,
+		FMOD_SOUND_FORMAT_PCM16,
+		FMOD_SOUND_FORMAT_PCM24,
+		FMOD_SOUND_FORMAT_PCM32,
+		FMOD_SOUND_FORMAT_PCMFLOAT,
+		FMOD_SOUND_FORMAT_BITSTREAM,
+		FMOD_SOUND_FORMAT_MAX
+	};
+
+	FMOD::Sound * pSound = nullptr;
+	DEBUG_PRINT(eLog::MESSAGE, "No of Channels %d", _noChannels);
+	for (auto elem : format)
+	{
+		FMOD_CREATESOUNDEXINFO info;
+		SecureZeroMemory(&info, sizeof(FMOD_CREATESOUNDEXINFO));
+		info.defaultfrequency   = _freq;
+		info.numchannels        = _noChannels;
+		info.format             = elem;//static_cast<FMOD_SOUND_FORMAT>(_format);
+		info.filebuffersize     = _buffersize;
+		info.suggestedsoundtype = FMOD_SOUND_TYPE_VORBIS;
+		auto result = mpFMOD->createSound(_data , FMOD_CREATESAMPLE | FMOD_LOWMEM | FMOD_3D | FMOD_3D_LINEARROLLOFF | FMOD_3D_INVERSEROLLOFF | FMOD_OPENRAW, &info, &pSound);
+		if (result == FMOD_OK)
+		{
+			DEBUG_PRINT(eLog::MESSAGE, "Sound is created");
+			__debugbreak();
+		}
+		else
+		{
+
+		}
+	}
+	//FMOD_CREATESOUNDEXINFO info;
+	//info.defaultfrequency = _freq;
+	//info.numchannels      = _noChannels;
+	//info.format = FMOD_SOUND_FORMAT_PCM24;//static_cast<FMOD_SOUND_FORMAT>(_format);
+	//auto result = mpFMOD->createSound(_data, FMOD_OPENRAW, &info, &pSound);
+	//if (result == FMOD_OK)
+	//{
+	//	DEBUG_PRINT(eLog::MESSAGE, "Sound is created");
+	//}
+	//else
+	//{
+	//	__debugbreak();
+	//}
+
+}
+
 char Dystopia::SoundSystem::RegisterNewListener(AudioListener * const & _Listener)
 {
 	//auto && _fn = [_Listener](AudioListener* _l)->bool {return _l == _Listener; };
@@ -313,6 +366,13 @@ _DLL_EXPORT float Dystopia::SoundSystem::GetBGM() const
 _DLL_EXPORT float Dystopia::SoundSystem::GetFX() const
 {
 	return mFXVol;
+}
+
+_DLL_EXPORT void Dystopia::SoundSystem::StopAll(void)
+{
+	for (auto& c : ComponentDonor<AudioSource>::mComponents)
+		if (c.GetChannel().mpChannel)
+			c.GetChannel().mpChannel->stop();
 }
 
 #if EDITOR

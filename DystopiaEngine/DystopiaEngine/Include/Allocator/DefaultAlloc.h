@@ -47,8 +47,11 @@ namespace Dystopia
 
 		static inline void DestructFree(Ty* _ptr) noexcept
 		{
-			_ptr->~Ty();
-			Free(_ptr);
+			if (_ptr)
+			{
+				_ptr->~Ty();
+				Free(_ptr);
+			}
 		}
 	};
 

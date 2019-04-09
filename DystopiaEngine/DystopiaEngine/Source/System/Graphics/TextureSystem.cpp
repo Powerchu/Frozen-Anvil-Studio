@@ -77,6 +77,11 @@ void Dystopia::TextureSystem::Shutdown(void) noexcept
 #endif
 }
 
+void Dystopia::TextureSystem::Free(Texture* _pTexture) noexcept
+{
+	mTextures.Remove(_pTexture);
+}
+
 void Dystopia::TextureSystem::SaveAtlases(void)
 {
 #if EDITOR

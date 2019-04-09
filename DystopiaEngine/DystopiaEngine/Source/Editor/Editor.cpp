@@ -63,7 +63,6 @@ int WinMain(HINSTANCE, HINSTANCE, char *, int){
 		pMain->EndFrame();
 	}
 	pMain->Shutdown();
-
 	return 0;
 }
 

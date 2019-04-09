@@ -160,6 +160,7 @@ namespace Dystopia
 		void SetSleeping(const bool);
 		void SetFixedRotation(bool flag);
 		void SetRotation(float zDeg);
+		void SetLinearDamping(Math::Vector2 damp, bool y = false);
 
 		// Gettors
 		Vec3D GetPosition() const;

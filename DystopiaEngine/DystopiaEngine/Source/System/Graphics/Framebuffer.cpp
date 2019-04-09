@@ -25,34 +25,40 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include <GL/glew.h>
 
 
-Dystopia::Framebuffer::Framebuffer(void) noexcept
-	: mpTexture{ nullptr }, mbAlpha{ false }, mnWidth{ 0 }, mnHeight{ 0 },
-	mBlendSrc{ GL_SRC_ALPHA }, mBlendDst{ GL_ONE_MINUS_SRC_ALPHA }
-{
-}
+//Dystopia::Framebuffer::Framebuffer(void) noexcept
+//	: mAttachments{ }, mbAlpha{ false }, mnWidth{ 0 }, mnHeight{ 0 }
+//	//,mBlendSrc{ GL_SRC_ALPHA }, mBlendDst{ GL_ONE_MINUS_SRC_ALPHA }
+//{
+//	glGenFramebuffers(1, &mnID);
+//}
 
-Dystopia::Framebuffer::Framebuffer(unsigned _nWidth, unsigned _nHeight, bool _bAlpha, int _blendSrc, int _blendDst) noexcept
-	: mpTexture{ nullptr }, mbAlpha{ _bAlpha }, 
-	mnWidth{ _nWidth }, mnHeight{ _nHeight }, mBlendSrc{ _blendSrc }, mBlendDst{ _blendDst }
+Dystopia::Framebuffer::Framebuffer(unsigned _nWidth, unsigned _nHeight, bool _bAlpha/*, int _blendSrc, int _blendDst*/) noexcept
+	: mAttachments{ }, mbAlpha{ _bAlpha }, mDepthBuffer{ 0 },
+	mnWidth{ _nWidth }, mnHeight{ _nHeight }, 
+	mClearCol{ 0 }//, mBlendSrc{ _blendSrc }, mBlendDst{ _blendDst }
 {
+	glGenFramebuffers(1, &mnID);
 }
 
 Dystopia::Framebuffer::~Framebuffer(void) noexcept
 {
 	glDeleteFramebuffers(1, &mnID);
 	glDeleteRenderbuffers(1, &mDepthBuffer);
+
+	for (auto& e : mAttachments)
+		CORE::Get<TextureSystem>()->Free(e);
+	mAttachments.clear();
 }
 
 
 void Dystopia::Framebuffer::Init(void)
 {
-	unsigned format = mbAlpha ? GL_RGBA : GL_RGB;
-	Image tmp = { "", false, true, format, format, mnWidth, mnHeight, mbAlpha ? 4u : 3u, 1u, nullptr };
-	mpTexture = EngineCore::GetInstance()->GetSubSystem<TextureSystem>()->LoadRaw<Texture2D>(&tmp);
+	GLenum buffers[]{
+		GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4,
+		GL_COLOR_ATTACHMENT5, GL_COLOR_ATTACHMENT6, GL_COLOR_ATTACHMENT7, GL_COLOR_ATTACHMENT8, GL_COLOR_ATTACHMENT9,
+		GL_COLOR_ATTACHMENT10, GL_COLOR_ATTACHMENT11, GL_COLOR_ATTACHMENT12, GL_COLOR_ATTACHMENT13, GL_COLOR_ATTACHMENT14
+	};
 
-	DEBUG_ASSERT(!mpTexture, "Framebuffer Error: Failed to create texture!\n");
-
-	glGenFramebuffers(1, &mnID);
 	glGenRenderbuffers(1, &mDepthBuffer);
 
 	// Depth + Stencil buffer for the FrameBuffer Object
@@ -61,8 +67,9 @@ void Dystopia::Framebuffer::Init(void)
 
 	// Bind the texture and stencil buffer to the FBO
 	Bind();
-	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, mpTexture->GetID(), 0);
 	glFramebufferRenderbuffer(GL_DRAW_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, mDepthBuffer);
+
+	glDrawBuffers(static_cast<GLsizei>(mAttachments.size()), buffers);
 
 	Unbind();
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
@@ -73,23 +80,37 @@ void Dystopia::Framebuffer::Init(void)
 #   endif 
 }
 
-void Dystopia::Framebuffer::Init(unsigned _nWidth, unsigned _nHeight, bool _bAlpha, int _blendSrc, int _blendDst)
+void Dystopia::Framebuffer::InitNoDepth(void)
 {
-	mbAlpha   = _bAlpha;
-	mnWidth   = _nWidth;
-	mnHeight  = _nHeight;
-	mBlendSrc = _blendSrc;
-	mBlendDst = _blendDst;
+	GLenum buffers[]{
+		GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3, GL_COLOR_ATTACHMENT4,
+		GL_COLOR_ATTACHMENT5, GL_COLOR_ATTACHMENT6, GL_COLOR_ATTACHMENT7, GL_COLOR_ATTACHMENT8, GL_COLOR_ATTACHMENT9,
+		GL_COLOR_ATTACHMENT10, GL_COLOR_ATTACHMENT11, GL_COLOR_ATTACHMENT12, GL_COLOR_ATTACHMENT13, GL_COLOR_ATTACHMENT14
+	};
 
-	Init();
+	Bind();
+	glDrawBuffers(static_cast<GLsizei>(mAttachments.size()), buffers);
+
+	Unbind();
 }
+
+//void Dystopia::Framebuffer::Init(unsigned _nWidth, unsigned _nHeight, bool _bAlpha/*, int _blendSrc, int _blendDst*/)
+//{
+//	mbAlpha   = _bAlpha;
+//	mnWidth   = _nWidth;
+//	mnHeight  = _nHeight;
+//	//mBlendSrc = _blendSrc;
+//	//mBlendDst = _blendDst;
+//
+//	Init();
+//}
 
 
 void Dystopia::Framebuffer::Bind(void) const noexcept
 {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, mnID);
 
-	glBlendFunc(mBlendSrc, mBlendDst);
+	//glBlendFunc(mBlendSrc, mBlendDst);
 }
 
 void Dystopia::Framebuffer::Unbind(void) const noexcept
@@ -112,20 +133,54 @@ unsigned Dystopia::Framebuffer::GetHeight(void) const noexcept
 	return mnHeight;
 }
 
-int Dystopia::Framebuffer::GetBlendSrc(void) const noexcept
+int Dystopia::Framebuffer::GetClearColor(void) const noexcept
 {
-	return mBlendSrc;
+	return mClearCol;
 }
 
-int Dystopia::Framebuffer::GetBlendDst(void) const noexcept
+//int Dystopia::Framebuffer::GetBlendSrc(void) const noexcept
+//{
+//	return mBlendSrc;
+//}
+//
+//int Dystopia::Framebuffer::GetBlendDst(void) const noexcept
+//{
+//	return mBlendDst;
+//}
+
+
+Dystopia::Texture* Dystopia::Framebuffer::AsTexture(unsigned _nIdx) const noexcept
 {
-	return mBlendDst;
+	return mAttachments[_nIdx];
 }
 
-
-Dystopia::Texture* Dystopia::Framebuffer::AsTexture(void) const noexcept
+void Dystopia::Framebuffer::Attach(bool _bAlpha, int num, unsigned datatype, unsigned internalFmt) noexcept
 {
-	return mpTexture;
+	unsigned format = _bAlpha ? GL_RGBA : GL_RGB;
+	internalFmt = internalFmt ? internalFmt : format;
+	Image tmp = { "", false, true, internalFmt, format, mnWidth, mnHeight, mbAlpha ? 4u : 3u, 1u, nullptr };
+	tmp.mDataType = datatype;
+	mAttachments.EmplaceBack(CORE::Get<TextureSystem>()->LoadRaw<Texture2D>(&tmp));
+
+	Bind();
+	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + num, GL_TEXTURE_2D, mAttachments.back()->GetID(), 0);
 }
 
+void Dystopia::Framebuffer::Resize(unsigned _nWidth, unsigned _nHeight) noexcept
+{
+	glBindRenderbuffer(GL_RENDERBUFFER, mDepthBuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, mnWidth, mnHeight);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+
+	for (auto& e : mAttachments)
+	{
+		e->Bind();
+		static_cast<Texture2D*>(e)->ReplaceTexture(_nWidth, _nHeight, nullptr, e->GetSettings().mnChannels > 3);
+	}
+}
+
+void Dystopia::Framebuffer::SetClearColor(int _nColor) noexcept
+{
+	mClearCol = _nColor;
+}
 

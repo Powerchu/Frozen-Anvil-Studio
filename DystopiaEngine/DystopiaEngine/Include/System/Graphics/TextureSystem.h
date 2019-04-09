@@ -61,6 +61,8 @@ namespace Dystopia
 		template <typename Ty>
 		Ty* LoadRaw(Image*, HashString const&);
 
+		void Free(Texture*) noexcept;
+
 		void SaveAtlases(void);
 		void SaveTexture(Texture const*);
 
@@ -109,14 +111,15 @@ Ty* Dystopia::TextureSystem::LoadTexture(HashString const& _strPath)
 	if (it != mTextures.end())
 		return static_cast<Ty*>(&*it);
 
+	Ty*  ret    = nullptr;
 	auto import = ImportImage(_strPath);
 	auto loaded = LoadImage(_strPath.c_str(), import);
 
-	if (loaded)
-		return mTextures.EmplaceAs<Ty>(_strPath, *loaded);
+	if (loaded) ret = mTextures.EmplaceAs<Ty>(_strPath, *loaded);
 
 	DEBUG_BREAK(!loaded, "Texture System Error: Failed to load texture \"%s\"", _strPath.c_str());
-	return nullptr;
+	DefaultAllocator<Image>::DestructFree(loaded);
+	return ret;
 }
 
 template <>
@@ -125,7 +128,7 @@ Dystopia::Texture* Dystopia::TextureSystem::LoadTexture(HashString const&);
 template<typename Ty>
 Ty* Dystopia::TextureSystem::LoadRaw(Image*_ptr)
 {
-	auto ret = mTextures.EmplaceAs<Ty>(std::to_string(reinterpret_cast<uintptr_t>(_ptr)).c_str(), *_ptr);
+	auto ret = mTextures.EmplaceAs<Ty>("", *_ptr);
 
 	return ret;
 }
