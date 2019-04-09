@@ -16,7 +16,7 @@ void main()
   vec4 color = texture(brightTex, vUV) * weight[0];
   
   vec2 offset   = vec2(0);
-  vec2 halfStep = vStep * 1.5;
+  vec2 halfStep = vStep * .5;
   
   for(int n = 1; n < 3; ++n)
   {
@@ -24,12 +24,13 @@ void main()
     color  += texture(brightTex, vUV + offset) * weight[n];
     color  += texture(brightTex, vUV - offset) * weight[n];
   }
-  
+  offset += halfStep;
   for(int n = 3; n < 5; ++n)
   {
-    offset += halfStep;
+    offset += vStep;
     color  += texture(brightTex, vUV + offset) * weight[n];
     color  += texture(brightTex, vUV - offset) * weight[n];
+    offset += vStep;
   }
   
   fragColor = color;

@@ -22,7 +22,7 @@ void main()
   fragColor = color;
   
   color *= intensity;
-  float L = dot(color.rgb, vec3(.2126,.7152,.0722));
+  float L    = dot(color.rgb, vec3(.2126,.7152,.0722));
   brightness = vec4((color.rgb - min(vec3(1), color.rgb)) * int(L > 1), 1);
 }
 
