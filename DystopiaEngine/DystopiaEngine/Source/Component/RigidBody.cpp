@@ -751,6 +751,16 @@ namespace Dystopia
 	
 	}
 
+	void Dystopia::RigidBody::SetLinearDamping(Math::Vector2 damp, bool y)
+	{
+		if (y)
+			mLinearDamping.y = damp.y;
+		else
+		{
+			mLinearDamping.x = damp.x;
+		}
+	}
+
 	void RigidBody::Set_IsStatic(bool _state)
 	{
 		mbIsStatic = _state;
