@@ -269,6 +269,21 @@ void Dystopia::SpriteRenderer::Unserialise(TextSerialiser& _in)
 	_in.ConsumeEndBlock();
 }
 
+Math::Vec4 Dystopia::SpriteRenderer::GetUVBounds(void) const
+{
+	if (mpAtlas && mnID < mAnimations.size())
+	{
+		auto& mSections = mpAtlas->GetAllSections();
+		auto& section = mSections[mAnimations[mnID].mnID];
+		const float uStart = section.uStart + mnCol * section.mCol;
+		const float vStart = section.vStart + mnRow * section.mRow;
+		const float uEnd = section.uStart + (mnCol + 1) * section.mCol;
+		const float vEnd = section.vStart + (mnRow + 1) * section.mRow;
+		return Math::Vec4{ uStart, vStart, uEnd, vEnd };
+	}
+	return Math::Vec4{ 0,0,1,1 };
+}
+
 void Dystopia::SpriteRenderer::EditorUI(void) noexcept
 {
 #if EDITOR
