@@ -737,13 +737,24 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 	ImGui::SameLine();
 	if (EGUI::Display::IconCross("Clear", 8.f))
 		SetTexture(nullptr);
-	
-	static char buf[512]{};
-	if (EGUI::Display::TextField("Shader Test", buf, 512))
+
+	if (EGUI::Display::EmptyBox("Shader Test", 150, (mpShader) ? mpShader->GetName().c_str() : "", true))
 	{
-		SetShader(CORE::Get<ShaderSystem>()->GetShader(buf));
-		std::memset(buf, 0, sizeof(buf));
+
 	}
+	if (unsigned *t = EGUI::Display::StartPayloadReceiver<unsigned>(EGUI::SHADER))
+	{
+		auto const & allShaders = Dystopia::CORE::Get<Dystopia::ShaderSystem>()->GetAllShaders();
+		SetShader(&allShaders[*t]);
+		EGUI::Display::EndPayloadReceiver();
+	}
+
+	//static char buf[512]{};
+	//if (EGUI::Display::TextField("Shader Test", buf, 512))
+	//{
+	//	SetShader(CORE::Get<ShaderSystem>()->GetShader(buf));
+	//	std::memset(buf, 0, sizeof(buf));
+	//}
 
 	//if (auto t = GetTexture())
 	//{
