@@ -479,6 +479,11 @@ Dystopia::Transform const& Dystopia::Emitter::GetOwnerTransform(void) const noex
 
 void Dystopia::Emitter::SetShader(Shader* _p) noexcept
 {
+	if (!_p)
+	{
+		DEBUG_PRINT(eLog::MESSAGE, "Emitter Set shader is null");
+		return;
+	}
 	mpShader = _p;
 }
 
@@ -734,7 +739,7 @@ void Dystopia::Emitter::EditorUI(void) noexcept
 		SetTexture(nullptr);
 	
 	static char buf[512]{};
-	if (EGUI::Display::TextField("Test", buf, 512))
+	if (EGUI::Display::TextField("Shader Test", buf, 512))
 	{
 		SetShader(CORE::Get<ShaderSystem>()->GetShader(buf));
 		std::memset(buf, 0, sizeof(buf));
