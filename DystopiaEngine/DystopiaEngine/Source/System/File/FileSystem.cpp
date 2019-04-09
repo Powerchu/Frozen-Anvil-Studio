@@ -143,7 +143,7 @@ namespace Dystopia
 					auto & ref = mMapOfTrackInfo[TrackJob->mFileHandle];
 					for (auto & f : ref)
 					{
-						//f.second(TrackJob->mFileName.c_str());
+						f.second(TrackJob->mFileName.c_str());
 						f.second();
 						//f.second(names.c_str(), ListOfFileNames[i].second);
 					}

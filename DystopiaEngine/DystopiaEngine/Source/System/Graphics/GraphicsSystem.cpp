@@ -211,10 +211,10 @@ bool Dystopia::GraphicsSystem::Init(void)
 	//for (auto& e : mViews)
 	//	e.Init();
 
-	auto shader = pShaderSys->GetShader("FinalStage");
-	shader->UploadUniformi("texGame", 0);
-	shader->UploadUniformi("texUI", 1);
-
+	//auto shader = pShaderSys->GetShader("FinalStage");
+	//shader->UploadUniformi("texGame", 0);
+	//shader->UploadUniformi("texUI", 1);
+	
 	return true;
 }
 
@@ -224,6 +224,11 @@ void Dystopia::GraphicsSystem::PostInit(void)
 
 	if (CORE::Get<FileSystem>()  ->CheckFileExist("Shader/ShaderList.txt", eFileDir::eResource))
 		CORE::Get<ShaderSystem>()->LoadShaderList("Shader/ShaderList.txt", eFileDir::eResource);
+
+	auto pShaderSys = CORE::Get<ShaderSystem>();
+	auto shader = pShaderSys->GetShader("FinalStage");
+	shader->UploadUniformi("texGame", 0);
+	shader->UploadUniformi("texUI", 1);
 
 #   if defined(_DEBUG) | defined(DEBUG)
 	if (auto err = glGetError())
