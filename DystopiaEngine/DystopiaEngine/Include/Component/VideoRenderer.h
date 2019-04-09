@@ -120,13 +120,13 @@ namespace Dystopia
 			virtual void Serialise(TextSerialiser&) const override;
 			virtual void Unserialise(TextSerialiser&)     override;
 
-			_DLL_EXPORT_ONLY vid_error_c_t LoadVideo(HashString const & VidName);
-
-			_DLL_EXPORT_ONLY void CloseCurrentVideo();
-			_DLL_EXPORT_ONLY void Play();
-			_DLL_EXPORT_ONLY void ResetVideo();
-			_DLL_EXPORT_ONLY void PlayOnStart(bool _b);
-			_DLL_EXPORT_ONLY void Pause();
+		    vid_error_c_t LoadVideo(HashString const & VidName);
+		   
+		    void CloseCurrentVideo();
+		    void Play();
+		    void ResetVideo();
+		    void PlayOnStart(bool _b);
+		    void Pause();
 
 			Texture2D* GetTexture(void) const noexcept;
 

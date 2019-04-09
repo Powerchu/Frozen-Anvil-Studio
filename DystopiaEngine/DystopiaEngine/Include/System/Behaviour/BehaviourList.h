@@ -22,6 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 
 #else
+/*
 #include "../Resource/BehavioursScripts/MainMenu.h"
 #include "../Resource/BehavioursScripts/PauseMenu.h"
 #include "../Resource/BehavioursScripts/SplashManager.h"
@@ -73,6 +74,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Resource/BehavioursScripts/WormShadow.h"
 #include "../Resource/BehavioursScripts/CameraZoomPoint.h"
 #include "../Resource/BehavioursScripts/ForegroundPasser.h"
+*/
 #endif
 
 #if EDITOR
@@ -83,6 +85,7 @@ namespace Dystopia
 {
 	using BehaviourList = typename Ut::MetaAutoIndexer<
 		/*Add Behaviours Here*/
+		/*
 		class MainMenu,
 		class PauseMenu,
 		class SplashManager,
@@ -133,6 +136,7 @@ namespace Dystopia
 		class WormHitBox,
 		class WormHorizontalCharge,
 		class WormShadow
+		*/
 	>::result;
 }
 

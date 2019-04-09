@@ -57,7 +57,7 @@ Dystopia::Emitter::Emitter(ParticleEmitter* _owner) noexcept
 #define COMMA ,
 Dystopia::Emitter::Emitter(ParticleEmitter * _owner, int _drawMode, int _div, char const* _shader) noexcept
 	: mColour{}, mPosition{}, mVelocity{}, mAccel{}, mLifetime{}, mInitialLife{}, mCommand{},
-	mnParticleLimit{ 1000 }, mSpawnCount{}, mSpawn{}, mUpdate{}, mFixedUpdate{}, 
+	_EDITOR_CODE(mnParticleLimit{ 1000 } COMMA) mSpawnCount{}, mSpawn{}, mUpdate{}, mFixedUpdate{},
 	mbUpdatedPositions{ false }, mbUVChanged{ false }, mbIsAlive{ true }, mbBuffers{ false },
 	mpShader{ nullptr }, mShaderName{ _shader }, mpTexture{ nullptr }, mTextureName{ DEFAULT_TEXTURE },
 	mpOwner{ _owner }, mpTransform{ nullptr }, mDrawMode{ _drawMode }, mDiv{ _div }
@@ -71,7 +71,7 @@ Dystopia::Emitter::Emitter(ParticleEmitter * _owner, int _drawMode, int _div, ch
 
 Dystopia::Emitter::Emitter(Dystopia::Emitter const& _rhs) noexcept
 	: mColour{}, mPosition{}, mVelocity{}, mAccel{}, mLifetime{}, mInitialLife{}, mCommand{},
-	mnParticleLimit{ _rhs.mnParticleLimit }, mSpawnCount{ _rhs.mSpawnCount }, 
+	_EDITOR_CODE(mnParticleLimit{ _rhs.mnParticleLimit }COMMA) mSpawnCount{ _rhs.mSpawnCount },
 	mSpawn{ _rhs.mSpawn }, mUpdate{ _rhs.mUpdate }, mFixedUpdate{ _rhs.mFixedUpdate },
 	mbUpdatedPositions{ false }, mbUVChanged{ false }, mbIsAlive{ _rhs.mbIsAlive }, mbBuffers{ false },
 	mpShader{ _rhs.mpShader }, mShaderName{ _rhs.mTextureName }, mpTexture{ _rhs.mpTexture }, mTextureName{ _rhs.mTextureName },
@@ -579,7 +579,11 @@ void Dystopia::Emitter::Serialise(TextSerialiser& _out) const noexcept
 		_out << mpTexture->GetName();
 	else
 		_out << DEFAULT_TEXTURE;
+#if EDITOR
 	_out << mnParticleLimit;
+#else
+	_out << mParticle.mnLimit;
+#endif
 	_out << mbIsAlive;
 	_out << mDrawMode;
 	_out << mDiv;
@@ -640,8 +644,13 @@ void Dystopia::Emitter::Unserialise(TextSerialiser& _in) noexcept
 		mpTexture = CORE::Get<TextureSystem>()->LoadTexture(mTextureName);
 	int n = 0;
 	_in >> n;
+#if EDITOR
 	mnParticleLimit = n;
 	mParticle.mnLimit = static_cast<size_t>(mnParticleLimit);
+#else
+	mParticle.mnLimit = static_cast<size_t>(n);
+#endif
+
 	_in >> mbIsAlive;
 	_in >> mDrawMode;
 	_in >> mDiv;
