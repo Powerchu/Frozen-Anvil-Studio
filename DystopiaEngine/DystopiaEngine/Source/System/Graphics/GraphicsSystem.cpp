@@ -254,7 +254,7 @@ Dystopia::Framebuffer& Dystopia::GraphicsSystem::GetView(int _n) const
 
 unsigned Dystopia::GraphicsSystem::GetEditorView(void) const
 {
-	return mViews.size() - 1;
+	return static_cast<unsigned>(mViews.size() - 1);
 }
 
 
@@ -658,13 +658,19 @@ void Dystopia::GraphicsSystem::PostUpdate(void)
 
 	//for (auto& set : mTransparency)
 	//{
+	//	auto& r = set.Get<0>();
+	//	auto s = r->GetTexture() ? r->GetShader() : ErrShader;
+	//	s->Bind();
+	//
 	//	for (auto& Cam : CamArray)
 	//	{
 	//		if constexpr (EDITOR)
 	//			if (Cam.GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 	//
-	//		auto& r = set.Get<0>();
-	//
+	//		Math::Matrix4 const& View = Cam.GetViewMatrix();
+	//		Math::Matrix4 const& Proj = Cam.GetProjectionMatrix();
+	//		const auto vp = Cam.GetViewport();
+	//	
 	//		// If the camera is inactive, skip
 	//		if (Cam.GetOwner() &&
 	//			(Cam.GetFlags() & eObjFlag::FLAG_ACTIVE) &&
@@ -672,18 +678,12 @@ void Dystopia::GraphicsSystem::PostUpdate(void)
 	//		{
 	//			auto ActiveFlags = static_cast<eObjFlag>(eObjFlag::FLAG_ALL_LAYERS & Cam.GetOwner()->GetFlags());
 	//
-	//			Math::Matrix4 const& View = Cam.GetViewMatrix();
-	//			Math::Matrix4 const& Proj = Cam.GetProjectionMatrix();
-	//			const auto vp = Cam.GetViewport();
-	//	
+	//			Cam.GetSurface()->Bind();
 	//			glViewport(static_cast<int>(vp.mnX), static_cast<int>(vp.mnY),
 	//				static_cast<int>(vp.mnWidth), static_cast<int>(vp.mnHeight));
-	//			Cam.GetSurface()->Bind();
 	//
 	//			if (r->GetOwner()->GetFlags() & ActiveFlags)
 	//			{
-	//				auto s = r->GetTexture() ? r->GetShader() : ErrShader;
-	//				s->Bind();
 	//				s->UploadUniform("ProjectMat", Proj);
 	//				s->UploadUniform("ViewMat", View);
 	//				rendererActs[set.Get<1>()](r, s);
@@ -722,8 +722,6 @@ void Dystopia::GraphicsSystem::PostUpdate(void)
 					s->UploadUniform("ProjectMat", Proj);
 					s->UploadUniform("ViewMat"   , View);
 					rendererActs[set.Get<1>()](r, s);
-
-					DrawRenderer(r, s);
 				}
 			}
 		}
@@ -880,7 +878,7 @@ void Dystopia::GraphicsSystem::LoadFramebuffers(void) noexcept
 	fb->InitNoDepth();
 	// Partial 3
 	fb = mViews.Emplace(x, y, true);
-	fb->Attach(true);
+	fb->Attach(true, 0, GL_FLOAT, GL_RGB16F);
 	fb->InitNoDepth();
 
 #if EDITOR

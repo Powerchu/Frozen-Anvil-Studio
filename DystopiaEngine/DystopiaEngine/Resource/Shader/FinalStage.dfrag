@@ -14,10 +14,19 @@ void main()
 {
   vec4 color1 = texture(texGame, vUV);
   vec4 color2 = texture(texUI  , vUV);
+  
+  // Flimic tone map pulled from internet
+  vec3 temp = max(vec3(0), color1.rgb - vec3(0.004));
+  vec3 mult = 6.2 * temp;
+  color1 = vec4((temp * (mult + .5)) / (temp * (mult + 1.7) + 0.06), color1.a);
+  
+  // Gamma correction only UI
+  color2.rgb = pow(color2.rgb, vec3(1.f / Gamma));
+  
   vec3 col = color1.rgb + color2.a * (color2.rgb - color1.rgb);
   
   // Gamma correction
-  col.rgb = pow(col.rgb, vec3(1.f / Gamma));
+  //col.rgb = pow(col.rgb, vec3(1.f / Gamma));
   
   fragColor = vec4(col, 1);
 }
