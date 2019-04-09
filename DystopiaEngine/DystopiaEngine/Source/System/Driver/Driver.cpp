@@ -258,7 +258,7 @@ void Dystopia::EngineCore::ExecuteGame()
 	Init();
 	PostInit();
 
-	Get<SceneSystem>()->LoadScene("SplashScreen.dscene");
+	Get<SceneSystem>()->LoadScene("MainMenuFinal.dscene");
 
 	while (!mbQuit)
 	{

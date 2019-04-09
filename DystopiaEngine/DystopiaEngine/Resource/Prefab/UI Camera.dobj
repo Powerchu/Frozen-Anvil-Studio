@@ -1,6 +1,6 @@
 [START_GO_PREFAB]
 1,[START_START_GO_DATA]
-18446744071972858368,33,"UI Camera",0,
+979644416,33,"UI Camera",0,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
@@ -12,7 +12,7 @@
 [END_GO_PREFAB]
 [START_Component]
 0,[START_Camera]
-18446744071746363392,1,18446744071972858368,0,0,0,500,-500,1,1,0,0,1,50,
+979645440,1,979644416,0,0,0,500,-500,1,1,0,0,1,50,
 [END_Camera]
 
 [END_Component]
@@ -78,11 +78,11 @@
 [END_Recursion Counter]
 [START_GO_PREFAB]
 1,[START_START_GO_DATA]
-18446744071972858880,32,"Fader",0,
+979646464,33,"Fader",0,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-2279.72,1222.51,1,0,0,400,0,0,0,1,18446744071972858368,
+2279.72,1222.51,1,0,0,400,0,0,0,1,979644416,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -90,7 +90,10 @@
 [END_GO_PREFAB]
 [START_Component]
 7,[START_Renderer]
-655421440,0,18446744071972858880,"Pause Menu Bigger Box.png",
+979647488,1,979646464,"SENTRY","Default Shader",1,"Pause Menu Bigger Box.png",
+[END_RENDERER_BASE]
+[START_OVERRIDE]
+0,
 [END_Renderer]
 [START_Sprite Renderer]
 0.016,0,0,0,0,0,0,1,
@@ -104,7 +107,7 @@
 "Fader",
 [END_Behaviour Names]
 [START_Behaviour Meta Count]
-6,
+8,
 [END_Behaviour  Meta Count]
 [START_FadeFrom]
 "FadeFrom",
@@ -142,13 +145,25 @@
 [START_Member Variable]
 0,
 [END_Member Variable]
+[START_DestroyOnceComplete]
+"DestroyOnceComplete",
+[END_DestroyOnceComplete]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_StartAwake]
+"StartAwake",
+[END_StartAwake]
+[START_Member Variable]
+1,
+[END_Member Variable]
 [START_GO_PREFAB]
 1,[START_START_GO_DATA]
-1051720704,33,"White_Fader",0,
+985939968,33,"White_Fader",0,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-3841.68,3841.68,1,0,0,401,0,0,0,1,18446744071972858368,
+3841.68,3841.68,1,0,0,399,0,0,0,1,979644416,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -156,10 +171,13 @@
 [END_GO_PREFAB]
 [START_Component]
 7,[START_Renderer]
-1052246016,1,1051720704,"white.dds",
+985940992,1,985939968,"SENTRY","Default Shader",1,"white.dds",
+[END_RENDERER_BASE]
+[START_OVERRIDE]
+0,
 [END_Renderer]
 [START_Sprite Renderer]
-0.016,0,0,0,1,0.99999,0.99999,1,
+0.016,0,0,0,1,1,1,0.4,
 [END_Sprite Renderer]
 
 [END_Component]
@@ -170,13 +188,13 @@
 "Fader",
 [END_Behaviour Names]
 [START_Behaviour Meta Count]
-6,
+8,
 [END_Behaviour  Meta Count]
 [START_FadeFrom]
 "FadeFrom",
 [END_FadeFrom]
 [START_Member Variable]
-1,
+0.4,
 [END_Member Variable]
 [START_FadeTowards]
 "FadeTowards",
@@ -188,7 +206,7 @@
 "FadeDuration",
 [END_FadeDuration]
 [START_Member Variable]
-1,
+0.1,
 [END_Member Variable]
 [START_StartFadeOut]
 "StartFadeOut",
@@ -207,4 +225,16 @@
 [END_mfCounter]
 [START_Member Variable]
 0,
+[END_Member Variable]
+[START_DestroyOnceComplete]
+"DestroyOnceComplete",
+[END_DestroyOnceComplete]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_StartAwake]
+"StartAwake",
+[END_StartAwake]
+[START_Member Variable]
+1,
 [END_Member Variable]

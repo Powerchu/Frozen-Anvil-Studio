@@ -1,10 +1,10 @@
 [START_GO_PREFAB]
-4,[START_START_GO_DATA]
-1748728320,65,"Salamander",16,
+5,[START_START_GO_DATA]
+834565120,65,"Salamander",2147483664,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-1414.32,767.117,1,24155.3,2303.97,4.5,0,0,0,1,18446744073709551615,
+1.7,1.7,1,25032.3,2240.14,4.8,0,0,0,1,18446744073709551615,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -12,29 +12,32 @@
 [END_GO_PREFAB]
 [START_Component]
 2,[START_RigidBody]
-461166592,1,1748728320,0,0.9999,0.5,0.5,0.3,0.01,0,4,1000,1,0,1,1,0,1,
+18446744071807993344,1,834565120,0,0.999,0.2,0.5,0.3,0.001,0,5,500,1,0,1,1,0,1,
 [END_RigidBody]
 
 [END_Component]
 [START_Component]
-4,[START_Convex_Collider]
-18782208,1,1748728320,0,-0.142,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.193,0.61,1,0,0,0,1,0,1,
-[END_Convex_Collider]
+5,[START_Circle_Collider2D]
+18446744071807994368,1,834565120,0,5,0,0,0,0,240,0,1,
+[END_Circle_Collider2D]
 
 [END_Component]
 [START_Component]
-7,[START_Renderer]
-1671219712,1,1748728320,"Salamander_Walking.dds",
-[END_Renderer]
-[START_Sprite Renderer]
-0.016,1,0,"Walk",5,8,1,0,39,0,1,1,1,1,1,
-[END_Sprite Renderer]
+5,[START_Circle_Collider2D]
+18446744071807994880,1,834565120,0,0,0,0,0,0,320,1,8192,
+[END_Circle_Collider2D]
 
 [END_Component]
 [START_Component]
 9,[START_AI Controller]
-319498240,1,1748728320,0,0,1,"Alert Range",1810,0,0,0,0,
+18446744071807995392,1,834565120,5,"IsFlinching",0,"Is Grounded",0,"IsAlert",0,"LookAt",1,"Is Facing Right",1,0,9,"AttackKnockback",210,"AttackDamage",25,"Alert Range",2560,"MeleeDist",379,"MaxHealth",500,"DashMult",2,"MoveSpeed",65,"Health",500,"RangedDist",1000,0,0,8,"Self",18446744072564231168,"Player",200244736,"mpWalk",18446744072564231680,"mpSlash",18446744072564232192,"mpFire",18446744072564232704,"mpSlashBox",18446744072564233216,"mpFireBox",18446744072564233728,"mpSphere",18446744072564234240,1,"CurrState","none",
 [END_AI Controller]
+
+[END_Component]
+[START_Component]
+4,[START_Convex_Collider]
+853473792,1,834565120,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,240.45,25,1,0,0,0,1,1,0,
+[END_Convex_Collider]
 
 [END_Component]
 [START_Number of Behaviours]
@@ -44,19 +47,85 @@
 "BossAI",
 [END_Behaviour Names]
 [START_Behaviour Meta Count]
-1,
+12,
 [END_Behaviour  Meta Count]
-[START_currHealth]
-"currHealth",
-[END_currHealth]
+[START_CurrTaskTimer]
+"CurrTaskTimer",
+[END_CurrTaskTimer]
 [START_Member Variable]
-1300,
+0,
+[END_Member Variable]
+[START_AttackCooldown]
+"AttackCooldown",
+[END_AttackCooldown]
+[START_Member Variable]
+1,
+[END_Member Variable]
+[START_AttackCooldownDelta]
+"AttackCooldownDelta",
+[END_AttackCooldownDelta]
+[START_Member Variable]
+1,
+[END_Member Variable]
+[START_mfAttackDamage]
+"mfAttackDamage",
+[END_mfAttackDamage]
+[START_Member Variable]
+25,
+[END_Member Variable]
+[START_mfAttackKnockback]
+"mfAttackKnockback",
+[END_mfAttackKnockback]
+[START_Member Variable]
+210,
+[END_Member Variable]
+[START_mfMoveSpeed]
+"mfMoveSpeed",
+[END_mfMoveSpeed]
+[START_Member Variable]
+65,
+[END_Member Variable]
+[START_mfDashMult]
+"mfDashMult",
+[END_mfDashMult]
+[START_Member Variable]
+2,
+[END_Member Variable]
+[START_mbIsGrounded]
+"mbIsGrounded",
+[END_mbIsGrounded]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_mbFacingRight]
+"mbFacingRight",
+[END_mbFacingRight]
+[START_Member Variable]
+1,
+[END_Member Variable]
+[START_mbPlayerDied]
+"mbPlayerDied",
+[END_mbPlayerDied]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_mfMeleeRange]
+"mfMeleeRange",
+[END_mfMeleeRange]
+[START_Member Variable]
+379,
+[END_Member Variable]
+[START_mfRangedRange]
+"mfRangedRange",
+[END_mfRangedRange]
+[START_Member Variable]
+1000,
 [END_Member Variable]
 [START_Behaviour Names]
 "PrimativeEnemy",
 [END_Behaviour Names]
 [START_Behaviour Meta Count]
-8,
+9,
 [END_Behaviour  Meta Count]
 [START_mbIsDead]
 "mbIsDead",
@@ -68,37 +137,37 @@
 "mfMaximumHealth",
 [END_mfMaximumHealth]
 [START_Member Variable]
-1300,
+500,
 [END_Member Variable]
 [START_mfCurrentHealth]
 "mfCurrentHealth",
 [END_mfCurrentHealth]
 [START_Member Variable]
-1300,
+500,
 [END_Member Variable]
 [START_mfForceTakenAmp]
 "mfForceTakenAmp",
 [END_mfForceTakenAmp]
 [START_Member Variable]
-400,
+750,
 [END_Member Variable]
 [START_mfDefense]
 "mfDefense",
 [END_mfDefense]
 [START_Member Variable]
-0,
+10,
 [END_Member Variable]
 [START_mfAttackDamage]
 "mfAttackDamage",
 [END_mfAttackDamage]
 [START_Member Variable]
-30,
+25,
 [END_Member Variable]
 [START_mfAttackKnockback]
 "mfAttackKnockback",
 [END_mfAttackKnockback]
 [START_Member Variable]
-10,
+210,
 [END_Member Variable]
 [START_mbUsePrimitiveUI]
 "mbUsePrimitiveUI",
@@ -106,6 +175,162 @@
 [START_Member Variable]
 0,
 [END_Member Variable]
+[START_mfFlashDuration]
+"mfFlashDuration",
+[END_mfFlashDuration]
+[START_Member Variable]
+0.1,
+[END_Member Variable]
 [START_Recursion Counter]
-0,
+6,
 [END_Recursion Counter]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+834565632,65,"S_Walk",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1339.62,726.969,1,25032.3,2371.51,4.80003,0,0,0,1,834565120,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+18446744071808014336,1,834565632,"SENTRY","Flash",1,"Salamander_Walking.dds",
+[END_RENDERER_BASE]
+[START_OVERRIDE]
+1,"mbFlash",0,1,0,
+[END_Renderer]
+[START_Sprite Renderer]
+0.028,1,1,"Walk",5,8,1,0,39,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+834566144,64,"S_Slash",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1339.62,726.969,1,25032.3,2371.51,4.9,0,0,0,1,834565120,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+18446744071808015872,0,834566144,"SENTRY","Flash",1,"Salamander_Slash.dds",
+[END_RENDERER_BASE]
+[START_OVERRIDE]
+1,"mbFlash",0,1,0,
+[END_Renderer]
+[START_Sprite Renderer]
+0.028,3,1,"Slash_Up",5,9,0,0,26,1,"Slash_Down",5,9,0,26,42,1,"Death",5,9,0,3,3,2,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+834566656,64,"S_Fire",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1339.62,726.969,1,25032.3,2371.51,5,0,0,0,1,834565120,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+18446744071808017408,0,834566656,"SENTRY","Flash",1,"Salamander_FireBreath.dds",
+[END_RENDERER_BASE]
+[START_OVERRIDE]
+1,"mbFlash",0,1,0,
+[END_Renderer]
+[START_Sprite Renderer]
+0.028,3,1,"Fire_Up",5,8,0,0,29,1,"Fire_Down",5,8,0,29,38,1,"Fire_Hold",5,8,1,12,29,1,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+834567168,65,"Slash_Hitbox",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+391,510,1,25557,2240.17,0.39954,0,0,0.092023,0.995757,834565120,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+4,[START_Convex_Collider]
+18446744071808018944,1,834567168,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,1,8192,
+[END_Convex_Collider]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+834567680,65,"Fire_Hitbox",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+1028.04,256,1,25969.3,2201.9,0.399901,0,0,0,1,834565120,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+4,[START_Convex_Collider]
+18446744071808020480,1,834567680,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1,1,1,0,0,0,1,1,8192,
+[END_Convex_Collider]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+2,[START_START_GO_DATA]
+834568192,64,"DefenceSphere",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+170,170,1,25032.3,2240.13,5.79997,0,0,0,1,834565120,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+2,[START_RigidBody]
+18446744071808022016,0,834568192,0,0.5,0.5,0.5,0,0,0,1,0,1,0,1,1,1,0,
+[END_RigidBody]
+
+[END_Component]
+[START_Component]
+5,[START_Circle_Collider2D]
+18446744071808022528,0,834568192,0,0,0,0,0,0,4,0,536870912,
+[END_Circle_Collider2D]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]

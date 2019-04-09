@@ -1,5 +1,5 @@
 [START_PROGRAMS]
-"Shader\\DefaultVert.dvert","Shader\\DefaultFrag.dfrag","Shader\\ColourFrag.dfrag","Shader\\FinalStage.dvert","Shader\\LogoFrag.dfrag","Shader\\Font.dvert","Shader\\FontFrag.dfrag","Shader\\Collider.dvert","Shader\\Collider.dfrag","Shader\\Particle.dvert","Shader\\Particle.dgeog","Shader\\Particle.dfrag","Shader\\Error.dvert","Shader\\Error.dfrag","Shader\\TrailParticle.dvert","Shader\\TrailParticle.dgeog","Shader\\SimplePass.dvert","Shader\\Blur.dfrag","Shader\\BlurMerge.dfrag",
+"Shader\\DefaultVert.dvert","Shader\\DefaultFrag.dfrag","Shader\\ColourFrag.dfrag","Shader\\FinalStage.dvert","Shader\\FinalStage.dfrag","Shader\\LogoFrag.dfrag","Shader\\Font.dvert","Shader\\FontFrag.dfrag","Shader\\Collider.dvert","Shader\\Collider.dfrag","Shader\\Particle.dvert","Shader\\Particle.dgeog","Shader\\Particle.dfrag","Shader\\Error.dvert","Shader\\Error.dfrag","Shader\\TrailParticle.dvert","Shader\\TrailParticle.dgeog","Shader\\SimplePass.dvert","Shader\\Blur.dfrag","Shader\\BlurMerge.dfrag",
 [START_SHADER]
 "Default Shader","Shader\DefaultVert.dvert","Shader\DefaultFrag.dfrag",
 [START_SHADER]
@@ -20,3 +20,6 @@
 "Blur Pass","Shader\SimplePass.dvert","Shader\Blur.dfrag",
 [START_SHADER]
 "Blur Merge","Shader\SimplePass.dvert","Shader\BlurMerge.dfrag",
+[START_SHADER]
+"FinalStage","Shader\FinalStage.dvert","Shader\FinalStage.dfrag",
+[END_SHADER]

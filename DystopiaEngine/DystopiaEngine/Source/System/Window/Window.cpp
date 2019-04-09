@@ -101,8 +101,8 @@ void Dystopia::Window::SetStyle(long _nStyle, long _nStyleEx) noexcept
 
 void Dystopia::Window::PushStyle(long _nStyle, long _nStyleEx) const noexcept
 {
-	SetWindowLong(mHandle, GWL_STYLE, _nStyle);
-	SetWindowLong(mHandle, GWL_EXSTYLE, _nStyleEx);
+	SetWindowLongPtr(mHandle, GWL_STYLE, _nStyle);
+	SetWindowLongPtr(mHandle, GWL_EXSTYLE, _nStyleEx);
 }
 
 
@@ -183,9 +183,14 @@ void Dystopia::Window::ToggleFullscreen(bool _bFullscreen) noexcept
 	{
 #       if !EDITOR
 			PushStyle(
-				mStyle & Ut::Constant<long, ~(WS_CAPTION | WS_SIZEBOX)>::value,
-				mStyleEx & Ut::Constant<long, ~(WS_EX_WINDOWEDGE)>::value
+				 //(mStyle & Ut::Constant<long, ~(WS_CAPTION | WS_SIZEBOX | WS_SYSMENU | WS_THICKFRAME)>::value) | WS_POPUP,
+				 WS_POPUP,
+				 mStyleEx & Ut::Constant<long, ~(WS_EX_WINDOWEDGE | WS_EX_DLGMODALFRAME | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE)>::value
 			);
+
+			RECT WindowRect{ 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN) };
+			::AdjustWindowRectEx(&WindowRect, WS_POPUP, FALSE, mStyleEx & Ut::Constant<long, ~(WS_EX_WINDOWEDGE | WS_EX_DLGMODALFRAME | WS_EX_CLIENTEDGE | WS_EX_STATICEDGE)>::value);
+				
 #       endif
 
 		::ShowWindow(GetWindowHandle(), SW_MAXIMIZE);

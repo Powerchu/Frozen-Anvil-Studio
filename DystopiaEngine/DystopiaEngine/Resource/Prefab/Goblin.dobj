@@ -1,10 +1,10 @@
 [START_GO_PREFAB]
 7,[START_START_GO_DATA]
-1245267456,65,"Goblin",16,
+1959304192,65,"Goblin",16,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-256,256,1,661.405,293.779,0,0,0,0,1,18446744073709551615,
+316.867,316.867,1,872.14,311.362,5.50001,0,0,0,1,1959303680,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -12,46 +12,49 @@
 [END_GO_PREFAB]
 [START_Component]
 2,[START_RigidBody]
-1245268480,1,1245267456,0,0.9999,0.1,0.5,0.5,0.01,0,4,200,1,0,1,1,0,0,
+18446744072211798016,1,1959304192,0,0.999,0.3,0.5,0.5,0.01,0,4,200,1,0,1,1,0,0,
 [END_RigidBody]
 
 [END_Component]
 [START_Component]
 4,[START_Convex_Collider]
-1245268992,1,1245267456,0,-0.197,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.25,0.375,1,0,0,0,1,0,1,
+18446744072211798528,1,1959304192,-0.04,-0.197,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.25,0.375,1,0,0,0,1,0,1,
+[END_Convex_Collider]
+
+[END_Component]
+[START_Component]
+4,[START_Convex_Collider]
+18446744072475119104,1,1959304192,0,-0.09,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.3,0.8,1,0,0,0,1,1,8192,
 [END_Convex_Collider]
 
 [END_Component]
 [START_Component]
 5,[START_Circle_Collider2D]
-1245269504,1,1245267456,0,0,5.77,0,0,0,0.25,0,1,
-[END_Circle_Collider2D]
-
-[END_Component]
-[START_Component]
-5,[START_Circle_Collider2D]
-1245270016,1,1245267456,0,-0.38,5.77,0,0,0,0.25,0,1,
+18446744072211799040,1,1959304192,-0.04,-0.38,5,0,0,0,0.25,0,1,
 [END_Circle_Collider2D]
 
 [END_Component]
 [START_Component]
 6,[START_Audio]
-1245270528,1,1245267456,1,0,0,"",1,1,1.1,1000,10000,
+18446744072211799552,1,1959304192,1,0,0,"",1,1,1.1,1000,10000,
 [END_Audio]
 
 [END_Component]
 [START_Component]
 7,[START_Renderer]
-1245271040,1,1245267456,"Goblin Sheet.dds",
+18446744072211800064,1,1959304192,"SENTRY","Flash",1,"Goblin Sheet.dds",
+[END_RENDERER_BASE]
+[START_OVERRIDE]
+0,
 [END_Renderer]
 [START_Sprite Renderer]
-0.03,6,1,"Attack",10,10,0,0,28,1,"Flinch",10,10,0,29,31,1,"Rally",10,10,0,30,75,1,"Jump",10,10,0,30,46,1,"Run",10,10,1,76,93,1,"Idle",10,10,1,30,30,5,1,1,1,1,1,
+0.035,8,1,"Attack",10,10,0,0,28,1,"Flinch",10,10,0,29,29,1,"Rally",10,10,0,30,75,1,"Jump",10,10,0,30,46,1,"Run",10,10,1,76,93,1,"Idle",10,10,1,30,30,1,"Lunge_1",10,10,0,0,16,1,"Lunge_2",10,10,0,16,28,2,1,1,0.99999,0.99999,1,
 [END_Sprite Renderer]
 
 [END_Component]
 [START_Component]
 9,[START_AI Controller]
-1245271552,1,1245267456,4,"Is Grounded",0,"Is Facing Right",1,"Has Flock",0,"Is Alert",0,1,"Rally Count",3,2,"State Timer",3,"Attack Timer",3,0,0,2,"Self",1245267456,"Player",18446744071901358080,0,
+18446744072211800576,1,1959304192,7,"IsFlinching",0,"Is Grounded",0,"IsDead",0,"Is Facing Right",1,"Has Flock",0,"Is Alert",0,"Point1or2",0,1,"Rally Count",1,7,"MaxHealth",75,"State Timer",3,"Attack Timer",3,"AttackKnockback",10,"AttackDamage",10,"MoveSpeed",40,"Health",75,0,2,"PatrolPoint1",747.016,-312.841,10,1,"PatrolPoint2",2021.1,-312.837,10,1,2,"Self",18446744071691331072,"Player",200244736,0,
 [END_AI Controller]
 
 [END_Component]
@@ -62,7 +65,7 @@
 "GoblinAI",
 [END_Behaviour Names]
 [START_Behaviour Meta Count]
-9,
+14,
 [END_Behaviour  Meta Count]
 [START_MaxTimer]
 "MaxTimer",
@@ -82,17 +85,17 @@
 [START_Member Variable]
 3,
 [END_Member Variable]
-[START_AttackCooldown]
-"AttackCooldown",
-[END_AttackCooldown]
+[START_AttackCooldownDelta]
+"AttackCooldownDelta",
+[END_AttackCooldownDelta]
 [START_Member Variable]
-0.1,
+0,
 [END_Member Variable]
 [START_RallyCount]
 "RallyCount",
 [END_RallyCount]
 [START_Member Variable]
-3,
+1,
 [END_Member Variable]
 [START_IsGrounded]
 "IsGrounded",
@@ -118,11 +121,41 @@
 [START_Member Variable]
 0,
 [END_Member Variable]
+[START_mfAttackDamage]
+"mfAttackDamage",
+[END_mfAttackDamage]
+[START_Member Variable]
+10,
+[END_Member Variable]
+[START_mfAttackKnockback]
+"mfAttackKnockback",
+[END_mfAttackKnockback]
+[START_Member Variable]
+10,
+[END_Member Variable]
+[START_moveSpeed]
+"moveSpeed",
+[END_moveSpeed]
+[START_Member Variable]
+40,
+[END_Member Variable]
+[START_IsAttackingCurr]
+"IsAttackingCurr",
+[END_IsAttackingCurr]
+[START_Member Variable]
+0,
+[END_Member Variable]
+[START_CanAttackCurr]
+"CanAttackCurr",
+[END_CanAttackCurr]
+[START_Member Variable]
+1,
+[END_Member Variable]
 [START_Behaviour Names]
 "PrimativeEnemy",
 [END_Behaviour Names]
 [START_Behaviour Meta Count]
-8,
+9,
 [END_Behaviour  Meta Count]
 [START_mbIsDead]
 "mbIsDead",
@@ -134,13 +167,13 @@
 "mfMaximumHealth",
 [END_mfMaximumHealth]
 [START_Member Variable]
-100,
+75,
 [END_Member Variable]
 [START_mfCurrentHealth]
 "mfCurrentHealth",
 [END_mfCurrentHealth]
 [START_Member Variable]
-100,
+75,
 [END_Member Variable]
 [START_mfForceTakenAmp]
 "mfForceTakenAmp",
@@ -158,7 +191,7 @@
 "mfAttackDamage",
 [END_mfAttackDamage]
 [START_Member Variable]
-5,
+10,
 [END_Member Variable]
 [START_mfAttackKnockback]
 "mfAttackKnockback",
@@ -172,16 +205,22 @@
 [START_Member Variable]
 1,
 [END_Member Variable]
+[START_mfFlashDuration]
+"mfFlashDuration",
+[END_mfFlashDuration]
+[START_Member Variable]
+1,
+[END_Member Variable]
 [START_Recursion Counter]
-2,
+4,
 [END_Recursion Counter]
 [START_GO_PREFAB]
 1,[START_START_GO_DATA]
-1245280256,65,"AlertRadius",0,
+1959304704,65,"AlertRadius",0,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-256,256,1,661.405,293.778,2.99662e-05,0,0,0,1,1245267456,
+316.867,316.867,1,872.303,311.364,5.50054,0,0,0,1,1959304192,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -189,7 +228,7 @@
 [END_GO_PREFAB]
 [START_Component]
 5,[START_Circle_Collider2D]
-1245281280,1,1245280256,0,0,-1,0,0,0,6,1,4,
+18446744072211814400,1,1959304704,0,0,-1,0,0,0,4,1,536870912,
 [END_Circle_Collider2D]
 
 [END_Component]
@@ -198,22 +237,82 @@
 [END_Number of Behaviours]
 [START_GO_PREFAB]
 1,[START_START_GO_DATA]
-1245281792,65,"UtilityBox",0,
+1959305216,65,"PrimitiveHealthUI",0,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-256,256,1,772.645,267.114,2.99662e-05,0,0,0,1,1245267456,
+158.433,-63.3734,0.999992,859.454,382.869,5.5003,0,0,0,1,1959304192,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
 
 [END_GO_PREFAB]
 [START_Component]
-4,[START_Convex_Collider]
-1245282816,1,1245281792,0,0,1,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.4,0.7,1,0,0,0,1,1,2,
-[END_Convex_Collider]
+7,[START_Renderer]
+18446744072211815936,1,1959305216,"SENTRY","Default Shader",1,"enemy_health_bar.png",
+[END_RENDERER_BASE]
+[START_OVERRIDE]
+0,
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,0,0.09375,1,
+[END_Sprite Renderer]
 
 [END_Component]
 [START_Number of Behaviours]
 0,
 [END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+1959305728,65,"EnemyHealthUI",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+158.433,-63.3734,0.999991,859.183,382.572,4.50079,0,0,0,1,1959305216,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+18446744072211817472,1,1959305728,"SENTRY","Default Shader",1,"enemy_health_blackborder.png",
+[END_RENDERER_BASE]
+[START_OVERRIDE]
+0,
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+1959306240,65,"FlockRadius",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+316.867,316.867,1,872.303,311.364,6.5003,0,0,0,1,1959304192,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+5,[START_Circle_Collider2D]
+18446744072211819008,1,1959306240,0,0,-1,0,0,0,4,1,16384,
+[END_Circle_Collider2D]
+
+[END_Component]
+[START_Number of Behaviours]
+1,
+[END_Number of Behaviours]
+[START_Behaviour Names]
+"Flocker",
+[END_Behaviour Names]
+[START_Behaviour Meta Count]
+0,
+[END_Behaviour  Meta Count]

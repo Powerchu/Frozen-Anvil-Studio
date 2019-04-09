@@ -1,10 +1,10 @@
 [START_GO_PREFAB]
-5,[START_START_GO_DATA]
-1392300544,65,"Form_Slam_Child",96,
+3,[START_START_GO_DATA]
+18446744072901274624,65,"Form_Slam_Child",96,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-274.55,193.322,1,5456.34,275.91,-0.4,0,0,-2.61799e-05,1,18446744073709551615,
+274.55,193.322,1,12002.4,1229.27,-0.4,0,0,-2.61799e-05,1,18446744073709551615,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -12,35 +12,26 @@
 [END_GO_PREFAB]
 [START_Component]
 2,[START_RigidBody]
-1392301568,1,1392300544,-0.00299999,0,0,0,2,2,0,3.4,1000,1,0,1,1,0,1,
+18446744072901275648,1,18446744072901274624,-0.00299999,0,0,0,2,2,0,6,1000,1,0,1,1,0,1,
 [END_RigidBody]
 
 [END_Component]
 [START_Component]
-4,[START_Convex_Collider]
-1392302080,1,1392300544,-0.085,0.266,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,0.777,0.221,1,0,0,0,1,0,1024,
-[END_Convex_Collider]
-
-[END_Component]
-[START_Component]
-5,[START_Circle_Collider2D]
-1392302592,1,1392300544,-0.21,-0.18,0,0,0,0,0.433,0,1024,
-[END_Circle_Collider2D]
-
-[END_Component]
-[START_Component]
-5,[START_Circle_Collider2D]
-1392303104,1,1392300544,0.24,-0.18,0,0,0,0,0.433,0,1024,
-[END_Circle_Collider2D]
-
-[END_Component]
-[START_Component]
 7,[START_Renderer]
-1392303616,1,1392300544,"Form_T2_Rock.png",
+18446744072901277696,1,18446744072901274624,"SENTRY","Default Shader",1,"Form_T2_Rock.png",
+[END_RENDERER_BASE]
+[START_OVERRIDE]
+0,
 [END_Renderer]
 [START_Sprite Renderer]
 0.016,0,0,0,1,1,1,1,
 [END_Sprite Renderer]
+
+[END_Component]
+[START_Component]
+5,[START_Circle_Collider2D]
+18446744072901277184,1,18446744072901274624,0,0,0,0,0,0,0.653,0,1024,
+[END_Circle_Collider2D]
 
 [END_Component]
 [START_Number of Behaviours]
@@ -50,18 +41,24 @@
 "FormSlamChild",
 [END_Behaviour Names]
 [START_Behaviour Meta Count]
-0,
+1,
 [END_Behaviour  Meta Count]
+[START_mfDeathDelay]
+"mfDeathDelay",
+[END_mfDeathDelay]
+[START_Member Variable]
+0,
+[END_Member Variable]
 [START_Recursion Counter]
 1,
 [END_Recursion Counter]
 [START_GO_PREFAB]
-2,[START_START_GO_DATA]
-1392304640,65,"Slam_HitBox",0,
+3,[START_START_GO_DATA]
+18446744072901278720,65,"Slam_HitBox",0,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-274.72,193.077,1,5456.34,275.906,-0.399999,0,0,0,1,1392300544,
+27.49,19.2821,1,12002.4,1229.27,0.6,0,0,0,1,18446744072901274624,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -69,14 +66,56 @@
 [END_GO_PREFAB]
 [START_Component]
 5,[START_Circle_Collider2D]
-1392305664,1,1392304640,0,0,0,0,0,0,4,1,1024,
+18446744072901279744,1,18446744072901278720,0,0,0,0,0,0,40,1,1024,
 [END_Circle_Collider2D]
 
 [END_Component]
 [START_Component]
 6,[START_Audio]
-1392306176,1,1392304640,1,0,0,"",1.2,1,1,5000,10000,
+18446744072901280256,1,18446744072901278720,1,0,0,"",1.2,1,1,5000,10000,
 [END_Audio]
+
+[END_Component]
+[START_Component]
+12,[START_Particle Emitter]
+18446744072901280768,0,18446744072901278720,1,
+[END_Particle Emitter]
+[START_Emitter]
+"Default Particle","debris_rock.png",1000,1,0,1,
+[END_Emitter]
+[START_Spawn affectors]
+6,1,2,7,11,9,5,
+[END_Spawn affectors]
+[START_Affector]
+2814754062073856,10,4,
+[END_Affector]
+[START_Affector]
+4593671619917905920,1069547520,0,
+[END_Affector]
+[START_Affector]
+4728779609840025600,4787326405009473536,1,
+[END_Affector]
+[START_Affector]
+4878524296349089792,0,1,
+[END_Affector]
+[START_Affector]
+14212093786586087424,0,0,
+[END_Affector]
+[START_Affector]
+4920182596183654400,4952692953846251520,2,
+[END_Affector]
+[START_Update affectors]
+2,0,4,
+[END_Update affectors]
+[START_Affector]
+11258999068426240,30,6,
+[END_Affector]
+[START_Affector]
+28148592904438015,0,0,
+[END_Affector]
+[START_Fixed Update affectors]
+0,
+[END_Fixed Update affectors]
 
 [END_Component]
 [START_Number of Behaviours]

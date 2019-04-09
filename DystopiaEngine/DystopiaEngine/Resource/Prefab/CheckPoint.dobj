@@ -1,10 +1,10 @@
 [START_GO_PREFAB]
-3,[START_START_GO_DATA]
-18446744073063470592,65,"CheckPoint",0,
+1,[START_START_GO_DATA]
+437729280,65,"CheckPoint",0,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-230.372,422.975,0.999985,18967.7,1912.65,0.0999111,0,0,0,1,18446744072530640896,
+1,1,1,0,62.8703,0,0,0,0,1,18446744073709551615,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -12,23 +12,8 @@
 [END_GO_PREFAB]
 [START_Component]
 4,[START_Convex_Collider]
-1107176960,1,18446744073063470592,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,1.05,1.15,1,0,0,0,1,1,1,
+200025088,1,437729280,0,0,0,4,0.5,0.5,0,-0.5,0.5,0,-0.5,-0.5,0,0.5,-0.5,0,100,600,1,0,0,0,1,1,4294967295,
 [END_Convex_Collider]
-
-[END_Component]
-[START_Component]
-7,[START_Renderer]
-1107177472,1,18446744073063470592,"CheckpointnRocks_SpriteSheet.dds",
-[END_Renderer]
-[START_Sprite Renderer]
-0.016,1,4,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
-[END_Sprite Renderer]
-
-[END_Component]
-[START_Component]
-6,[START_Audio]
-18446744072517516800,1,18446744073063470592,1,0,0,"Checkpoint.wav",3,1,1,0.1,10000,
-[END_Audio]
 
 [END_Component]
 [START_Number of Behaviours]
@@ -38,24 +23,30 @@
 "CheckPoint",
 [END_Behaviour Names]
 [START_Behaviour Meta Count]
-1,
+2,
 [END_Behaviour  Meta Count]
-[START_mfRadialDuration]
-"mfRadialDuration",
-[END_mfRadialDuration]
+[START_mfDuration]
+"mfDuration",
+[END_mfDuration]
 [START_Member Variable]
-0.8,
+1,
+[END_Member Variable]
+[START_mfIntervals]
+"mfIntervals",
+[END_mfIntervals]
+[START_Member Variable]
+1.5,
 [END_Member Variable]
 [START_Recursion Counter]
-6,
+7,
 [END_Recursion Counter]
 [START_GO_PREFAB]
 1,[START_START_GO_DATA]
-18446744073063471104,65,"CheckPoint_Ring",0,
+18446744073305799680,65,"Ring_Glow",0,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-300.166,314.426,0.999964,18967.7,2092.2,0.0599884,0,0,0,1,18446744073063470592,
+323,302,1,-0.4,246.87,-0.08,0,0,0,1,437729280,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
@@ -63,7 +54,64 @@
 [END_GO_PREFAB]
 [START_Component]
 7,[START_Renderer]
-1107179520,1,18446744073063471104,"CheckpointnRocks_SpriteSheet.dds",
+911198208,1,18446744073305799680,"SENTRY","Ping",1,"CheckpointnRocks_SpriteSheet.dds",
+[END_RENDERER_BASE]
+[START_OVERRIDE]
+1,"fRatio",1,2,0,
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,2,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+18446744073638199296,65,"Statue",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+304.999,560,1,0,42.4283,0,0,0,0,1,437729280,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+18446744071662717440,1,18446744073638199296,"SENTRY","Default Shader",1,"CheckpointnRocks_SpriteSheet.dds",
+[END_RENDERER_BASE]
+[START_OVERRIDE]
+0,
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,4,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+383206400,65,"Ring_Base",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+399.999,419,1,0,287.504,-0.1,0,0,0,1,437729280,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+18446744073027931136,1,383206400,"SENTRY","Default Shader",1,"CheckpointnRocks_SpriteSheet.dds",
+[END_RENDERER_BASE]
+[START_OVERRIDE]
+0,
 [END_Renderer]
 [START_Sprite Renderer]
 0.016,1,3,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
@@ -75,112 +123,97 @@
 [END_Number of Behaviours]
 [START_GO_PREFAB]
 1,[START_START_GO_DATA]
-18446744073063471616,65,"Glow",0,
+1055868928,64,"Particles",0,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-241.814,226.093,0.999964,18967.7,2063.23,0.0899874,0,0,0,1,18446744073063470592,
+1,1,1,0,-234.946,0.1,0,0,0,1,437729280,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
 
 [END_GO_PREFAB]
 [START_Component]
-7,[START_Renderer]
-1107181056,1,18446744073063471616,"CheckpointnRocks_SpriteSheet.dds",
-[END_Renderer]
-[START_Sprite Renderer]
-0.016,1,2,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
-[END_Sprite Renderer]
-
-[END_Component]
-[START_Number of Behaviours]
-0,
-[END_Number of Behaviours]
-[START_GO_PREFAB]
-1,[START_START_GO_DATA]
-18446744073063472128,65,"Glow_BG",0,
-[END_END_GO_DATA]
-[START_START_GO_TRANSFORM]
-[START_Transform]
-241.814,226.093,0.999964,18967.7,2063.23,0.0799874,0,0,0,1,18446744073063470592,
-[END_Transform]
-
-[END_END_GO_TRANSFORM]
-
-[END_GO_PREFAB]
-[START_Component]
-7,[START_Renderer]
-1107182592,1,18446744073063472128,"CheckpointnRocks_SpriteSheet.dds",
-[END_Renderer]
-[START_Sprite Renderer]
-0.016,1,2,"Rename this",1,1,0,0,0,0,0,1,1,1,1,
-[END_Sprite Renderer]
-
-[END_Component]
-[START_Number of Behaviours]
-0,
-[END_Number of Behaviours]
-[START_GO_PREFAB]
-2,[START_START_GO_DATA]
-18446744073063472640,65,"BaseEmitterBack",0,
-[END_END_GO_DATA]
-[START_START_GO_TRANSFORM]
-[START_Transform]
-1,1,1,18967.7,1675.82,0.0899884,0,0,0,1,18446744073063470592,
-[END_Transform]
-
-[END_END_GO_TRANSFORM]
-
-[END_GO_PREFAB]
-[START_Component]
-7,[START_Renderer]
-1106135552,1,18446744073063472640,
-[END_Renderer]
-[START_Sprite Renderer]
-0.016,0,0,0,1,1,1,1,
-[END_Sprite Renderer]
-
-[END_Component]
-[START_Component]
-12,[START_Emitter]
-1106136064,1,18446744073063472640,"Default Particle","particle01.dds",1000,0,
+12,[START_Particle Emitter]
+18446744072481655808,0,1055868928,2,
+[END_Particle Emitter]
+[START_Emitter]
+"Default Particle","RadialCircle.png",1000,1,0,1,
 [END_Emitter]
 [START_Spawn affectors]
-5,3,1,5,7,2,
+5,1,2,3,5,7,
 [END_Spawn affectors]
 [START_Affector]
-71777214294589440,71777214294589695,0,
+5629499534213120,300,4,
 [END_Affector]
 [START_Affector]
-281474976710656,220,4,
+4611686018427387904,1082130432,0,
 [END_Affector]
 [START_Affector]
-4787326403894837248,4795207703242735616,2,
+71777214294589695,71777214294589695,0,
 [END_Affector]
 [START_Affector]
-4764808405757984768,1113325568,2,
+4764808409017483264,4795207704354750464,2,
 [END_Affector]
 [START_Affector]
-4638707616191610880,1083179008,0,
+4697254412441092096,4710765211326349312,1,
 [END_Affector]
 [START_Update affectors]
-3,0,8,4,
+3,0,4,8,
 [END_Update affectors]
 [START_Affector]
-8444506999357440,69818988363776,1,
+107374182400,0,1,
 [END_Affector]
 [START_Affector]
-1101004800,0,0,
+1095233372415,0,0,
 [END_Affector]
 [START_Affector]
-1408470116925440,0,0,
+13835058058503389184,0,0,
 [END_Affector]
 [START_Fixed Update affectors]
 1,10,
 [END_Fixed Update affectors]
 [START_Affector]
-22937640,1137180672,1,
+13107250,1128792064,33580041,
+[END_Affector]
+[START_Emitter]
+"Def Trail Particle","RadialCircle.png",1000,1,11,32,
+[END_Emitter]
+[START_Spawn affectors]
+5,1,2,3,5,7,
+[END_Spawn affectors]
+[START_Affector]
+8444249301319680,300,4,
+[END_Affector]
+[START_Affector]
+4611686018427387904,1077936128,0,
+[END_Affector]
+[START_Affector]
+71777214294589695,71777214294589695,0,
+[END_Affector]
+[START_Affector]
+4776067408085909504,4848124999976353792,2,
+[END_Affector]
+[START_Affector]
+4692750812812673024,4728779609840025600,1,
+[END_Affector]
+[START_Update affectors]
+3,0,4,8,
+[END_Update affectors]
+[START_Affector]
+34359738368,0,1,
+[END_Affector]
+[START_Affector]
+1095233372415,0,0,
+[END_Affector]
+[START_Affector]
+0,0,0,
+[END_Affector]
+[START_Fixed Update affectors]
+1,10,
+[END_Fixed Update affectors]
+[START_Affector]
+19660900,1133903872,33580041,
 [END_Affector]
 
 [END_Component]
@@ -189,56 +222,26 @@
 [END_Number of Behaviours]
 [START_GO_PREFAB]
 1,[START_START_GO_DATA]
-18446744073063473152,65,"BaseEmitterFront",0,
+1614266880,65,"Ring_UnGlow",0,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-1,1,1,18967.7,1666.5,0.109988,0,0,0,1,18446744073063470592,
+323,302,1,-0.4,246.87,-0.09,0,0,0,1,437729280,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
 
 [END_GO_PREFAB]
 [START_Component]
-12,[START_Emitter]
-1106137600,1,18446744073063473152,"Default Particle","particle01.dds",1000,0,
-[END_Emitter]
-[START_Spawn affectors]
-5,3,1,5,7,2,
-[END_Spawn affectors]
-[START_Affector]
-71777214294589440,71777214294589695,0,
-[END_Affector]
-[START_Affector]
-281474976710656,200,4,
-[END_Affector]
-[START_Affector]
-4674736416464306176,4795207704348983296,2,
-[END_Affector]
-[START_Affector]
-4715268809856909312,1101004800,2,
-[END_Affector]
-[START_Affector]
-4629700416936869888,1082130432,0,
-[END_Affector]
-[START_Update affectors]
-3,0,8,4,
-[END_Update affectors]
-[START_Affector]
-5629628383232000,69818988363776,1,
-[END_Affector]
-[START_Affector]
-1109393408,0,0,
-[END_Affector]
-[START_Affector]
-1408470116925440,0,0,
-[END_Affector]
-[START_Fixed Update affectors]
-1,10,
-[END_Fixed Update affectors]
-[START_Affector]
-19660860,1138819072,1,
-[END_Affector]
+7,[START_Renderer]
+1970259456,1,1614266880,"SENTRY","Default Shader",1,"CheckpointnRocks_SpriteSheet.dds",
+[END_RENDERER_BASE]
+[START_OVERRIDE]
+0,
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,1,2,"Rename this",1,1,0,0,0,0,0,1e-06,0,0,1,
+[END_Sprite Renderer]
 
 [END_Component]
 [START_Number of Behaviours]
@@ -246,50 +249,53 @@
 [END_Number of Behaviours]
 [START_GO_PREFAB]
 1,[START_START_GO_DATA]
-18446744073063473664,65,"RadialEmitter",0,
+496876032,65,"GlyphRed",0,
 [END_END_GO_DATA]
 [START_START_GO_TRANSFORM]
 [START_Transform]
-1,1,1,18967.7,2060.7,0.0499884,0,0,0,1,18446744073063470592,
+261.61,342.05,1,10.9971,289.219,-0.3,0,0,0,1,437729280,
 [END_Transform]
 
 [END_END_GO_TRANSFORM]
 
 [END_GO_PREFAB]
 [START_Component]
-12,[START_Emitter]
-1106139136,1,18446744073063473664,"Default Particle","particle01.dds",1000,0,
-[END_Emitter]
-[START_Spawn affectors]
-4,1,2,7,3,
-[END_Spawn affectors]
-[START_Affector]
-42949672960,0,3,
-[END_Affector]
-[START_Affector]
-4575657221408423936,1069547520,0,
-[END_Affector]
-[START_Affector]
-4674736413210574848,1092616192,2,
-[END_Affector]
-[START_Affector]
-71777214294589440,71777214294589695,0,
-[END_Affector]
-[START_Update affectors]
-2,0,4,
-[END_Update affectors]
-[START_Affector]
-56295424838860800,67949818609664,3,
-[END_Affector]
-[START_Affector]
-43629716623523840,0,0,
-[END_Affector]
-[START_Fixed Update affectors]
-1,10,
-[END_Fixed Update affectors]
-[START_Affector]
-7864410,0,4,
-[END_Affector]
+7,[START_Renderer]
+18446744072019099136,1,496876032,"SENTRY","Default Shader",1,"Force.png",
+[END_RENDERER_BASE]
+[START_OVERRIDE]
+0,
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,0,
+[END_Sprite Renderer]
+
+[END_Component]
+[START_Number of Behaviours]
+0,
+[END_Number of Behaviours]
+[START_GO_PREFAB]
+1,[START_START_GO_DATA]
+18446744072253605888,65,"GlyphBlue",0,
+[END_END_GO_DATA]
+[START_START_GO_TRANSFORM]
+[START_Transform]
+261.61,342.05,1,10.9971,289.219,-0.2,0,0,0,1,437729280,
+[END_Transform]
+
+[END_END_GO_TRANSFORM]
+
+[END_GO_PREFAB]
+[START_Component]
+7,[START_Renderer]
+18446744072253606912,1,18446744072253605888,"SENTRY","Default Shader",1,"Form.png",
+[END_RENDERER_BASE]
+[START_OVERRIDE]
+0,
+[END_Renderer]
+[START_Sprite Renderer]
+0.016,0,0,0,1,1,1,0,
+[END_Sprite Renderer]
 
 [END_Component]
 [START_Number of Behaviours]
