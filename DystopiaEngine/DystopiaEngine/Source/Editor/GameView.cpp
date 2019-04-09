@@ -101,7 +101,7 @@ namespace Editor
 				ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.f);
 
 			// because game view should show final display with ui layer together, while game camera only paints world object
-			//Dystopia::Texture* pTex = mpGfxSys->GetView(3).AsTexture();
+			//Dystopia::Texture* pTex = mpGfxSys->GetView(2).AsTexture();
 			Dystopia::Texture* pTex = mpGfxSys->GetFrameBuffer().AsTexture();
 
 			AdjustImageSize(pTex);

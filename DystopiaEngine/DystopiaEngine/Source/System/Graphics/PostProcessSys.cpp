@@ -100,14 +100,14 @@ void Dystopia::PostProcessSystem::ApplyBlur(void)
 		blurShader->UploadUniform("vStep", Math::Vec2{ w_step, 0 });
 		first->Bind();
 		glClearColor(0, 0, 0, 0);
-		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT);
 		second->AsTexture()->Bind();
 		Mesh->DrawMesh(4);
 	
 		blurShader->UploadUniform("vStep", Math::Vec2{ 0, h_step });
 		second->Bind();
 		glClearColor(0, 0, 0, 0);
-		glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT);
 		first->AsTexture()->Bind();
 		Mesh->DrawMesh(4);
 	}

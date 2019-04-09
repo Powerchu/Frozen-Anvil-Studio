@@ -22,6 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/Vectors.h"
 
 #include "Utility/Utility.h"
+#include "DataStructure/Tuple.h"
 #include "DataStructure/AutoArray.h"
 
 #include <map>
@@ -135,7 +136,7 @@ namespace Dystopia
 		AutoArray<Renderer*>       mSet1;
 		AutoArray<SpriteRenderer*> mSet2;
 		AutoArray<TextRenderer*>   mSet3;
-		AutoArray<Renderer*>       mTransparency;
+		AutoArray<Tuple<Renderer*, unsigned>> mTransparency;
 
 #	if EDITOR
 		bool mbVSync;
