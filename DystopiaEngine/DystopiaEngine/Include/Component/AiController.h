@@ -87,10 +87,13 @@ namespace Dystopia
 
 		// Editor UI		
 		void EditorUI(void) noexcept override;
+		void SetLocked(bool _b);
+		bool GetLock();
 		
 #endif // EDITOR
 		SharedPtr<BehaviourTree> bTree;
 	private:
+		bool isLocked = false;
 		Task * mCurrentTask = nullptr;
 
 	};

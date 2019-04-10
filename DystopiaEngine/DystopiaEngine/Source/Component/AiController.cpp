@@ -92,7 +92,8 @@ namespace Dystopia
 	{
 		if (bTree && bTree->IsValidTree())
 		{
-			mNodeStatus = bTree->Update(_dt);
+			if (!isLocked)
+				mNodeStatus = bTree->Update(_dt);
 		}
 	}
 
@@ -122,7 +123,16 @@ namespace Dystopia
 		{
 			bTree = nullptr;
 		}
-		
+	}
+
+	void AiController::SetLocked(bool _b)
+	{
+		isLocked = _b;
+	}
+
+	bool AiController::GetLock()
+	{
+		return isLocked;
 	}
 
 	void AiController::SetTree(const SharedPtr<BehaviourTree>& _root)

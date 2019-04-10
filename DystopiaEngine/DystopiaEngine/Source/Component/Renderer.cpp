@@ -377,7 +377,9 @@ void Dystopia::Renderer::TranslucencyField(void) noexcept
 {
 	static bool IsTranslucent = HasTransparency();
 
-	if (EGUI::Display::CheckBox("Has Transparaency", &IsTranslucent))
+	EGUI::Display::Label("Has Transparency");
+	ImGui::SameLine();
+	if (EGUI::Display::CheckBox("Has Transparency", &IsTranslucent, false))
 	{
 		SetTransparencyFlag(IsTranslucent);
 	}
