@@ -74,13 +74,13 @@ namespace Dystopia
 		}
 
 		// OpenGL not ready for next frame
-		if (mFence)
-		{
-			if (GL_TIMEOUT_EXPIRED == glClientWaitSync(mFence, 0, 0))
-				return;
+		//if (mFence)
+		//{
+		//	if (GL_TIMEOUT_EXPIRED == glClientWaitSync(mFence, 0, 0))
+		//		return;
 
-			glDeleteSync(mFence);
-		}
+		//	glDeleteSync(mFence);
+		//}
 
 		mFence = 0;
 
@@ -175,7 +175,7 @@ namespace Dystopia
 				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 				//if (auto err = glGetError())
 				//	__debugbreak();
-				mFence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+				//mFence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 				//if (auto err = glGetError())
 				//	__debugbreak();
 
@@ -229,7 +229,10 @@ namespace Dystopia
 		for (unsigned y = buff->count / yuv_image->d_w; y < yuv_image->d_h; ++y)
 		{
 			if (_prevdone && mTimer.Complete())
+			{
+				DEBUG_PRINT(eLog::MESSAGE, "Decoding is slow\n");
 				return;
+			}
 			for (unsigned x = buff->count % yuv_image->d_w; x < yuv_image->d_w; ++x)
 			{
 

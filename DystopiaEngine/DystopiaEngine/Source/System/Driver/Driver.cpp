@@ -258,7 +258,7 @@ void Dystopia::EngineCore::ExecuteGame()
 	Init();
 	PostInit();
 
-	Get<SceneSystem>()->LoadScene("CastleFinal.dscene");
+	Get<SceneSystem>()->LoadScene("SplashScreen.dscene");
 
 	while (!mbQuit)
 	{
