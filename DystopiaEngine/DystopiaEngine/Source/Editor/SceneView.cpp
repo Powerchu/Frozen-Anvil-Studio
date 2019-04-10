@@ -348,12 +348,14 @@ namespace Editor
 
 	void SceneView::AdjustImageSize(Dystopia::Texture *_pTex)
 	{
-		const auto aspect = mpSceneCamera->GetAspectRatio();
-		float ix = static_cast<float>(aspect * _pTex->GetWidth());
-		float iy = static_cast<float>(_pTex->GetHeight());
+		// const auto aspect = mpSceneCamera->GetAspectRatio();
+		// float ix = static_cast<float>(aspect * _pTex->GetWidth());
+		// float iy = static_cast<float>(_pTex->GetHeight());
 		float sx = Size().x;
 		float sy = Size().y - EGUI::TabsImageOffsetY;
-		mImgSize = GetAdjustedRatio(sx, sy, ix, iy);
+		float minScale = Math::Min(sx / static_cast<float>(_pTex->GetWidth()),
+								   sy / static_cast<float>(_pTex->GetHeight()));
+		mImgSize = Math::Vec2{ _pTex->GetWidth() * minScale, _pTex->GetHeight() * minScale };// GetAdjustedRatio(sx, sy, ix, iy);
 	}
 
 	void SceneView::AdjustDisplayPos(void)
