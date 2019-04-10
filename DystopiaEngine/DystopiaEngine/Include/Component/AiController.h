@@ -69,6 +69,9 @@ namespace Dystopia
 
 		Node::eStatus mNodeStatus;
 		Blackboard::Ptr mpBlackboard;
+
+		void SetLocked(bool _b);
+		bool GetLock();
 #if EDITOR
 		/*=================Editor Stuff=====================*/
 		void EditorCurrentStatus();
@@ -87,8 +90,7 @@ namespace Dystopia
 
 		// Editor UI		
 		void EditorUI(void) noexcept override;
-		void SetLocked(bool _b);
-		bool GetLock();
+
 		
 #endif // EDITOR
 		SharedPtr<BehaviourTree> bTree;

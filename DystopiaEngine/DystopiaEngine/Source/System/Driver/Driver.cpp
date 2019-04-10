@@ -258,7 +258,7 @@ void Dystopia::EngineCore::ExecuteGame()
 	Init();
 	PostInit();
 
-	Get<SceneSystem>()->LoadScene("MainMenuFinal.dscene");
+	Get<SceneSystem>()->LoadScene("CastleFinal.dscene");
 
 	while (!mbQuit)
 	{

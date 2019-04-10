@@ -47,6 +47,60 @@
     <ClCompile Include="..\Dependancies\libvpx\y4minput.c" />
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
     <ClCompile Include="Include\IO\XMLParser.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\AiDirector.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\BatAI.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\BossAI.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\BossIntro.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\BossUI.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\CamAi.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\CameraZoomPoint.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\CamShake.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\CaveVines.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\ChangeLevel.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\CharacterController.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\CharacterHitBox.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\ChargerAi.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\CheckPoint.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\EndingMessage.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\EndlessSpin.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\EnvironmentalResponse.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\Fader.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\FallingPillar.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\Flocker.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\ForceBlast.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\ForceFlame.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\ForegroundPasser.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\FormSlam.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\FormSlamChild.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\GauntletFollow.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\GoblinAI.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\IceEncasing.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\IcePillar.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\IciclePackManager.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\Icicles.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\IcicleZone.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\IntroductionScene.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\MainMenu.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\PauseMenu.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\PlayerUIController.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\PrimativeEnemy.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\RandomRockFall.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\RuneAnim.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\RuneSwitch.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\RuneWall.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\Running.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\SkillRelay.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\SpeechBubbleTrigger.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\SplashManager.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\StageRelay.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\TutorialManager.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\VinesPlatform.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\WormCave.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\WormFinalShowdown.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\WormHitBox.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\WormHorizontalCharge.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\WormShadow.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\WormSpitProjectile.cpp" />
     <ClCompile Include="Source\Editor\ShaderView.cpp" />
     <ClCompile Include="Source\System\Graphics\PostProcessSys.cpp" />
     <ClCompile Include="Source\System\Particle\AccelerationAffector.cpp" />
@@ -476,6 +530,60 @@
     <ClInclude Include="Include\Editor\RuntimeMeta.h" />
     <ClInclude Include="Include\System\Particle\FloorAffector.h" />
     <ClInclude Include="Include\Component\VideoRenderer.h" />
+    <ClInclude Include="Resource\BehavioursScripts\AiDirector.h" />
+    <ClInclude Include="Resource\BehavioursScripts\BatAI.h" />
+    <ClInclude Include="Resource\BehavioursScripts\BossAI.h" />
+    <ClInclude Include="Resource\BehavioursScripts\BossIntro.h" />
+    <ClInclude Include="Resource\BehavioursScripts\BossUI.h" />
+    <ClInclude Include="Resource\BehavioursScripts\CamAi.h" />
+    <ClInclude Include="Resource\BehavioursScripts\CameraZoomPoint.h" />
+    <ClInclude Include="Resource\BehavioursScripts\CamShake.h" />
+    <ClInclude Include="Resource\BehavioursScripts\CaveVines.h" />
+    <ClInclude Include="Resource\BehavioursScripts\ChangeLevel.h" />
+    <ClInclude Include="Resource\BehavioursScripts\CharacterController.h" />
+    <ClInclude Include="Resource\BehavioursScripts\CharacterHitBox.h" />
+    <ClInclude Include="Resource\BehavioursScripts\ChargerAi.h" />
+    <ClInclude Include="Resource\BehavioursScripts\CheckPoint.h" />
+    <ClInclude Include="Resource\BehavioursScripts\EndingMessage.h" />
+    <ClInclude Include="Resource\BehavioursScripts\EndlessSpin.h" />
+    <ClInclude Include="Resource\BehavioursScripts\EnvironmentalResponse.h" />
+    <ClInclude Include="Resource\BehavioursScripts\Fader.h" />
+    <ClInclude Include="Resource\BehavioursScripts\FallingPillar.h" />
+    <ClInclude Include="Resource\BehavioursScripts\Flocker.h" />
+    <ClInclude Include="Resource\BehavioursScripts\ForceBlast.h" />
+    <ClInclude Include="Resource\BehavioursScripts\ForceFlame.h" />
+    <ClInclude Include="Resource\BehavioursScripts\ForegroundPasser.h" />
+    <ClInclude Include="Resource\BehavioursScripts\FormSlam.h" />
+    <ClInclude Include="Resource\BehavioursScripts\FormSlamChild.h" />
+    <ClInclude Include="Resource\BehavioursScripts\GauntletFollow.h" />
+    <ClInclude Include="Resource\BehavioursScripts\GoblinAI.h" />
+    <ClInclude Include="Resource\BehavioursScripts\IceEncasing.h" />
+    <ClInclude Include="Resource\BehavioursScripts\IcePillar.h" />
+    <ClInclude Include="Resource\BehavioursScripts\IciclePackManager.h" />
+    <ClInclude Include="Resource\BehavioursScripts\Icicles.h" />
+    <ClInclude Include="Resource\BehavioursScripts\IcicleZone.h" />
+    <ClInclude Include="Resource\BehavioursScripts\IntroductionScene.h" />
+    <ClInclude Include="Resource\BehavioursScripts\MainMenu.h" />
+    <ClInclude Include="Resource\BehavioursScripts\PauseMenu.h" />
+    <ClInclude Include="Resource\BehavioursScripts\PlayerUIController.h" />
+    <ClInclude Include="Resource\BehavioursScripts\PrimativeEnemy.h" />
+    <ClInclude Include="Resource\BehavioursScripts\RandomRockFall.h" />
+    <ClInclude Include="Resource\BehavioursScripts\RuneAnim.h" />
+    <ClInclude Include="Resource\BehavioursScripts\RuneSwitch.h" />
+    <ClInclude Include="Resource\BehavioursScripts\RuneWall.h" />
+    <ClInclude Include="Resource\BehavioursScripts\Running.h" />
+    <ClInclude Include="Resource\BehavioursScripts\SkillRelay.h" />
+    <ClInclude Include="Resource\BehavioursScripts\SpeechBubbleTrigger.h" />
+    <ClInclude Include="Resource\BehavioursScripts\SplashManager.h" />
+    <ClInclude Include="Resource\BehavioursScripts\StageRelay.h" />
+    <ClInclude Include="Resource\BehavioursScripts\TutorialManager.h" />
+    <ClInclude Include="Resource\BehavioursScripts\VinesPlatform.h" />
+    <ClInclude Include="Resource\BehavioursScripts\WormCave.h" />
+    <ClInclude Include="Resource\BehavioursScripts\WormFinalShowdown.h" />
+    <ClInclude Include="Resource\BehavioursScripts\WormHitBox.h" />
+    <ClInclude Include="Resource\BehavioursScripts\WormHorizontalCharge.h" />
+    <ClInclude Include="Resource\BehavioursScripts\WormShadow.h" />
+    <ClInclude Include="Resource\BehavioursScripts\WormSpitProjectile.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DystopiaEngine1.rc" />
@@ -724,13 +832,13 @@
       <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\lodepng\;$(SolutionDir)Dependancies\libvpx;$(SolutionDir)Dependancies\libvpx\third_party\libyuv\include;$(SolutionDir)Dependancies\libvpx\third_party\libwebm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DebugInformationFormat>None</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)Dependancies\freetype-2.9.1\lib;$(SolutionDir)Dependancies\glew-2.1.0\lib\Release\x64;$(SolutionDir)Dependancies\FMOD\lib;$(SolutionDir)Dependancies\libvpx\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>freetype.lib;opengl32.lib;glew32.lib;fmod64_vc.lib;vpxmd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
