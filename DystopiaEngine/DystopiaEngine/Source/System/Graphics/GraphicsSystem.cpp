@@ -206,7 +206,7 @@ void Dystopia::GraphicsSystem::PreInit(void)
 bool Dystopia::GraphicsSystem::Init(void)
 {
 	DEBUG_BREAK(mViews.size() < 3, "Graphics System Error: Graphics did not load settings properly!\n");
-	auto pShaderSys = CORE::Get<ShaderSystem>();
+	//auto pShaderSys = CORE::Get<ShaderSystem>();
 
 	//for (auto& e : mViews)
 	//	e.Init();
@@ -494,7 +494,7 @@ void Dystopia::GraphicsSystem::DrawDebug(Camera& _cam)
 			if (col->GetFlags() & eObjFlag::FLAG_EDITOR_OBJ) continue;
 		
 		GameObject* pOwner = col->GetOwner();
-		if (pOwner && (pOwner->GetFlags() & ActiveFlags) == ActiveFlags && (col->GetFlags() & ActiveFlags) == ActiveFlags)
+		if (pOwner && (pOwner->GetFlags() & ActiveFlags) && (col->GetFlags() & ActiveFlags))
 		{
 			auto pTransform = pOwner->GetComponent<Transform>();
 			if (col->GetColliderType() != eColliderType::CIRCLE)
@@ -748,6 +748,12 @@ void Dystopia::GraphicsSystem::PostUpdate(void)
 			(Cam.GetFlags() & eObjFlag::FLAG_ACTIVE) &&
 			(Cam.GetOwner()->GetFlags() & eObjFlag::FLAG_ACTIVE))
 		{
+			const auto vp = Cam.GetViewport();
+
+			glViewport(static_cast<int>(vp.mnX), static_cast<int>(vp.mnY),
+				static_cast<int>(vp.mnWidth), static_cast<int>(vp.mnHeight));
+			Cam.GetSurface()->Bind();
+
 			debugShader->UploadUniform("ViewMat"   , Cam.GetViewMatrix()      );
 			debugShader->UploadUniform("ProjectMat", Cam.GetProjectionMatrix());
 			DrawDebug(Cam);
