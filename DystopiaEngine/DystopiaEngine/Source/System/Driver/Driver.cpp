@@ -41,6 +41,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Editor/EditorIntermediary.h"
 #include "System/Database/DatabaseSystem.h"
 #include "System/Particle/ParticleSystem.h"
+#include "System/Graphics/PostProcessSys.h"
+#include "System/Video/VideoSystem.h"
 
 // SubSystems
 #include "System/Graphics/MeshSystem.h"
@@ -256,7 +258,7 @@ void Dystopia::EngineCore::ExecuteGame()
 	Init();
 	PostInit();
 
-	Dystopia::EngineCore::GetInstance()->GetSystem<Dystopia::SceneSystem>()->LoadScene("SplashScreen.dscene");
+	Get<SceneSystem>()->LoadScene("SplashScreen.dscene");
 
 	while (!mbQuit)
 	{
@@ -265,6 +267,7 @@ void Dystopia::EngineCore::ExecuteGame()
 		Update();
 		PostUpdate();
 	}
+
 	Shutdown();
 	return;
 }

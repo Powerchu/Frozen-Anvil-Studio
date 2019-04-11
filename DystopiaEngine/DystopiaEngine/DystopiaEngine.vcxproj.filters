@@ -451,9 +451,126 @@
     <ClCompile Include="Source\System\Particle\BubbleAffector.cpp">
       <Filter>Game Engine\Systems\Particle\Affectors\Bubble</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Component\VideoRenderer.cpp">
+      <Filter>Game Engine\Components\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Video\VideoSystem.cpp">
+      <Filter>Game Engine\Systems\Video</Filter>
+    </ClCompile>
     <ClCompile Include="Source\System\Particle\FloorAffector.cpp">
       <Filter>Game Engine\Systems\Particle\Affectors\Floor</Filter>
     </ClCompile>
+    <ClCompile Include="..\Dependancies\libvpx\args.c">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependancies\libvpx\ivfdec.c">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependancies\libvpx\ivfenc.c">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependancies\libvpx\md5_utils.c">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependancies\libvpx\third_party\libwebm\mkvmuxer\mkvmuxer.cc">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependancies\libvpx\third_party\libwebm\mkvmuxer\mkvmuxerutil.cc">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependancies\libvpx\third_party\libwebm\mkvparser\mkvparser.cc">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependancies\libvpx\third_party\libwebm\mkvparser\mkvreader.cc">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependancies\libvpx\third_party\libwebm\mkvmuxer\mkvwriter.cc">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependancies\libvpx\rate_hist.c">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependancies\libvpx\tools_common.c">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependancies\libvpx\video_reader.c">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependancies\libvpx\video_writer.c">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependancies\libvpx\warnings.c">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependancies\libvpx\webmdec.cc">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependancies\libvpx\webmenc.cc">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependancies\libvpx\y4menc.c">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Dependancies\libvpx\y4minput.c">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\System\Graphics\PostProcessSys.cpp">
+      <Filter>Game Engine\Systems\PostProcess</Filter>
+    </ClCompile>
+    <ClCompile Include="Resource\BehavioursScripts\AiDirector.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\BatAI.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\BossAI.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\BossIntro.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\BossUI.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\CamAi.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\CameraZoomPoint.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\CamShake.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\CaveVines.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\ChangeLevel.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\CharacterController.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\CharacterHitBox.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\ChargerAi.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\CheckPoint.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\EndingMessage.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\EndlessSpin.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\EnvironmentalResponse.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\Fader.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\FallingPillar.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\Flocker.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\ForceBlast.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\ForceFlame.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\ForegroundPasser.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\FormSlam.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\FormSlamChild.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\GauntletFollow.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\GoblinAI.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\IceEncasing.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\IcePillar.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\IciclePackManager.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\Icicles.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\IcicleZone.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\IntroductionScene.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\MainMenu.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\PauseMenu.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\PlayerUIController.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\PrimativeEnemy.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\RandomRockFall.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\RuneAnim.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\RuneSwitch.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\RuneWall.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\Running.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\SkillRelay.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\SpeechBubbleTrigger.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\SplashManager.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\StageRelay.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\TutorialManager.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\VinesPlatform.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\WormCave.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\WormFinalShowdown.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\WormHitBox.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\WormHorizontalCharge.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\WormShadow.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\WormSpitProjectile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Include\Behaviour\Behaviour.h">
@@ -1230,9 +1347,153 @@
     <ClInclude Include="Include\System\Particle\BubbleAffector.h">
       <Filter>Game Engine\Systems\Particle\Affectors\Bubble</Filter>
     </ClInclude>
+    <ClInclude Include="Include\Component\VideoRenderer.h">
+      <Filter>Game Engine\Components\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Video\VideoSystem.h">
+      <Filter>Game Engine\Systems\Video</Filter>
+    </ClInclude>
     <ClInclude Include="Include\System\Particle\FloorAffector.h">
       <Filter>Game Engine\Systems\Particle\Affectors\Floor</Filter>
     </ClInclude>
+    <ClInclude Include="..\Dependancies\libvpx\args.h">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\libvpx\ivfdec.h">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\libvpx\ivfenc.h">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\libvpx\md5_utils.h">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\libvpx\third_party\libwebm\mkvmuxer\mkvmuxer.h">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\libvpx\third_party\libwebm\mkvmuxer\mkvmuxertypes.h">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\libvpx\third_party\libwebm\mkvmuxer\mkvmuxerutil.h">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\libvpx\third_party\libwebm\mkvparser\mkvparser.h">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\libvpx\third_party\libwebm\mkvparser\mkvreader.h">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\libvpx\third_party\libwebm\mkvmuxer\mkvwriter.h">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\libvpx\rate_hist.h">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\libvpx\tools_common.h">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\libvpx\video_common.h">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\libvpx\video_reader.h">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\libvpx\video_writer.h">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\libvpx\vp8_rtcd.h">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\libvpx\vp9_rtcd.h">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\libvpx\vpx_config.h">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\libvpx\vpx_dsp_rtcd.h">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\libvpx\vpx_scale_rtcd.h">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\libvpx\vpx_version.h">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\libvpx\warnings.h">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\libvpx\webmdec.h">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\libvpx\webmenc.h">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\libvpx\y4menc.h">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Dependancies\libvpx\y4minput.h">
+      <Filter>Dependancies\libvpx</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\DataStructure\Unused.h">
+      <Filter>DataStructures</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\System\Graphics\PostProcessSys.h">
+      <Filter>Game Engine\Systems\PostProcess</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource\BehavioursScripts\AiDirector.h" />
+    <ClInclude Include="Resource\BehavioursScripts\BatAI.h" />
+    <ClInclude Include="Resource\BehavioursScripts\BossAI.h" />
+    <ClInclude Include="Resource\BehavioursScripts\BossIntro.h" />
+    <ClInclude Include="Resource\BehavioursScripts\BossUI.h" />
+    <ClInclude Include="Resource\BehavioursScripts\CamAi.h" />
+    <ClInclude Include="Resource\BehavioursScripts\CameraZoomPoint.h" />
+    <ClInclude Include="Resource\BehavioursScripts\CamShake.h" />
+    <ClInclude Include="Resource\BehavioursScripts\CaveVines.h" />
+    <ClInclude Include="Resource\BehavioursScripts\ChangeLevel.h" />
+    <ClInclude Include="Resource\BehavioursScripts\CharacterController.h" />
+    <ClInclude Include="Resource\BehavioursScripts\CharacterHitBox.h" />
+    <ClInclude Include="Resource\BehavioursScripts\ChargerAi.h" />
+    <ClInclude Include="Resource\BehavioursScripts\CheckPoint.h" />
+    <ClInclude Include="Resource\BehavioursScripts\EndingMessage.h" />
+    <ClInclude Include="Resource\BehavioursScripts\EndlessSpin.h" />
+    <ClInclude Include="Resource\BehavioursScripts\EnvironmentalResponse.h" />
+    <ClInclude Include="Resource\BehavioursScripts\Fader.h" />
+    <ClInclude Include="Resource\BehavioursScripts\FallingPillar.h" />
+    <ClInclude Include="Resource\BehavioursScripts\Flocker.h" />
+    <ClInclude Include="Resource\BehavioursScripts\ForceBlast.h" />
+    <ClInclude Include="Resource\BehavioursScripts\ForceFlame.h" />
+    <ClInclude Include="Resource\BehavioursScripts\ForegroundPasser.h" />
+    <ClInclude Include="Resource\BehavioursScripts\FormSlam.h" />
+    <ClInclude Include="Resource\BehavioursScripts\FormSlamChild.h" />
+    <ClInclude Include="Resource\BehavioursScripts\GauntletFollow.h" />
+    <ClInclude Include="Resource\BehavioursScripts\GoblinAI.h" />
+    <ClInclude Include="Resource\BehavioursScripts\IceEncasing.h" />
+    <ClInclude Include="Resource\BehavioursScripts\IcePillar.h" />
+    <ClInclude Include="Resource\BehavioursScripts\IciclePackManager.h" />
+    <ClInclude Include="Resource\BehavioursScripts\Icicles.h" />
+    <ClInclude Include="Resource\BehavioursScripts\IcicleZone.h" />
+    <ClInclude Include="Resource\BehavioursScripts\IntroductionScene.h" />
+    <ClInclude Include="Resource\BehavioursScripts\MainMenu.h" />
+    <ClInclude Include="Resource\BehavioursScripts\PauseMenu.h" />
+    <ClInclude Include="Resource\BehavioursScripts\PlayerUIController.h" />
+    <ClInclude Include="Resource\BehavioursScripts\PrimativeEnemy.h" />
+    <ClInclude Include="Resource\BehavioursScripts\RandomRockFall.h" />
+    <ClInclude Include="Resource\BehavioursScripts\RuneAnim.h" />
+    <ClInclude Include="Resource\BehavioursScripts\RuneSwitch.h" />
+    <ClInclude Include="Resource\BehavioursScripts\RuneWall.h" />
+    <ClInclude Include="Resource\BehavioursScripts\Running.h" />
+    <ClInclude Include="Resource\BehavioursScripts\SkillRelay.h" />
+    <ClInclude Include="Resource\BehavioursScripts\SpeechBubbleTrigger.h" />
+    <ClInclude Include="Resource\BehavioursScripts\SplashManager.h" />
+    <ClInclude Include="Resource\BehavioursScripts\StageRelay.h" />
+    <ClInclude Include="Resource\BehavioursScripts\TutorialManager.h" />
+    <ClInclude Include="Resource\BehavioursScripts\VinesPlatform.h" />
+    <ClInclude Include="Resource\BehavioursScripts\WormCave.h" />
+    <ClInclude Include="Resource\BehavioursScripts\WormFinalShowdown.h" />
+    <ClInclude Include="Resource\BehavioursScripts\WormHitBox.h" />
+    <ClInclude Include="Resource\BehavioursScripts\WormHorizontalCharge.h" />
+    <ClInclude Include="Resource\BehavioursScripts\WormShadow.h" />
+    <ClInclude Include="Resource\BehavioursScripts\WormSpitProjectile.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DataStructures">
@@ -1775,8 +2036,23 @@
     <Filter Include="Game Engine\Systems\Particle\Affectors\Bubble">
       <UniqueIdentifier>{d1689e74-f958-4f4e-a2e4-4403a782b602}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Game Engine\Components\Video">
+      <UniqueIdentifier>{3c22fab1-4010-4b5b-861e-49fe1ed6d4b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\Video">
+      <UniqueIdentifier>{7cae69ad-45f2-4ac5-b2a2-7798e9bc1c38}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Game Engine\Systems\Particle\Affectors\Floor">
       <UniqueIdentifier>{213c85af-3027-45b1-b334-2ef1262015d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependancies">
+      <UniqueIdentifier>{36c0d8ff-1a06-4aeb-842f-5c950ad76a5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependancies\libvpx">
+      <UniqueIdentifier>{9b6039c0-cc6c-4ae1-b97d-01c4a5dac729}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Engine\Systems\PostProcess">
+      <UniqueIdentifier>{621f58d6-da63-4a8a-a162-25ac75e00569}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

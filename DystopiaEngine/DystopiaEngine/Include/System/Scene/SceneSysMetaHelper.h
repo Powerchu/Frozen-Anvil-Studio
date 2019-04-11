@@ -27,6 +27,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Input/InputSystem.h"
 #include "System/Sound/SoundSystem.h"
 #include "System/AI/AISystem.h"
+#include "System/Video/VideoSystem.h"
 
 #include "Component/ComponentList.h"
 #include "Component/Component.h"
@@ -39,6 +40,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/TextRenderer.h"
 #include "Component/AudioSource.h"
 #include "Component/AudioListener.h"
+#include "Component/VideoRenderer.h"
 
 namespace Dystopia
 {

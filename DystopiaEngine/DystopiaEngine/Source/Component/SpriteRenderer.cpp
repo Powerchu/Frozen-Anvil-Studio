@@ -109,8 +109,9 @@ void Dystopia::SpriteRenderer::Draw(void) const noexcept
 				shader->UploadUniform("vUVBounds", 0.f, 0.f, 1.f, 1.f);
 			}
 		}
-		Renderer::Draw();
 	}
+
+	Renderer::Draw();
 }
 
 void Dystopia::SpriteRenderer::Update(float _fDT)
@@ -268,12 +269,28 @@ void Dystopia::SpriteRenderer::Unserialise(TextSerialiser& _in)
 	_in.ConsumeEndBlock();
 }
 
+Math::Vec4 Dystopia::SpriteRenderer::GetUVBounds(void) const
+{
+	if (mpAtlas && mnID < mAnimations.size())
+	{
+		auto& mSections = mpAtlas->GetAllSections();
+		auto& section = mSections[mAnimations[mnID].mnID];
+		const float uStart = section.uStart + mnCol * section.mCol;
+		const float vStart = section.vStart + mnRow * section.mRow;
+		const float uEnd = section.uStart + (mnCol + 1) * section.mCol;
+		const float vEnd = section.vStart + (mnRow + 1) * section.mRow;
+		return Math::Vec4{ uStart, vStart, uEnd, vEnd };
+	}
+	return Math::Vec4{ 0,0,1,1 };
+}
+
 void Dystopia::SpriteRenderer::EditorUI(void) noexcept
 {
 #if EDITOR
 	auto cmd = Editor::EditorMain::GetInstance()->GetSystem<Editor::EditorCommands>();
 
 	EGUI::PushLeftAlign(95);
+	Renderer::TranslucencyField();
 	Renderer::TextureField();
 	EGUI::Display::HorizontalSeparator();
 

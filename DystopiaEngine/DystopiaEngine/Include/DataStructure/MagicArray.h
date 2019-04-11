@@ -391,8 +391,16 @@ void MagicArray<T, PP>::Remove(T* _pObj)
 
 		if (diff < PP::blk_sz && diff >= 0)
 		{
-			Destroy(*_pObj);
-			blk.present[blk.GetPresentIndex(diff)] &= ~(1Ui64 << (diff & 63Ui64));
+			auto     const idx  = blk.GetPresentIndex(diff);
+			uint64_t const flag = 1Ui64 << (diff & 63Ui64);
+			auto& segment = blk.present[idx];
+
+			if (segment & flag)
+			{
+				Destroy(*_pObj);
+				blk.present[idx] &= ~flag;
+			}
+
 			return;
 		}
 	}

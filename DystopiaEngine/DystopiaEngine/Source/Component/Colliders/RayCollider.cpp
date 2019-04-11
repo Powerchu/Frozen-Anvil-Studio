@@ -298,15 +298,15 @@ namespace Dystopia
 				return false;
 			/*No break here on purpose*/
 		case false:
-			if (_OutputResult != nullptr)
+			if (_OutputResult != nullptr && t < _OutputResult->mTimeIntersection)
 			{
 				/*Insert Collision Info*/
-				_OutputResult->mEdgeNormal =  (_Pos + (_RayDir*t) - _Collider->GetGlobalPosition()).Normalise();
+				_OutputResult->mEdgeNormal       =  (_Pos + (_RayDir*t) - _Collider->GetGlobalPosition()).Normalise();
 				_OutputResult->mTimeIntersection = t;
-				_OutputResult->mCollisionPoint = _Pos + (_RayDir*t);
-				_OutputResult->mCollidedWith = _Collider->GetOwner();
+				_OutputResult->mCollisionPoint   = _Pos + (_RayDir*t);
+				_OutputResult->mCollidedWith     = _Collider->GetOwner();
+				return true;
 			}
-			return true;
 		}
 		return false;
 	}
@@ -342,19 +342,27 @@ namespace Dystopia
 			v2.Negate<Math::NegateFlag::X>();
 #endif
 
-			if (v1.Dot(_RayDir) > 0.f || v2.Dot(_RayDir) > 0.f)
+			if (v1.Dot(_RayDir) > 0.00014f || v2.Dot(_RayDir) > 0.00014f)
+			{
+				//DEBUG_PRINT(eLog::MESSAGE, "Cone Test failed %f  %f ", v1.Dot(_RayDir), v2.Dot(_RayDir) > 0.f);
 				continue;
+			}
+				
 			/*Get the intersection time*/
 			float cosTheta = _RayDir.Dot(-elem.mNorm3);
 			float adj = Math::Abs(v1_copy.Dot(elem.mNorm3));
 			float time = adj / cosTheta;
 			/*If the time of intersection to the edge is less than the current time of intersection, update it*/
 
-			if (time < _OutputResult->mTimeIntersection)
+			if (time < _OutputResult->mTimeIntersection && time >= 0.f)
 			{
 				if (_MaxLength)
 					if ((time * _RayDir).MagnitudeSqr() > _MaxLength * _MaxLength)
+					{
+						//DEBUG_PRINT(eLog::MESSAGE, "%f is more than limit ", time);
 						continue;
+					}
+
 
 
 

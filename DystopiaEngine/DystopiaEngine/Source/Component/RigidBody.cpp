@@ -228,7 +228,7 @@ namespace Dystopia
 		 ********************************************************************/
 		 //Store previous Position
 		mPrevPosition = mPosition = GetOwner()->GetComponent<Transform>()->GetGlobalPosition();
-		//mfZAngleDeg   = GetOwner()->GetComponent<Transform>()->GetGlobalRotation().ToEuler().z;
+		mfZAngleDeg   = GetOwner()->GetComponent<Transform>()->GetGlobalRotation().ToEuler().z;
 
 		if (Get_IsKinematic()) return;
 
@@ -749,6 +749,16 @@ namespace Dystopia
 	{
 		mfZAngleDeg = zDeg;
 	
+	}
+
+	void Dystopia::RigidBody::SetLinearDamping(Math::Vector2 damp, bool y)
+	{
+		if (y)
+			mLinearDamping.y = damp.y;
+		else
+		{
+			mLinearDamping.x = damp.x;
+		}
 	}
 
 	void RigidBody::Set_IsStatic(bool _state)

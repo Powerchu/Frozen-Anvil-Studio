@@ -20,7 +20,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 
 
 Dystopia::Texture::Texture(void) noexcept :
-	mnType{ 0 }, mnID{ 0 }, mData{}
+	mnType{ 0 }, mnID{ 0 }, mData{}, mstrPath{}
 {
 	glGenTextures(1, &mnID);
 }
@@ -32,7 +32,7 @@ Dystopia::Texture::Texture(unsigned _nType, HashString const& _strPath, Image& _
 }
 
 Dystopia::Texture::Texture(unsigned _nWidth, unsigned _nHeight, unsigned _nType) noexcept :
-	mnType{ _nType }, mnID{ 0 }, mData{}
+	mnType{ _nType }, mnID{ 0 }, mData{}, mstrPath{}
 {
 	glGenTextures(1, &mnID);
 	mData.mnWidth  = _nWidth;
@@ -40,7 +40,7 @@ Dystopia::Texture::Texture(unsigned _nWidth, unsigned _nHeight, unsigned _nType)
 }
 
 Dystopia::Texture::Texture(Texture&& _other) noexcept :
-	mnType{ _other.mnType }, mnID{ _other.mnID }, mData{ Ut::Move(_other.mData) }
+	mnType{ _other.mnType }, mnID{ _other.mnID }, mData{ Ut::Move(_other.mData) }, mstrPath{ Ut::Move(_other.mstrPath) }
 {
 	_other.mnID = 0;
 }

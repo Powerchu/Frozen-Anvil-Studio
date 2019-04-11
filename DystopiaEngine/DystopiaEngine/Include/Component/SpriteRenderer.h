@@ -99,6 +99,8 @@ namespace Dystopia
 		Math::Vec2 Resized(float _xMult = 1.f, float _yMult = 1.f) const;
 		void ResizeToFit(float _xMult = 1.f, float _yMult = 1.f) const;
 
+		Math::Vec4 GetUVBounds(void) const;
+
 	private:
 		struct SpriteSheet
 		{

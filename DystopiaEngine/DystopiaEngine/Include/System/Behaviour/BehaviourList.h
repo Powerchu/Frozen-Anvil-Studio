@@ -22,6 +22,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #if EDITOR
 
 #else
+
 #include "../Resource/BehavioursScripts/MainMenu.h"
 #include "../Resource/BehavioursScripts/PauseMenu.h"
 #include "../Resource/BehavioursScripts/SplashManager.h"
@@ -39,8 +40,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Resource/BehavioursScripts/ForceFlame.h"
 #include "../Resource/BehavioursScripts/FormSlam.h"
 #include "../Resource/BehavioursScripts/FormSlamChild.h"
-#include "../Resource/BehavioursScripts/FormSpike.h"
-#include "../Resource/BehavioursScripts/FormSpikeChild.h"
+
+
 #include "../Resource/BehavioursScripts/GoblinAI.h"
 #include "../Resource/BehavioursScripts/PlayerUIController.h"
 #include "../Resource/BehavioursScripts/PrimativeEnemy.h"
@@ -48,13 +49,13 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Resource/BehavioursScripts/RuneSwitch.h"
 #include "../Resource/BehavioursScripts/RuneWall.h"
 #include "../Resource/BehavioursScripts/SkillRelay.h"
-#include "../Resource/BehavioursScripts/SortChildOrder.h"
+
 #include "../Resource/BehavioursScripts/VinesPlatform.h"
 #include "../Resource/BehavioursScripts/IntroductionScene.h"
 #include "../Resource/BehavioursScripts/CheckPoint.h"
 #include "../Resource/BehavioursScripts/ChangeLevel.h"
 
-#include "../Resource/BehavioursScripts/EmpoweredStone.h"
+
 #include "../Resource/BehavioursScripts/EnvironmentalResponse.h"
 #include "../Resource/BehavioursScripts/Flocker.h"
 #include "../Resource/BehavioursScripts/IceEncasing.h"
@@ -63,16 +64,32 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "../Resource/BehavioursScripts/IcicleZone.h"
 #include "../Resource/BehavioursScripts/IntroductionScene.h"
 #include "../Resource/BehavioursScripts/SkillRelay.h"
-#include "../Resource/BehavioursScripts/SortChildOrder.h"
+
 #include "../Resource/BehavioursScripts/StageRelay.h"
-#include "../Resource/BehavioursScripts/TestBubble.h"
-#include "../Resource/BehavioursScripts/TownPanning.h"
+
 #include "../Resource/BehavioursScripts/WormCave.h"
 #include "../Resource/BehavioursScripts/WormHitBox.h"
 #include "../Resource/BehavioursScripts/WormHorizontalCharge.h"
 #include "../Resource/BehavioursScripts/WormShadow.h"
 #include "../Resource/BehavioursScripts/CameraZoomPoint.h"
 #include "../Resource/BehavioursScripts/ForegroundPasser.h"
+
+#include "../Resource/BehavioursScripts/BatAI.h"
+#include "../Resource/BehavioursScripts/BossIntro.h"
+#include "../Resource/BehavioursScripts/CaveVines.h"
+#include "../Resource/BehavioursScripts/ChargerAi.h"
+#include "../Resource/BehavioursScripts/EndingMessage.h"
+#include "../Resource/BehavioursScripts/EndlessSpin.h"
+#include "../Resource/BehavioursScripts/Flocker.h"
+#include "../Resource/BehavioursScripts/GauntletFollow.h"
+#include "../Resource/BehavioursScripts/IceEncasing.h"
+#include "../Resource/BehavioursScripts/IciclePackManager.h"
+#include "../Resource/BehavioursScripts/RandomRockFall.h"
+#include "../Resource/BehavioursScripts/Running.h"
+#include "../Resource/BehavioursScripts/SpeechBubbleTrigger.h"
+#include "../Resource/BehavioursScripts/TutorialManager.h"
+#include "../Resource/BehavioursScripts/WormFinalShowdown.h"
+#include "../Resource/BehavioursScripts/WormSpitProjectile.h"
 #endif
 
 #if EDITOR
@@ -83,6 +100,7 @@ namespace Dystopia
 {
 	using BehaviourList = typename Ut::MetaAutoIndexer<
 		/*Add Behaviours Here*/
+		
 		class MainMenu,
 		class PauseMenu,
 		class SplashManager,
@@ -102,8 +120,6 @@ namespace Dystopia
 		class ForceFlame,
 		class FormSlam,
 		class FormSlamChild,
-		class FormSpike,
-		class FormSpikeChild,
 		class ForegroundPasser,
 		class GoblinAI,
 		class PlayerUIController,
@@ -112,27 +128,38 @@ namespace Dystopia
 		class RuneSwitch,
 		class RuneWall,
 		class SkillRelay,
-		class SortChildOrder,
 		class VinesPlatform,
 		class IntroductionScene,
 		class CheckPoint,
-		class EmpoweredStone,
 		class EnvironmentalResponse,
 		class Flocker,
 		class IceEncasing,
 		class IcePillar,
 		class Icicles,
 		class IcicleZone,
-		class IntroductionScene,
 		class SkillRelay,
-		class SortChildOrder,
 		class StageRelay,
-		class TestBubble,
-		class TownPanning,
 		class WormCave,
 		class WormHitBox,
 		class WormHorizontalCharge,
-		class WormShadow
+		class WormShadow,
+		class BatAI,
+		class BossIntro,
+		class CaveVines,
+		class ChargerAi,
+		class EndingMessage,
+		class EndlessSpin,
+		class Flocker,
+		class GauntletFollow,
+		class IceEncasing,
+		class IciclePackManager,
+		class RandomRockFall,
+		class Running,
+		class SpeechBubbleTrigger,
+		class TutorialManager,
+		class WormFinalShowdown,
+		class WormSpitProjectile
+		
 	>::result;
 }
 
