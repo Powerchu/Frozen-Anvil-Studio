@@ -178,13 +178,23 @@
     
 #### BehaviourTree Editor
     Not implemented yet.
-    However, a behaviour tree viewer is avaliable once you add an AI Component in the Inspector. More on this below under their respective categories.
+    However, a behaviour tree viewer is avaliable once you add an AI Component 
+    in the Inspector. More on this below under their respective categories.
     
 #### DataSheet
-    This is a serialized data format which allows read/write. Under the hood, it utilises a map data structure to store key-value types. How the team used Datasheets are in Character's default value, skills default values and interactables default attributes. In order to use them, callbacks are avaliable. However, if you want to understand how these work, please approach and contact Shannon.
+    This is a serialized data format which allows read/write. Under the hood, 
+    it utilises a map data structure to store key-value types. How the team used 
+    Datasheets are in Character's default value, skills default values and 
+    interactables default attributes. In order to use them, callbacks are avaliable. 
+    However, if you want to understand how these work, please approach and 
+    contact Shannon.
     
 #### GameView
-    View port as seen from the game view camera. The game camera relies on having one Main Camera in the scene. So do make sure there is one. Game Cameras can be either Orthographic or Perspective camerea. 
+    View port as seen from the game view camera. The game camera relies on having 
+    one Main Camera in the scene. So do make sure there is one. Game Cameras can 
+    be either Orthographic or Perspective camerea. 
     
 #### SceneView
-    This is the editor view port and is strictly Orthographic. Details of the camera position and zoom is avaliable on the top left corner. Hold right click to pan the camera, and use mousewheel to zoom in and out.
+    This is the editor view port and is strictly Orthographic. Details of the camera 
+    position and zoom is avaliable on the top left corner. Hold right click to pan the 
+    camera, and use mousewheel to zoom in and out.
