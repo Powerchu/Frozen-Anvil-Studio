@@ -46,9 +46,9 @@ bool Gfx::InitGraphicsAPI(void const* phwnd, GfxMode _mode)
 			__debugbreak();
 #   endif
 
-#if defined(RUNTIME_GFXAPI) && RUNTIME_GFXAPI
 	ActiveMode = _mode;
 
+#if defined(RUNTIME_GFXAPI) && RUNTIME_GFXAPI
 	switch (_mode)
 	{
 	case GfxMode::OPENGL:
@@ -64,7 +64,6 @@ bool Gfx::InitGraphicsAPI(void const* phwnd, GfxMode _mode)
 	return false;
 #else
 
-	UNUSED_PARAMETER(_mode);
 	pInstance = Dystopia::DefaultAllocator<Ut::RemovePtr_t<decltype(pInstance)>>::ConstructAlloc();
 	return static_cast<OpenGL_API*>(pInstance)->InitGraphicsAPI(phwnd);
 
@@ -77,6 +76,9 @@ void Gfx::ShutdownGraphicsAPI(void) noexcept
 	{
 	case GfxMode::OPENGL:
 		Dystopia::DefaultAllocator<OpenGL_API>::DestructFree(static_cast<OpenGL_API*>(pInstance));
+		break;
+
+	case GfxMode::NONE:
 		break;
 	}
 }

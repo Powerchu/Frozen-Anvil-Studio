@@ -82,6 +82,7 @@ namespace Dystopia
 		Texture* GetTexture(unsigned = 0) const noexcept;
 		AutoArray<Tuple<unsigned, Texture*>> const& GetTextures(void) const noexcept;
 
+		void SetTransparencyFlag(bool) noexcept;
 		bool HasTransparency(void) const noexcept;
 
 		template <typename T>
@@ -135,9 +136,10 @@ namespace Dystopia
 #   if EDITOR
 		AutoArray<char const*> mOverrideNames;
 
-		void TextureField();
-		void MeshField();
-		void ShaderField();
+		void TranslucencyField(void) noexcept;
+		void TextureField(void);
+		void MeshField(void);
+		void ShaderField(void);
 #   endif
 	};
 }

@@ -161,6 +161,6 @@ void Dystopia::Scene::SetSceneName(const std::string& _name)
 
 HashString Dystopia::Scene::GetSceneName(void) const
 {
-	return mName;
+	return  mName.c_str();
 }
 

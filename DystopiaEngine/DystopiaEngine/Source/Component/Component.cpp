@@ -159,13 +159,11 @@ void Dystopia::Component::Unserialise(TextSerialiser& _in)
 		GameObject* owner = sceneSys->GetActiveScene().FindGameObject(nOwner);
 
 		if (owner)
-			owner->AddComponent(this, Component::TAG{});
+			owner->AddComponent(this, TAG{});
 		else
 		{
 #if EDITOR
 			::Editor::EditorMain::GetInstance()->GetSystem<::Editor::EditorResource>()->AddComponent(this, nOwner, true);
-#else 
-			__debugbreak(); // something went wrong
 #endif 
 		}
 	}

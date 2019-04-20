@@ -4,9 +4,9 @@
 \author Tan Jie Wei Jacky (100%)
 \par    email: t.jieweijacky\@digipen.edu
 \brief
-	BRIEF HERE
+	Graphics System
 
-All Content Copyright © 2018 DigiPen (SINGAPORE) Corporation, all rights reserved.
+All Content Copyright © 2019 DigiPen (SINGAPORE) Corporation, all rights reserved.
 Reproduction or disclosure of this file or its contents without the
 prior written consent of DigiPen Institute of Technology is prohibited.
 */
@@ -22,6 +22,8 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Math/Vectors.h"
 
 #include "Utility/Utility.h"
+#include "DataStructure/Tuple.h"
+#include "DataStructure/AutoArray.h"
 
 #include <map>
 #include <string>
@@ -89,7 +91,7 @@ namespace Dystopia
 		Framebuffer& GetGameView(void) const noexcept;
 		Framebuffer& GetUIView(void) const noexcept;
 		Framebuffer& GetFrameBuffer(void) const noexcept;
-		Framebuffer& GetSceneView(void) const noexcept;
+		//Framebuffer& GetSceneView(void) const noexcept;
 		Framebuffer& GetView(int) const;
 
 		template <typename ...Ty>
@@ -99,12 +101,14 @@ namespace Dystopia
 		static void SetDrawMode(int) noexcept;
 
 		void SetResolution(unsigned w, unsigned h) noexcept;
-		void UpdateResolution(void) const noexcept;
+		void UpdateResolution(void) noexcept;
 
 		void EditorAspectRatio(void);
 		void EditorUI(void);
 
 		void DrawSplash(void);
+
+		unsigned GetEditorView(void) const;
 	private:
 
 		Math::Vector4 mvDebugColour;
@@ -124,8 +128,15 @@ namespace Dystopia
 		void StartFrame(void);
 		void EndFrame(void);
 
-		void DrawScene(Camera&, Math::Matrix4&, Math::Matrix4&);
-		void DrawDebug(Camera&, Math::Matrix4&, Math::Matrix4&);
+		void DrawScene(Camera& /*, Math::Mat4 const&, Math::Mat4 const&*/ );
+		void DrawDebug(Camera& /*, Math::Mat4 const&, Math::Mat4 const&*/ );
+
+		void LoadFramebuffers(void) noexcept;
+
+		AutoArray<Renderer*>       mSet1;
+		AutoArray<SpriteRenderer*> mSet2;
+		AutoArray<TextRenderer*>   mSet3;
+		AutoArray<Tuple<Renderer*, unsigned>> mTransparency;
 
 #	if EDITOR
 		bool mbVSync;

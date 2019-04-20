@@ -27,9 +27,82 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Dependancies\libvpx\args.c" />
+    <ClCompile Include="..\Dependancies\libvpx\ivfdec.c" />
+    <ClCompile Include="..\Dependancies\libvpx\ivfenc.c" />
+    <ClCompile Include="..\Dependancies\libvpx\md5_utils.c" />
+    <ClCompile Include="..\Dependancies\libvpx\rate_hist.c" />
+    <ClCompile Include="..\Dependancies\libvpx\third_party\libwebm\mkvmuxer\mkvmuxer.cc" />
+    <ClCompile Include="..\Dependancies\libvpx\third_party\libwebm\mkvmuxer\mkvmuxerutil.cc" />
+    <ClCompile Include="..\Dependancies\libvpx\third_party\libwebm\mkvmuxer\mkvwriter.cc" />
+    <ClCompile Include="..\Dependancies\libvpx\third_party\libwebm\mkvparser\mkvparser.cc" />
+    <ClCompile Include="..\Dependancies\libvpx\third_party\libwebm\mkvparser\mkvreader.cc" />
+    <ClCompile Include="..\Dependancies\libvpx\tools_common.c" />
+    <ClCompile Include="..\Dependancies\libvpx\video_reader.c" />
+    <ClCompile Include="..\Dependancies\libvpx\video_writer.c" />
+    <ClCompile Include="..\Dependancies\libvpx\warnings.c" />
+    <ClCompile Include="..\Dependancies\libvpx\webmdec.cc" />
+    <ClCompile Include="..\Dependancies\libvpx\webmenc.cc" />
+    <ClCompile Include="..\Dependancies\libvpx\y4menc.c" />
+    <ClCompile Include="..\Dependancies\libvpx\y4minput.c" />
     <ClCompile Include="..\Dependancies\lodepng\lodepng.cpp" />
     <ClCompile Include="Include\IO\XMLParser.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\AiDirector.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\BatAI.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\BossAI.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\BossIntro.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\BossUI.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\CamAi.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\CameraZoomPoint.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\CamShake.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\CaveVines.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\ChangeLevel.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\CharacterController.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\CharacterHitBox.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\ChargerAi.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\CheckPoint.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\EndingMessage.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\EndlessSpin.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\EnvironmentalResponse.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\Fader.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\FallingPillar.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\Flocker.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\ForceBlast.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\ForceFlame.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\ForegroundPasser.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\FormSlam.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\FormSlamChild.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\GauntletFollow.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\GoblinAI.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\IceEncasing.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\IcePillar.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\IciclePackManager.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\Icicles.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\IcicleZone.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\IntroductionScene.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\MainMenu.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\PauseMenu.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\PlayerUIController.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\PrimativeEnemy.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\RandomRockFall.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\RuneAnim.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\RuneSwitch.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\RuneWall.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\Running.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\SkillRelay.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\SpeechBubbleTrigger.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\SplashManager.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\StageRelay.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\TutorialManager.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\VinesPlatform.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\WormCave.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\WormFinalShowdown.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\WormHitBox.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\WormHorizontalCharge.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\WormShadow.cpp" />
+    <ClCompile Include="Resource\BehavioursScripts\WormSpitProjectile.cpp" />
     <ClCompile Include="Source\Editor\ShaderView.cpp" />
+    <ClCompile Include="Source\System\Graphics\PostProcessSys.cpp" />
     <ClCompile Include="Source\System\Particle\AccelerationAffector.cpp" />
     <ClCompile Include="Source\System\Particle\AttractionAffector.cpp" />
     <ClCompile Include="Source\System\Particle\BubbleAffector.cpp" />
@@ -169,12 +242,40 @@
     <ClCompile Include="Source\System\Time\ScopedTimer.cpp" />
     <ClCompile Include="Source\System\Time\Timer.cpp" />
     <ClCompile Include="Source\System\Time\TimeSystem.cpp" />
+    <ClCompile Include="Source\System\Video\VideoSystem.cpp" />
     <ClCompile Include="Source\System\Window\Window.cpp" />
     <ClCompile Include="Source\System\Window\WindowManager.cpp" />
     <ClCompile Include="Source\Utility\GUID.cpp" />
     <ClCompile Include="Source\System\Input\XGamePad.cpp" />
+    <ClCompile Include="Source\Component\VideoRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Dependancies\libvpx\args.h" />
+    <ClInclude Include="..\Dependancies\libvpx\ivfdec.h" />
+    <ClInclude Include="..\Dependancies\libvpx\ivfenc.h" />
+    <ClInclude Include="..\Dependancies\libvpx\md5_utils.h" />
+    <ClInclude Include="..\Dependancies\libvpx\rate_hist.h" />
+    <ClInclude Include="..\Dependancies\libvpx\third_party\libwebm\mkvmuxer\mkvmuxer.h" />
+    <ClInclude Include="..\Dependancies\libvpx\third_party\libwebm\mkvmuxer\mkvmuxertypes.h" />
+    <ClInclude Include="..\Dependancies\libvpx\third_party\libwebm\mkvmuxer\mkvmuxerutil.h" />
+    <ClInclude Include="..\Dependancies\libvpx\third_party\libwebm\mkvmuxer\mkvwriter.h" />
+    <ClInclude Include="..\Dependancies\libvpx\third_party\libwebm\mkvparser\mkvparser.h" />
+    <ClInclude Include="..\Dependancies\libvpx\third_party\libwebm\mkvparser\mkvreader.h" />
+    <ClInclude Include="..\Dependancies\libvpx\tools_common.h" />
+    <ClInclude Include="..\Dependancies\libvpx\video_common.h" />
+    <ClInclude Include="..\Dependancies\libvpx\video_reader.h" />
+    <ClInclude Include="..\Dependancies\libvpx\video_writer.h" />
+    <ClInclude Include="..\Dependancies\libvpx\vp8_rtcd.h" />
+    <ClInclude Include="..\Dependancies\libvpx\vp9_rtcd.h" />
+    <ClInclude Include="..\Dependancies\libvpx\vpx_config.h" />
+    <ClInclude Include="..\Dependancies\libvpx\vpx_dsp_rtcd.h" />
+    <ClInclude Include="..\Dependancies\libvpx\vpx_scale_rtcd.h" />
+    <ClInclude Include="..\Dependancies\libvpx\vpx_version.h" />
+    <ClInclude Include="..\Dependancies\libvpx\warnings.h" />
+    <ClInclude Include="..\Dependancies\libvpx\webmdec.h" />
+    <ClInclude Include="..\Dependancies\libvpx\webmenc.h" />
+    <ClInclude Include="..\Dependancies\libvpx\y4menc.h" />
+    <ClInclude Include="..\Dependancies\libvpx\y4minput.h" />
     <ClInclude Include="..\Dependancies\lodepng\lodepng.h" />
     <ClInclude Include="Include\Allocator\StackAlloc.h" />
     <ClInclude Include="Include\Allocator\StackAllocImpl.h" />
@@ -183,6 +284,7 @@
     <ClInclude Include="Include\Component\RayCollider.h" />
     <ClInclude Include="Include\Component\PointCollider.h" />
     <ClInclude Include="Include\DataStructure\Delegate.h" />
+    <ClInclude Include="Include\DataStructure\Unused.h" />
     <ClInclude Include="Include\Editor\BehaviourTreeEditor.h" />
     <ClInclude Include="Include\Editor\DataSheetEditor.h" />
     <ClInclude Include="Include\Editor\EditorFactory.h" />
@@ -290,6 +392,7 @@
     <ClInclude Include="Include\System\Graphics\Font.h" />
     <ClInclude Include="Include\System\Graphics\FontSystem.h" />
     <ClInclude Include="Include\System\Graphics\MeshBuilder.h" />
+    <ClInclude Include="Include\System\Graphics\PostProcessSys.h" />
     <ClInclude Include="Include\System\Graphics\ShaderProgram.h" />
     <ClInclude Include="Include\System\Graphics\TextureAtlas.h" />
     <ClInclude Include="Include\System\Logger\FileLogger.h" />
@@ -400,6 +503,7 @@
     <ClInclude Include="Include\System\SystemTypes.h" />
     <ClInclude Include="Include\System\Time\Timer.h" />
     <ClInclude Include="Include\System\Time\TimeSystem.h" />
+    <ClInclude Include="Include\System\Video\VideoSystem.h" />
     <ClInclude Include="Include\System\Window\Window.h" />
     <ClInclude Include="Include\System\Window\WindowManager.h" />
     <ClInclude Include="Include\Utility\DebugAssert.h" />
@@ -425,6 +529,61 @@
     <ClInclude Include="Include\IO\XMLParser.h" />
     <ClInclude Include="Include\Editor\RuntimeMeta.h" />
     <ClInclude Include="Include\System\Particle\FloorAffector.h" />
+    <ClInclude Include="Include\Component\VideoRenderer.h" />
+    <ClInclude Include="Resource\BehavioursScripts\AiDirector.h" />
+    <ClInclude Include="Resource\BehavioursScripts\BatAI.h" />
+    <ClInclude Include="Resource\BehavioursScripts\BossAI.h" />
+    <ClInclude Include="Resource\BehavioursScripts\BossIntro.h" />
+    <ClInclude Include="Resource\BehavioursScripts\BossUI.h" />
+    <ClInclude Include="Resource\BehavioursScripts\CamAi.h" />
+    <ClInclude Include="Resource\BehavioursScripts\CameraZoomPoint.h" />
+    <ClInclude Include="Resource\BehavioursScripts\CamShake.h" />
+    <ClInclude Include="Resource\BehavioursScripts\CaveVines.h" />
+    <ClInclude Include="Resource\BehavioursScripts\ChangeLevel.h" />
+    <ClInclude Include="Resource\BehavioursScripts\CharacterController.h" />
+    <ClInclude Include="Resource\BehavioursScripts\CharacterHitBox.h" />
+    <ClInclude Include="Resource\BehavioursScripts\ChargerAi.h" />
+    <ClInclude Include="Resource\BehavioursScripts\CheckPoint.h" />
+    <ClInclude Include="Resource\BehavioursScripts\EndingMessage.h" />
+    <ClInclude Include="Resource\BehavioursScripts\EndlessSpin.h" />
+    <ClInclude Include="Resource\BehavioursScripts\EnvironmentalResponse.h" />
+    <ClInclude Include="Resource\BehavioursScripts\Fader.h" />
+    <ClInclude Include="Resource\BehavioursScripts\FallingPillar.h" />
+    <ClInclude Include="Resource\BehavioursScripts\Flocker.h" />
+    <ClInclude Include="Resource\BehavioursScripts\ForceBlast.h" />
+    <ClInclude Include="Resource\BehavioursScripts\ForceFlame.h" />
+    <ClInclude Include="Resource\BehavioursScripts\ForegroundPasser.h" />
+    <ClInclude Include="Resource\BehavioursScripts\FormSlam.h" />
+    <ClInclude Include="Resource\BehavioursScripts\FormSlamChild.h" />
+    <ClInclude Include="Resource\BehavioursScripts\GauntletFollow.h" />
+    <ClInclude Include="Resource\BehavioursScripts\GoblinAI.h" />
+    <ClInclude Include="Resource\BehavioursScripts\IceEncasing.h" />
+    <ClInclude Include="Resource\BehavioursScripts\IcePillar.h" />
+    <ClInclude Include="Resource\BehavioursScripts\IciclePackManager.h" />
+    <ClInclude Include="Resource\BehavioursScripts\Icicles.h" />
+    <ClInclude Include="Resource\BehavioursScripts\IcicleZone.h" />
+    <ClInclude Include="Resource\BehavioursScripts\IntroductionScene.h" />
+    <ClInclude Include="Resource\BehavioursScripts\MainMenu.h" />
+    <ClInclude Include="Resource\BehavioursScripts\PauseMenu.h" />
+    <ClInclude Include="Resource\BehavioursScripts\PlayerUIController.h" />
+    <ClInclude Include="Resource\BehavioursScripts\PrimativeEnemy.h" />
+    <ClInclude Include="Resource\BehavioursScripts\RandomRockFall.h" />
+    <ClInclude Include="Resource\BehavioursScripts\RuneAnim.h" />
+    <ClInclude Include="Resource\BehavioursScripts\RuneSwitch.h" />
+    <ClInclude Include="Resource\BehavioursScripts\RuneWall.h" />
+    <ClInclude Include="Resource\BehavioursScripts\Running.h" />
+    <ClInclude Include="Resource\BehavioursScripts\SkillRelay.h" />
+    <ClInclude Include="Resource\BehavioursScripts\SpeechBubbleTrigger.h" />
+    <ClInclude Include="Resource\BehavioursScripts\SplashManager.h" />
+    <ClInclude Include="Resource\BehavioursScripts\StageRelay.h" />
+    <ClInclude Include="Resource\BehavioursScripts\TutorialManager.h" />
+    <ClInclude Include="Resource\BehavioursScripts\VinesPlatform.h" />
+    <ClInclude Include="Resource\BehavioursScripts\WormCave.h" />
+    <ClInclude Include="Resource\BehavioursScripts\WormFinalShowdown.h" />
+    <ClInclude Include="Resource\BehavioursScripts\WormHitBox.h" />
+    <ClInclude Include="Resource\BehavioursScripts\WormHorizontalCharge.h" />
+    <ClInclude Include="Resource\BehavioursScripts\WormShadow.h" />
+    <ClInclude Include="Resource\BehavioursScripts\WormSpitProjectile.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DystopiaEngine1.rc" />
@@ -571,7 +730,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalOptions>/DEDITOR /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER  /DEXPORT /DDEBUGALLOC /DCOMMANDPROMPT</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\libvpx\third_party\libyuv\include;$(SolutionDir)Dependancies\libvpx;$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\libvpx\third_party\libwebm\mkvparser;$(SolutionDir)Dependancies\libvpx\third_party\libwebm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExceptionHandling>Sync</ExceptionHandling>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
@@ -580,8 +739,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependancies\freetype-2.9.1\lib;$(SolutionDir)Dependancies\glew-2.1.0\lib\Release\x64;$(SolutionDir)Dependancies\FMOD\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freetypeD.lib;opengl32.lib;glew32.lib;fmod64_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependancies\freetype-2.9.1\lib;$(SolutionDir)Dependancies\glew-2.1.0\lib\Release\x64;$(SolutionDir)Dependancies\FMOD\lib;$(SolutionDir)Dependancies\libvpx\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>freetypeD.lib;opengl32.lib;glew32.lib;fmod64_vc.lib;vpxmd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -640,7 +799,7 @@
       <SDLCheck>
       </SDLCheck>
       <AdditionalOptions>/DEDITOR /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER  /DEXPORT</AdditionalOptions>
-      <AdditionalIncludeDirectories>C:\Users\aaron\source\repos\Frozen-Anvil-Studio\DystopiaEngine\DystopiaEngine\Include;$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\lodepng\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\libvpx\third_party\libyuv\include;$(SolutionDir)Dependancies\libvpx;$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\libvpx\third_party\libwebm\mkvparser;$(SolutionDir)Dependancies\libvpx\third_party\libwebm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ExceptionHandling>Sync</ExceptionHandling>
@@ -650,8 +809,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependancies\freetype-2.9.1\lib;$(SolutionDir)Dependancies\glew-2.1.0\lib\Release\x64;$(SolutionDir)Dependancies\FMOD\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freetype.lib;opengl32.lib;glew32.lib;fmod64_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependancies\freetype-2.9.1\lib;$(SolutionDir)Dependancies\glew-2.1.0\lib\Release\x64;$(SolutionDir)Dependancies\FMOD\lib;$(SolutionDir)Dependancies\libvpx\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>freetype.lib;opengl32.lib;glew32.lib;fmod64_vc.lib;vpxmd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>
@@ -670,7 +829,7 @@
       <SDLCheck>
       </SDLCheck>
       <AdditionalOptions>/DEDITOR=0 /DLODEPNG_NO_COMPILE_ANCILLARY_CHUNKS /DLODEPNG_NO_COMPILE_ENCODER /DSAFE_PTRS /DEXPORT</AdditionalOptions>
-      <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\lodepng\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Dependancies\freetype-2.9.1\include;$(SolutionDir)Dependancies\FMOD\inc;$(ProjectDir)Include;$(SolutionDir)Dependancies\glew-2.1.0\include;$(SolutionDir)Dependancies\lodepng\;$(SolutionDir)Dependancies\libvpx;$(SolutionDir)Dependancies\libvpx\third_party\libyuv\include;$(SolutionDir)Dependancies\libvpx\third_party\libwebm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <DebugInformationFormat>None</DebugInformationFormat>
@@ -680,8 +839,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)Dependancies\freetype-2.9.1\lib;$(SolutionDir)Dependancies\glew-2.1.0\lib\Release\x64;$(SolutionDir)Dependancies\FMOD\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>freetype.lib;opengl32.lib;glew32.lib;fmod64_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Dependancies\freetype-2.9.1\lib;$(SolutionDir)Dependancies\glew-2.1.0\lib\Release\x64;$(SolutionDir)Dependancies\FMOD\lib;$(SolutionDir)Dependancies\libvpx\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>freetype.lib;opengl32.lib;glew32.lib;fmod64_vc.lib;vpxmd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

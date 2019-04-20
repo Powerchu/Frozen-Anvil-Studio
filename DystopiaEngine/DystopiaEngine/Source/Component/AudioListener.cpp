@@ -53,6 +53,7 @@ namespace Dystopia
 
 	void Dystopia::AudioListener::Init(void)
 	{
+		
 	}
 
 	void Dystopia::AudioListener::GameObjectDestroy(void)
@@ -61,6 +62,7 @@ namespace Dystopia
 
 	void Dystopia::AudioListener::Update(float)
 	{
+
 	}
 
 	Dystopia::AudioListener * Dystopia::AudioListener::Duplicate() const

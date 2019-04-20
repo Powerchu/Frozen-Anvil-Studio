@@ -52,7 +52,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "Component/TextRenderer.h"
 #include "Component/ParticleEmitter.h"
 #include "Component/AudioListener.h"
-
+#include "Component/VideoRenderer.h"
 #include "IO/TextSerialiser.h"
 
 #include "System/SystemTypes.h"
@@ -68,6 +68,7 @@ prior written consent of DigiPen Institute of Technology is prohibited.
 #include "System/Behaviour/BehaviourSystem.h"
 #include "System/Collision/CollisionSystem.h"
 #include "System/Particle/ParticleSystem.h"
+#include "System/Video/VideoSystem.h"
 
 #include "System/Particle/Emitter.h"
 #include "System/Particle/ParticleAffector.h"
