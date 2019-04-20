@@ -1,6 +1,16 @@
-### How to use:
+# Frozen Anvil's GAM200/250 Engine/Editor
+    Developed game - Wilo & The Fabled Fist
+## ![logo](https://i.ibb.co/jGvQ2sr/dystopia-engine-ico-2x.png) Dystopia Engine
 
-## [EDITOR]
+> A Student Team's attempt at a Game Engine.
+
+## 🚩 Table of Contents
+- [Editor Help](#using-the-editor)
+    - [Input](#input)
+    - [Getting Started](#getting-started)
+    - [Editor Header Tabs](#editor-header-tabs)
+
+## Using The Editor
 
 ### Input
 #### Hot keys (only available while not in play mode)
@@ -96,9 +106,9 @@
     
     Use the hokey Play (Ctrl + P) to watch the results.
 
-### Editor Stuff
+### Editor Header Tabs
 
-#### [Inspector]
+#### Inspector
     Users can add, remove and edit components in an existing game object. 
     Generic game object properties will always be there and component 
     properties will only appear when available. For generic object properties, 
@@ -110,7 +120,7 @@
     Users can code in cpp as usual and attach them to game objects as a 
     scripting means. Experiment with other various component properties.
 
-#### [Console Log]
+#### Console Log
     DLL Compilation outputs as well as game debug prints outputs here. 
 
     [Hierarchy View]
@@ -122,7 +132,7 @@
 
     Search bar not working yet.
 
-#### [Project Resource]
+#### Project Resource
     
     Displays all resources that the current Project uses. Drag and drop an 
     existing game object form the Hierarchy View into the project resource 
@@ -135,16 +145,16 @@
     
     Search bar not working yet.
 
-#### [ColorScheme]
+#### ColorScheme
     Change color of editor ( visuals )
     
-#### [StyleScheme]
+#### StyleScheme
     Change editor styles ( visuals ) 
     
-#### [Performance Log]
+#### Performance Log
     Views the different performances of various systems of the engine
     
-#### [SceneView]
+#### SceneView
     Allow editing the current game scene mainly through the use of mouse. 
     While editing, pressing keyboard [F] will focus onto the selected 
     game object, [W] will use the translate tool (arrow heads on the gizmo), 
@@ -152,29 +162,29 @@
     through the X, Y-axis or the blue box for both axis. If there are multiple 
     selected objects, gizmo will appear at the average position.
 
-#### [Sprite Previewer]
+#### Sprite Previewer
     Serves as a means to preview an existing sprite.
     
-#### [Sprite Editor] 
+#### Sprite Editor
     Serves mainly for editing sprite sheet data to be used in animations. 
     Drag a image file into the sprite field to get started. Fill in the 
     starting position, size, cols and row to create a atlas section. A 
     red grid will visually appear to reflect your data fields.
     
-#### [ProjectSettings] 
+#### ProjectSettings
     Displays the engine system’s settings for the current project. Such as 
     Graphics system, Physics system etc. These systems will affect the game 
     throughout.
     
-#### [BehaviourTree Editor]
+#### BehaviourTree Editor
     Not implemented yet.
     However, a behaviour tree viewer is avaliable once you add an AI Component in the Inspector. More on this below under their respective categories.
     
-#### [DataSheet]
+#### DataSheet
     This is a serialized data format which allows read/write. Under the hood, it utilises a map data structure to store key-value types. How the team used Datasheets are in Character's default value, skills default values and interactables default attributes. In order to use them, callbacks are avaliable. However, if you want to understand how these work, please approach and contact Shannon.
     
-#### [GameView]
+#### GameView
     View port as seen from the game view camera. The game camera relies on having one Main Camera in the scene. So do make sure there is one. Game Cameras can be either Orthographic or Perspective camerea. 
     
-#### [SceneView]
+#### SceneView
     This is the editor view port and is strictly Orthographic. Details of the camera position and zoom is avaliable on the top left corner. Hold right click to pan the camera, and use mousewheel to zoom in and out.
