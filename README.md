@@ -40,7 +40,6 @@ Dystopia Engine is a 3D game engine, running OpenGL 4.6 with powerful features w
 - [Behaviour Tree Details](##using-the-behaviour-tree)
 
 ## Getting Started
----
 ### **Launching The Editor**
 <img src="https://i.ibb.co/8KHwQZZ/openingfromold.png" width="600"/>
     
@@ -105,7 +104,6 @@ FlowChart      | **DEPRECATED: It used to show State Machine's Flow Chart.**
    
 
 ## Input
-___
 
 ### **Hot keys (only available while not in play mode)**
 
@@ -139,7 +137,6 @@ Tip
 - Mouse Wheel zooms in and out
 
 ## Making A Simple "Game"
-___
 
 #### Creating your first Game object
 
@@ -205,7 +202,6 @@ ___
     Use the hokey Play (Ctrl + P) to watch the results.
 
 ## Editor Panel Details
-___
 
 #### Inspector
 
@@ -382,7 +378,6 @@ Learn other various component properties by clicking [here](#component-details)
 
 
 ## Component Details
-___
 ### Transform
 <img src="https://i.ibb.co/NTT4sC7/Desktop-Screenshot-2019-04-21-13-21-22-70-2.png" width="400"/>
 
@@ -673,7 +668,6 @@ if (mpRend)
 > The AudioListener polls for all AudioSource components and plays the audios. This component is inside but is bugged and should **not** be used.
 
 ## Project Settings Details
-___
 ### Graphics
 <img src="https://i.ibb.co/pfmS466/graphics.png" width="600"/>
 
@@ -734,7 +728,6 @@ Like Unity, Dystopia uses a Collision Layer Table to ignore certain collisions b
 > Time Scale affects the deltaTime for all Update loop (slow-mo, fast-mo).
 
 ## Using The Behaviour Tree
-___
 Samuel Lum, I'll explain this in Redmond. For now, please look at the following files:
 
 - "System/AI/Blackboard.h"
